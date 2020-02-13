@@ -7,6 +7,12 @@
   "devDependencies": {
     "@types/node": "^13.7.0",
     "@types/nw.js": "^0.13.9",
+    "prettier": "^1.19.1",
     "typescript": "^3.7.5"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "all",
+    "jsxBracketSameLine": true
   }
 }
