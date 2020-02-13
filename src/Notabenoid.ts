@@ -1,50 +1,88 @@
+// useful links:
+// https://github.com/uisky/notabenoid
+
 import { fetchDocument } from './utils.js';
-import { Translation, Fragment, calculateTranslationScore } from './types.js';
 
-export async function fetchAreaUrls({
-  anonymous,
-}: {
-  anonymous: boolean;
-}): Promise<Record<string, string>> {
-  let doc = await fetchDocument(
-    anonymous
-      ? 'https://opennota2.duckdns.org/book/74823'
-      : 'http://notabenoid.org/book/74823',
-  );
+const BOOK_ID = '74823';
 
-  let result: Record<string, string> = {};
-  doc.querySelectorAll('#Chapters > tbody > tr').forEach(tr => {
-    let a = tr.querySelector('a');
-    if (a == null) return;
-    result[a.textContent!] = a.href;
-  });
-  return result;
+export interface NotaArea {
+  id: string;
+  fragments: Fragment[];
 }
 
-export async function fetchAreaFragments(url: string): Promise<Fragment[]> {
-  url = `${url}?Orig_page=1`;
+export interface Fragment {
+  originalText: string;
+  translations: Translation[];
+  id: string;
+}
 
-  let fragments: Fragment[] = [];
+export interface Translation {
+  rawText: string;
+  text: string;
+  authorUsername: string;
+  votes: number;
+  score: number;
+  timestamp: Date;
+  flags: Record<string, any>;
+}
 
-  while (true) {
+export class NotaClient {
+  constructor(readonly options: { anonymous: boolean }) {}
+
+  private async makeRequest(path: string) {
+    let url = new URL(
+      path,
+      this.options.anonymous
+        ? 'https://opennota2.duckdns.org'
+        : 'http://notabenoid.org',
+    );
     let doc = await fetchDocument(url);
 
-    doc.querySelectorAll('#Tr > tbody > tr').forEach(tr => {
-      let f = parseFragment(tr);
-      if (f != null) fragments.push(f);
-    });
-
-    let nextA = doc.querySelector<HTMLAnchorElement>(
-      'a[title="На следующую страницу"]',
-    );
-    if (nextA != null && nextA.href.length > 0) {
-      url = nextA.href;
-    } else {
-      break;
+    if (
+      doc.querySelector(
+        'form[method="post"][action="/"] input[name^="login"]',
+      ) != null
+    ) {
+      throw new Error('authentication required');
     }
+
+    return doc;
   }
 
-  return fragments;
+  async fetchAreaIds(): Promise<Record<string, string>> {
+    let doc = await this.makeRequest(`/book/${BOOK_ID}`);
+    let result: Record<string, string> = {};
+    doc.querySelectorAll<HTMLElement>('#Chapters > tbody > tr').forEach(tr => {
+      let a = tr.querySelector('a');
+      if (a == null) return;
+      let id = tr.dataset.id;
+      if (id == null) return;
+      result[a.textContent!] = id;
+    });
+    return result;
+  }
+
+  async fetchArea(id: string): Promise<Fragment[]> {
+    let fragments: Fragment[] = [];
+
+    let totalPages = 1;
+
+    for (let i = 0; i < totalPages; i++) {
+      let doc = await this.makeRequest(
+        `/book/${BOOK_ID}/${id}?Orig_page=${i + 1}`,
+      );
+
+      doc.querySelectorAll('#Tr > tbody > tr').forEach(tr => {
+        let f = parseFragment(tr);
+        if (f != null) fragments.push(f);
+      });
+
+      totalPages = doc.querySelectorAll('#tb-main .chic-pages > ul > li')
+        .length;
+    }
+
+    return fragments;
+  }
 }
 
 function parseFragment(element: Element): Fragment | null {
@@ -56,7 +94,6 @@ function parseFragment(element: Element): Fragment | null {
   let f: Fragment = {
     originalText: text.textContent!,
     translations: [],
-    url: anchor.href,
     id: anchor.hash.slice(1),
   };
   let escapeSequences = f.originalText.match(/\\[civs](\[[^\]]+\])?/g);
@@ -179,4 +216,14 @@ function parseTranslation(
 
   t.score = calculateTranslationScore(t as Translation);
   return t as Translation;
+}
+
+function calculateTranslationScore(t: Translation): number {
+  let score = 1e10 + 1e10 * t.votes + t.timestamp.getTime() / 1000 - 19e8;
+  if (t.authorUsername === 'p_zombie') score -= 1e9;
+  if (t.authorUsername === 'DimavasBot') {
+    score -= 3e9;
+    if (t.flags.fromGTable && !t.flags.notChecked) score += 1e9;
+  }
+  return score;
 }
