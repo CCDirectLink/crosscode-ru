@@ -10,7 +10,7 @@ import { NotaClient } from './Notabenoid.js';
   let client = new NotaClient({
     anonymous: true,
   });
-  let ids = await client.fetchAreaIds();
-  console.log(ids);
-  console.log(await client.fetchArea(ids['tree-dng']));
+  let areas = await client.fetchAllAreaStatuses();
+  console.log(areas);
+  console.log(await client.fetchAreaFragments(areas['tree-dng'].id));
 })();

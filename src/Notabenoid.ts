@@ -5,9 +5,24 @@ import { fetchDocument } from './utils.js';
 
 const BOOK_ID = '74823';
 
-export interface NotaArea {
+const RU_ABBREVIATED_MONTH_NAMES = [
+  'янв.',
+  'февр.',
+  'марта',
+  'апр.',
+  'мая',
+  'июня',
+  'июля',
+  'авг.',
+  'сент.',
+  'окт.',
+  'нояб.',
+  'дек.',
+];
+
+export interface AreaStatus {
   id: string;
-  fragments: Fragment[];
+  lastModificationTimestamp: Date;
 }
 
 export interface Fragment {
@@ -49,20 +64,37 @@ export class NotaClient {
     return doc;
   }
 
-  async fetchAreaIds(): Promise<Record<string, string>> {
+  async fetchAllAreaStatuses(): Promise<Record<string, AreaStatus>> {
     let doc = await this.makeRequest(`/book/${BOOK_ID}`);
-    let result: Record<string, string> = {};
+    let result: Record<string, AreaStatus> = {};
     doc.querySelectorAll<HTMLElement>('#Chapters > tbody > tr').forEach(tr => {
-      let a = tr.querySelector('a');
-      if (a == null) return;
       let id = tr.dataset.id;
       if (id == null) return;
-      result[a.textContent!] = id;
+      let a = tr.querySelector(':scope > td:nth-child(1) > a');
+      if (a == null) return;
+      let span = tr.querySelector<HTMLElement>(
+        ':scope > td:nth-child(3) > span',
+      );
+      if (span == null) return;
+
+      let match = /(\d+) ([а-я.]+) (\d+) г., (\d+):(\d+)/.exec(span.title);
+      if (match == null || match.length !== 6) return;
+      let [day, month, year, hour, minute] = match.slice(1);
+      let [dayN, yearN, hourN, minuteN] = [day, year, hour, minute].map(s =>
+        parseInt(s, 10),
+      );
+      let monthIndex = RU_ABBREVIATED_MONTH_NAMES.indexOf(month);
+      if (monthIndex < 0) return;
+      let date = new Date(
+        Date.UTC(yearN, monthIndex, dayN, hourN - 3, minuteN),
+      );
+
+      result[a.textContent!] = { id, lastModificationTimestamp: date };
     });
     return result;
   }
 
-  async fetchArea(id: string): Promise<Fragment[]> {
+  async fetchAreaFragments(id: string): Promise<Fragment[]> {
     let fragments: Fragment[] = [];
 
     let totalPages = 1;
@@ -124,7 +156,6 @@ function parseTranslation(
     element.querySelector('.info .icon-flag')!.nextSibling!.textContent!,
   );
   if (match == null || match.length !== 6) return null;
-
   let [day, month, year, hour, minute] = match
     .slice(1)
     .map(s => parseInt(s, 10));
