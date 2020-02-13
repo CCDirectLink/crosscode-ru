@@ -2,6 +2,18 @@
 # yarn lockfile v1
 
 
+"@types/node@*", "@types/node@^13.7.0":
+  version "13.7.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.7.0.tgz#b417deda18cf8400f278733499ad5547ed1abec4"
+  integrity sha512-GnZbirvmqZUzMgkFn70c74OQpTTUcCzlhQliTzYjQMqg+hVKcDnxdL19Ne3UdYzdMA/+W3eb646FWn/ZaT1NfQ==
+
+"@types/nw.js@^0.13.9":
+  version "0.13.9"
+  resolved "https://registry.yarnpkg.com/@types/nw.js/-/nw.js-0.13.9.tgz#897f335eea884750562691ddee4d209d9828f8c0"
+  integrity sha512-OxpYKOFJsn8ZGdCTfssbx01PKW5DGg0gPwHWAU2C32GFu8WeMU/qTplI6SwirNZh/4ypmo6N6w2FrUO8m6iDxA==
+  dependencies:
+    "@types/node" "*"
+
 typescript@^3.7.5:
   version "3.7.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.5.tgz#0692e21f65fd4108b9330238aac11dd2e177a1ae"
