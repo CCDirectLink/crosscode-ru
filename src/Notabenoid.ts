@@ -38,7 +38,7 @@ export interface Translation {
   votes: number;
   score: number;
   timestamp: Date;
-  flags: Record<string, any>;
+  flags: Record<string, boolean | string>;
 }
 
 export class NotaClient {

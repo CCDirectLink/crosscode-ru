@@ -1,0 +1,10 @@
+{
+  "name": "crosscode-ru-translation-tool-ng",
+  "description": "Инструмент переводчика CrossCode нового поколения",
+  "homepage": "https://github.com/dmitmel/crosscode-ru-translation-tool-ng",
+  "postload": "postload.js",
+  "version": "0.0.0",
+  "ccmodDependencies": {
+    "Localize Me": ">=0.4 <1"
+  }
+}
