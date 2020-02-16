@@ -26,9 +26,18 @@ export interface AreaStatus {
 }
 
 export interface Fragment {
-  originalText: string;
+  original: Original;
   translations: Translation[];
   id: string;
+}
+
+export interface Original {
+  rawContent: string;
+  file: string;
+  jsonPath: string;
+  langUid: number;
+  descriptionLines: string[];
+  text: string;
 }
 
 export interface Translation {
@@ -123,20 +132,51 @@ function parseFragment(element: Element): Fragment | null {
   let anchor = element.querySelector<HTMLAnchorElement>('.o a.ord');
   if (anchor == null || anchor.hash.length <= 1) return null;
 
-  let f: Fragment = {
-    originalText: text.textContent!,
-    translations: [],
-    id: anchor.hash.slice(1),
-  };
-  let escapeSequences = f.originalText.match(/\\[civs](\[[^\]]+\])?/g);
+  let f: Partial<Fragment> = {};
+  f.id = anchor.hash.slice(1);
 
+  let original = parseOriginal(text.textContent!);
+  if (original == null) return null;
+  f.original = original;
+
+  let escapeSequences = original.text.match(/\\[civs](\[[^\]]+\])?/g);
+  let translations: Translation[] = [];
+  f.translations = translations;
   element.querySelectorAll('.t > div').forEach(translationElement => {
     let t = parseTranslation(translationElement, escapeSequences);
-    if (t != null) f.translations.push(t);
+    if (t != null) translations.push(t);
   });
   f.translations.sort((a, b) => b.score - a.score);
 
-  return f;
+  return f as Fragment;
+}
+
+function parseOriginal(raw: string): Original | null {
+  if (raw.startsWith('----')) return null;
+
+  let o: Partial<Original> = {};
+  o.rawContent = raw;
+
+  let [header, ...lines] = raw.split('\n').map(s => s.trim());
+  let match = /^(\S+)\s+(\S+)\s+#(\d+)$/.exec(header);
+  if (match == null || match.length !== 4) return null;
+  let [file, jsonPath, langUid] = match.slice(1);
+
+  o.file = file;
+  o.jsonPath = jsonPath;
+  o.langUid = parseInt(langUid, 10);
+
+  let descrLinesLen = lines.indexOf('');
+  o.descriptionLines = lines.slice(0, descrLinesLen);
+  let textStartIdx = descrLinesLen;
+  for (
+    ;
+    textStartIdx < lines.length && lines[textStartIdx] === '';
+    textStartIdx++
+  ) {}
+  o.text = lines.slice(textStartIdx).join('\n');
+
+  return o as Original;
 }
 
 function parseTranslation(
