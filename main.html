@@ -3,14 +3,66 @@
   <head>
     <title>crosscode-ru-translation-tool-ng</title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="common.css" />
+    <link rel="stylesheet" href="dist/styles/main.css" />
   </head>
 
   <body>
-    <!-- <progress id="progress"></progress> -->
-    <span id="progressText"></span>
-    <div id="console"></div>
+    <header>
+      <h1>Инструмент переводчика CrossCode</h1>
+    </header>
 
-    <script type="module" src="dist/main.js"></script>
+    <main>
+      <nav class="tabs">
+        <button type="button" class="current">Основные</button>
+        <button type="button">Редактор</button>
+      </nav>
+
+      <div class="tabContent" id="general">
+        <section>
+          <h2>Скачивание переводов</h2>
+          <p>
+            <b>Статус:</b>
+            <span id="general_translations_progressTask"
+              >нету текущей задачи</span
+            >
+            <br />
+            <progress id="general_translations_progress" value="0"></progress>
+            <span id="general_translations_progressCount">0 / 0</span>
+          </p>
+          <p>
+            <button type="button" id="general_translations_update">
+              Обновить переводы
+            </button>
+            <button type="button" id="general_translations_redownload">
+              Скачать всё заново
+            </button>
+            <button type="button" id="general_translations_delete">
+              Удалить скачанное
+            </button>
+          </p>
+          <p>
+            <label>
+              <input
+                type="checkbox"
+                id="general_translations_updateAutomatically"
+              />
+              Автоматически устанавливать обновления
+            </label>
+          </p>
+        </section>
+
+        <section>
+          <h2>Аккаунт Notabenoid.org</h2>
+          <p>
+            <button type="button" id="general_notaAccount_login">Войти</button>
+            <button type="button" id="general_notaAccount_logout">Выйти</button>
+          </p>
+        </section>
+      </div>
+
+      <div class="tabContent" id="editor" style="display: none"></div>
+
+      <script type="module" src="dist/main.js"></script>
+    </main>
   </body>
 </html>
