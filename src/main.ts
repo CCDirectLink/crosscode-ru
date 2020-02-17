@@ -1,6 +1,7 @@
 /// <reference types="nw.js" />
 
 import { NotaClient } from './Notabenoid.js';
+import { notaChapterToPack } from './TranslationPack.js';
 
 (async () => {
   await new Promise(resolve => {
@@ -10,7 +11,9 @@ import { NotaClient } from './Notabenoid.js';
   let client = new NotaClient({
     anonymous: true,
   });
-  let areas = await client.fetchAllAreaStatuses();
-  console.log(areas);
-  console.log(await client.fetchAreaFragments(areas['tree-dng'].id));
+  let chapters = await client.fetchAllChapterStatuses();
+  console.log(chapters);
+  let chapter = await client.fetchChapterFragments(chapters['tree-dng']);
+  console.log(chapter);
+  console.log(notaChapterToPack(chapter));
 })();

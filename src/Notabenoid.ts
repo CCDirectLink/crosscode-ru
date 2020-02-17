@@ -20,9 +20,14 @@ const RU_ABBREVIATED_MONTH_NAMES = [
   'дек.',
 ];
 
-export interface AreaStatus {
+export interface ChapterStatus {
   id: string;
+  name: string;
   lastModificationTimestamp: Date;
+}
+
+export interface Chapter extends ChapterStatus {
+  fragments: Fragment[];
 }
 
 export interface Fragment {
@@ -73,9 +78,9 @@ export class NotaClient {
     return doc;
   }
 
-  async fetchAllAreaStatuses(): Promise<Record<string, AreaStatus>> {
+  async fetchAllChapterStatuses(): Promise<Record<string, ChapterStatus>> {
     let doc = await this.makeRequest(`/book/${BOOK_ID}`);
-    let result: Record<string, AreaStatus> = {};
+    let result: Record<string, ChapterStatus> = {};
     doc.querySelectorAll<HTMLElement>('#Chapters > tbody > tr').forEach(tr => {
       let id = tr.dataset.id;
       if (id == null) return;
@@ -98,19 +103,20 @@ export class NotaClient {
         Date.UTC(yearN, monthIndex, dayN, hourN - 3, minuteN),
       );
 
-      result[a.textContent!] = { id, lastModificationTimestamp: date };
+      let name = a.textContent!;
+      result[name] = { id, name, lastModificationTimestamp: date };
     });
     return result;
   }
 
-  async fetchAreaFragments(id: string): Promise<Fragment[]> {
+  async fetchChapterFragments(status: ChapterStatus): Promise<Chapter> {
     let fragments: Fragment[] = [];
 
     let totalPages = 1;
 
     for (let i = 0; i < totalPages; i++) {
       let doc = await this.makeRequest(
-        `/book/${BOOK_ID}/${id}?Orig_page=${i + 1}`,
+        `/book/${BOOK_ID}/${status.id}?Orig_page=${i + 1}`,
       );
 
       doc.querySelectorAll('#Tr > tbody > tr').forEach(tr => {
@@ -122,7 +128,10 @@ export class NotaClient {
         .length;
     }
 
-    return fragments;
+    return {
+      ...status,
+      fragments,
+    };
   }
 }
 
