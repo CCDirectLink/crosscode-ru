@@ -7,8 +7,9 @@ cache:
 install:
   - yarn install
 script:
-  - yarn build
-  - prettier --check "**/*.{js,ts,json,css,html}"
+  - yarn build:scripts
+  - yarn build:styles
+  - prettier --check "**/*.{js,ts,json,css,scss,html}"
 
 notifications:
   webhooks: https://fathomless-fjord-24024.herokuapp.com/notify
