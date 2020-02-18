@@ -1,3 +1,5 @@
+import './src/open-translation-tool-button.js';
+
 ig.module('crosscode-ru-translation-tool-ng')
   .requires(
     'game.feature.menu.gui.menu-misc',
@@ -34,30 +36,34 @@ ig.module('crosscode-ru-translation-tool-ng')
       },
     });
 
-    sc.TitleScreenButtonGui.inject({
-      init() {
-        this.parent();
-        const DEFAULT_TEXT =
-          'abcdefghi\\c[2]jklmnopqrstuv\\c[3]wxyz\\c[1]abcdefghij\\c[0]klmnopqrstuvwxyz';
-        this._infoBar1 = new sc.SplittableTextGui(DEFAULT_TEXT);
-        this._infoBar1.setAlign(ig.GUI_ALIGN.X_CENTER, ig.GUI_ALIGN.Y_CENTER);
-        this._infoBar1.setPos(0, -8);
-        this.addChildGui(this._infoBar1);
-        this._infoBar2 = new sc.TextGui(DEFAULT_TEXT);
-        this._infoBar2.setAlign(ig.GUI_ALIGN.X_CENTER, ig.GUI_ALIGN.Y_CENTER);
-        this._infoBar2.setPos(0, 8);
-        this.addChildGui(this._infoBar2);
-        window._setText = text => {
-          this._infoBar1.setText(text);
-          this._infoBar2.setText(text);
-        };
-        // setInterval(() => {
-        //   let letters = 'abcdefghijklmnopqrstuvwxyz';
-        //   let letter = letters[Math.floor(Math.random() * letters.length)];
-        //   this._infoBar.setText(this._infoBar.text + letter);
-        // }, 200);
-      },
-    });
+    // sc.TitleScreenButtonGui.inject({
+    //   _infoBar1: null,
+    //   _infoBar2: null,
+
+    //   init() {
+    //     this.parent();
+
+    //     const DEFAULT_TEXT =
+    //       'abcdefghi\\c[2]jklmnopqrstuv\\c[3]wxyz\\c[1]abcdefghij\\c[0]klmnopqrstuvwxyz';
+    //     this._infoBar1 = new sc.SplittableTextGui(DEFAULT_TEXT);
+    //     this._infoBar1.setAlign(ig.GUI_ALIGN.X_CENTER, ig.GUI_ALIGN.Y_CENTER);
+    //     this._infoBar1.setPos(0, -8);
+    //     this.addChildGui(this._infoBar1);
+    //     this._infoBar2 = new sc.TextGui(DEFAULT_TEXT);
+    //     this._infoBar2.setAlign(ig.GUI_ALIGN.X_CENTER, ig.GUI_ALIGN.Y_CENTER);
+    //     this._infoBar2.setPos(0, 8);
+    //     this.addChildGui(this._infoBar2);
+    //     window._setText = text => {
+    //       this._infoBar1.setText(text);
+    //       this._infoBar2.setText(text);
+    //     };
+    //     // setInterval(() => {
+    //     //   let letters = 'abcdefghijklmnopqrstuvwxyz';
+    //     //   let letter = letters[Math.floor(Math.random() * letters.length)];
+    //     //   this._infoBar.setText(this._infoBar.text + letter);
+    //     // }, 200);
+    //   },
+    // });
 
     const REPEATED_TEXT_MARGIN = { x: 10, y: 5 };
     const TICKER_SPEED = { x: 50, y: 50 };
@@ -221,9 +227,10 @@ ig.module('crosscode-ru-translation-tool-ng')
     });
 
     sc.SplittableTextGui = ig.GuiElementBase.extend({
-      font: null,
+      config: {},
       text: '',
-      textBlock: null,
+      parsedText: '',
+      commands: [],
       textBlocks: [],
       tickerTimer: 0,
 
