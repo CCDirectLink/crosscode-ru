@@ -1,4 +1,6 @@
-export default class CrossCodeRuTranslationToolNgPlugin extends Plugin {
+import { RuTranslationToolNgClient } from './src/tool-client.js';
+
+export default class RuTranslationToolNgPlugin extends Plugin {
   constructor(mod) {
     super();
     this.baseDirectory = mod.baseDirectory;
@@ -9,20 +11,9 @@ export default class CrossCodeRuTranslationToolNgPlugin extends Plugin {
   }
 
   prestart() {
-    window.ruTranslationToolNg = {
-      openWindow: () => {
-        const nw = require('nw.gui');
-        nw.Window.open(
-          `${this.baseDirectory}/tool/main.html`,
-          // magic values from the game's package.json
-          { width: 1136, height: 640 },
-          toolWindow => {
-            toolWindow.window.gameWindow = window;
-          },
-        );
-      },
-    };
-
+    window.ruTranslationToolNg = new RuTranslationToolNgClient(
+      `${this.baseDirectory}/tool`,
+    );
     return import('./prestart.js');
   }
 }
