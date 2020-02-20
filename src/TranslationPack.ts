@@ -4,10 +4,11 @@ type LocalizeMeMappingTable = Record<string, string>;
 
 type LocalizeMePack = Record<string, { orig: string; text: string }>;
 
-export function notaChapterToPack(chapter: Nota.Chapter): LocalizeMePack {
+export function notaFragmentsToPack(
+  fragments: Nota.Fragment[],
+): LocalizeMePack {
   let pack: LocalizeMePack = {};
-  chapter.fragments.forEach(fragment => {
-    console.log(fragment);
+  fragments.forEach(fragment => {
     if (fragment.translations.length === 0) return;
     let { file, jsonPath } = fragment.original;
     if (!file.startsWith('data/')) return;

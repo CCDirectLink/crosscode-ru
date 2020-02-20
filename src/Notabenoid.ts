@@ -20,10 +20,16 @@ const RU_ABBREVIATED_MONTH_NAMES = [
   'дек.',
 ];
 
+// I hope this doesn't get changed... although, the latest commit on Nota's
+// repo is from 2016, so such changes are very unlikely.
+const CHAPTER_PAGE_SIZE = 50;
+
 export interface ChapterStatus {
   id: string;
   name: string;
   lastModificationTimestamp: Date;
+  translatedFragments: number;
+  totalFragments: number;
 }
 
 export interface Chapter extends ChapterStatus {
@@ -40,7 +46,7 @@ export interface Original {
   rawContent: string;
   file: string;
   jsonPath: string;
-  langUid: number;
+  langUid: number | null;
   descriptionLines: string[];
   text: string;
 }
@@ -82,39 +88,19 @@ export class NotaClient {
     let doc = await this.makeRequest(`/book/${BOOK_ID}`);
     let result: Record<string, ChapterStatus> = {};
     doc.querySelectorAll<HTMLElement>('#Chapters > tbody > tr').forEach(tr => {
-      let id = tr.dataset.id;
-      if (id == null) return;
-      let a = tr.querySelector(':scope > td:nth-child(1) > a');
-      if (a == null) return;
-      let span = tr.querySelector<HTMLElement>(
-        ':scope > td:nth-child(3) > span',
-      );
-      if (span == null) return;
-
-      let match = /(\d+) ([а-я.]+) (\d+) г., (\d+):(\d+)/.exec(span.title);
-      if (match == null || match.length !== 6) return;
-      let [day, month, year, hour, minute] = match.slice(1);
-      let [dayN, yearN, hourN, minuteN] = [day, year, hour, minute].map(s =>
-        parseInt(s, 10),
-      );
-      let monthIndex = RU_ABBREVIATED_MONTH_NAMES.indexOf(month);
-      if (monthIndex < 0) return;
-      let date = new Date(
-        Date.UTC(yearN, monthIndex, dayN, hourN - 3, minuteN),
-      );
-
-      let name = a.textContent!;
-      result[name] = { id, name, lastModificationTimestamp: date };
+      let chapterStatus = parseChapterStatus(tr);
+      if (chapterStatus == null) return null;
+      result[chapterStatus.name] = chapterStatus;
     });
     return result;
   }
 
-  async fetchChapterFragments(status: ChapterStatus): Promise<Chapter> {
+  async fetchChapterFragments(status: ChapterStatus): Promise<Fragment[]> {
     let fragments: Fragment[] = [];
 
-    let totalPages = 1;
-
-    for (let i = 0; i < totalPages; i++) {
+    let pages = Math.ceil(status.totalFragments / CHAPTER_PAGE_SIZE);
+    for (let i = 0; i < pages; i++) {
+      console.log(`${status.name}, page ${i + 1}/${pages}`);
       let doc = await this.makeRequest(
         `/book/${BOOK_ID}/${status.id}?Orig_page=${i + 1}`,
       );
@@ -123,16 +109,52 @@ export class NotaClient {
         let f = parseFragment(tr);
         if (f != null) fragments.push(f);
       });
-
-      totalPages = doc.querySelectorAll('#tb-main .chic-pages > ul > li')
-        .length;
     }
 
-    return {
-      ...status,
-      fragments,
-    };
+    return fragments;
   }
+}
+
+function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
+  let cs: Partial<ChapterStatus> = {};
+
+  let id = element.dataset.id;
+  if (id == null) return null;
+  cs.id = id;
+  let anchor = element.querySelector(':scope > td:nth-child(1) > a');
+  if (anchor == null) return null;
+  let activityElem = element.querySelector<HTMLElement>(
+    ':scope > td:nth-child(3) > span',
+  );
+  if (activityElem == null) return null;
+  let doneElem = element.querySelector<HTMLElement>(
+    ':scope > td:nth-child(4) > small',
+  );
+  if (doneElem == null) return null;
+
+  cs.name = anchor.textContent!;
+
+  let match = /(\d+) ([а-я.]+) (\d+) г., (\d+):(\d+)/.exec(activityElem.title);
+  if (match == null || match.length !== 6) return null;
+  let [day, month, year, hour, minute] = match.slice(1);
+  let [dayN, yearN, hourN, minuteN] = [day, year, hour, minute].map(s =>
+    parseInt(s, 10),
+  );
+  let monthIndex = RU_ABBREVIATED_MONTH_NAMES.indexOf(month);
+  if (monthIndex < 0) return null;
+  cs.lastModificationTimestamp = new Date(
+    Date.UTC(yearN, monthIndex, dayN, hourN - 3, minuteN),
+  );
+
+  match = /\((\d+) \/ (\d+)\)/.exec(doneElem.textContent!);
+  if (match == null || match.length !== 3) return null;
+  let [translatedFragments, totalFragments] = match
+    .slice(1)
+    .map(s => parseInt(s, 10));
+  cs.translatedFragments = translatedFragments;
+  cs.totalFragments = totalFragments;
+
+  return cs as ChapterStatus;
 }
 
 function parseFragment(element: Element): Fragment | null {
@@ -167,13 +189,13 @@ function parseOriginal(raw: string): Original | null {
   o.rawContent = raw;
 
   let [header, ...lines] = raw.split('\n').map(s => s.trim());
-  let match = /^(\S+)\s+(\S+)\s+#(\d+)$/.exec(header);
+  let match = /^(\S+)\s+(\S+)(?:\s+#(\d+))?$/.exec(header);
   if (match == null || match.length !== 4) return null;
   let [file, jsonPath, langUid] = match.slice(1);
 
   o.file = file;
   o.jsonPath = jsonPath;
-  o.langUid = parseInt(langUid, 10);
+  o.langUid = langUid != null ? parseInt(langUid, 10) : null;
 
   let descrLinesLen = lines.indexOf('');
   o.descriptionLines = lines.slice(0, descrLinesLen);
