@@ -1,6 +1,4 @@
-/// <reference types="node/fs" />
-
-import fs from './node-builtin-modules/fs.js';
+import fs from '../node-builtin-modules/fs.js';
 
 const ENABLE_PRETTY_PRINT = true;
 

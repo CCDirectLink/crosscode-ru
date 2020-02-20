@@ -95,23 +95,23 @@ export class NotaClient {
     return result;
   }
 
-  async fetchChapterFragments(status: ChapterStatus): Promise<Fragment[]> {
-    let fragments: Fragment[] = [];
-
+  *createChapterFragmentFetcher(
+    status: ChapterStatus,
+  ): Iterator<Promise<Fragment[]>> {
     let pages = Math.ceil(status.totalFragments / CHAPTER_PAGE_SIZE);
     for (let i = 0; i < pages; i++) {
       console.log(`${status.name}, page ${i + 1}/${pages}`);
-      let doc = await this.makeRequest(
+      yield this.makeRequest(
         `/book/${BOOK_ID}/${status.id}?Orig_page=${i + 1}`,
-      );
-
-      doc.querySelectorAll('#Tr > tbody > tr').forEach(tr => {
-        let f = parseFragment(tr);
-        if (f != null) fragments.push(f);
+      ).then(doc => {
+        let fragments: Fragment[] = [];
+        doc.querySelectorAll('#Tr > tbody > tr').forEach(tr => {
+          let f = parseFragment(tr);
+          if (f != null) fragments.push(f);
+        });
+        return fragments;
       });
     }
-
-    return fragments;
   }
 }
 
