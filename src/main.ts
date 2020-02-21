@@ -49,7 +49,7 @@ const LOCALIZE_ME_MAPPING_FILE = path.join(
       8,
     );
 
-    packer.addNotaFragments(fragments);
+    await packer.addNotaFragments(fragments);
     await fsUtils.writeJsonFile(
       path.join(CHAPTER_FRAGMENTS_DIR, `${id}.json`),
       fragments,
@@ -74,4 +74,4 @@ const LOCALIZE_ME_MAPPING_FILE = path.join(
   }
 
   await fsUtils.writeJsonFile(LOCALIZE_ME_MAPPING_FILE, mappingTable);
-})();
+})().catch(console.error);
