@@ -1,7 +1,7 @@
 // useful links:
 // https://github.com/uisky/notabenoid
 
-import { fetchDocument } from './utils.js';
+import { fetchDocument } from './utils/http.js';
 
 const BOOK_ID = '74823';
 
@@ -64,7 +64,7 @@ export interface Translation {
 export class NotaClient {
   constructor(readonly options: { anonymous: boolean }) {}
 
-  private async makeRequest(path: string) {
+  private async makeRequest(path: string): Promise<Document> {
     let url = new URL(
       path,
       this.options.anonymous
