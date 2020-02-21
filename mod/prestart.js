@@ -1,5 +1,47 @@
 import './src/open-translation-tool-button.js';
 
+ig.module('crosscode-ru-translation-tool-ng.fixes')
+  .requires(
+    'game.feature.menu.gui.circuit.circuit-detail-elements',
+    'game.feature.menu.gui.trade.trade-misc',
+    'game.feature.menu.gui.item.item-list',
+  )
+  .defines(() => {
+    sc.CircuitInfoBox.inject({
+      init(scrollHook) {
+        this.parent(scrollHook);
+        this.special.setPos(8, 2);
+        this.special.setAlign(ig.GUI_ALIGN.X_LEFT, ig.GUI_ALIGN.Y_BOTTOM);
+      },
+    });
+
+    sc.TradeButtonBox.inject({
+      init(traderName, buttonGroup, buttonStartIndex) {
+        this.parent(traderName, buttonGroup, buttonStartIndex);
+        this.location.textBlock.linePadding = -2;
+        let foundTrader = sc.trade.getFoundTrader(traderName);
+        this.location.setText(
+          (foundTrader.area || '???') + '\n> ' + (foundTrader.map || '???'),
+        );
+      },
+    });
+
+    sc.ItemTabbedBox.TabButton.inject({
+      setPressed(pressed) {
+        var prevPressed = this.pressed;
+        this.parent(pressed);
+        if (this.pressed !== prevPressed) {
+          this.textChild.setText(this.getButtonText());
+          this.hook.size.x = Math.max(
+            this.pressed ? this._largeWidth : this._smallWidth,
+            this.textChild.hook.size.x + 16,
+          );
+          this.onPressedChange(this.pressed);
+        }
+      },
+    });
+  });
+
 ig.module('crosscode-ru-translation-tool-ng')
   .requires(
     'game.feature.menu.gui.menu-misc',
@@ -240,7 +282,7 @@ ig.module('crosscode-ru-translation-tool-ng')
         this.setText(text);
       },
 
-      setText(text = '') {
+      setText(text) {
         this.clear();
         this.textBlocks = [];
 
@@ -250,6 +292,7 @@ ig.module('crosscode-ru-translation-tool-ng')
           linePadding,
         };
 
+        if (text == null) text = '';
         if (typeof text === 'object') text = text.toString();
         this.text = text.trim();
         this.commands = [];
