@@ -144,7 +144,8 @@ ig.module('crosscode-ru-translation-tool-ng')
       }
 
       // renderer.addColor('rgba(255, 0, 0, 0.25)', 0, 0, size.x, size.y);
-      // renderer.addColor( 'rgba(0, 255, 0, 0.25)',
+      // renderer.addColor(
+      //   'rgba(0, 255, 0, 0.25)',
       //   prtPos.x,
       //   prtPos.y,
       //   prtSize.x,
@@ -194,13 +195,14 @@ ig.module('crosscode-ru-translation-tool-ng')
     }
 
     function updateDrawablesTicker(renderer, hook, timer, renderText) {
-      let tickerDrawn = tryUpdateDrawablesTicker(
-        renderer,
-        hook,
-        timer,
-        renderText,
-      );
-      if (!tickerDrawn) renderText(0, 0);
+      // let tickerDrawn = tryUpdateDrawablesTicker(
+      //   renderer,
+      //   hook,
+      //   timer,
+      //   renderText,
+      // );
+      // if (!tickerDrawn) renderText(0, 0);
+      renderText(0, 0);
     }
 
     sc.TextGui.inject({
