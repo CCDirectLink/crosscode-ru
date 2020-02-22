@@ -7,7 +7,7 @@ export function readJsonFile(
   options:
     | { encoding: BufferEncoding; flag?: string | number }
     | BufferEncoding,
-): Promise<string> {
+): Promise<any> {
   return fs.promises.readFile(path, options).then(data => JSON.parse(data));
 }
 

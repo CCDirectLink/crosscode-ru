@@ -67,7 +67,7 @@ export class LocalizeMePacker {
       }
     }
 
-    let realOriginalText;
+    let realOriginalText: string;
     if (file.endsWith('.en_US.json')) {
       if (typeof obj !== 'string') return null;
       realOriginalText = obj;

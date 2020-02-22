@@ -47,7 +47,7 @@ export interface Original {
   file: string;
   jsonPath: string;
   langUid: number | null;
-  descriptionLines: string[];
+  descriptionText: string;
   text: string;
 }
 
@@ -188,24 +188,22 @@ function parseOriginal(raw: string): Original | null {
   let o: Partial<Original> = {};
   o.rawContent = raw;
 
-  let [header, ...lines] = raw.split('\n').map(s => s.trim());
-  let match = /^(\S+)\s+(\S+)(?:\s+#(\d+))?$/.exec(header);
+  let headersLen = raw.indexOf('\n\n');
+  if (headersLen < 0) return null;
+  let headers = raw.slice(0, headersLen);
+  let locationLineLen = headers.indexOf('\n');
+  if (locationLineLen < 0) locationLineLen = headers.length;
+  let locationLine = headers.slice(0, locationLineLen);
+
+  let match = /^(\S+)\s+(\S+)(?:\s+#(\d+))?\s*$/.exec(locationLine);
   if (match == null || match.length !== 4) return null;
   let [file, jsonPath, langUid] = match.slice(1);
-
   o.file = file;
   o.jsonPath = jsonPath;
   o.langUid = langUid != null ? parseInt(langUid, 10) : null;
 
-  let descrLinesLen = lines.indexOf('');
-  o.descriptionLines = lines.slice(0, descrLinesLen);
-  let textStartIdx = descrLinesLen;
-  for (
-    ;
-    textStartIdx < lines.length && lines[textStartIdx] === '';
-    textStartIdx++
-  ) {}
-  o.text = lines.slice(textStartIdx).join('\n');
+  o.descriptionText = raw.slice(locationLineLen + 1, headersLen);
+  o.text = raw.slice(headersLen + 2);
 
   return o as Original;
 }
