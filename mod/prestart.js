@@ -4,7 +4,14 @@ ig.module('crosscode-ru-translation-tool-ng.fixes')
   .requires(
     'game.feature.menu.gui.circuit.circuit-detail-elements',
     'game.feature.menu.gui.trade.trade-misc',
-    'game.feature.menu.gui.item.item-list',
+    'game.feature.menu.gui.quests.quest-tab-list',
+    'game.feature.menu.gui.quest-hub.quest-hub-list',
+    'game.feature.menu.gui.enemies.enemy-list',
+    'game.feature.menu.gui.lore.lore-list',
+    'game.feature.menu.gui.social.social-list',
+    'game.feature.menu.gui.trade.trader-list',
+    'game.feature.menu.gui.botanics.botanics-list',
+    'game.feature.menu.gui.arena.arena-list',
   )
   .defines(() => {
     sc.CircuitInfoBox.inject({
@@ -26,18 +33,103 @@ ig.module('crosscode-ru-translation-tool-ng.fixes')
       },
     });
 
-    sc.ItemTabbedBox.TabButton.inject({
-      setPressed(pressed) {
-        var prevPressed = this.pressed;
-        this.parent(pressed);
-        if (this.pressed !== prevPressed) {
-          this.textChild.setText(this.getButtonText());
-          this.hook.size.x = Math.max(
-            this.pressed ? this._largeWidth : this._smallWidth,
-            this.textChild.hook.size.x + 16,
-          );
-          this.onPressedChange(this.pressed);
-        }
+    sc.QuestListBox.inject({
+      _createTabButton(...args) {
+        let btn = this.parent(...args);
+        btn._largeWidth = Math.max(btn._largeWidth, 95);
+        return btn;
+      },
+    });
+
+    sc.QuestHubList.inject({
+      onTabButtonCreation(...args) {
+        let btn = this.parent(...args);
+        btn._largeWidth = Math.max(btn._largeWidth, 105);
+        return btn;
+      },
+    });
+
+    sc.EnemyListBox.inject({
+      onTabButtonCreation(...args) {
+        let btn = this.parent(...args);
+        btn._largeWidth = Math.max(btn._largeWidth, 120);
+        return btn;
+      },
+    });
+
+    sc.LoreListBoxNew.inject({
+      onTabButtonCreation(...args) {
+        let btn = this.parent(...args);
+        btn._largeWidth = Math.max(btn._largeWidth, 120);
+        return btn;
+      },
+    });
+
+    sc.SocialList.inject({
+      onTabButtonCreation(...args) {
+        let btn = this.parent(...args);
+        btn._largeWidth = Math.max(btn._largeWidth, 95);
+        return btn;
+      },
+    });
+
+    const TRADERS_LIST_ADDITIONAL_WIDTH = 32;
+    sc.TradersListBox.inject({
+      init(...args) {
+        let setSizeOld = this.setSize;
+        let setPivotOld = this.setPivot;
+        let setPanelSizeOld = this.setPanelSize;
+        this.setSize = (w, h) =>
+          setSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
+        this.setPivot = (x, y) =>
+          setPivotOld.call(this, x + TRADERS_LIST_ADDITIONAL_WIDTH, y);
+        this.setPanelSize = (w, h) =>
+          setPanelSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
+
+        this.parent(...args);
+
+        this.setSize = setSizeOld;
+        this.setPivot = setPivotOld;
+        this.setPanelSize = setPanelSizeOld;
+      },
+
+      onCreateListEntries(list, ...args) {
+        let listSetSizeOld = list.setSize;
+        list.setSize = (w, h) =>
+          listSetSizeOld.call(list, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
+
+        this.parent(list, ...args);
+
+        list.setSize = listSetSizeOld;
+
+        list.contentPane.hook.children.forEach(hook => {
+          hook.pos.x += TRADERS_LIST_ADDITIONAL_WIDTH;
+        });
+        list.traderInfoGui.hook.children.forEach(hook => {
+          hook.size.x += TRADERS_LIST_ADDITIONAL_WIDTH;
+        });
+      },
+
+      onTabButtonCreation(...args) {
+        let btn = this.parent(...args);
+        btn._largeWidth = Math.max(btn._largeWidth, 160);
+        return btn;
+      },
+    });
+
+    sc.BotanicsListBox.inject({
+      onTabButtonCreation(...args) {
+        let btn = this.parent(...args);
+        btn._largeWidth = Math.max(btn._largeWidth, 160);
+        return btn;
+      },
+    });
+
+    sc.ArenaCupList.inject({
+      onTabButtonCreation(...args) {
+        let btn = this.parent(...args);
+        btn._largeWidth = Math.max(btn._largeWidth, 145);
+        return btn;
       },
     });
   });
@@ -56,8 +148,7 @@ ig.module('crosscode-ru-translation-tool-ng')
     sc.InfoBar.inject({
       init(width = ig.system.width, height = 21, skipRender = false) {
         ig.GuiElementBase.prototype.init.call(this);
-        this.hook.size.x = width;
-        this.hook.size.y = height;
+        this.setSize(width, height);
         this.setStateValue('HIDDEN', 'offsetY', -this.hook.size.y);
         this.skipRender = skipRender;
         this.text = new sc.SplittableTextGui('');
@@ -300,8 +391,7 @@ ig.module('crosscode-ru-translation-tool-ng')
         this.commands = [];
         this.parsedText = ig.TextParser.parse(this.text, this.commands, font);
 
-        this.hook.size.x = 0;
-        this.hook.size.y = 0;
+        this.setSize(0, 0);
         let textWidth = 0;
         let blockStart = 0;
         let lastColor = 0;
@@ -326,8 +416,10 @@ ig.module('crosscode-ru-translation-tool-ng')
             textBlockConfig,
           );
           this.textBlocks.push({ offset: this.hook.size.x, textBlock });
-          this.hook.size.x += textBlock.size.x;
-          this.hook.size.y = Math.max(this.hook.size.y, textBlock.size.y);
+          this.setSize(
+            this.hook.size.x + textBlock.size.x,
+            Math.max(this.hook.size.y, textBlock.size.y),
+          );
 
           if (blockCommands.length > 0) {
             let maxCmdIndex = 0;
@@ -355,8 +447,10 @@ ig.module('crosscode-ru-translation-tool-ng')
           if (isLast) flushBlock(i);
         }
 
-        this.hook.pivot.x = Math.floor(this.hook.size.x / 2);
-        this.hook.pivot.y = Math.floor(this.hook.size.y / 2);
+        this.setPivot(
+          Math.floor(this.hook.size.x / 2),
+          Math.floor(this.hook.size.y / 2),
+        );
       },
 
       onVisibilityChange(visible) {
