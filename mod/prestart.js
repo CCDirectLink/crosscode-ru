@@ -1,140 +1,9 @@
 import './src/open-translation-tool-button.js';
+import './src/tab-button.js';
+import './src/traders-list.js';
+import './src/circuit-menu.js';
 
-ig.module('crosscode-ru-translation-tool-ng.fixes')
-  .requires(
-    'game.feature.menu.gui.circuit.circuit-detail-elements',
-    'game.feature.menu.gui.trade.trade-misc',
-    'game.feature.menu.gui.quests.quest-tab-list',
-    'game.feature.menu.gui.quest-hub.quest-hub-list',
-    'game.feature.menu.gui.enemies.enemy-list',
-    'game.feature.menu.gui.lore.lore-list',
-    'game.feature.menu.gui.social.social-list',
-    'game.feature.menu.gui.trade.trader-list',
-    'game.feature.menu.gui.botanics.botanics-list',
-    'game.feature.menu.gui.arena.arena-list',
-  )
-  .defines(() => {
-    sc.CircuitInfoBox.inject({
-      init(scrollHook) {
-        this.parent(scrollHook);
-        this.special.setPos(8, 2);
-        this.special.setAlign(ig.GUI_ALIGN.X_LEFT, ig.GUI_ALIGN.Y_BOTTOM);
-      },
-    });
-
-    sc.TradeButtonBox.inject({
-      init(traderName, buttonGroup, buttonStartIndex) {
-        this.parent(traderName, buttonGroup, buttonStartIndex);
-        this.location.textBlock.linePadding = -2;
-        let foundTrader = sc.trade.getFoundTrader(traderName);
-        this.location.setText(
-          (foundTrader.area || '???') + '\n> ' + (foundTrader.map || '???'),
-        );
-      },
-    });
-
-    sc.QuestListBox.inject({
-      _createTabButton(...args) {
-        let btn = this.parent(...args);
-        btn._largeWidth = Math.max(btn._largeWidth, 95);
-        return btn;
-      },
-    });
-
-    sc.QuestHubList.inject({
-      onTabButtonCreation(...args) {
-        let btn = this.parent(...args);
-        btn._largeWidth = Math.max(btn._largeWidth, 105);
-        return btn;
-      },
-    });
-
-    sc.EnemyListBox.inject({
-      onTabButtonCreation(...args) {
-        let btn = this.parent(...args);
-        btn._largeWidth = Math.max(btn._largeWidth, 120);
-        return btn;
-      },
-    });
-
-    sc.LoreListBoxNew.inject({
-      onTabButtonCreation(...args) {
-        let btn = this.parent(...args);
-        btn._largeWidth = Math.max(btn._largeWidth, 120);
-        return btn;
-      },
-    });
-
-    sc.SocialList.inject({
-      onTabButtonCreation(...args) {
-        let btn = this.parent(...args);
-        btn._largeWidth = Math.max(btn._largeWidth, 95);
-        return btn;
-      },
-    });
-
-    const TRADERS_LIST_ADDITIONAL_WIDTH = 32;
-    sc.TradersListBox.inject({
-      init(...args) {
-        let setSizeOld = this.setSize;
-        let setPivotOld = this.setPivot;
-        let setPanelSizeOld = this.setPanelSize;
-        this.setSize = (w, h) =>
-          setSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
-        this.setPivot = (x, y) =>
-          setPivotOld.call(this, x + TRADERS_LIST_ADDITIONAL_WIDTH, y);
-        this.setPanelSize = (w, h) =>
-          setPanelSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
-
-        this.parent(...args);
-
-        this.setSize = setSizeOld;
-        this.setPivot = setPivotOld;
-        this.setPanelSize = setPanelSizeOld;
-      },
-
-      onCreateListEntries(list, ...args) {
-        let listSetSizeOld = list.setSize;
-        list.setSize = (w, h) =>
-          listSetSizeOld.call(list, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
-
-        this.parent(list, ...args);
-
-        list.setSize = listSetSizeOld;
-
-        list.contentPane.hook.children.forEach(hook => {
-          hook.pos.x += TRADERS_LIST_ADDITIONAL_WIDTH;
-        });
-        list.traderInfoGui.hook.children.forEach(hook => {
-          hook.size.x += TRADERS_LIST_ADDITIONAL_WIDTH;
-        });
-      },
-
-      onTabButtonCreation(...args) {
-        let btn = this.parent(...args);
-        btn._largeWidth = Math.max(btn._largeWidth, 160);
-        return btn;
-      },
-    });
-
-    sc.BotanicsListBox.inject({
-      onTabButtonCreation(...args) {
-        let btn = this.parent(...args);
-        btn._largeWidth = Math.max(btn._largeWidth, 160);
-        return btn;
-      },
-    });
-
-    sc.ArenaCupList.inject({
-      onTabButtonCreation(...args) {
-        let btn = this.parent(...args);
-        btn._largeWidth = Math.max(btn._largeWidth, 145);
-        return btn;
-      },
-    });
-  });
-
-ig.module('crosscode-ru-translation-tool-ng')
+ig.module('crosscode-ru')
   .requires(
     'game.feature.menu.gui.menu-misc',
     'impact.base.system',
@@ -176,25 +45,23 @@ ig.module('crosscode-ru-translation-tool-ng')
     //   init() {
     //     this.parent();
 
-    //     const DEFAULT_TEXT =
-    //       'abcdefghi\\c[2]jklmnopqrstuv\\c[3]wxyz\\c[1]abcdefghij\\c[0]klmnopqrstuvwxyz';
-    //     this._infoBar1 = new sc.SplittableTextGui(DEFAULT_TEXT);
-    //     this._infoBar1.setAlign(ig.GUI_ALIGN.X_CENTER, ig.GUI_ALIGN.Y_CENTER);
-    //     this._infoBar1.setPos(0, -8);
-    //     this.addChildGui(this._infoBar1);
-    //     this._infoBar2 = new sc.TextGui(DEFAULT_TEXT);
+    //     const RUSSIAN_FONT_CHARACTERS =
+    //       'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+    //     // this._infoBar1 = new sc.SplittableTextGui(DEFAULT_TEXT);
+    //     // this._infoBar1.setAlign(ig.GUI_ALIGN.X_CENTER, ig.GUI_ALIGN.Y_CENTER);
+    //     // this._infoBar1.setPos(0, -8);
+    //     // this.addChildGui(this._infoBar1);
+    //     // this._infoBar2 = new sc.TextGui(DEFAULT_TEXT);
+    //     let text = '';
+    //     for (let i = 0; i < 4; i++) {
+    //       text += `\\c[${i}]${RUSSIAN_FONT_CHARACTERS}\\c[${i}]\n`;
+    //     }
+    //     this._infoBar2 = new sc.TextGui(text, {
+    //       font: sc.fontsystem.tinyFont,
+    //     });
     //     this._infoBar2.setAlign(ig.GUI_ALIGN.X_CENTER, ig.GUI_ALIGN.Y_CENTER);
-    //     this._infoBar2.setPos(0, 8);
+    //     this._infoBar2.setPos(0, 0);
     //     this.addChildGui(this._infoBar2);
-    //     window._setText = text => {
-    //       this._infoBar1.setText(text);
-    //       this._infoBar2.setText(text);
-    //     };
-    //     // setInterval(() => {
-    //     //   let letters = 'abcdefghijklmnopqrstuvwxyz';
-    //     //   let letter = letters[Math.floor(Math.random() * letters.length)];
-    //     //   this._infoBar.setText(this._infoBar.text + letter);
-    //     // }, 200);
     //   },
     // });
 

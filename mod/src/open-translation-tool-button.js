@@ -1,4 +1,4 @@
-ig.module('crosscode-ru-translation-tool-ng.open-translation-tool-button')
+ig.module('crosscode-ru.translation-tool-ng.open-button')
   .requires('game.feature.gui.screen.title-screen')
   .defines(() => {
     function createTranslationToolButton() {
