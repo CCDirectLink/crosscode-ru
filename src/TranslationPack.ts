@@ -77,6 +77,10 @@ export class LocalizeMePacker {
     }
     if (text === realOriginalText.trimRight()) text = realOriginalText;
 
+    if (text !== realOriginalText) {
+      console.warn(`stale translation in ${file} at ${jsonPath}`);
+    }
+
     return { file, jsonPath, text };
   }
 

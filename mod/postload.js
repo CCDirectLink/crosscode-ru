@@ -67,6 +67,11 @@ window.localizeMe.add_locale('ru_RU', {
     let date = new Date();
     // https://pikabu.ru/story/a_gdeto_seychas_rovno_polden_4223194
     if (date.getHours() >= 11 && date.getHours() <= 13) return 'час расплаты';
-    return `${date.getHours()}:${date.getMinutes()}`;
+    let h = date.getHours().toString();
+    let m = date
+      .getMinutes()
+      .toString()
+      .padStart(2, '0');
+    return `${h}:${m}`;
   },
 });

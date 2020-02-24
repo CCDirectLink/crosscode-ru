@@ -48,6 +48,13 @@ const LOCALIZE_ME_MAPPING_FILE = path.join(
       ),
       8,
     );
+    // console.log(id);
+    // fragments = await fsUtils.readJsonFile(
+    //   path.join(CHAPTER_FRAGMENTS_DIR, `${id}.json`),
+    //   'utf8',
+    // );
+
+    fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
 
     await packer.addNotaFragments(fragments);
     await fsUtils.writeJsonFile(
@@ -74,4 +81,6 @@ const LOCALIZE_ME_MAPPING_FILE = path.join(
   }
 
   await fsUtils.writeJsonFile(LOCALIZE_ME_MAPPING_FILE, mappingTable);
+
+  console.log('DONE');
 })().catch(console.error);

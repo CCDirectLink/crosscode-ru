@@ -37,9 +37,10 @@ export interface Chapter extends ChapterStatus {
 }
 
 export interface Fragment {
+  id: string;
+  orderNumber: number;
   original: Original;
   translations: Translation[];
-  id: string;
 }
 
 export interface Original {
@@ -158,13 +159,15 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
 }
 
 function parseFragment(element: Element): Fragment | null {
+  if (element.id.length <= 1) return null;
   let text = element.querySelector('.o .text');
   if (text == null) return null;
   let anchor = element.querySelector<HTMLAnchorElement>('.o a.ord');
-  if (anchor == null || anchor.hash.length <= 1) return null;
+  if (anchor == null || anchor.textContent!.length <= 1) return null;
 
   let f: Partial<Fragment> = {};
-  f.id = anchor.hash.slice(1);
+  f.id = element.id.slice(1);
+  f.orderNumber = parseInt(anchor.textContent!.slice(1), 10);
 
   let original = parseOriginal(text.textContent!);
   if (original == null) return null;
