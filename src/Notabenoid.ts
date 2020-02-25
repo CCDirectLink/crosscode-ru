@@ -24,10 +24,12 @@ const RU_ABBREVIATED_MONTH_NAMES = [
 // repo is from 2016, so such changes are very unlikely.
 const CHAPTER_PAGE_SIZE = 50;
 
+export type ChapterStatuses = Record<string, ChapterStatus>;
+
 export interface ChapterStatus {
   id: string;
   name: string;
-  lastModificationTimestamp: Date;
+  modificationTimestamp: number;
   translatedFragments: number;
   totalFragments: number;
 }
@@ -85,9 +87,9 @@ export class NotaClient {
     return doc;
   }
 
-  async fetchAllChapterStatuses(): Promise<Record<string, ChapterStatus>> {
+  async fetchAllChapterStatuses(): Promise<ChapterStatuses> {
     let doc = await this.makeRequest(`/book/${BOOK_ID}`);
-    let result: Record<string, ChapterStatus> = {};
+    let result: ChapterStatuses = {};
     doc.querySelectorAll<HTMLElement>('#Chapters > tbody > tr').forEach(tr => {
       let chapterStatus = parseChapterStatus(tr);
       if (chapterStatus == null) return null;
@@ -143,9 +145,9 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   );
   let monthIndex = RU_ABBREVIATED_MONTH_NAMES.indexOf(month);
   if (monthIndex < 0) return null;
-  cs.lastModificationTimestamp = new Date(
+  cs.modificationTimestamp = new Date(
     Date.UTC(yearN, monthIndex, dayN, hourN - 3, minuteN),
-  );
+  ).getTime();
 
   match = /\((\d+) \/ (\d+)\)/.exec(doneElem.textContent!);
   if (match == null || match.length !== 3) return null;

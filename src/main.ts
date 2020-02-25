@@ -1,6 +1,6 @@
 /// <reference types="nw.js" />
 
-import { NotaClient, Fragment } from './Notabenoid.js';
+import { NotaClient, Fragment, ChapterStatuses } from './Notabenoid.js';
 import { LocalizeMePacker } from './TranslationPack.js';
 
 import fs from './node-builtin-modules/fs.js';
@@ -30,37 +30,55 @@ const LOCALIZE_ME_MAPPING_FILE = path.join(
     anonymous: true,
   });
 
-  let chapters = await client.fetchAllChapterStatuses();
-  console.log(chapters);
+  let statuses: ChapterStatuses = await client.fetchAllChapterStatuses();
+  let prevStatuses: ChapterStatuses = {};
 
-  await fsUtils.writeJsonFile(CHAPTER_STATUSES_FILE, chapters);
+  try {
+    prevStatuses = await fsUtils.readJsonFile(CHAPTER_STATUSES_FILE, 'utf8');
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err;
+  }
 
   await fs.promises.mkdir(CHAPTER_FRAGMENTS_DIR, { recursive: true });
 
   let packer = new LocalizeMePacker();
-  for (let [id, status] of Object.entries(chapters)) {
-    let fragments: Fragment[] = [];
-    await asyncUtils.limitConcurrency(
-      iteratorUtils.map(client.createChapterFragmentFetcher(status), promise =>
-        promise.then(pageFragments => {
-          fragments = fragments.concat(pageFragments);
-        }),
-      ),
-      8,
-    );
-    // console.log(id);
-    // fragments = await fsUtils.readJsonFile(
-    //   path.join(CHAPTER_FRAGMENTS_DIR, `${id}.json`),
-    //   'utf8',
-    // );
+  for (let [id, status] of Object.entries(statuses)) {
+    let prevStatus = prevStatuses[id];
+    let needsUpdate =
+      prevStatus == null ||
+      status.modificationTimestamp !== prevStatus.modificationTimestamp;
 
-    fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
+    let fragments: Fragment[] = [];
+    if (needsUpdate) {
+      console.log(`updating ${id}`);
+
+      await asyncUtils.limitConcurrency(
+        iteratorUtils.map(
+          client.createChapterFragmentFetcher(status),
+          promise =>
+            promise.then(pageFragments => {
+              fragments = fragments.concat(pageFragments);
+            }),
+        ),
+        8,
+      );
+
+      fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
+
+      await fsUtils.writeJsonFile(
+        path.join(CHAPTER_FRAGMENTS_DIR, `${id}.json`),
+        fragments,
+      );
+    } else {
+      console.log(`loading ${id} from disk`);
+
+      fragments = await fsUtils.readJsonFile(
+        path.join(CHAPTER_FRAGMENTS_DIR, `${id}.json`),
+        'utf8',
+      );
+    }
 
     await packer.addNotaFragments(fragments);
-    await fsUtils.writeJsonFile(
-      path.join(CHAPTER_FRAGMENTS_DIR, `${id}.json`),
-      fragments,
-    );
   }
 
   let mappingTable: Record<string, string> = {};
@@ -81,6 +99,8 @@ const LOCALIZE_ME_MAPPING_FILE = path.join(
   }
 
   await fsUtils.writeJsonFile(LOCALIZE_ME_MAPPING_FILE, mappingTable);
+
+  await fsUtils.writeJsonFile(CHAPTER_STATUSES_FILE, statuses);
 
   console.log('DONE');
 })().catch(console.error);
