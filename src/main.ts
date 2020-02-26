@@ -2,6 +2,8 @@
 
 import { NotaClient, Fragment, ChapterStatuses } from './Notabenoid.js';
 import { LocalizeMePacker } from './TranslationPack.js';
+import { readSettings } from './settings.js';
+import * as paths from './paths.js';
 
 import fs from './node-builtin-modules/fs.js';
 import * as fsUtils from './utils/fs.js';
@@ -10,21 +12,26 @@ import path from './node-builtin-modules/path.js';
 import * as asyncUtils from './utils/async.js';
 import * as iteratorUtils from './utils/iterator.js';
 
-const MOD_DATA_DIR = path.join('assets', 'ru-translation-tool-ng');
-const CHAPTER_STATUSES_FILE = path.join(MOD_DATA_DIR, 'chapter-statuses.json');
-const CHAPTER_FRAGMENTS_DIR = path.join(MOD_DATA_DIR, 'chapter-fragments');
-const LOCALIZE_ME_PACKS_DIR = path.join(MOD_DATA_DIR, 'localize-me-packs');
-const LOCALIZE_ME_MAPPING_FILE = path.join(
-  MOD_DATA_DIR,
-  'localize-me-mapping.json',
-);
+window.addEventListener('load', () => start());
 
-(async () => {
-  await new Promise(resolve => {
-    nw.Window.get().showDevTools(undefined, resolve);
-  });
+async function start(): Promise<void> {
+  try {
+    let settings = await readSettings();
+    await showDevTools();
+    console.log(settings);
+  } catch (err) {
+    console.error(err);
+  }
+}
 
-  await fs.promises.mkdir(MOD_DATA_DIR, { recursive: true });
+function showDevTools(): Promise<void> {
+  return new Promise(resolve =>
+    nw.Window.get().showDevTools(undefined, () => resolve()),
+  );
+}
+
+async function updateTranslations() {
+  await fs.promises.mkdir(paths.MOD_DATA_DIR, { recursive: true });
 
   let client = new NotaClient({
     anonymous: true,
@@ -34,12 +41,15 @@ const LOCALIZE_ME_MAPPING_FILE = path.join(
   let prevStatuses: ChapterStatuses = {};
 
   try {
-    prevStatuses = await fsUtils.readJsonFile(CHAPTER_STATUSES_FILE, 'utf8');
+    prevStatuses = await fsUtils.readJsonFile(
+      paths.CHAPTER_STATUSES_FILE,
+      'utf8',
+    );
   } catch (err) {
     if (err.code !== 'ENOENT') throw err;
   }
 
-  await fs.promises.mkdir(CHAPTER_FRAGMENTS_DIR, { recursive: true });
+  await fs.promises.mkdir(paths.CHAPTER_FRAGMENTS_DIR, { recursive: true });
 
   let packer = new LocalizeMePacker();
   for (let [id, status] of Object.entries(statuses)) {
@@ -66,14 +76,14 @@ const LOCALIZE_ME_MAPPING_FILE = path.join(
       fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
 
       await fsUtils.writeJsonFile(
-        path.join(CHAPTER_FRAGMENTS_DIR, `${id}.json`),
+        path.join(paths.CHAPTER_FRAGMENTS_DIR, `${id}.json`),
         fragments,
       );
     } else {
       console.log(`loading ${id} from disk`);
 
       fragments = await fsUtils.readJsonFile(
-        path.join(CHAPTER_FRAGMENTS_DIR, `${id}.json`),
+        path.join(paths.CHAPTER_FRAGMENTS_DIR, `${id}.json`),
         'utf8',
       );
     }
@@ -83,24 +93,24 @@ const LOCALIZE_ME_MAPPING_FILE = path.join(
 
   let mappingTable: Record<string, string> = {};
 
-  await fs.promises.mkdir(LOCALIZE_ME_PACKS_DIR, { recursive: true });
+  await fs.promises.mkdir(paths.LOCALIZE_ME_PACKS_DIR, { recursive: true });
 
   for (let [originalFile, packContents] of packer.packs.entries()) {
     mappingTable[originalFile] = originalFile;
     console.log(`writing pack for ${originalFile}`);
     await fs.promises.mkdir(
-      path.join(LOCALIZE_ME_PACKS_DIR, path.dirname(originalFile)),
+      path.join(paths.LOCALIZE_ME_PACKS_DIR, path.dirname(originalFile)),
       { recursive: true },
     );
     await fsUtils.writeJsonFile(
-      path.join(LOCALIZE_ME_PACKS_DIR, originalFile),
+      path.join(paths.LOCALIZE_ME_PACKS_DIR, originalFile),
       packContents,
     );
   }
 
-  await fsUtils.writeJsonFile(LOCALIZE_ME_MAPPING_FILE, mappingTable);
+  await fsUtils.writeJsonFile(paths.LOCALIZE_ME_MAPPING_FILE, mappingTable);
 
-  await fsUtils.writeJsonFile(CHAPTER_STATUSES_FILE, statuses);
+  await fsUtils.writeJsonFile(paths.CHAPTER_STATUSES_FILE, statuses);
 
   console.log('DONE');
-})().catch(console.error);
+}

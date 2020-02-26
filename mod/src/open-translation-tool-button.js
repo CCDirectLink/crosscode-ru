@@ -1,6 +1,17 @@
-ig.module('crosscode-ru.translation-tool-ng.open-button')
-  .requires('game.feature.gui.screen.title-screen')
+import { readSettings } from '../tool/dist/settings.js';
+
+ig.module('crosscode-ru.translation-tool-ng')
+  .requires('game.main', 'game.feature.gui.screen.title-screen')
   .defines(() => {
+    sc.CrossCode.inject({
+      onGameLoopStart() {
+        this.parent();
+        readSettings().then(settings => {
+          if (settings.autoOpen) window.ruTranslationToolNg.open();
+        });
+      },
+    });
+
     function createTranslationToolButton() {
       let btn = new sc.ButtonGui('Переводилка', sc.BUTTON_DEFAULT_WIDTH);
       btn.onButtonPress = () => window.ruTranslationToolNg.open();
