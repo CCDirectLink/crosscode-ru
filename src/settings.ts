@@ -5,14 +5,20 @@ export interface Settings {
   autoOpen: boolean;
 }
 
-export function readSettings(): Promise<Settings> {
-  return fsUtils.readJsonFile(paths.SETTINGS_FILE, 'utf8').catch(err => {
-    if (err.code === 'ENOENT') {
-      return {
-        autoOpen: false,
-      };
-    } else {
-      throw err;
-    }
-  });
+export async function readSettings(): Promise<Settings> {
+  let settings: Settings = {
+    autoOpen: true,
+  };
+  try {
+    settings = await fsUtils.readJsonFile(paths.SETTINGS_FILE, 'utf8');
+  } catch (err) {
+    if (err.code !== 'ENOENT') throw err;
+  }
+  console.log('settings:', settings);
+  return settings;
+}
+
+export function writeSettings(settings: Settings): Promise<void> {
+  console.log('writing settings:', settings);
+  return fsUtils.writeJsonFile(paths.SETTINGS_FILE, settings, 'utf8');
 }

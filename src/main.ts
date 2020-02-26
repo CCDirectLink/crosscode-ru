@@ -2,7 +2,7 @@
 
 import { NotaClient, Fragment, ChapterStatuses } from './Notabenoid.js';
 import { LocalizeMePacker } from './TranslationPack.js';
-import { readSettings } from './settings.js';
+import { readSettings, writeSettings } from './settings.js';
 import * as paths from './paths.js';
 
 import fs from './node-builtin-modules/fs.js';
@@ -16,9 +16,21 @@ window.addEventListener('load', () => start());
 
 async function start(): Promise<void> {
   try {
+    await fs.promises.mkdir(paths.MOD_DATA_DIR, { recursive: true });
+
     let settings = await readSettings();
+
+    let autoOpenCheckbox = document.getElementById(
+      'settings_translations_autoOpen',
+    )! as HTMLInputElement;
+    autoOpenCheckbox.disabled = false;
+    autoOpenCheckbox.checked = settings.autoOpen;
+    autoOpenCheckbox.addEventListener('change', () => {
+      settings.autoOpen = autoOpenCheckbox.checked;
+      writeSettings(settings);
+    });
+
     await showDevTools();
-    console.log(settings);
   } catch (err) {
     console.error(err);
   }
@@ -31,8 +43,6 @@ function showDevTools(): Promise<void> {
 }
 
 async function updateTranslations() {
-  await fs.promises.mkdir(paths.MOD_DATA_DIR, { recursive: true });
-
   let client = new NotaClient({
     anonymous: true,
   });

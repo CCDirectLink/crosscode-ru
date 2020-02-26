@@ -13,42 +13,54 @@
 
     <main>
       <nav class="tabs">
-        <button type="button" class="current">Основные</button>
+        <button type="button" class="current">Настройки</button>
         <button type="button">Редактор</button>
       </nav>
 
-      <div class="tabContent" id="general">
+      <div class="tabContent" id="settings">
         <section>
           <h2>Скачивание переводов</h2>
           <p>
             <b>Статус:</b>
-            <span id="general_translations_progressTask"
+            <span id="settings_translations_progressTask"
               >нету текущей задачи</span
             >
             <br />
-            <progress id="general_translations_progress" value="0"></progress>
-            <span id="general_translations_progressCount">0 / 0</span>
+            <progress id="settings_translations_progress" value="0"></progress>
+            <span id="settings_translations_progressCount">0 / 0</span>
           </p>
           <p>
-            <button type="button" id="general_translations_update">
+            <button type="button" id="settings_translations_update" disabled>
               Обновить переводы
             </button>
-            <button type="button" id="general_translations_redownload">
+            <button
+              type="button"
+              id="settings_translations_redownload"
+              disabled
+            >
               Скачать всё заново
             </button>
-            <button type="button" id="general_translations_delete">
+            <button type="button" id="settings_translations_delete" disabled>
               Удалить скачанное
             </button>
           </p>
           <p>
             <label>
-              <input type="checkbox" id="general_translations_autoUpdate" />
+              <input
+                type="checkbox"
+                id="settings_translations_autoUpdate"
+                disabled
+              />
               Автоматически устанавливать обновления
             </label>
           </p>
           <p>
             <label>
-              <input type="checkbox" id="general_translations_autoOpen" />
+              <input
+                type="checkbox"
+                id="settings_translations_autoOpen"
+                disabled
+              />
               Открывать это окно при старте игры
             </label>
           </p>
@@ -57,8 +69,12 @@
         <section>
           <h2>Аккаунт Notabenoid.org</h2>
           <p>
-            <button type="button" id="general_notaAccount_login">Войти</button>
-            <button type="button" id="general_notaAccount_logout">Выйти</button>
+            <button type="button" id="settings_notaAccount_login" disabled>
+              Войти
+            </button>
+            <button type="button" id="settings_notaAccount_logout" disabled>
+              Выйти
+            </button>
           </p>
         </section>
       </div>
