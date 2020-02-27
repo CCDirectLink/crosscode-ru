@@ -6,13 +6,14 @@ export interface Settings {
 }
 
 export async function readSettings(): Promise<Settings> {
-  let settings: Settings = {
-    autoOpen: true,
-  };
-  try {
-    settings = await fsUtils.readJsonFile(paths.SETTINGS_FILE, 'utf8');
-  } catch (err) {
-    if (err.code !== 'ENOENT') throw err;
+  let settings: Settings | null = await fsUtils.readJsonFileOptional(
+    paths.SETTINGS_FILE,
+    'utf8',
+  );
+  if (settings == null) {
+    settings = {
+      autoOpen: true,
+    };
   }
   console.log('settings:', settings);
   return settings;

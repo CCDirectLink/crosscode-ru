@@ -2,13 +2,28 @@ import fs from '../node-builtin-modules/fs.js';
 
 const ENABLE_PRETTY_PRINT = true;
 
-export function readJsonFile(
+export async function readJsonFile(
   path: fs.PathLike | fs.promises.FileHandle,
   options:
     | { encoding: BufferEncoding; flag?: string | number }
     | BufferEncoding,
 ): Promise<any> {
-  return fs.promises.readFile(path, options).then(data => JSON.parse(data));
+  let data = await fs.promises.readFile(path, options);
+  return JSON.parse(data);
+}
+
+export async function readJsonFileOptional(
+  path: fs.PathLike | fs.promises.FileHandle,
+  options:
+    | { encoding: BufferEncoding; flag?: string | number }
+    | BufferEncoding,
+): Promise<any | null> {
+  try {
+    return await readJsonFile(path, options);
+  } catch (err) {
+    if (err.code === 'ENOENT') return null;
+    else throw err;
+  }
 }
 
 export function writeJsonFile(

@@ -22,12 +22,18 @@
           <h2>Скачивание переводов</h2>
           <p>
             <b>Статус:</b>
-            <span id="settings_translations_progressTask"
-              >нету текущей задачи</span
+            <span
+              id="settings_translations_progressTask_error"
+              style="display: none"
             >
+              ОШИБКА:
+            </span>
+            <span id="settings_translations_progressTask">
+              нету текущей задачи
+            </span>
             <br />
             <progress id="settings_translations_progress" value="0"></progress>
-            <span id="settings_translations_progressCount">0 / 0</span>
+            <span id="settings_translations_progressCount"></span>
           </p>
           <p>
             <button type="button" id="settings_translations_update" disabled>

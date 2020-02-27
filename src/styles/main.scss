@@ -108,3 +108,8 @@ input[type='button'] {
   width: 75%;
   margin-right: $container_padding;
 }
+
+#settings_translations_progressTask_error {
+  color: red;
+  font-weight: bold;
+}
