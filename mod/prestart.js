@@ -5,3 +5,4 @@ import './src/info-bar.js';
 import './src/open-translation-tool-button.js';
 import './src/tab-button.js';
 import './src/traders-list.js';
+import './src/pvp.js';
