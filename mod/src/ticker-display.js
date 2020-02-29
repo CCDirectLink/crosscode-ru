@@ -1,3 +1,5 @@
+// TODO: replace default parameter syntax with `== null` checks
+
 ig.module('crosscode-ru.ticker-display')
   .requires(
     'impact.base.system',
@@ -5,152 +7,126 @@ ig.module('crosscode-ru.ticker-display')
     'game.feature.gui.base.text',
     'impact.base.font',
     'game.feature.font.font-system',
-    // 'game.feature.gui.screen.title-screen',
   )
   .defines(() => {
-    // sc.TitleScreenButtonGui.inject({
-    //   _infoBar1: null,
-    //   _infoBar2: null,
-
-    //   init() {
-    //     this.parent();
-
-    //     const RUSSIAN_FONT_CHARACTERS =
-    //       'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя';
-    //     // this._infoBar1 = new sc.SplittableTextGui(DEFAULT_TEXT);
-    //     // this._infoBar1.setAlign(ig.GUI_ALIGN.X_CENTER, ig.GUI_ALIGN.Y_CENTER);
-    //     // this._infoBar1.setPos(0, -8);
-    //     // this.addChildGui(this._infoBar1);
-    //     // this._infoBar2 = new sc.TextGui(DEFAULT_TEXT);
-    //     let text = '';
-    //     for (let i = 0; i < 4; i++) {
-    //       text += `\\c[${i}]${RUSSIAN_FONT_CHARACTERS}\\c[${i}]\n`;
-    //     }
-    //     this._infoBar2 = new sc.TextGui(text, {
-    //       font: sc.fontsystem.tinyFont,
-    //     });
-    //     this._infoBar2.setAlign(ig.GUI_ALIGN.X_CENTER, ig.GUI_ALIGN.Y_CENTER);
-    //     this._infoBar2.setPos(0, 0);
-    //     this.addChildGui(this._infoBar2);
-    //   },
-    // });
-
     const REPEATED_TEXT_MARGIN = { x: 10, y: 5 };
     const TICKER_SPEED = { x: 50, y: 50 };
+    const ALLOWED_OVERFLOW = { x: 1, y: 1 };
 
     function triangleWave(x, a) {
       return Math.abs(Math.abs((x - a) % (2 * a)) - a);
     }
 
-    function clamp(x, min, max) {
-      return Math.max(min, Math.min(x, max));
-    }
+    function updateDrawablesTicker(renderer, hook, timer, maxSize, renderText) {
+      function tryRenderTicker() {
+        let { pos, size, align, parentHook } = hook;
 
-    function tryUpdateDrawablesTicker(renderer, hook, timer, renderText) {
-      let { pos, size, align, parentHook } = hook;
+        if (parentHook == null) return false;
+        let prtSize = parentHook.size;
+        // Check if the parent size has been set. Sometimes developers forget
+        // to set it correctly, (1, 1) is the default value. I doubt that any
+        // GUI elements actually have size (1, 1) by design, so this check is
+        // good enough.
+        if (prtSize.x === 1 || prtSize.y === 1) return false;
+        if (maxSize == null) maxSize = {};
+        if (maxSize.x == null) maxSize.x = prtSize.x;
+        if (maxSize.y == null) maxSize.y = prtSize.y;
 
-      if (parentHook == null) return false;
-      let prtSize = parentHook.size;
-      if (prtSize.x === 1 || prtSize.y === 1) return false;
+        let overflow = {
+          x: size.x - maxSize.x > ALLOWED_OVERFLOW.x,
+          y: size.y - maxSize.y > ALLOWED_OVERFLOW.y,
+        };
+        if (!overflow.x && !overflow.y) return false;
 
-      let overflow = {
-        x: size.x - prtSize.x > 1,
-        y: size.y - prtSize.y > 1,
-      };
-      if (!overflow.x && !overflow.y) return false;
+        let prtPos = { x: -pos.x, y: -pos.y };
+        if (align.x === ig.GUI_ALIGN.X_CENTER) {
+          prtPos.x -= (maxSize.x - size.x) / 2;
+        } else if (align.x === ig.GUI_ALIGN.X_RIGHT) {
+          prtPos.x -= maxSize.x - size.x;
+        }
+        if (align.y === ig.GUI_ALIGN.Y_CENTER) {
+          prtPos.y -= (maxSize.y - size.y) / 2;
+        } else if (align.y === ig.GUI_ALIGN.Y_RIGHT) {
+          prtPos.y -= maxSize.y - size.y;
+        }
 
-      let prtPos = { x: -pos.x, y: -pos.y };
-      if (align.x === ig.GUI_ALIGN.X_CENTER) {
-        prtPos.x -= (prtSize.x - size.x) / 2;
-      } else if (align.x === ig.GUI_ALIGN.X_RIGHT) {
-        prtPos.x -= prtSize.x - size.x;
-      }
-      if (align.y === ig.GUI_ALIGN.Y_CENTER) {
-        prtPos.y -= (prtSize.y - size.y) / 2;
-      } else if (align.y === ig.GUI_ALIGN.Y_RIGHT) {
-        prtPos.y -= prtSize.y - size.y;
-      }
+        renderer.addColor('rgba(255, 0, 0, 0.25)', 0, 0, size.x, size.y);
+        renderer.addColor(
+          'rgba(0, 255, 0, 0.25)',
+          prtPos.x,
+          prtPos.y,
+          maxSize.x,
+          maxSize.y,
+        );
 
-      // renderer.addColor('rgba(255, 0, 0, 0.25)', 0, 0, size.x, size.y);
-      // renderer.addColor(
-      //   'rgba(0, 255, 0, 0.25)',
-      //   prtPos.x,
-      //   prtPos.y,
-      //   prtSize.x,
-      //   prtSize.y,
-      // );
+        renderer
+          .addTransform()
+          .setTranslate(prtPos.x, prtPos.y)
+          .setClip(maxSize.x, maxSize.y);
+        renderer.addTransform().setTranslate(-prtPos.x, -prtPos.y);
 
-      renderer
-        .addTransform()
-        .setTranslate(prtPos.x, prtPos.y)
-        .setClip(prtSize.x, prtSize.y);
-      renderer.addTransform().setTranslate(-prtPos.x, -prtPos.y);
-
-      function calculateOffset(axis) {
-        if (!overflow[axis]) return 0;
-        // let length = size[axis] + REPEATED_TEXT_MARGIN[axis];
-        let length =
-          size[axis] - prtSize[axis] + 2 * REPEATED_TEXT_MARGIN[axis];
-        return (
-          prtPos[axis] +
-          2 * REPEATED_TEXT_MARGIN[axis] -
-          clamp(
+        function calculateOffset(axis) {
+          if (!overflow[axis]) return 0;
+          let length =
+            size[axis] - maxSize[axis] + 2 * REPEATED_TEXT_MARGIN[axis];
+          return (
+            prtPos[axis] +
+            2 * REPEATED_TEXT_MARGIN[axis] -
             triangleWave(
               timer * TICKER_SPEED[axis],
               length + 2 * REPEATED_TEXT_MARGIN[axis],
-            ),
-            REPEATED_TEXT_MARGIN[axis],
-            length + REPEATED_TEXT_MARGIN[axis],
-          )
-        );
+            ).limit(
+              REPEATED_TEXT_MARGIN[axis],
+              length + REPEATED_TEXT_MARGIN[axis],
+            )
+          );
+        }
+
+        let offsetX = calculateOffset('x');
+        let offsetY = calculateOffset('y');
+
+        renderText(offsetX, offsetY);
+        // if (overflow.x && !overflow.y) {
+        //   renderText(size.x + offsetX + REPEATED_TEXT_MARGIN.x, 0);
+        // }
+        // if (overflow.y && !overflow.x) {
+        //   renderText(0, size.y - offsetY + REPEATED_TEXT_MARGIN.y);
+        // }
+
+        renderer.undoTransform();
+        renderer.undoTransform();
+
+        return true;
       }
 
-      let offsetX = calculateOffset('x');
-      let offsetY = calculateOffset('y');
-
-      renderText(offsetX, offsetY);
-      // if (overflow.x && !overflow.y) {
-      //   renderText(size.x + offsetX + REPEATED_TEXT_MARGIN.x, 0);
-      // }
-      // if (overflow.y && !overflow.x) {
-      //   renderText(0, size.y - offsetY + REPEATED_TEXT_MARGIN.y);
-      // }
-
-      renderer.undoTransform();
-      renderer.undoTransform();
-
-      return true;
+      let tickerDrawn = tryRenderTicker();
+      if (!tickerDrawn) renderText(0, 0);
     }
 
-    function updateDrawablesTicker(renderer, hook, timer, renderText) {
-      // let tickerDrawn = tryUpdateDrawablesTicker(
-      //   renderer,
-      //   hook,
-      //   timer,
-      //   renderText,
-      // );
-      // if (!tickerDrawn) renderText(0, 0);
-      renderText(0, 0);
-    }
+    // sc.TextGui.inject({
+    //   tickerTimer: 0,
 
-    sc.TextGui.inject({
-      tickerTimer: 0,
+    //   update() {
+    //     this.parent();
+    //     if (this.textBlock.isFinished()) {
+    //       this.tickerTimer += ig.system.actualTick;
+    //     }
+    //   },
 
-      update() {
-        this.parent();
-        if (this.textBlock.isFinished()) {
-          this.tickerTimer += ig.system.actualTick;
-        }
-      },
+    //   updateDrawables(renderer) {
+    //     updateDrawablesTicker(
+    //       renderer,
+    //       this.hook,
+    //       this.tickerTimer,
+    //       null,
+    //       (x, y) => {
+    //         renderer.addText(this.textBlock, x, y);
+    //       },
+    //     );
+    //   },
+    // });
 
-      updateDrawables(renderer) {
-        updateDrawablesTicker(renderer, this.hook, this.tickerTimer, (x, y) => {
-          renderer.addText(this.textBlock, x, y);
-        });
-      },
-    });
-
-    ig.RawTextBlock = ig.TextBlock.extend({
+    sc.ru.RawTextBlock = ig.TextBlock.extend({
       init(
         font,
         parsedText,
@@ -198,7 +174,7 @@ ig.module('crosscode-ru.ticker-display')
       },
     });
 
-    sc.SplittableTextGui = ig.GuiElementBase.extend({
+    sc.ru.LongHorizontalTextGui = ig.GuiElementBase.extend({
       config: {},
       text: '',
       parsedText: '',
@@ -206,9 +182,14 @@ ig.module('crosscode-ru.ticker-display')
       textBlocks: [],
       tickerTimer: 0,
 
-      init(text, config = {}) {
+      init(
+        text,
+        { font = sc.fontsystem.font, linePadding, tickerMaxSize } = {},
+      ) {
         this.parent();
-        this.config = config;
+        this.font = font;
+        this.linePadding = linePadding;
+        this.tickerMaxSize = tickerMaxSize;
         this.setText(text);
       },
 
@@ -216,17 +197,20 @@ ig.module('crosscode-ru.ticker-display')
         this.clear();
         this.textBlocks = [];
 
-        let { font = sc.fontsystem.font, linePadding } = this.config;
         let textBlockConfig = {
           speed: ig.TextBlock.SPEED.IMMEDIATE,
-          linePadding,
+          linePadding: this.linePadding,
         };
 
         if (text == null) text = '';
         if (typeof text === 'object') text = text.toString();
         this.text = text.trim();
         this.commands = [];
-        this.parsedText = ig.TextParser.parse(this.text, this.commands, font);
+        this.parsedText = ig.TextParser.parse(
+          this.text,
+          this.commands,
+          this.font,
+        );
 
         this.setSize(0, 0);
         let textWidth = 0;
@@ -246,8 +230,8 @@ ig.module('crosscode-ru.ticker-display')
             }));
           blockCommands.unshift({ index: 0, command: { color: lastColor } });
 
-          let textBlock = new ig.RawTextBlock(
-            font,
+          let textBlock = new sc.ru.RawTextBlock(
+            this.font,
             blockParsedText,
             blockCommands,
             textBlockConfig,
@@ -273,9 +257,9 @@ ig.module('crosscode-ru.ticker-display')
         };
 
         for (let i = 0; i < this.parsedText.length; i++) {
-          let charWidth = font.getCharWidth(this.parsedText.charCodeAt(i));
+          let charWidth = this.font.getCharWidth(this.parsedText.charCodeAt(i));
           let willOverflow =
-            textWidth + charWidth > sc.SplittableTextGui.SPLIT_WIDTH;
+            textWidth + charWidth > sc.ru.LongHorizontalTextGui.SPLIT_WIDTH;
           let isFirst = i <= 0;
           let isLast = i >= this.parsedText.length - 1;
 
@@ -307,25 +291,31 @@ ig.module('crosscode-ru.ticker-display')
       },
 
       updateDrawables(renderer) {
-        const COLORS = [
-          'rgba(255, 0, 0, 0.3)',
-          'rgba(0, 255, 0, 0.3)',
-          'rgba(0, 0, 255, 0.3)',
-        ];
+        // const COLORS = [
+        //   'rgba(255, 0, 0, 0.3)',
+        //   'rgba(0, 255, 0, 0.3)',
+        //   'rgba(0, 0, 255, 0.3)',
+        // ];
 
-        updateDrawablesTicker(renderer, this.hook, this.tickerTimer, (x, y) => {
-          this.textBlocks.forEach(({ textBlock, offset }, blockIndex) => {
-            let color = COLORS[blockIndex % COLORS.length];
-            renderer.addColor(
-              color,
-              x + offset,
-              y,
-              textBlock.size.x,
-              textBlock.size.y,
-            );
-            renderer.addText(textBlock, x + offset, y);
-          });
-        });
+        updateDrawablesTicker(
+          renderer,
+          this.hook,
+          this.tickerTimer,
+          this.tickerMaxSize,
+          (x, y) => {
+            this.textBlocks.forEach(({ textBlock, offset }, blockIndex) => {
+              // let color = COLORS[blockIndex % COLORS.length];
+              // renderer.addColor(
+              //   color,
+              //   x + offset,
+              //   y,
+              //   textBlock.size.x,
+              //   textBlock.size.y,
+              // );
+              renderer.addText(textBlock, x + offset, y);
+            });
+          },
+        );
       },
 
       onAttach() {
@@ -339,5 +329,5 @@ ig.module('crosscode-ru.ticker-display')
       },
     });
     // the splitting width is a smaller than ig.system.width, just to be safe
-    sc.SplittableTextGui.SPLIT_WIDTH = 500;
+    sc.ru.LongHorizontalTextGui.SPLIT_WIDTH = 500;
   });

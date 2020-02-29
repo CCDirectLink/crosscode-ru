@@ -1,3 +1,5 @@
+if (sc.ru == null) sc.ru = {};
+
 const LOCALIZE_ME_PACKS_DIR = `ru-translation-tool-ng/localize-me-packs/`;
 const LOCALIZE_ME_MAPPING_FILE = `ru-translation-tool-ng/localize-me-mapping.json`;
 
