@@ -120,6 +120,7 @@ ig.module('crosscode-ru.ticker-display')
       update() {
         this.parent();
         if (
+          this.text != null &&
           this.text.length > 0 &&
           this.tickerConfig != null &&
           this.isVisible() &&
@@ -308,6 +309,7 @@ ig.module('crosscode-ru.ticker-display')
       update() {
         this.textBlocks.forEach(({ textBlock: tb }) => tb.update());
         if (
+          this.text != null &&
           this.text.length > 0 &&
           this.tickerConfig != null &&
           this.isVisible()
