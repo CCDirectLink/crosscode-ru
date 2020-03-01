@@ -9,7 +9,8 @@ ig.module('crosscode-ru.ticker-display')
     'game.feature.font.font-system',
   )
   .defines(() => {
-    const REPEATED_TEXT_MARGIN = { x: 10, y: 5 };
+    // TODO: move these constants into the sc.ru.* namespace
+    const DELAY_AT_BORDERS = { x: 1, y: 1 };
     const TICKER_SPEED = { x: 50, y: 50 };
     const ALLOWED_OVERFLOW = { x: 1, y: 1 };
 
@@ -17,10 +18,11 @@ ig.module('crosscode-ru.ticker-display')
       return Math.abs(Math.abs((x - a) % (2 * a)) - a);
     }
 
-    function updateDrawablesTicker(renderer, hook, timer, maxSize, renderText) {
+    function updateDrawablesTicker(renderer, hook, timer, config, renderText) {
       function tryRenderTicker() {
-        let { pos, size, align, parentHook } = hook;
+        if (config == null) return false;
 
+        let { size, align, parentHook } = hook;
         if (parentHook == null) return false;
         let prtSize = parentHook.size;
         // Check if the parent size has been set. Sometimes developers forget
@@ -28,17 +30,13 @@ ig.module('crosscode-ru.ticker-display')
         // GUI elements actually have size (1, 1) by design, so this check is
         // good enough.
         if (prtSize.x === 1 || prtSize.y === 1) return false;
+
+        let { maxSize } = config;
         if (maxSize == null) maxSize = {};
         if (maxSize.x == null) maxSize.x = prtSize.x;
         if (maxSize.y == null) maxSize.y = prtSize.y;
 
-        let overflow = {
-          x: size.x - maxSize.x > ALLOWED_OVERFLOW.x,
-          y: size.y - maxSize.y > ALLOWED_OVERFLOW.y,
-        };
-        if (!overflow.x && !overflow.y) return false;
-
-        let prtPos = { x: -pos.x, y: -pos.y };
+        let prtPos = { x: 0, y: 0 };
         if (align.x === ig.GUI_ALIGN.X_CENTER) {
           prtPos.x -= (maxSize.x - size.x) / 2;
         } else if (align.x === ig.GUI_ALIGN.X_RIGHT) {
@@ -50,14 +48,16 @@ ig.module('crosscode-ru.ticker-display')
           prtPos.y -= maxSize.y - size.y;
         }
 
-        renderer.addColor('rgba(255, 0, 0, 0.25)', 0, 0, size.x, size.y);
-        renderer.addColor(
-          'rgba(0, 255, 0, 0.25)',
-          prtPos.x,
-          prtPos.y,
-          maxSize.x,
-          maxSize.y,
-        );
+        // renderer.addColor('red', 0, 0, size.x, size.y).setAlpha(0.25);
+        // renderer
+        //   .addColor('green', prtPos.x, prtPos.y, maxSize.x, maxSize.y)
+        //   .setAlpha(0.25);
+
+        let overflow = {
+          x: size.x - maxSize.x > ALLOWED_OVERFLOW.x,
+          y: size.y - maxSize.y > ALLOWED_OVERFLOW.y,
+        };
+        if (!overflow.x && !overflow.y) return false;
 
         renderer
           .addTransform()
@@ -67,18 +67,18 @@ ig.module('crosscode-ru.ticker-display')
 
         function calculateOffset(axis) {
           if (!overflow[axis]) return 0;
-          let length =
-            size[axis] - maxSize[axis] + 2 * REPEATED_TEXT_MARGIN[axis];
+          let length = size[axis] - maxSize[axis];
+          let speed = TICKER_SPEED[axis];
+          let delay = DELAY_AT_BORDERS[axis];
+          // multiply the delay by speed so that delay isn't affected by speed
+          // and always means the same time in seconds
+          let scaledDelay = delay * speed;
           return (
-            prtPos[axis] +
-            2 * REPEATED_TEXT_MARGIN[axis] -
-            triangleWave(
-              timer * TICKER_SPEED[axis],
-              length + 2 * REPEATED_TEXT_MARGIN[axis],
-            ).limit(
-              REPEATED_TEXT_MARGIN[axis],
-              length + REPEATED_TEXT_MARGIN[axis],
-            )
+            prtPos[axis] -
+            (
+              triangleWave(timer * speed - delay / 2, length + scaledDelay) -
+              scaledDelay / 2
+            ).limit(0, length)
           );
         }
 
@@ -103,28 +103,49 @@ ig.module('crosscode-ru.ticker-display')
       if (!tickerDrawn) renderText(0, 0);
     }
 
-    // sc.TextGui.inject({
-    //   tickerTimer: 0,
+    sc.TextGui.inject({
+      tickerTimer: 0,
+      tickerConfig: null,
 
-    //   update() {
-    //     this.parent();
-    //     if (this.textBlock.isFinished()) {
-    //       this.tickerTimer += ig.system.actualTick;
-    //     }
-    //   },
+      setTickerConfig(config) {
+        this.tickerConfig = config;
+        this.tickerTimer = 0;
+      },
 
-    //   updateDrawables(renderer) {
-    //     updateDrawablesTicker(
-    //       renderer,
-    //       this.hook,
-    //       this.tickerTimer,
-    //       null,
-    //       (x, y) => {
-    //         renderer.addText(this.textBlock, x, y);
-    //       },
-    //     );
-    //   },
-    // });
+      setText(...args) {
+        this.parent(...args);
+        this.tickerTimer = 0;
+      },
+
+      onVisibilityChange(...args) {
+        this.parent(...args);
+        this.tickerTimer = 0;
+      },
+
+      update() {
+        this.parent();
+        if (
+          this.text.length > 0 &&
+          this.tickerConfig != null &&
+          this.isVisible() &&
+          this.textBlock.isFinished()
+        ) {
+          this.tickerTimer += ig.system.actualTick;
+        }
+      },
+
+      updateDrawables(renderer) {
+        updateDrawablesTicker(
+          renderer,
+          this.hook,
+          this.tickerTimer,
+          this.tickerConfig,
+          (x, y) => {
+            renderer.addText(this.textBlock, x, y);
+          },
+        );
+      },
+    });
 
     sc.ru.RawTextBlock = ig.TextBlock.extend({
       init(
@@ -181,21 +202,19 @@ ig.module('crosscode-ru.ticker-display')
       commands: [],
       textBlocks: [],
       tickerTimer: 0,
+      tickerConfig: null,
 
-      init(
-        text,
-        { font = sc.fontsystem.font, linePadding, tickerMaxSize } = {},
-      ) {
+      init(text, { font = sc.fontsystem.font, linePadding } = {}) {
         this.parent();
         this.font = font;
         this.linePadding = linePadding;
-        this.tickerMaxSize = tickerMaxSize;
         this.setText(text);
       },
 
       setText(text) {
         this.clear();
         this.textBlocks = [];
+        this.tickerTimer = 0;
 
         let textBlockConfig = {
           speed: ig.TextBlock.SPEED.IMMEDIATE,
@@ -275,6 +294,7 @@ ig.module('crosscode-ru.ticker-display')
       },
 
       onVisibilityChange(visible) {
+        this.tickerTimer = 0;
         this.textBlocks.forEach(({ textBlock: tb }) => {
           if (visible) tb.prerender();
           else tb.clearPrerendered();
@@ -285,9 +305,20 @@ ig.module('crosscode-ru.ticker-display')
         this.textBlocks.forEach(({ textBlock: tb }) => tb.clearPrerendered());
       },
 
+      setTickerConfig(config) {
+        this.tickerConfig = config;
+        this.tickerTimer = 0;
+      },
+
       update() {
         this.textBlocks.forEach(({ textBlock: tb }) => tb.update());
-        this.tickerTimer += ig.system.actualTick;
+        if (
+          this.text.length > 0 &&
+          this.tickerConfig != null &&
+          this.isVisible()
+        ) {
+          this.tickerTimer += ig.system.actualTick;
+        }
       },
 
       updateDrawables(renderer) {
@@ -301,7 +332,7 @@ ig.module('crosscode-ru.ticker-display')
           renderer,
           this.hook,
           this.tickerTimer,
-          this.tickerMaxSize,
+          this.tickerConfig,
           (x, y) => {
             this.textBlocks.forEach(({ textBlock, offset }, blockIndex) => {
               // let color = COLORS[blockIndex % COLORS.length];
