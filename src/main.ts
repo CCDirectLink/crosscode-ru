@@ -74,7 +74,8 @@ class Main {
       let chaptersWithUpdates: ChapterStatus[] = [];
       let chaptersWithoutUpdates: ChapterStatus[] = [];
       for (let status of Object.values(statuses)) {
-        let prevStatus = prevStatuses[status.name];
+        let id = status.name;
+        let prevStatus = prevStatuses[id];
         let needsUpdate =
           prevStatus == null ||
           status.modificationTimestamp !== prevStatus.modificationTimestamp;
@@ -106,13 +107,16 @@ class Main {
 
         let fragments: Fragment[] = [];
 
+        let {
+          total: notaPageCount,
+          iterator,
+        } = this.notaClient.createChapterFragmentFetcher(status);
+        console.log('notaPageCount', notaPageCount);
         await asyncUtils.limitConcurrency(
-          iteratorUtils.map(
-            this.notaClient.createChapterFragmentFetcher(status),
-            promise =>
-              promise.then(pageFragments => {
-                fragments = fragments.concat(pageFragments);
-              }),
+          iteratorUtils.map(iterator, promise =>
+            promise.then(pageFragments => {
+              fragments = fragments.concat(pageFragments);
+            }),
           ),
           8,
         );
@@ -126,66 +130,51 @@ class Main {
         );
       }
 
-      // let packer = new LocalizeMePacker();
-      // for (let [id, status] of Object.entries(statuses)) {
-      //   let prevStatus = prevStatuses[id];
-      //   let needsUpdate =
-      //     prevStatus == null ||
-      //     status.modificationTimestamp !== prevStatus.modificationTimestamp;
+      let packer = new LocalizeMePacker();
 
-      //   let fragments: Fragment[] = [];
-      //   if (needsUpdate) {
-      //     console.log(`updating ${id}`);
+      let chapterIds = Object.keys(chapterFragments);
+      for (let i = 0, len = chapterIds.length; i < len; i++) {
+        let id = chapterIds[i];
+        let fragments = chapterFragments[id];
+        console.log(`generating packs for ${id}`);
+        this.progressBar.setTaskInfo(
+          `Генерация транслейт-паков Localize-me для главы '${id}'...`,
+        );
+        this.progressBar.setValue(i, len);
+        await packer.addNotaFragments(fragments);
+      }
 
-      //     await asyncUtils.limitConcurrency(
-      //       iteratorUtils.map(
-      //         this.notaClient.createChapterFragmentFetcher(status),
-      //         promise =>
-      //           promise.then(pageFragments => {
-      //             fragments = fragments.concat(pageFragments);
-      //           }),
-      //       ),
-      //       8,
-      //     );
+      let mappingTable: Record<string, string> = {};
 
-      //     fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
+      await fs.promises.mkdir(paths.LOCALIZE_ME_PACKS_DIR, { recursive: true });
 
-      //     await fsUtils.writeJsonFile(
-      //       path.join(paths.CHAPTER_FRAGMENTS_DIR, `${id}.json`),
-      //       fragments,
-      //     );
-      //   } else {
-      //     console.log(`loading ${id} from disk`);
+      let totalPackCount = packer.packs.size;
+      let currentPackIndex = 0;
+      for (let [originalFile, packContents] of packer.packs.entries()) {
+        mappingTable[originalFile] = originalFile;
+        console.log(`writing pack for ${originalFile}`);
+        this.progressBar.setTaskInfo(
+          `Запись транслейт-пака '${originalFile}'...`,
+        );
+        this.progressBar.setValue(currentPackIndex, totalPackCount + 1);
+        currentPackIndex++;
+        await fs.promises.mkdir(
+          path.join(paths.LOCALIZE_ME_PACKS_DIR, path.dirname(originalFile)),
+          { recursive: true },
+        );
+        await fsUtils.writeJsonFile(
+          path.join(paths.LOCALIZE_ME_PACKS_DIR, originalFile),
+          packContents,
+        );
+      }
 
-      //     fragments = await fsUtils.readJsonFile(
-      //       path.join(paths.CHAPTER_FRAGMENTS_DIR, `${id}.json`),
-      //       'utf8',
-      //     );
-      //   }
+      this.progressBar.setTaskInfo(
+        `Запись таблицы маппингов транслейт-паков...`,
+      );
+      this.progressBar.setValue(totalPackCount, totalPackCount + 1);
+      await fsUtils.writeJsonFile(paths.LOCALIZE_ME_MAPPING_FILE, mappingTable);
 
-      //   await packer.addNotaFragments(fragments);
-      // }
-
-      // let mappingTable: Record<string, string> = {};
-
-      // await fs.promises.mkdir(paths.LOCALIZE_ME_PACKS_DIR, { recursive: true });
-
-      // for (let [originalFile, packContents] of packer.packs.entries()) {
-      //   mappingTable[originalFile] = originalFile;
-      //   console.log(`writing pack for ${originalFile}`);
-      //   await fs.promises.mkdir(
-      //     path.join(paths.LOCALIZE_ME_PACKS_DIR, path.dirname(originalFile)),
-      //     { recursive: true },
-      //   );
-      //   await fsUtils.writeJsonFile(
-      //     path.join(paths.LOCALIZE_ME_PACKS_DIR, originalFile),
-      //     packContents,
-      //   );
-      // }
-
-      // await fsUtils.writeJsonFile(paths.LOCALIZE_ME_MAPPING_FILE, mappingTable);
-
-      // await fsUtils.writeJsonFile(paths.CHAPTER_STATUSES_FILE, statuses);
+      await fsUtils.writeJsonFile(paths.CHAPTER_STATUSES_FILE, statuses);
 
       console.log('DONE');
       this.progressBar.setTaskInfo('Скачивание переводов успешно завершено!');

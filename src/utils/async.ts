@@ -1,3 +1,8 @@
+export interface Fetcher<T> {
+  total: number;
+  iterator: Iterator<PromiseLike<T>>;
+}
+
 export function wait(ms: number): Promise<void> {
   return new Promise(resolve => {
     setTimeout(resolve, ms);

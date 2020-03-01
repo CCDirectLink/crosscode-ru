@@ -2,6 +2,7 @@
 // https://github.com/uisky/notabenoid
 
 import { fetchDocument } from './utils/http.js';
+import { Fetcher } from './utils/async.js';
 
 const BOOK_ID = '74823';
 
@@ -98,23 +99,29 @@ export class NotaClient {
     return result;
   }
 
-  *createChapterFragmentFetcher(
-    status: ChapterStatus,
-  ): Iterator<Promise<Fragment[]>> {
+  createChapterFragmentFetcher(status: ChapterStatus): Fetcher<Fragment[]> {
     let pages = Math.ceil(status.totalFragments / CHAPTER_PAGE_SIZE);
-    for (let i = 0; i < pages; i++) {
-      console.log(`${status.name}, page ${i + 1}/${pages}`);
-      yield this.makeRequest(
-        `/book/${BOOK_ID}/${status.id}?Orig_page=${i + 1}`,
-      ).then(doc => {
-        let fragments: Fragment[] = [];
-        doc.querySelectorAll('#Tr > tbody > tr').forEach(tr => {
-          let f = parseFragment(tr);
-          if (f != null) fragments.push(f);
-        });
-        return fragments;
-      });
-    }
+    // seriously... JS has regular generator function, yet it doesn't have
+    // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern again.
+    let self = this;
+    return {
+      total: pages,
+      iterator: (function*() {
+        for (let i = 0; i < pages; i++) {
+          console.log(`${status.name}, page ${i + 1}/${pages}`);
+          yield self
+            .makeRequest(`/book/${BOOK_ID}/${status.id}?Orig_page=${i + 1}`)
+            .then(doc => {
+              let fragments: Fragment[] = [];
+              doc.querySelectorAll('#Tr > tbody > tr').forEach(tr => {
+                let f = parseFragment(tr);
+                if (f != null) fragments.push(f);
+              });
+              return fragments;
+            });
+        }
+      })(),
+    };
   }
 }
 
