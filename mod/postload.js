@@ -24,6 +24,14 @@ window.localizeMe.add_locale('ru_RU', {
   },
   flag: 'media/font/ru_RU/flag.png',
 
+  missing_cb: (langLabelOrString, dictPath) => {
+    let original = langLabelOrString.en_US || langLabelOrString;
+    if (/^credits\/[^/]+.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)) {
+      return original;
+    }
+    return `--${original}`;
+  },
+
   pre_patch_font: async context => {
     let url = PATCHED_FONT_URLS[context.size_index];
     if (url != null) {
