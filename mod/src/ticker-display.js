@@ -65,6 +65,7 @@ ig.module('crosscode-ru.ticker-display')
           .setClip(maxSize.x, maxSize.y);
         renderer.addTransform().setTranslate(-prtPos.x, -prtPos.y);
 
+        // TODO: display shadows at the overflowing side
         function calculateOffset(axis) {
           if (!overflow[axis]) return 0;
           let length = size[axis] - maxSize[axis];
@@ -86,12 +87,6 @@ ig.module('crosscode-ru.ticker-display')
         let offsetY = calculateOffset('y');
 
         renderText(offsetX, offsetY);
-        // if (overflow.x && !overflow.y) {
-        //   renderText(size.x + offsetX + REPEATED_TEXT_MARGIN.x, 0);
-        // }
-        // if (overflow.y && !overflow.x) {
-        //   renderText(0, size.y - offsetY + REPEATED_TEXT_MARGIN.y);
-        // }
 
         renderer.undoTransform();
         renderer.undoTransform();
@@ -334,7 +329,7 @@ ig.module('crosscode-ru.ticker-display')
           this.tickerTimer,
           this.tickerConfig,
           (x, y) => {
-            this.textBlocks.forEach(({ textBlock, offset }, blockIndex) => {
+            this.textBlocks.forEach(({ textBlock, offset }) => {
               // let color = COLORS[blockIndex % COLORS.length];
               // renderer.addColor(
               //   color,

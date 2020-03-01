@@ -1,17 +1,13 @@
 ig.module('crosscode-ru.fixes.info-bar')
   .requires('game.feature.menu.gui.menu-misc', 'crosscode-ru.ticker-display')
   .defines(() => {
-    // TODO: ticker required for:
-    // sc.MainMenu
-    // sc.TradeMenu
-    // sc.QuickMenu
-
     sc.InfoBar.inject({
       init(width, height, skipRender) {
         if (width == null) width = ig.system.width;
         if (height == null) height = 21;
         if (skipRender == null) skipRender = false;
 
+        // THE ORIGINAL CODE INCOMING
         ig.GuiElementBase.prototype.init.call(this);
         this.setSize(width, height);
         this.setStateValue('HIDDEN', 'offsetY', -this.hook.size.y);
@@ -32,6 +28,7 @@ ig.module('crosscode-ru.fixes.info-bar')
         this.text.doStateTransition('HIDDEN', true);
         this.addChildGui(this.text);
         this.doStateTransition('HIDDEN', true);
+        // END OF THE ORIGINAL COdE
 
         this._updateTickerConfig();
       },
@@ -47,17 +44,25 @@ ig.module('crosscode-ru.fixes.info-bar')
         if (time == null) this._updateTickerConfig();
       },
 
-      _updateTickerConfig() {
-        this.text.setTickerConfig({
-          maxSize: { x: this.hook.size.x - this.text.hook.pos.x * 2 },
-        });
+      addChildGui(gui) {
+        this.parent(gui);
+        if (gui instanceof sc.BuffInfo) {
+          this.associatedBuffInfo = gui;
+          let buffInfoSetText = this.associatedBuffInfo.setText;
+          this.associatedBuffInfo.setText = (text, initDelay) => {
+            buffInfoSetText.call(this.associatedBuffInfo, text, initDelay);
+            if (initDelay == null || initDelay <= 0) this._updateTickerConfig();
+          };
+        }
       },
 
-      updateDrawables(renderer) {
-        this.parent(renderer);
-        renderer
-          .addColor('blue', 0, 0, this.hook.size.x, this.hook.size.y)
-          .setAlpha(0.1);
+      _updateTickerConfig() {
+        let maxWidth = this.hook.size.x - this.text.hook.pos.x * 2;
+        let buffInfo = this.associatedBuffInfo;
+        if (buffInfo != null && buffInfo._width > 0) {
+          maxWidth -= buffInfo._width + buffInfo.hook.pos.x;
+        }
+        this.text.setTickerConfig({ maxSize: { x: maxWidth } });
       },
     });
   });
