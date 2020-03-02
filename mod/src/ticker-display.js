@@ -38,12 +38,12 @@ ig.module('crosscode-ru.ticker-display')
 
         let prtPos = { x: 0, y: 0 };
         if (align.x === ig.GUI_ALIGN.X_CENTER) {
-          prtPos.x -= (maxSize.x - size.x) / 2;
+          prtPos.x -= Math.floor((maxSize.x - size.x) / 2);
         } else if (align.x === ig.GUI_ALIGN.X_RIGHT) {
           prtPos.x -= maxSize.x - size.x;
         }
         if (align.y === ig.GUI_ALIGN.Y_CENTER) {
-          prtPos.y -= (maxSize.y - size.y) / 2;
+          prtPos.y -= Math.floor((maxSize.y - size.y) / 2);
         } else if (align.y === ig.GUI_ALIGN.Y_RIGHT) {
           prtPos.y -= maxSize.y - size.y;
         }
