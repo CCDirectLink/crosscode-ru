@@ -7,14 +7,22 @@ ig.module('crosscode-ru.fixes.traders-list')
     'game.feature.menu.gui.trade.trader-list',
   )
   .defines(() => {
+    function patchTraderLocation(location) {
+      location.textBlock.linePadding = -3;
+    }
+
+    function setTraderLocationText(location, traderId) {
+      let foundTrader = sc.trade.getFoundTrader(traderId);
+      location.setText(
+        (foundTrader.area || '???') + '\n> ' + (foundTrader.map || '???'),
+      );
+    }
+
     sc.TradeButtonBox.inject({
-      init(traderName, buttonGroup, buttonStartIndex) {
-        this.parent(traderName, buttonGroup, buttonStartIndex);
-        this.location.textBlock.linePadding = -2;
-        let foundTrader = sc.trade.getFoundTrader(traderName);
-        this.location.setText(
-          (foundTrader.area || '???') + '\n> ' + (foundTrader.map || '???'),
-        );
+      init(trader, ...args) {
+        this.parent(trader, ...args);
+        patchTraderLocation(this.location);
+        setTraderLocationText(this.location, trader);
       },
     });
 
@@ -53,6 +61,20 @@ ig.module('crosscode-ru.fixes.traders-list')
         list.traderInfoGui.hook.children.forEach(hook => {
           hook.size.x += TRADERS_LIST_ADDITIONAL_WIDTH;
         });
+      },
+    });
+
+    sc.TradeDetailsView.inject({
+      init(...args) {
+        this.parent(...args);
+        this.hook.pos.x -= TRADERS_LIST_ADDITIONAL_WIDTH / 2;
+        patchTraderLocation(this.location);
+      },
+
+      setTraderData(trader, ...args) {
+        let shouldUpdateLocation = this._trader !== trader;
+        this.parent(trader, ...args);
+        if (shouldUpdateLocation) setTraderLocationText(this.location, trader);
       },
     });
   });
