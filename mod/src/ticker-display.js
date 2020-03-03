@@ -21,17 +21,17 @@ ig.module('crosscode-ru.ticker-display')
     function updateDrawablesTicker(renderer, hook, timer, config, renderText) {
       function tryRenderTicker() {
         if (config == null) return false;
+        let { maxSize } = config;
 
         let { size, align, parentHook } = hook;
         if (parentHook == null) return false;
         let prtSize = parentHook.size;
         // Check if the parent size has been set. Sometimes developers forget
-        // to set it correctly, (1, 1) is the default value. I doubt that any
-        // GUI elements actually have size (1, 1) by design, so this check is
-        // good enough.
+        // to set it correctly to (ig.system.width, ig.system.height), and
+        // (1, 1) is the default value. I doubt that any GUI elements actually
+        // have size (1, 1) by design, so this check is good enough.
         if (prtSize.x === 1 || prtSize.y === 1) return false;
 
-        let { maxSize } = config;
         if (maxSize == null) maxSize = {};
         if (maxSize.x == null) maxSize.x = prtSize.x;
         if (maxSize.y == null) maxSize.y = prtSize.y;
@@ -119,13 +119,30 @@ ig.module('crosscode-ru.ticker-display')
 
       update() {
         this.parent();
+
+        // TODO: extract this to a function and apply to
+        // sc.ru.LongHorizontalTextGui as well
+
         if (
-          this.text != null &&
-          this.text.length > 0 &&
-          this.tickerConfig != null &&
-          this.isVisible() &&
-          this.textBlock.isFinished()
+          this.text == null ||
+          this.text.length === 0 ||
+          this.tickerConfig == null ||
+          !this.isVisible() ||
+          !this.textBlock.isFinished()
         ) {
+          return;
+        }
+
+        let { focusTarget } = this.tickerConfig;
+        if (
+          focusTarget != null &&
+          !(
+            focusTarget.focus ||
+            (focusTarget.keepPressed && focusTarget.pressed)
+          )
+        ) {
+          this.tickerTimer = 0;
+        } else {
           this.tickerTimer += ig.system.actualTick;
         }
       },

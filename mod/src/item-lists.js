@@ -117,7 +117,10 @@ ig.module('crosscode-ru.fixes.item-lists')
         if (btn.iconTextChild != null) {
           tickerMaxWidth -= btn.iconTextChild.hook.size.x;
         }
-        btn.textChild.setTickerConfig({ maxSize: { x: tickerMaxWidth } });
+        btn.textChild.setTickerConfig({
+          maxSize: { x: tickerMaxWidth },
+          focusTarget: btn,
+        });
       },
 
       setDrawCallback(callback) {
