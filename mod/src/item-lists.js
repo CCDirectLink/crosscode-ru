@@ -3,7 +3,24 @@ ig.module('crosscode-ru.fixes.item-lists')
   .defines(() => {
     sc.ButtonGui.inject({
       iconTextChild: null,
+
+      _getDefaultTextChildPos() {
+        return { x: this.buttonType.alignXPadding || 0, y: 0 };
+      },
     });
+
+    function parseButtonIconText(text) {
+      if (text == null) text = '';
+
+      let iconSequence = null;
+      let match = /^\\i\[[^\]]+\]/.exec(text);
+      if (match != null) {
+        iconSequence = match[0];
+        text = text.slice(iconSequence.length);
+      }
+
+      return { iconSequence, text };
+    }
 
     sc.ItemBoxButton.inject({
       init(
@@ -19,15 +36,10 @@ ig.module('crosscode-ru.fixes.item-lists')
         maxNumber,
         level,
       ) {
-        if (text == null) text = '';
         if (maxNumber == null) maxNumber = 99;
 
-        let iconSequence = null;
-        let match = /^\\i\[[^\]]+\]/.exec(text);
-        if (match != null) {
-          iconSequence = match[0];
-          text = text.slice(iconSequence.length);
-        }
+        let iconSequence;
+        ({ iconSequence, text } = parseButtonIconText(text));
 
         sc.ListBoxButton.prototype.init.call(
           this,
@@ -42,29 +54,10 @@ ig.module('crosscode-ru.fixes.item-lists')
         );
 
         if (iconSequence != null) {
-          let { button } = this;
-          let { textChild } = button;
-
-          let iconTextChild = new sc.TextGui(iconSequence, {
-            speed: ig.TextBlock.SPEED.IMMEDIATE,
-          });
-          iconTextChild.setAlign(
-            textChild.hook.align.x,
-            textChild.hook.align.y,
-          );
-          iconTextChild.setPos(textChild.hook.pos.x, textChild.hook.pos.y);
-
-          button.iconTextChild = iconTextChild;
-          button.addChildGui(iconTextChild);
-          let alignXPadding = textChild.hook.pos.x;
-          textChild.hook.pos.x += iconTextChild.hook.size.x;
-
-          let tickerMaxWidth =
-            button.hook.size.x - iconTextChild.hook.size.x - alignXPadding * 2;
-          textChild.setTickerConfig({
-            maxSize: { x: tickerMaxWidth },
-          });
+          this.level = level;
+          this._addButtonIconTextChild(iconSequence);
         }
+        this._updateButtonTextChildTickerConfig();
 
         // from the constructor of sc.ItemBoxButton
         if (amount >= 0) {
@@ -74,46 +67,76 @@ ig.module('crosscode-ru.fixes.item-lists')
           this.amount.setPos(5, 7);
           this.addChildGui(this.amount);
         }
-        this.setLevel(level);
       },
 
-      setLevel(level) {
-        if (level == null) level = 0;
-        this.level = level;
-        let target =
-          this.button.iconTextChild != null
-            ? this.button.iconTextChild
-            : this.button.textChild;
-        target.setDrawCallback(
-          this.level > 0
-            ? (a, b) => {
-                sc.MenuHelper.drawLevel(this.level, a, b, this.numberGfx);
-              }
-            : null,
-        );
+      setText(text) {
+        let iconSequence;
+        ({ iconSequence, text } = parseButtonIconText(text));
+        this.button.textChild.setText(text);
+        if (iconSequence != null) this._addButtonIconTextChild(iconSequence);
+        else this._removeButtonIconTextChild();
+        this._updateButtonTextChildTickerConfig();
       },
 
-      // well... [insert shrug face here]
+      _addButtonIconTextChild(iconSequence) {
+        let btn = this.button;
+        if (btn.iconTextChild != null) {
+          btn.iconTextChild.setText(iconSequence);
+          return;
+        }
 
-      setDrawCallback(_callback) {
-        // setDrawCallback is used only in setLevel which I overwrite here
-        throw new Error(
-          'crosscode-ru: sc.ItemBoxButton.setDrawCallback: unimplemented',
-        );
+        let { textChild } = btn;
+        let iconTextChild = new sc.TextGui(iconSequence, {
+          speed: ig.TextBlock.SPEED.IMMEDIATE,
+        });
+        iconTextChild.setAlign(textChild.hook.align.x, textChild.hook.align.y);
+
+        let pos = btn._getDefaultTextChildPos();
+        iconTextChild.setPos(pos.x, pos.y);
+        textChild.setPos(pos.x + iconTextChild.hook.size.x, pos.y);
+
+        btn.iconTextChild = iconTextChild;
+        btn.addChildGui(iconTextChild);
+        this.setLevel(this.level);
+      },
+
+      _removeButtonIconTextChild() {
+        let btn = this.button;
+        if (btn.iconTextChild == null) return;
+        this.setDrawCallback(null);
+        btn.removeChildGui(btn.iconTextChild);
+        btn.iconTextChild = null;
+        let pos = btn._getDefaultTextChildPos();
+        btn.textChild.setPos(pos.x, pos.y);
+      },
+
+      _updateButtonTextChildTickerConfig() {
+        let btn = this.button;
+        let tickerMaxWidth =
+          btn.hook.size.x - sc.BUTTON_TYPE.ITEM.alignXPadding * 2;
+        if (btn.iconTextChild != null) {
+          tickerMaxWidth -= btn.iconTextChild.hook.size.x;
+        }
+        btn.textChild.setTickerConfig({ maxSize: { x: tickerMaxWidth } });
+      },
+
+      setDrawCallback(callback) {
+        let btn = this.button;
+        if (btn.iconTextChild == null) {
+          // fortunately, the whole drawCallback feature is used only for
+          // adding levels to item icons
+          throw new Error(
+            'crosscode-ru: sc.ItemBoxButton.setDrawCallback: unsupported on a button without an icon because I am lazy',
+          );
+        }
+        btn.iconTextChild.setDrawCallback(callback);
       },
 
       setButtonText(_text) {
+        // well... [insert shrug face here]
         // setButtonText isn't used at all in the entire codebase
         throw new Error(
           'crosscode-ru: sc.ItemBoxButton.setButtonText: unimplemented',
-        );
-      },
-
-      setText(_text) {
-        // setText may be used somewhere, but I was too lazy to search for its
-        // usages. I guess I'll find this out when the game crashes.
-        throw new Error(
-          'crosscode-ru: sc.ItemBoxButton.setText: unimplemented',
         );
       },
     });
