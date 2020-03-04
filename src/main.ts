@@ -54,14 +54,22 @@ class Main {
       )! as HTMLButtonElement;
       updateButton.disabled = false;
       updateButton.addEventListener('click', () => {
-        this.downloadTranslations();
+        this.downloadTranslations(false);
+      });
+
+      let redownloadButton = document.getElementById(
+        'settings_translations_redownload',
+      )! as HTMLButtonElement;
+      redownloadButton.disabled = false;
+      redownloadButton.addEventListener('click', () => {
+        this.downloadTranslations(true);
       });
     } catch (err) {
       console.error(err);
     }
   }
 
-  async downloadTranslations(): Promise<void> {
+  async downloadTranslations(force: boolean): Promise<void> {
     try {
       this.progressBar.setTaskInfo('Скачивание данных о главах на Ноте...');
       this.progressBar.setIndeterminate();
@@ -79,9 +87,10 @@ class Main {
         let needsUpdate =
           prevStatus == null ||
           status.modificationTimestamp !== prevStatus.modificationTimestamp;
-        (needsUpdate ? chaptersWithUpdates : chaptersWithoutUpdates).push(
-          status,
-        );
+        (force || needsUpdate
+          ? chaptersWithUpdates
+          : chaptersWithoutUpdates
+        ).push(status);
       }
 
       let chapterFragments: Record<string, Fragment[]> = {};
