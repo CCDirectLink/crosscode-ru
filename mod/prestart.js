@@ -1,6 +1,7 @@
 import './src/ticker-display.js';
 
 import './src/circuit-menu.js';
+import './src/help-boxes.js';
 import './src/info-bar.js';
 import './src/item-lists.js';
 import './src/open-translation-tool-button.js';
