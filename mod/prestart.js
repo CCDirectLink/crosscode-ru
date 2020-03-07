@@ -10,3 +10,4 @@ import './src/quest-menu.js';
 import './src/status-combat-arts.js';
 import './src/tab-button.js';
 import './src/traders-list.js';
+import './src/status-lines.js';
