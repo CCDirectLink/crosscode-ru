@@ -4,6 +4,8 @@ node_js: node
 cache:
   yarn: true
 
+before_install:
+  - cd tool
 install:
   - yarn install
 script:

@@ -1,21 +1,11 @@
 {
-  "private": true,
-  "scripts": {
-    "build:scripts": "tsc",
-    "watch:scripts": "tsc --watch",
-    "build:styles": "node-sass --recursive --output dist/styles --source-map true src/styles",
-    "watch:styles": "node-sass --recursive --output dist/styles --source-map true src/styles --watch"
-  },
-  "devDependencies": {
-    "@types/node": "^13.7.0",
-    "@types/nw.js": "^0.13.9",
-    "node-sass": "^4.13.1",
-    "prettier": "^1.19.1",
-    "typescript": "^3.7.5"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "all",
-    "jsxBracketSameLine": true
+  "name": "crosscode-ru-translation-tool-ng",
+  "description": "Инструмент переводчика CrossCode нового поколения",
+  "homepage": "https://github.com/dmitmel/crosscode-ru-translation-tool-ng",
+  "version": "0.0.0",
+  "module": true,
+  "plugin": "plugin.js",
+  "ccmodDependencies": {
+    "Localize Me": ">=0.4 <1"
   }
 }
