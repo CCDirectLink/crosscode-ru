@@ -4,13 +4,11 @@ node_js: node
 cache:
   yarn: true
 
-before_install:
-  - cd tool
 install:
-  - yarn install
+  - (cd tool && yarn install)
+  - yarn global add prettier
 script:
-  - yarn build:scripts
-  - yarn build:styles
+  - (cd tool && yarn build:scripts && yarn build:styles)
   - prettier --check "**/*.{js,ts,json,css,scss,html}"
 
 notifications:
