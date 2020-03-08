@@ -195,3 +195,21 @@ ig.module('crosscode-ru.fixes.item-lists.status-main-equipment')
       },
     });
   });
+
+ig.module('crosscode-ru.fixes.item-lists.social-menu')
+  .requires(
+    'game.feature.menu.gui.social.social-misc',
+    'crosscode-ru.ticker-display',
+  )
+  .defines(() => {
+    sc.SocialInfoBox.inject({
+      setCharacter(id) {
+        this.parent(id);
+        this.equip.hook.children.forEach(({ gui }) => {
+          gui.setTickerConfig({
+            maxSize: { x: this.equip.hook.size.x },
+          });
+        });
+      },
+    });
+  });
