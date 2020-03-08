@@ -185,3 +185,22 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
       },
     });
   });
+
+ig.module('crosscode-ru.fixes.item-lists.status-main-equipment')
+  .requires(
+    'game.feature.menu.gui.status.status-view-main',
+    'crosscode-ru.ticker-display',
+  )
+  .defines(() => {
+    sc.StatusViewMainEquipment.Entry.inject({
+      init(...args) {
+        this.parent(...args);
+        this.itemGui.hook.pos.x = this.textGui.hook.pos.x;
+        this.itemGui.setTickerConfig({
+          maxSize: {
+            x: this.hook.size.x - this.itemGui.hook.pos.x * 2,
+          },
+        });
+      },
+    });
+  });
