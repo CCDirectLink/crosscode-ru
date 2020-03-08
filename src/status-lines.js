@@ -1,5 +1,9 @@
 // TODO reduce number of colored sprites and figure out more constants
 
+// R.D. (Stefan) said that it's okay to copy copyrighted code from the
+// game, so I'll copy the copyrighted source code, specifically constants
+// (because they aren't present in the compiled code)
+
 const STATUS_LINE_START_X = 0;
 const STATUS_LINE_START_Y = 12;
 const STATUS_LINE_HEIGHT = 11;
