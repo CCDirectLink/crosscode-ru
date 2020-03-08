@@ -79,7 +79,7 @@ ig.module('crosscode-ru.ticker-display')
           return (
             prtPos[axis] -
             (
-              triangleWave(timer * speed - delay / 2, length + scaledDelay) -
+              triangleWave((timer - delay / 2) * speed, length + scaledDelay) -
               scaledDelay / 2
             ).limit(0, length)
           );
@@ -109,9 +109,9 @@ ig.module('crosscode-ru.ticker-display')
         this.tickerTimer = 0;
       },
 
-      setText(...args) {
-        this.parent(...args);
-        this.tickerTimer = 0;
+      setText(text) {
+        if (this.text !== text) this.tickerTimer = 0;
+        this.parent(text);
       },
 
       onVisibilityChange(...args) {
@@ -230,7 +230,7 @@ ig.module('crosscode-ru.ticker-display')
       setText(text) {
         this.clear();
         this.textBlocks = [];
-        this.tickerTimer = 0;
+        if (this.text !== text) this.tickerTimer = 0;
 
         let textBlockConfig = {
           speed: ig.TextBlock.SPEED.IMMEDIATE,

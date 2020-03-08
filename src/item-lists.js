@@ -11,6 +11,7 @@ ig.module('crosscode-ru.fixes.item-lists')
 
     function parseButtonIconText(text) {
       if (text == null) text = '';
+      if (typeof text === 'object') text = text.toString();
 
       let iconSequence = null;
       let match = /^\\i\[[^\]]+\]/.exec(text);
@@ -171,16 +172,6 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
         this.parent();
         this.entries.forEach(entry => {
           entry.gui.setTickerConfig({ maxSize: { x: this.hook.size.x } });
-        });
-      },
-
-      _updateTexts() {
-        this.entries.forEach(entry => {
-          let { tradeName } = entry.gui;
-          let newText = this._hasMissingItem(entry.require)
-            ? `\\c[4]${tradeName}\\c[0]`
-            : tradeName;
-          if (entry.gui.text !== newText) entry.gui.setText(newText);
         });
       },
     });
