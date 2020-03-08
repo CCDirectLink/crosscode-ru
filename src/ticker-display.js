@@ -33,8 +33,10 @@ ig.module('crosscode-ru.ticker-display')
         if (prtSize.x === 1 || prtSize.y === 1) return false;
 
         if (maxSize == null) maxSize = {};
-        if (maxSize.x == null) maxSize.x = prtSize.x;
-        if (maxSize.y == null) maxSize.y = prtSize.y;
+        maxSize = {
+          x: maxSize.x != null ? maxSize.x : size.x,
+          y: maxSize.y != null ? maxSize.y : size.y,
+        };
 
         let prtPos = { x: 0, y: 0 };
         if (align.x === ig.GUI_ALIGN.X_CENTER) {
@@ -142,9 +144,10 @@ ig.module('crosscode-ru.ticker-display')
           )
         ) {
           this.tickerTimer = 0;
-        } else {
-          this.tickerTimer += ig.system.actualTick;
+          return;
         }
+
+        this.tickerTimer += ig.system.actualTick;
       },
 
       updateDrawables(renderer) {
