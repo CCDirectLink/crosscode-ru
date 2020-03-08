@@ -1,5 +1,5 @@
 ig.module('crosscode-ru.fixes.item-lists')
-  .requires()
+  .requires('crosscode-ru.ticker-display')
   .defines(() => {
     sc.ButtonGui.inject({
       iconTextChild: null,
@@ -141,6 +141,28 @@ ig.module('crosscode-ru.fixes.item-lists')
         throw new Error(
           'crosscode-ru: sc.ItemBoxButton.setButtonText: unimplemented',
         );
+      },
+    });
+  });
+
+ig.module('crosscode-ru.fixes.item-lists.trade-gui')
+  .requires(
+    'game.feature.trade.gui.trade-icon',
+    'game.feature.trade.gui.equip-toggle-stats',
+    'crosscode-ru.ticker-display',
+  )
+  .defines(() => {
+    sc.TradeToggleStats.inject({
+      _createContent() {
+        this.parent();
+        this.compareItem.setTickerConfig({
+          maxSize: {
+            x:
+              this.hook.size.x -
+              this.compareItem.hook.pos.x -
+              this.compareHelpText.hook.pos.x,
+          },
+        });
       },
     });
 
