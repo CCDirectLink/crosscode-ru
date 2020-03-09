@@ -174,12 +174,17 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
   .requires(
     'game.feature.trade.gui.trade-icon',
     'game.feature.trade.gui.equip-toggle-stats',
+    'game.feature.menu.gui.shop.shop-stats',
     'crosscode-ru.ticker-display',
   )
   .defines(() => {
     sc.TradeToggleStats.inject({
       _createContent() {
         this.parent();
+        this._updateTickerConfig();
+      },
+
+      _updateTickerConfig() {
         this.compareItem.setTickerConfig({
           maxSize: {
             x:
@@ -188,6 +193,16 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
               this.compareHelpText.hook.pos.x,
           },
         });
+      },
+    });
+
+    sc.ShopEquipStats.inject({
+      init() {
+        this.parent();
+        // despite the fact that sc.ShopEquipStats extends sc.TradeToggleStats,
+        // ticker config must be recalculated here once again because
+        // constructor of sc.ShopEquipStats modifies this.hook.size
+        this._updateTickerConfig();
       },
     });
 
