@@ -1,5 +1,5 @@
 ig.module('crosscode-ru.fixes.item-lists')
-  .requires('crosscode-ru.ticker-display')
+  .requires('game.feature.menu.gui.menu-misc', 'crosscode-ru.ticker-display')
   .defines(() => {
     sc.ButtonGui.inject({
       iconTextChild: null,
@@ -23,68 +23,45 @@ ig.module('crosscode-ru.fixes.item-lists')
       return { iconSequence, text };
     }
 
-    sc.ItemBoxButton.inject({
-      init(
-        text,
-        buttonWidth,
-        lineWidth,
-        amount,
-        id,
-        description,
-        noLine,
-        alignCenter,
-        sound,
-        maxNumber,
-        level,
-      ) {
-        if (maxNumber == null) maxNumber = 99;
-
+    sc.ListBoxButton.inject({
+      init(text, ...args) {
         let iconSequence;
-        ({ iconSequence, text } = parseButtonIconText(text));
-
-        sc.ListBoxButton.prototype.init.call(
-          this,
-          text,
-          buttonWidth,
-          lineWidth,
-          id,
-          description,
-          noLine,
-          alignCenter,
-          sound,
-        );
-
-        if (iconSequence != null) {
-          this.level = level;
-          this._addButtonIconTextChild(iconSequence);
+        if (this.enableTickerDisplay) {
+          ({ iconSequence, text } = parseButtonIconText(text));
         }
-        this._updateButtonTextChildTickerConfig();
 
-        // from the constructor of sc.ItemBoxButton
-        if (amount >= 0) {
-          this.amount = new sc.NumberGui(maxNumber);
-          this.amount.setNumber(amount, true);
-          this.amount.setAlign(ig.GUI_ALIGN.X_RIGHT, ig.GUI_ALIGN.Y_TOP);
-          this.amount.setPos(5, 7);
-          this.addChildGui(this.amount);
-        }
+        this.parent(text, ...args);
+
+        if (this.enableTickerDisplay) this._setIconSequence(iconSequence);
       },
 
       setText(text) {
+        if (!this.enableTickerDisplay) return this.parent(text);
+
         let iconSequence;
         ({ iconSequence, text } = parseButtonIconText(text));
-        this.button.textChild.setText(text);
-        if (iconSequence != null) this._addButtonIconTextChild(iconSequence);
-        else this._removeButtonIconTextChild();
+
+        let btn = this.button;
+        btn.text = text;
+        btn.textChild.setText(btn.getButtonText());
+        btn.setWidth(this._width);
+
+        this._setIconSequence(iconSequence);
+      },
+
+      _setIconSequence(icon) {
+        let { iconTextChild } = this.button;
+        if (icon != null) {
+          if (iconTextChild != null) iconTextChild.setText(icon);
+          else this._addButtonIconTextChild(icon);
+        } else if (iconTextChild != null) {
+          this._removeButtonIconTextChild();
+        }
         this._updateButtonTextChildTickerConfig();
       },
 
       _addButtonIconTextChild(iconSequence) {
         let btn = this.button;
-        if (btn.iconTextChild != null) {
-          btn.iconTextChild.setText(iconSequence);
-          return;
-        }
 
         let { textChild } = btn;
         let iconTextChild = new sc.TextGui(iconSequence, {
@@ -103,7 +80,6 @@ ig.module('crosscode-ru.fixes.item-lists')
 
       _removeButtonIconTextChild() {
         let btn = this.button;
-        if (btn.iconTextChild == null) return;
         this.setDrawCallback(null);
         btn.removeChildGui(btn.iconTextChild);
         btn.iconTextChild = null;
@@ -113,11 +89,11 @@ ig.module('crosscode-ru.fixes.item-lists')
 
       _updateButtonTextChildTickerConfig() {
         let btn = this.button;
+        let padding = sc.BUTTON_TYPE.ITEM.alignXPadding;
         let tickerMaxWidth =
-          btn.hook.size.x - sc.BUTTON_TYPE.ITEM.alignXPadding * 2;
-        if (btn.iconTextChild != null) {
-          tickerMaxWidth -= btn.iconTextChild.hook.size.x;
-        }
+          btn.hook.size.x - btn.textChild.hook.pos.x - padding;
+        if (btn.textChild.hook.align.x === ig.GUI_ALIGN_X.CENTER)
+          tickerMaxWidth -= padding;
         btn.textChild.setTickerConfig({
           maxSize: { x: tickerMaxWidth },
           focusTarget: btn,
@@ -125,14 +101,17 @@ ig.module('crosscode-ru.fixes.item-lists')
       },
 
       setDrawCallback(callback) {
+        if (!this.enableTickerDisplay) return this.parent(callback);
+
         let btn = this.button;
         if (btn.iconTextChild == null) {
-          // fortunately, the whole drawCallback feature is used only for
-          // adding levels to item icons
+          if (callback == null) return;
           throw new Error(
-            'crosscode-ru: sc.ItemBoxButton.setDrawCallback: unsupported on a button without an icon because I am lazy',
+            'crosscode-ru: sc.ListBoxButton.setDrawCallback: unsupported on a button without an icon because I am lazy',
           );
         }
+        // fortunately, the whole drawCallback feature is used only for
+        // adding levels to equipment icons
         btn.iconTextChild.setDrawCallback(callback);
       },
 
@@ -140,8 +119,53 @@ ig.module('crosscode-ru.fixes.item-lists')
         // well... [insert shrug face here]
         // setButtonText isn't used at all in the entire codebase
         throw new Error(
-          'crosscode-ru: sc.ItemBoxButton.setButtonText: unimplemented',
+          'crosscode-ru: sc.ListBoxButton.setButtonText: unimplemented',
         );
+      },
+    });
+
+    // here's a full list of classes which are descendants of sc.ListBoxButton:
+    // sc.ItemBoxButton
+    // sc.DebugSkillLearner.ItemBoxButton
+    // sc.ShopItemButton
+    // sc.SocialEntryButton
+    // sc.EnemyEntryButton
+    // sc.LoreEntryButton
+    // sc.TradeItem
+    // - TradeEntryButton
+    // sc.BotanicsEntryButton
+    // sc.ArenaEntryButton
+    // - sc.ArenaRoundEntryButton
+    // sc.NewGameOptionButton
+    // TODO: put these in separate modules
+    sc.ItemBoxButton.inject({ enableTickerDisplay: true });
+    sc.ShopItemButton.inject({ enableTickerDisplay: true });
+    sc.TradeItem.inject({ enableTickerDisplay: true });
+    sc.BotanicsEntryButton.inject({ enableTickerDisplay: true });
+    sc.NewGameOptionButton.inject({ enableTickerDisplay: true });
+  });
+
+ig.module('crosscode-ru.fixes.new-game-menu')
+  .requires('game.feature.menu.gui.new-game.new-game-misc')
+  .defines(() => {
+    sc.NewGameOptionButton.inject({
+      name: null,
+
+      init(name, ...args) {
+        this.name = name;
+        this.parent('', ...args);
+      },
+
+      updateToggleState() {
+        let enabled = sc.newgame.options[this.data.id] || false;
+        let text = '\\i[toggle-item-';
+        text += enabled ? 'on' : 'off';
+        if (this.set.type === sc.TOGGLE_SET_TYPE.SINGLE) text += '-radio';
+        if (!this.active) text += '-grey';
+        text += ']';
+        text += this.name;
+        // the original implementation calls this.button.textChild.setText
+        this.setText(text);
       },
     });
   });
