@@ -252,3 +252,33 @@ ig.module('crosscode-ru.fixes.item-lists.social-menu')
       },
     });
   });
+
+ig.module('crosscode-ru.fixes.item-lists.quests')
+  .requires('game.feature.menu.gui.quests.quest-entries')
+  .defines(() => {
+    sc.SubTaskEntryBase.inject({
+      init(...args) {
+        this.parent(...args);
+        this._updateTickerConfig();
+      },
+
+      setSize(...args) {
+        this.parent(...args);
+        // make sure that this._updateTickerConfig is not called in the
+        // ig.BoxGui constructor before sc.SubTaskEntryBase is properly
+        // initialized
+        if (this.textGui != null) this._updateTickerConfig();
+      },
+
+      _updateTickerConfig() {
+        let maxWidth = this.hook.size.x;
+        maxWidth -= this.textGui.hook.pos.x; // left margin
+        maxWidth -= this.textGui.hook.pos.x / 2; // right margin
+        // check GUI elements created in subclasses
+        if (this.numberGui != null) {
+          maxWidth -= this.numberGui.hook.pos.x + this.numberGui.hook.size.x;
+        }
+        this.textGui.setTickerConfig({ maxSize: { x: maxWidth } });
+      },
+    });
+  });
