@@ -254,7 +254,10 @@ ig.module('crosscode-ru.fixes.item-lists.social-menu')
   });
 
 ig.module('crosscode-ru.fixes.item-lists.quests')
-  .requires('game.feature.menu.gui.quests.quest-entries')
+  .requires(
+    'game.feature.menu.gui.quests.quest-entries',
+    'crosscode-ru.ticker-display',
+  )
   .defines(() => {
     sc.SubTaskEntryBase.inject({
       init(...args) {
@@ -279,6 +282,22 @@ ig.module('crosscode-ru.fixes.item-lists.quests')
           maxWidth -= this.numberGui.hook.pos.x + this.numberGui.hook.size.x;
         }
         this.textGui.setTickerConfig({ maxSize: { x: maxWidth } });
+      },
+    });
+  });
+
+ig.module('crosscode-ru.fixes.equipment-menu')
+  .requires(
+    'game.feature.menu.gui.equip.equip-bodypart',
+    'crosscode-ru.ticker-display',
+  )
+  .defines(() => {
+    sc.EquipBodyPartContainer.Entry.inject({
+      init(...args) {
+        this.parent(...args);
+        this.button.textChild.setTickerConfig({
+          maxSize: { x: this.button.hook.size.x - 5 * 2 },
+        });
       },
     });
   });
