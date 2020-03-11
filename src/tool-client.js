@@ -12,6 +12,11 @@ export class RuTranslationToolNgClient {
     // this.gameWindow.on('close', this.onGameWindowClose.bind(this));
   }
 
+  async readSettings() {
+    let { readSettings } = await import('../tool/dist/settings.js');
+    return readSettings();
+  }
+
   open() {
     if (this.toolWindowIsOpening) return;
     if (this.toolWindow != null) {

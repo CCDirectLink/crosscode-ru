@@ -11,7 +11,7 @@ export default class RuTranslationToolNgPlugin extends Plugin {
   }
 
   prestart() {
-    window.ruTranslationToolNg = new RuTranslationToolNgClient(
+    sc.ru.translationTool = new RuTranslationToolNgClient(
       `${this.baseDirectory}/tool`,
     );
     return import('./prestart.js');
