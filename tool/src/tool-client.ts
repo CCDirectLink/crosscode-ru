@@ -1,23 +1,24 @@
-const nw = require('nw.gui');
+import { readSettings, Settings } from './settings.js';
+
+let scriptUrl: string = import.meta.url;
+let scriptDir = scriptUrl.slice(0, scriptUrl.lastIndexOf('/'));
 
 export class RuTranslationToolNgClient {
-  constructor(baseDirectory) {
-    this.baseDirectory = baseDirectory;
-    this.gameWindow = nw.Window.get();
-    this.toolWindow = null;
-    this.toolWindowIsOpening = false;
+  gameWindow: NWJS_Helpers.win = nw.Window.get();
+  toolWindow: NWJS_Helpers.win | null = null;
+  toolWindowIsOpening = false;
 
+  constructor() {
     // TODO: enable this when I find a workaround for listening to window
     //       events in the game iframe
     // this.gameWindow.on('close', this.onGameWindowClose.bind(this));
   }
 
-  async readSettings() {
-    let { readSettings } = await import('../tool/dist/settings.js');
+  readSettings(): Promise<Settings> {
     return readSettings();
   }
 
-  open() {
+  open(): void {
     if (this.toolWindowIsOpening) return;
     if (this.toolWindow != null) {
       this.toolWindow.focus();
@@ -26,15 +27,16 @@ export class RuTranslationToolNgClient {
 
     this.toolWindowIsOpening = true;
     nw.Window.open(
-      `${this.baseDirectory}/main.html`,
+      `${scriptDir}/../main.html`,
       // magic values from the game's package.json
       { width: 1136, height: 640 },
       toolWindow => {
+        if (toolWindow == null) return;
+
         this.toolWindow = toolWindow;
         this.toolWindowIsOpening = false;
 
-        this.toolWindow.window.gameWindow = this.gameWindow;
-
+        (this.toolWindow.window as any).gameWindow = this.gameWindow;
         this.toolWindow.on('closed', () => {
           this.toolWindow = null;
         });
@@ -42,7 +44,7 @@ export class RuTranslationToolNgClient {
     );
   }
 
-  onGameWindowClose() {
+  onGameWindowClose(): void {
     if (this.toolWindow != null) this.toolWindow.close();
     this.gameWindow.close(true);
   }

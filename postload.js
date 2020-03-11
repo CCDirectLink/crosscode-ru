@@ -1,5 +1,13 @@
 if (sc.ru == null) sc.ru = {};
 
+(async () => {
+  let { RuTranslationToolNgClient } = await import(
+    './tool/dist/tool-client.js'
+  );
+  sc.ru.translationTool = new RuTranslationToolNgClient();
+  await import('./src/open-translation-tool-button.js');
+})();
+
 const LOCALIZE_ME_PACKS_DIR = `ru-translation-tool-ng/localize-me-packs/`;
 const LOCALIZE_ME_MAPPING_FILE = `ru-translation-tool-ng/localize-me-mapping.json`;
 
