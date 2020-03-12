@@ -1,4 +1,17 @@
 # Ascended form of CrossCode mod packaging, true old-school UNIX style.
+# makefile cheat sheet: https://devhints.io/makefile
+
+# https://tech.davis-hansson.com/p/make/
+SHELL := bash
+.ONESHELL:
+.SHELLFLAGS := -eu -o pipefail -c
+.DELETE_ON_ERROR:
+MAKEFLAGS += --warn-undefined-variables
+MAKEFLAGS += --no-builtin-rules
+ifeq ($(origin .RECIPEPREFIX), undefined)
+  $(error This Make does not support .RECIPEPREFIX. Please use GNU Make 4.0 or later)
+endif
+.RECIPEPREFIX = >
 
 .PHONY: all clean
 
@@ -24,21 +37,21 @@ MODPACK_ARCHIVE_FILES := $(MOD_ARCHIVE_FILES) $(LOCALIZE_ME_DIR_NAME)
 all: $(MOD_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME)
 
 clean:
-	rm -rvf $(MOD_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME) $(MOD_DIR_NAME) $(LOCALIZE_ME_DIR_NAME)
+> rm -rvf $(MOD_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME) $(MOD_DIR_NAME) $(LOCALIZE_ME_DIR_NAME)
 
 $(MOD_ARCHIVE_NAME): $(MOD_ARCHIVE_FILES)
-	rm -rvf $@
-	zip -r $@ $^
+> rm -rvf $@
+> zip -r $@ $^
 
 $(MODPACK_ARCHIVE_NAME): $(MODPACK_ARCHIVE_FILES)
-	rm -rvf $@
-	zip -r $@ $^
+> rm -rvf $@
+> zip -r $@ $^
 
 $(MOD_DIR_NAME)/%: ../%
-	mkdir -pv $(@D)
-	cp -rv ../$* $(MOD_DIR_NAME)/$*
+> mkdir -pv $(@D)
+> cp -rv ../$* $(MOD_DIR_NAME)/$*
 
 $(LOCALIZE_ME_DIR_NAME):
-	mkdir -v $@
-	curl -fL https://github.com/L-Sherry/Localize-me/tarball/master | \
-		tar -C "$(LOCALIZE_ME_DIR_NAME)" --gzip --strip-components 1 --extract --verbose
+> mkdir -v $@
+> curl -fL https://github.com/L-Sherry/Localize-me/tarball/master | \
+    tar -C "$(LOCALIZE_ME_DIR_NAME)" --gzip --strip-components 1 --extract --verbose
