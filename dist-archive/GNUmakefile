@@ -74,8 +74,16 @@ $(MOD_DIR)/$(TRANSLATIONS_DIR)/%.json: $(TOOL_DATA_DIR)/%.json
 > mkdir -pv $(@D)
 > jq -c . $< > $@
 $(MOD_DIR)/%.js: ../%.js
-> mkdir -pv $(@D)
-> awk -f ./tool-section-preprocessor.awk $< > $@
+> mkdir -pv $(@D) && cp -r $< $@
+# The following sed command removes all text in the source file between
+# /* <tool> */ and /* </tool> */ directives. This way I can put a bit of
+# optional tool code in the mod files and remove it so that I don't ship it to
+# the users.
+# TODO: Consider moving all mod-code into the tool itself. Maybe even starting
+#       the mod from the tool files. Or splitting the tool into another mod and
+#       specifying the main one as a dependency. Anyway, this is a giant hack
+#       that must be avoided.
+> sed '/\/\* <tool> \*\//, /\/\* <\/tool> \*\// d' $< > $@
 $(MOD_DIR)/%: ../%
 > mkdir -pv $(@D) && cp -r $< $@
 $(TOOL_DIR)/%: ../%
