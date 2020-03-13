@@ -1,3 +1,4 @@
+/* <tool> */
 ig.module('crosscode-ru.translation-tool-ng')
   .requires('game.main', 'game.feature.gui.screen.title-screen')
   .defines(() => {
@@ -71,3 +72,4 @@ ig.module('crosscode-ru.translation-tool-ng')
       },
     });
   });
+/* </tool> */

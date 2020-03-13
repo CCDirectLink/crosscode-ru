@@ -5,6 +5,7 @@
 # $@    - name of the target
 # $(@D) - directory of the target
 # $^    - dependencies of the target
+# $<    - the first dependency of the target
 
 # https://tech.davis-hansson.com/p/make/
 SHELL := bash
@@ -56,17 +57,22 @@ $(MOD_ARCHIVE_NAME): $(MOD_ARCHIVE_FILES)
 $(TOOL_ARCHIVE_NAME): $(TOOL_ARCHIVE_FILES)
 $(MODPACK_ARCHIVE_NAME): $(MODPACK_ARCHIVE_FILES)
 $(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME):
-> rm -rvf $@ && zip -r $@ $^
+> rm -rvf $@
+> zip -r $@ $^
 
 $(LOCALIZE_ME_DIR_NAME):
 > mkdir -v $@
-> curl -fL https://github.com/L-Sherry/Localize-me/tarball/master | \
-    tar -C $@ --gzip --strip-components 1 --extract --verbose
+> curl --location --fail https://github.com/L-Sherry/Localize-me/tarball/master | \
+    tar -v --directory $@ --gzip --strip-components 1 --extract
 
 # Unfortuntatelly, the following file copying rules can't be merged together
 $(MOD_DIR_NAME)/assets/ru-translation-tool-ng/%: $(TOOL_DATA_DIR)/%
-> mkdir -pv $(@D) && cp -rv $^ $@
+> mkdir -pv $(@D) && cp -rv $< $@
+$(MOD_DIR_NAME)/%.js: ../%.js
+> mkdir -pv $(@D)
+> echo preprocessing $< '->' $@
+> awk -f ./tool-section-preprocessor.awk < $< > $@
 $(MOD_DIR_NAME)/%: ../%
-> mkdir -pv $(@D) && cp -rv $^ $@
+> mkdir -pv $(@D) && cp -rv $< $@
 $(TOOL_DIR_NAME)/%: ../%
-> mkdir -pv $(@D) && cp -rv $^ $@
+> mkdir -pv $(@D) && cp -rv $< $@
