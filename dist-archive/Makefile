@@ -1,6 +1,11 @@
 # Ascended form of CrossCode mod packaging, true old-school UNIX style.
 # makefile cheat sheet: https://devhints.io/makefile
 
+# short note about make's magic variables:
+# $@    - name of the target
+# $(@D) - directory of the target
+# $^    - dependencies of the target
+
 # https://tech.davis-hansson.com/p/make/
 SHELL := bash
 .ONESHELL:
@@ -48,24 +53,20 @@ clean:
 > rm -rvf $(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME) $(MOD_DIR_NAME) $(TOOL_DIR_NAME) $(LOCALIZE_ME_DIR_NAME)
 
 $(MOD_ARCHIVE_NAME): $(MOD_ARCHIVE_FILES)
-> rm -rvf $@ && zip -r $@ $^
-
 $(TOOL_ARCHIVE_NAME): $(TOOL_ARCHIVE_FILES)
-> rm -rvf $@ && zip -r $@ $^
-
 $(MODPACK_ARCHIVE_NAME): $(MODPACK_ARCHIVE_FILES)
+$(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME):
 > rm -rvf $@ && zip -r $@ $^
-
-$(MOD_DIR_NAME)/%: ../%
-> mkdir -pv $(@D) && cp -rv $^ $@
-
-$(MOD_DIR_NAME)/assets/ru-translation-tool-ng/%: $(TOOL_DATA_DIR)/%
-> mkdir -pv $(@D) && cp -rv $^ $@
-
-$(TOOL_DIR_NAME)/%: ../%
-> mkdir -pv $(@D) && cp -rv $^ $@
 
 $(LOCALIZE_ME_DIR_NAME):
 > mkdir -v $@
 > curl -fL https://github.com/L-Sherry/Localize-me/tarball/master | \
-    tar -C "$(LOCALIZE_ME_DIR_NAME)" --gzip --strip-components 1 --extract --verbose
+    tar -C $@ --gzip --strip-components 1 --extract --verbose
+
+# Unfortuntatelly, the following file copying rules can't be merged together
+$(MOD_DIR_NAME)/assets/ru-translation-tool-ng/%: $(TOOL_DATA_DIR)/%
+> mkdir -pv $(@D) && cp -rv $^ $@
+$(MOD_DIR_NAME)/%: ../%
+> mkdir -pv $(@D) && cp -rv $^ $@
+$(TOOL_DIR_NAME)/%: ../%
+> mkdir -pv $(@D) && cp -rv $^ $@
