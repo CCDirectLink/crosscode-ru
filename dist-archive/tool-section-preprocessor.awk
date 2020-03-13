@@ -9,6 +9,6 @@
 # enable flag if a line which contains the opening directive is found
 /\/\* <tool> \*\// { tool_section = 1 }
 # print all lines when the flag is disabled
-tool_section == 0 { print }
+!tool_section { print }
 # disable flag if a line which contains the closing directive is found
 /\/\* <\/tool> \*\// { tool_section = 0 }
