@@ -66,7 +66,7 @@ $(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME):
 
 $(LOCALIZE_ME_DIR):
 > mkdir -pv $@
-> curl --location --fail https://github.com/L-Sherry/Localize-me/tarball/master | \
+> curl --location --fail https://github.com/L-Sherry/Localize-me/archive/v0.5.2.tar.gz | \
     tar -v --directory $@ --gzip --strip-components 1 --extract
 
 # Unfortuntately, the following file copying rules can't be merged together
