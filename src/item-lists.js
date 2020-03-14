@@ -94,10 +94,8 @@ ig.module('crosscode-ru.fixes.item-lists')
           btn.hook.size.x - btn.textChild.hook.pos.x - padding;
         if (btn.textChild.hook.align.x === ig.GUI_ALIGN_X.CENTER)
           tickerMaxWidth -= padding;
-        btn.textChild.setTickerConfig({
-          maxSize: { x: tickerMaxWidth },
-          focusTarget: btn,
-        });
+        btn.textChild.tickerHook.setMaxSize({ x: tickerMaxWidth });
+        btn.textChild.tickerHook.focusTarget = btn;
       },
 
       setDrawCallback(callback) {
@@ -185,13 +183,11 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
       },
 
       _updateTickerConfig() {
-        this.compareItem.setTickerConfig({
-          maxSize: {
-            x:
-              this.hook.size.x -
-              this.compareItem.hook.pos.x -
-              this.compareHelpText.hook.pos.x,
-          },
+        this.compareItem.tickerHook.setMaxSize({
+          x:
+            this.hook.size.x -
+            this.compareItem.hook.pos.x -
+            this.compareHelpText.hook.pos.x,
         });
       },
     });
@@ -210,7 +206,7 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
       _createContent() {
         this.parent();
         this.entries.forEach(entry => {
-          entry.gui.setTickerConfig({ maxSize: { x: this.hook.size.x } });
+          entry.gui.tickerHook.setMaxSize({ x: this.hook.size.x });
         });
       },
     });
@@ -226,10 +222,8 @@ ig.module('crosscode-ru.fixes.item-lists.status-main-equipment')
       init(...args) {
         this.parent(...args);
         this.itemGui.hook.pos.x = this.textGui.hook.pos.x;
-        this.itemGui.setTickerConfig({
-          maxSize: {
-            x: this.hook.size.x - this.itemGui.hook.pos.x * 2,
-          },
+        this.itemGui.tickerHook.setMaxSize({
+          x: this.hook.size.x - this.itemGui.hook.pos.x * 2,
         });
       },
     });
@@ -245,8 +239,8 @@ ig.module('crosscode-ru.fixes.item-lists.social-menu')
       setCharacter(id) {
         this.parent(id);
         this.equip.hook.children.forEach(({ gui }) => {
-          gui.setTickerConfig({
-            maxSize: { x: this.equip.hook.size.x },
+          gui.tickerHook.setMaxSize({
+            x: this.equip.hook.size.x,
           });
         });
       },
@@ -281,7 +275,7 @@ ig.module('crosscode-ru.fixes.item-lists.quests')
         if (this.numberGui != null) {
           maxWidth -= this.numberGui.hook.pos.x + this.numberGui.hook.size.x;
         }
-        this.textGui.setTickerConfig({ maxSize: { x: maxWidth } });
+        this.textGui.tickerHook.setMaxSize({ x: maxWidth });
       },
     });
   });
@@ -295,8 +289,8 @@ ig.module('crosscode-ru.fixes.equipment-menu')
     sc.EquipBodyPartContainer.Entry.inject({
       init(...args) {
         this.parent(...args);
-        this.button.textChild.setTickerConfig({
-          maxSize: { x: this.button.hook.size.x - 5 * 2 },
+        this.button.textChild.tickerHook.setMaxSize({
+          x: this.button.hook.size.x - 5 * 2,
         });
       },
     });

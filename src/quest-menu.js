@@ -11,13 +11,11 @@ ig.module('crosscode-ru.fixes.quest-menu')
         let locationIconHook = this.locationGui.hook.children.find(
           ({ gui }) => gui instanceof ig.ImageGui && gui.image === this.gfx,
         );
-        this.locationText.setTickerConfig({
-          maxSize: {
-            x:
-              this.locationGui.hook.size.x -
-              this.locationText.hook.pos.x -
-              locationIconHook.pos.x,
-          },
+        this.locationText.tickerHook.setMaxSize({
+          x:
+            this.locationGui.hook.size.x -
+            this.locationText.hook.pos.x -
+            locationIconHook.pos.x,
         });
       },
     });

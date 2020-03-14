@@ -62,7 +62,7 @@ ig.module('crosscode-ru.fixes.info-bar')
         if (buffInfo != null && buffInfo._width > 0) {
           maxWidth -= buffInfo._width + buffInfo.hook.pos.x;
         }
-        this.text.setTickerConfig({ maxSize: { x: maxWidth } });
+        this.text.tickerHook.setMaxSize({ x: maxWidth });
       },
     });
   });

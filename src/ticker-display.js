@@ -18,14 +18,49 @@ ig.module('crosscode-ru.ticker-display')
       return Math.abs(Math.abs((x - a) % (2 * a)) - a);
     }
 
-    function updateDrawablesTicker(renderer, hook, timer, config, renderText) {
-      function tryRenderTicker() {
-        if (config == null) return false;
-        let { maxSize } = config;
+    sc.ru.TickerDisplayHook = ig.Class.extend({
+      hook: null,
+      renderText: null,
+      timer: 0,
+      maxSize: null,
+      focusTarget: null,
 
-        let { size, align } = hook;
+      init(hook, renderText) {
+        this.hook = hook;
+        this.renderText = renderText;
+      },
 
-        if (maxSize == null) maxSize = {};
+      setMaxSize(maxSize) {
+        this.maxSize = maxSize;
+        this.timer = 0;
+      },
+
+      update() {
+        if (
+          this.focusTarget != null &&
+          !(
+            this.focusTarget.focus ||
+            (this.focusTarget.keepPressed && this.focusTarget.pressed)
+          )
+        ) {
+          this.timer = 0;
+          return;
+        }
+
+        this.timer += ig.system.actualTick;
+      },
+
+      updateDrawables(renderer) {
+        let tickerDrawn = this.tryRenderTicker(renderer);
+        if (!tickerDrawn) this.renderText(renderer, 0, 0);
+      },
+
+      tryRenderTicker(renderer) {
+        let { maxSize, timer } = this;
+        if (maxSize == null) return;
+
+        let { size, align } = this.hook;
+
         maxSize = {
           x: maxSize.x != null ? maxSize.x : size.x,
           y: maxSize.y != null ? maxSize.y : size.y,
@@ -81,78 +116,45 @@ ig.module('crosscode-ru.ticker-display')
         let offsetX = calculateOffset('x');
         let offsetY = calculateOffset('y');
 
-        renderText(offsetX, offsetY);
+        this.renderText(renderer, offsetX, offsetY);
 
         renderer.undoTransform();
         renderer.undoTransform();
 
         return true;
-      }
-
-      let tickerDrawn = tryRenderTicker();
-      if (!tickerDrawn) renderText(0, 0);
-    }
+      },
+    });
 
     sc.TextGui.inject({
-      tickerTimer: 0,
-      tickerConfig: null,
+      tickerHook: null,
 
-      setTickerConfig(config) {
-        this.tickerConfig = config;
-        this.tickerTimer = 0;
+      init(...args) {
+        this.parent(...args);
+        this.tickerHook = new sc.ru.TickerDisplayHook(
+          this.hook,
+          (renderer, x, y) => {
+            renderer.addText(this.textBlock, x, y);
+          },
+        );
       },
 
       setText(text) {
-        if (this.text !== text) this.tickerTimer = 0;
+        if (this.text !== text) this.tickerHook.timer = 0;
         this.parent(text);
       },
 
       onVisibilityChange(...args) {
         this.parent(...args);
-        this.tickerTimer = 0;
+        this.tickerHook.timer = 0;
       },
 
       update() {
         this.parent();
-
-        // TODO: extract this to a function and apply to
-        // sc.ru.LongHorizontalTextGui as well
-
-        if (
-          this.text == null ||
-          this.text.length === 0 ||
-          this.tickerConfig == null ||
-          !this.isVisible() ||
-          !this.textBlock.isFinished()
-        ) {
-          return;
-        }
-
-        let { focusTarget } = this.tickerConfig;
-        if (
-          focusTarget != null &&
-          !(
-            focusTarget.focus ||
-            (focusTarget.keepPressed && focusTarget.pressed)
-          )
-        ) {
-          this.tickerTimer = 0;
-          return;
-        }
-
-        this.tickerTimer += ig.system.actualTick;
+        if (this.textBlock.isFinished()) this.tickerHook.update();
       },
 
       updateDrawables(renderer) {
-        updateDrawablesTicker(
-          renderer,
-          this.hook,
-          this.tickerTimer,
-          this.tickerConfig,
-          (x, y) => {
-            renderer.addText(this.textBlock, x, y);
-          },
-        );
+        this.tickerHook.updateDrawables(renderer);
       },
     });
 
@@ -210,20 +212,34 @@ ig.module('crosscode-ru.ticker-display')
       parsedText: '',
       commands: [],
       textBlocks: [],
-      tickerTimer: 0,
       tickerConfig: null,
+      tickerHook: null,
 
       init(text, { font = sc.fontsystem.font, linePadding } = {}) {
         this.parent();
         this.font = font;
         this.linePadding = linePadding;
+        this.tickerHook = new sc.ru.TickerDisplayHook(
+          this.hook,
+          (renderer, x, y) => {
+            let offset = 0;
+            this.textBlocks.forEach(tb => {
+              // let color = ['red', 'green', 'blue'][blockIndex % 3];
+              // renderer
+              //   .addColor(color, x + offset, y, tb.size.x, tb.size.y)
+              //   .setAlpha(0.3);
+              renderer.addText(tb, x + offset, y);
+              offset += tb.size.x;
+            });
+          },
+        );
         this.setText(text);
       },
 
       setText(text) {
         this.clear();
         this.textBlocks = [];
-        if (this.text !== text) this.tickerTimer = 0;
+        if (this.text !== text) this.tickerHook.timer = 0;
 
         let textBlockConfig = {
           speed: ig.TextBlock.SPEED.IMMEDIATE,
@@ -264,7 +280,7 @@ ig.module('crosscode-ru.ticker-display')
             blockCommands,
             textBlockConfig,
           );
-          this.textBlocks.push({ offset: this.hook.size.x, textBlock });
+          this.textBlocks.push(textBlock);
           this.setSize(
             this.hook.size.x + textBlock.size.x,
             Math.max(this.hook.size.y, textBlock.size.y),
@@ -303,65 +319,28 @@ ig.module('crosscode-ru.ticker-display')
       },
 
       onVisibilityChange(visible) {
-        this.tickerTimer = 0;
-        this.textBlocks.forEach(({ textBlock: tb }) => {
-          if (visible) tb.prerender();
-          else tb.clearPrerendered();
-        });
+        this.textBlocks.forEach(tb =>
+          visible ? tb.prerender() : tb.clearPrerendered(),
+        );
+        this.tickerHook.timer = 0;
       },
 
       clear() {
-        this.textBlocks.forEach(({ textBlock: tb }) => tb.clearPrerendered());
-      },
-
-      setTickerConfig(config) {
-        this.tickerConfig = config;
-        this.tickerTimer = 0;
+        this.textBlocks.forEach(tb => tb.clearPrerendered());
       },
 
       update() {
-        this.textBlocks.forEach(({ textBlock: tb }) => tb.update());
-        if (
-          this.text != null &&
-          this.text.length > 0 &&
-          this.tickerConfig != null &&
-          this.isVisible()
-        ) {
-          this.tickerTimer += ig.system.actualTick;
-        }
+        this.textBlocks.forEach(tb => tb.update());
+        this.tickerHook.update();
       },
 
       updateDrawables(renderer) {
-        // const COLORS = [
-        //   'rgba(255, 0, 0, 0.3)',
-        //   'rgba(0, 255, 0, 0.3)',
-        //   'rgba(0, 0, 255, 0.3)',
-        // ];
-
-        updateDrawablesTicker(
-          renderer,
-          this.hook,
-          this.tickerTimer,
-          this.tickerConfig,
-          (x, y) => {
-            this.textBlocks.forEach(({ textBlock, offset }) => {
-              // let color = COLORS[blockIndex % COLORS.length];
-              // renderer.addColor(
-              //   color,
-              //   x + offset,
-              //   y,
-              //   textBlock.size.x,
-              //   textBlock.size.y,
-              // );
-              renderer.addText(textBlock, x + offset, y);
-            });
-          },
-        );
+        this.tickerHook.updateDrawables(renderer);
       },
 
       onAttach() {
         if (this.isVisible()) {
-          this.textBlocks.forEach(({ textBlock: tb }) => tb.prerender());
+          this.textBlocks.forEach(tb => tb.prerender());
         }
       },
 
