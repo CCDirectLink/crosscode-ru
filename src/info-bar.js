@@ -30,18 +30,19 @@ ig.module('crosscode-ru.fixes.info-bar')
         this.doStateTransition('HIDDEN', true);
         // END OF THE ORIGINAL COdE
 
-        this._updateTickerConfig();
+        this.text.tickerHook.speed.x *= 1.5;
+        this._updateTickerMaxSize();
       },
 
       update() {
-        let shouldUpdateConfig = this.sizeTransition != null;
+        let shouldUpdateMaxSize = this.sizeTransition != null;
         this.parent();
-        if (shouldUpdateConfig) this._updateTickerConfig();
+        if (shouldUpdateMaxSize) this._updateTickerMaxSize();
       },
 
       doSizeTransition(width, height, time, timeFunction, delay) {
         this.parent(width, height, time, timeFunction, delay);
-        if (time == null) this._updateTickerConfig();
+        if (time == null) this._updateTickerMaxSize();
       },
 
       addChildGui(gui) {
@@ -51,12 +52,13 @@ ig.module('crosscode-ru.fixes.info-bar')
           let buffInfoSetText = this.associatedBuffInfo.setText;
           this.associatedBuffInfo.setText = (text, initDelay) => {
             buffInfoSetText.call(this.associatedBuffInfo, text, initDelay);
-            if (initDelay == null || initDelay <= 0) this._updateTickerConfig();
+            if (initDelay == null || initDelay <= 0)
+              this._updateTickerMaxSize();
           };
         }
       },
 
-      _updateTickerConfig() {
+      _updateTickerMaxSize() {
         let maxWidth = this.hook.size.x - this.text.hook.pos.x * 2;
         let buffInfo = this.associatedBuffInfo;
         if (buffInfo != null && buffInfo._width > 0) {

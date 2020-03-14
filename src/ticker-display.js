@@ -9,11 +9,6 @@ ig.module('crosscode-ru.ticker-display')
     'game.feature.font.font-system',
   )
   .defines(() => {
-    // TODO: move these constants into the sc.ru.* namespace
-    const DELAY_AT_BORDERS = { x: 1, y: 1 };
-    const TICKER_SPEED = { x: 50, y: 50 };
-    const ALLOWED_OVERFLOW = { x: 1, y: 1 };
-
     function triangleWave(x, a) {
       return Math.abs(Math.abs((x - a) % (2 * a)) - a);
     }
@@ -22,6 +17,8 @@ ig.module('crosscode-ru.ticker-display')
       hook: null,
       renderText: null,
       timer: 0,
+      speed: { x: 50, y: 50 }, // pixels per second
+      delayAtBorders: { x: 1, y: 1 }, // seconds
       maxSize: null,
       focusTarget: null,
 
@@ -47,7 +44,7 @@ ig.module('crosscode-ru.ticker-display')
           return;
         }
 
-        this.timer += ig.system.actualTick;
+        this.timer += ig.system.tick;
       },
 
       updateDrawables(renderer) {
@@ -56,7 +53,7 @@ ig.module('crosscode-ru.ticker-display')
       },
 
       tryRenderTicker(renderer) {
-        let { maxSize, timer } = this;
+        let { maxSize, timer, speed, delayAtBorders } = this;
         if (maxSize == null) return;
 
         let { size, align } = this.hook;
@@ -84,8 +81,8 @@ ig.module('crosscode-ru.ticker-display')
         //   .setAlpha(0.25);
 
         let overflow = {
-          x: size.x - maxSize.x > ALLOWED_OVERFLOW.x,
-          y: size.y - maxSize.y > ALLOWED_OVERFLOW.y,
+          x: size.x > maxSize.x,
+          y: size.y > maxSize.y,
         };
         if (!overflow.x && !overflow.y) return false;
 
@@ -99,15 +96,17 @@ ig.module('crosscode-ru.ticker-display')
         function calculateOffset(axis) {
           if (!overflow[axis]) return 0;
           let length = size[axis] - maxSize[axis];
-          let speed = TICKER_SPEED[axis];
-          let delay = DELAY_AT_BORDERS[axis];
+          let spd = speed[axis];
           // multiply the delay by speed so that delay isn't affected by speed
           // and always means the same time in seconds
-          let scaledDelay = delay * speed;
+          let scaledDelay = delayAtBorders[axis] * spd;
           return (
             prtPos[axis] -
             (
-              triangleWave((timer - delay / 2) * speed, length + scaledDelay) -
+              triangleWave(
+                timer * spd - scaledDelay / 2,
+                length + scaledDelay,
+              ) -
               scaledDelay / 2
             ).limit(0, length)
           );

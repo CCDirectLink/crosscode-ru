@@ -57,7 +57,7 @@ ig.module('crosscode-ru.fixes.item-lists')
         } else if (iconTextChild != null) {
           this._removeButtonIconTextChild();
         }
-        this._updateButtonTextChildTickerConfig();
+        this._updateButtonTextChildTickerMaxSize();
       },
 
       _addButtonIconTextChild(iconSequence) {
@@ -87,7 +87,7 @@ ig.module('crosscode-ru.fixes.item-lists')
         btn.textChild.setPos(pos.x, pos.y);
       },
 
-      _updateButtonTextChildTickerConfig() {
+      _updateButtonTextChildTickerMaxSize() {
         let btn = this.button;
         let padding = sc.BUTTON_TYPE.ITEM.alignXPadding;
         let tickerMaxWidth =
@@ -179,10 +179,10 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
     sc.TradeToggleStats.inject({
       _createContent() {
         this.parent();
-        this._updateTickerConfig();
+        this._updateTickerMaxSize();
       },
 
-      _updateTickerConfig() {
+      _updateTickerMaxSize() {
         this.compareItem.tickerHook.setMaxSize({
           x:
             this.hook.size.x -
@@ -198,7 +198,7 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
         // despite the fact that sc.ShopEquipStats extends sc.TradeToggleStats,
         // ticker config must be recalculated here once again because
         // constructor of sc.ShopEquipStats modifies this.hook.size
-        this._updateTickerConfig();
+        this._updateTickerMaxSize();
       },
     });
 
@@ -256,18 +256,18 @@ ig.module('crosscode-ru.fixes.item-lists.quests')
     sc.SubTaskEntryBase.inject({
       init(...args) {
         this.parent(...args);
-        this._updateTickerConfig();
+        this._updateTickerMaxSize();
       },
 
       setSize(...args) {
         this.parent(...args);
-        // make sure that this._updateTickerConfig is not called in the
+        // make sure that this._updateTickerMaxSize is not called in the
         // ig.BoxGui constructor before sc.SubTaskEntryBase is properly
         // initialized
-        if (this.textGui != null) this._updateTickerConfig();
+        if (this.textGui != null) this._updateTickerMaxSize();
       },
 
-      _updateTickerConfig() {
+      _updateTickerMaxSize() {
         let maxWidth = this.hook.size.x;
         maxWidth -= this.textGui.hook.pos.x; // left margin
         maxWidth -= this.textGui.hook.pos.x / 2; // right margin
