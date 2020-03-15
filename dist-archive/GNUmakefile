@@ -35,7 +35,8 @@ MOD_ID := $(shell jq -r '.name' ../package.json)
 MOD_VERSION := $(shell jq -r '.version' ../package.json)
 MOD_DIR := $(MOD_ID)
 TOOL_DIR := $(MOD_ID)-tool
-LOCALIZE_ME_DIR := Localize-me
+LOCALIZE_ME_MOD_DIR := Localize-me
+CC_WORLD_MAP_OVERHAUL_MOD_DIR := cc-world-map-overhaul
 TRANSLATIONS_DIR := assets/ru-translation-tool-ng
 
 TOOL_FILES := tool/dist/*.js tool/dist/*.js.map tool/dist/*.css tool/dist/*.css.map tool/main.html
@@ -50,12 +51,12 @@ MOD_ARCHIVE_FILES := $(addprefix $(MOD_DIR)/,$(MOD_FILES) $(addprefix $(TRANSLAT
 TOOL_ARCHIVE_NAME := $(TOOL_DIR)_v$(MOD_VERSION).zip
 TOOL_ARCHIVE_FILES := $(addprefix $(TOOL_DIR)/,$(TOOL_FILES) $(MOD_FILES))
 MODPACK_ARCHIVE_NAME := $(MOD_DIR)_modpack_v$(MOD_VERSION).zip
-MODPACK_ARCHIVE_FILES := $(MOD_ARCHIVE_FILES) $(LOCALIZE_ME_DIR)
+MODPACK_ARCHIVE_FILES := $(MOD_ARCHIVE_FILES) $(LOCALIZE_ME_MOD_DIR) $(CC_WORLD_MAP_OVERHAUL_MOD_DIR)
 
 all: $(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME)
 
 clean:
-> rm -rvf $(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME) $(MOD_DIR) $(TOOL_DIR) $(LOCALIZE_ME_DIR)
+> rm -rvf $(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME) $(MOD_DIR) $(TOOL_DIR) $(LOCALIZE_ME_MOD_DIR) $(CC_WORLD_MAP_OVERHAUL_MOD_DIR)
 
 $(MOD_ARCHIVE_NAME): $(MOD_ARCHIVE_FILES)
 $(TOOL_ARCHIVE_NAME): $(TOOL_ARCHIVE_FILES)
@@ -64,10 +65,15 @@ $(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME):
 > rm -rvf $@
 > zip -r $@ $^
 
-$(LOCALIZE_ME_DIR):
-> mkdir -pv $@
-> curl --location --fail https://github.com/L-Sherry/Localize-me/archive/v0.5.2.tar.gz | \
-    tar -v --directory $@ --gzip --strip-components 1 --extract
+define download_crosscode_mod
+mkdir -pv $1 && \
+curl --location --fail $2 | tar -v --directory $1 --gzip --strip-components 1 --extract
+endef
+
+$(LOCALIZE_ME_MOD_DIR):
+> $(call download_crosscode_mod,$@,https://github.com/L-Sherry/Localize-me/archive/v0.5.2.tar.gz)
+$(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
+> $(call download_crosscode_mod,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.0/cc-world-map-overhaul_v1.0.0.tar.gz)
 
 # Unfortuntately, the following file copying rules can't be merged together
 $(MOD_DIR)/$(TRANSLATIONS_DIR)/%.json: $(TOOL_DATA_DIR)/%.json
