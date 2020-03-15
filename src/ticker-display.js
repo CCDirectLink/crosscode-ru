@@ -365,34 +365,30 @@ ig.module('crosscode-ru.ticker-display')
       if (text == null) text = '';
       if (typeof text === 'object') text = text.toString();
 
-      if (text.length === 0) {
-        return {
-          firstIcon: '',
-          iconCommands: [],
-          parsedText: '',
-          commands: [],
-        };
-      }
-
       let commands = [];
       let parsedText = ig.TextParser.parse(text, commands, font);
-      let firstIcon = null;
-      let iconCommands = null;
+      // NOTE: setDrawCallback might not be handled correctly when the icon
+      // string is empty. I should check for changes in draw callback usages in
+      // future updates.
+      let firstIcon = '';
+      let iconCommands = [];
 
-      let firstChar = parsedText.charCodeAt(0);
-      if (
-        firstChar >= ig.MultiFont.ICON_START &&
-        firstChar < ig.MultiFont.ICON_END &&
-        font.iconSets.length > 0
-      ) {
-        firstIcon = String.fromCharCode(firstChar);
-        parsedText = parsedText.slice(1);
-        iconCommands = [];
-        commands.forEach(cmd => {
-          cmd.index = Math.max(cmd.index - 1, 0);
-          if (cmd.index === 0) iconCommands.push(cmd);
-        });
+      if (parsedText.length > 0 && font.iconSets.length > 0) {
+        let firstChar = parsedText.charCodeAt(0);
+        if (
+          firstChar >= ig.MultiFont.ICON_START &&
+          firstChar < ig.MultiFont.ICON_END
+        ) {
+          firstIcon = String.fromCharCode(firstChar);
+          parsedText = parsedText.slice(1);
+          iconCommands = [];
+          commands.forEach(cmd => {
+            cmd.index = Math.max(cmd.index - 1, 0);
+            if (cmd.index === 0) iconCommands.push(cmd);
+          });
+        }
       }
+
       return { firstIcon, iconCommands, parsedText, commands };
     }
 
@@ -415,11 +411,6 @@ ig.module('crosscode-ru.ticker-display')
           text,
           this.font,
         );
-        if (firstIcon == null) {
-          throw new Error(
-            'sc.ru.IconTextGui: not implemented for text without icons yet',
-          );
-        }
 
         // TODO: limit `options` here
         this.iconTextBlock = new sc.ru.RawTextBlock(
@@ -453,11 +444,6 @@ ig.module('crosscode-ru.ticker-display')
           text,
           this.font,
         );
-        if (firstIcon == null) {
-          throw new Error(
-            'sc.ru.IconTextGui: not implemented for text without icons yet',
-          );
-        }
 
         this.iconTextBlock.setText(firstIcon, iconCommands);
         this.textBlock.setText(parsedText, commands);

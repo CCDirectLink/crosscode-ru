@@ -10,116 +10,33 @@ function guiMapChildren(gui, callback) {
 ig.module('crosscode-ru.fixes.item-lists')
   .requires('game.feature.menu.gui.menu-misc', 'crosscode-ru.ticker-display')
   .defines(() => {
-    sc.ButtonGui.inject({
-      iconTextChild: null,
-
-      _getDefaultTextChildPos() {
-        return { x: this.buttonType.alignXPadding || 0, y: 0 };
-      },
-    });
-
-    function parseButtonIconText(text) {
-      if (text == null) text = '';
-      if (typeof text === 'object') text = text.toString();
-
-      let iconSequence = null;
-      let match = /^\\i\[[^\]]+\]/.exec(text);
-      if (match != null) {
-        iconSequence = match[0];
-        text = text.slice(iconSequence.length);
-      }
-
-      return { iconSequence, text };
-    }
-
     sc.ListBoxButton.inject({
       init(text, ...args) {
-        let iconSequence;
-        if (this.enableTickerDisplay) {
-          ({ iconSequence, text } = parseButtonIconText(text));
-        }
-
         this.parent(text, ...args);
 
-        if (this.enableTickerDisplay) this._setIconSequence(iconSequence);
+        if (this.enableTickerDisplay) {
+          let oldTextChild = this.button.textChild;
+          let newTextChild = new sc.ru.IconTextGui(text);
+          newTextChild.setAlign(
+            oldTextChild.hook.align.x,
+            oldTextChild.hook.align.y,
+          );
+          newTextChild.setPos(oldTextChild.hook.pos.x, oldTextChild.hook.pos.y);
+          newTextChild.tickerHook.setMaxSize({
+            x: this.button.hook.size.x - sc.BUTTON_TYPE.ITEM.alignXPadding * 2,
+          });
+          newTextChild.tickerHook.focusTarget = this.button;
+
+          this.button.removeChildGui(oldTextChild);
+          this.button.addChildGui(newTextChild);
+          this.button.textChild = newTextChild;
+        }
       },
 
       setText(text) {
-        if (!this.enableTickerDisplay) return this.parent(text);
-
-        let iconSequence;
-        ({ iconSequence, text } = parseButtonIconText(text));
-
-        let btn = this.button;
-        btn.text = text;
-        btn.textChild.setText(btn.getButtonText());
-        btn.setWidth(this._width);
-
-        this._setIconSequence(iconSequence);
-      },
-
-      _setIconSequence(icon) {
-        let { iconTextChild } = this.button;
-        if (icon != null) {
-          if (iconTextChild != null) iconTextChild.setText(icon);
-          else this._addButtonIconTextChild(icon);
-        } else if (iconTextChild != null) {
-          this._removeButtonIconTextChild();
-        }
-        this._updateButtonTextChildTickerMaxSize();
-      },
-
-      _addButtonIconTextChild(iconSequence) {
-        let btn = this.button;
-
-        let { textChild } = btn;
-        let iconTextChild = new sc.TextGui(iconSequence, {
-          speed: ig.TextBlock.SPEED.IMMEDIATE,
-        });
-        iconTextChild.setAlign(textChild.hook.align.x, textChild.hook.align.y);
-
-        let pos = btn._getDefaultTextChildPos();
-        iconTextChild.setPos(pos.x, pos.y);
-        textChild.setPos(pos.x + iconTextChild.hook.size.x, pos.y);
-
-        btn.iconTextChild = iconTextChild;
-        btn.addChildGui(iconTextChild);
-        this.setLevel(this.level);
-      },
-
-      _removeButtonIconTextChild() {
-        let btn = this.button;
-        this.setDrawCallback(null);
-        btn.removeChildGui(btn.iconTextChild);
-        btn.iconTextChild = null;
-        let pos = btn._getDefaultTextChildPos();
-        btn.textChild.setPos(pos.x, pos.y);
-      },
-
-      _updateButtonTextChildTickerMaxSize() {
-        let btn = this.button;
-        let padding = sc.BUTTON_TYPE.ITEM.alignXPadding;
-        let tickerMaxWidth =
-          btn.hook.size.x - btn.textChild.hook.pos.x - padding;
-        if (btn.textChild.hook.align.x === ig.GUI_ALIGN_X.CENTER)
-          tickerMaxWidth -= padding;
-        btn.textChild.tickerHook.setMaxSize({ x: tickerMaxWidth });
-        btn.textChild.tickerHook.focusTarget = btn;
-      },
-
-      setDrawCallback(callback) {
-        if (!this.enableTickerDisplay) return this.parent(callback);
-
-        let btn = this.button;
-        if (btn.iconTextChild == null) {
-          if (callback == null) return;
-          throw new Error(
-            'crosscode-ru: sc.ListBoxButton.setDrawCallback: unsupported on a button without an icon because I am lazy',
-          );
-        }
-        // fortunately, the whole drawCallback feature is used only for
-        // adding levels to equipment icons
-        btn.iconTextChild.setDrawCallback(callback);
+        this.button.text = text;
+        this.button.textChild.setText(this.button.getButtonText());
+        this.button.setWidth(this._width);
       },
 
       setButtonText(_text) {
