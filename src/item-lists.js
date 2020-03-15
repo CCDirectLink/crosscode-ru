@@ -179,6 +179,17 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
     sc.TradeToggleStats.inject({
       _createContent() {
         this.parent();
+
+        let newCompareItem = new sc.ru.IconTextGui('');
+        newCompareItem.setPos(
+          this.compareItem.hook.pos.x,
+          this.compareItem.hook.pos.y,
+        );
+
+        this.removeChildGui(this.compareItem);
+        this.addChildGui(newCompareItem);
+        this.compareItem = newCompareItem;
+
         this._updateTickerMaxSize();
       },
 
@@ -206,7 +217,22 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
       _createContent() {
         this.parent();
         this.entries.forEach(entry => {
-          entry.gui.tickerHook.setMaxSize({ x: this.hook.size.x });
+          let { gui } = entry;
+          let newGui = new sc.ru.IconTextGui(gui.text);
+          newGui.tradeName = gui.tradeName;
+          newGui.setAlign(gui.hook.align.x, gui.hook.align.y);
+          newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
+          let { level, numberGfx } = gui;
+          if (level > 0) {
+            newGui.setDrawCallback((width, height) =>
+              sc.MenuHelper.drawLevel(level, width, height, numberGfx),
+            );
+          }
+          newGui.tickerHook.setMaxSize({ x: this.hook.size.x - 3 * 2 });
+
+          this.removeChildGui(gui);
+          this.addChildGui(newGui);
+          entry.gui = newGui;
         });
       },
     });
@@ -221,10 +247,15 @@ ig.module('crosscode-ru.fixes.item-lists.status-main-equipment')
     sc.StatusViewMainEquipment.Entry.inject({
       init(...args) {
         this.parent(...args);
-        this.itemGui.hook.pos.x = this.textGui.hook.pos.x;
-        this.itemGui.tickerHook.setMaxSize({
+        let newItemGui = new sc.ru.IconTextGui(this.itemGui.text);
+        newItemGui.setPos(this.textGui.hook.pos.x, this.itemGui.hook.pos.y);
+        newItemGui.tickerHook.setMaxSize({
           x: this.hook.size.x - this.itemGui.hook.pos.x * 2,
         });
+
+        this.removeChildGui(this.itemGui);
+        this.addChildGui(newItemGui);
+        this.itemGui = newItemGui;
       },
     });
   });
@@ -238,10 +269,22 @@ ig.module('crosscode-ru.fixes.item-lists.social-menu')
     sc.SocialInfoBox.inject({
       setCharacter(id) {
         this.parent(id);
-        this.equip.hook.children.forEach(({ gui }) => {
-          gui.tickerHook.setMaxSize({
+        // make a copy of array of children GUIs because I'll be modifying
+        // `this.equip.hook.children`
+        let oldGuis = this.equip.hook.children.map(hook => hook.gui);
+        oldGuis.forEach(gui => {
+          let newGui = new sc.ru.IconTextGui(gui.text);
+          newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
+          let { level, numberGfx } = gui;
+          newGui.setDrawCallback((width, height) =>
+            sc.MenuHelper.drawLevel(level, width, height, numberGfx),
+          );
+          newGui.tickerHook.setMaxSize({
             x: this.equip.hook.size.x,
           });
+
+          this.equip.removeChildGui(gui);
+          this.equip.addChildGui(newGui);
         });
       },
     });
@@ -256,15 +299,17 @@ ig.module('crosscode-ru.fixes.item-lists.quests')
     sc.SubTaskEntryBase.inject({
       init(...args) {
         this.parent(...args);
-        this._updateTickerMaxSize();
-      },
 
-      setSize(...args) {
-        this.parent(...args);
-        // make sure that this._updateTickerMaxSize is not called in the
-        // ig.BoxGui constructor before sc.SubTaskEntryBase is properly
-        // initialized
-        if (this.textGui != null) this._updateTickerMaxSize();
+        let newTextGui = new sc.ru.IconTextGui('', {
+          font: sc.fontsystem.smallFont,
+        });
+        newTextGui.setPos(this.textGui.hook.pos.x, this.textGui.hook.pos.y);
+
+        this.removeChildGui(this.textGui);
+        this.addChildGui(newTextGui);
+        this.textGui = newTextGui;
+
+        this._updateTickerMaxSize();
       },
 
       _updateTickerMaxSize() {
@@ -278,6 +323,15 @@ ig.module('crosscode-ru.fixes.item-lists.quests')
         this.textGui.tickerHook.setMaxSize({ x: maxWidth });
       },
     });
+
+    sc.TaskEntry.inject({
+      setTask(...args) {
+        this.parent(...args);
+        this._subtasks.forEach(subTaskEntry => {
+          subTaskEntry._updateTickerMaxSize();
+        });
+      },
+    });
   });
 
 ig.module('crosscode-ru.fixes.equipment-menu')
@@ -289,9 +343,26 @@ ig.module('crosscode-ru.fixes.equipment-menu')
     sc.EquipBodyPartContainer.Entry.inject({
       init(...args) {
         this.parent(...args);
-        this.button.textChild.tickerHook.setMaxSize({
+
+        let oldTextChild = this.button.textChild;
+        let newTextChild = new sc.ru.IconTextGui(oldTextChild.text);
+        newTextChild.setAlign(
+          oldTextChild.hook.align.x,
+          oldTextChild.hook.align.y,
+        );
+        newTextChild.setPos(oldTextChild.hook.pos.x, oldTextChild.hook.pos.y);
+        newTextChild.setDrawCallback((width, height) => {
+          if (this.level > 0) {
+            sc.MenuHelper.drawLevel(this.level, width, height, this.numberGfx);
+          }
+        });
+        newTextChild.tickerHook.setMaxSize({
           x: this.button.hook.size.x - 5 * 2,
         });
+
+        this.button.removeChildGui(oldTextChild);
+        this.button.addChildGui(newTextChild);
+        this.button.textChild = newTextChild;
       },
     });
   });
