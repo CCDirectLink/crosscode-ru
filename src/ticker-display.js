@@ -16,9 +16,10 @@ ig.module('crosscode-ru.ticker-display')
     sc.ru.TickerDisplayHook = ig.Class.extend({
       hook: null,
       renderText: null,
-      timer: 0,
+      timer: 0, // seconds
       speed: { x: 50, y: 50 }, // pixels per second
       delayAtBorders: { x: 1, y: 1 }, // seconds
+      constantTextOffset: { x: 0, y: 0 }, // pixels
       maxSize: null,
       focusTarget: null,
 
@@ -48,12 +49,23 @@ ig.module('crosscode-ru.ticker-display')
       },
 
       updateDrawables(renderer) {
-        let tickerDrawn = this.tryRenderTicker(renderer);
-        if (!tickerDrawn) this.renderText(renderer, 0, 0);
+        let tickerDrawn = this._tryRenderTicker(renderer);
+        if (tickerDrawn) return;
+        this.renderText(
+          renderer,
+          this.constantTextOffset.x,
+          this.constantTextOffset.y,
+        );
       },
 
-      tryRenderTicker(renderer) {
-        let { maxSize, timer, speed, delayAtBorders } = this;
+      _tryRenderTicker(renderer) {
+        let {
+          maxSize,
+          timer,
+          speed,
+          delayAtBorders,
+          constantTextOffset,
+        } = this;
         if (maxSize == null) return;
 
         let { size, align } = this.hook;
@@ -65,14 +77,15 @@ ig.module('crosscode-ru.ticker-display')
 
         let prtPos = { x: 0, y: 0 };
         if (align.x === ig.GUI_ALIGN.X_CENTER) {
-          prtPos.x -= Math.floor((maxSize.x - size.x) / 2);
+          // dunno why, but Math.ceil does centering better than Math.floor here
+          prtPos.x = Math.ceil((size.x - maxSize.x) / 2);
         } else if (align.x === ig.GUI_ALIGN.X_RIGHT) {
-          prtPos.x -= maxSize.x - size.x;
+          prtPos.x = size.x - maxSize.x;
         }
         if (align.y === ig.GUI_ALIGN.Y_CENTER) {
-          prtPos.y -= Math.floor((maxSize.y - size.y) / 2);
+          prtPos.y = Math.ceil((size.y - maxSize.y) / 2);
         } else if (align.y === ig.GUI_ALIGN.Y_RIGHT) {
-          prtPos.y -= maxSize.y - size.y;
+          prtPos.y = size.y - maxSize.y;
         }
 
         // renderer.addColor('red', 0, 0, size.x, size.y).setAlpha(0.25);
@@ -88,9 +101,14 @@ ig.module('crosscode-ru.ticker-display')
 
         renderer
           .addTransform()
-          .setTranslate(prtPos.x, prtPos.y)
-          .setClip(maxSize.x, maxSize.y);
-        renderer.addTransform().setTranslate(-prtPos.x, -prtPos.y);
+          .setTranslate(
+            prtPos.x + constantTextOffset.x,
+            prtPos.y + constantTextOffset.y,
+          )
+          .setClip(
+            maxSize.x - constantTextOffset.x,
+            maxSize.y - constantTextOffset.y,
+          );
 
         // TODO: display shadows at the overflowing side
         function calculateOffset(axis) {
@@ -101,23 +119,16 @@ ig.module('crosscode-ru.ticker-display')
           // and always means the same time in seconds
           let scaledDelay = delayAtBorders[axis] * spd;
           return (
-            prtPos[axis] -
-            (
-              triangleWave(
-                timer * spd - scaledDelay / 2,
-                length + scaledDelay,
-              ) -
-              scaledDelay / 2
-            ).limit(0, length)
-          );
+            triangleWave(timer * spd - scaledDelay / 2, length + scaledDelay) -
+            scaledDelay / 2
+          ).limit(0, length);
         }
 
         let offsetX = calculateOffset('x');
         let offsetY = calculateOffset('y');
 
-        this.renderText(renderer, offsetX, offsetY);
+        this.renderText(renderer, -offsetX, -offsetY);
 
-        renderer.undoTransform();
         renderer.undoTransform();
 
         return true;
@@ -317,15 +328,25 @@ ig.module('crosscode-ru.ticker-display')
         );
       },
 
-      onVisibilityChange(visible) {
-        this.textBlocks.forEach(tb =>
-          visible ? tb.prerender() : tb.clearPrerendered(),
-        );
-        this.tickerHook.timer = 0;
+      prerender() {
+        this.textBlocks.forEach(tb => tb.prerender());
       },
 
       clear() {
         this.textBlocks.forEach(tb => tb.clearPrerendered());
+      },
+
+      onVisibilityChange(visible) {
+        visible ? this.prerender() : this.clear();
+        this.tickerHook.timer = 0;
+      },
+
+      onAttach() {
+        if (this.isVisible()) this.prerender();
+      },
+
+      onDetach() {
+        this.clear();
       },
 
       update() {
@@ -336,17 +357,193 @@ ig.module('crosscode-ru.ticker-display')
       updateDrawables(renderer) {
         this.tickerHook.updateDrawables(renderer);
       },
+    });
+    // the splitting width is a smaller than ig.system.width, just to be safe
+    sc.ru.LongHorizontalTextGui.SPLIT_WIDTH = 500;
+
+    function parseIconText(text, font) {
+      if (text == null) text = '';
+      if (typeof text === 'object') text = text.toString();
+
+      if (text.length === 0) {
+        return {
+          firstIcon: '',
+          iconCommands: [],
+          parsedText: '',
+          commands: [],
+        };
+      }
+
+      let commands = [];
+      let parsedText = ig.TextParser.parse(text, commands, font);
+      let firstIcon = null;
+      let iconCommands = null;
+
+      let firstChar = parsedText.charCodeAt(0);
+      if (
+        firstChar >= ig.MultiFont.ICON_START &&
+        firstChar < ig.MultiFont.ICON_END &&
+        font.iconSets.length > 0
+      ) {
+        firstIcon = String.fromCharCode(firstChar);
+        parsedText = parsedText.slice(1);
+        iconCommands = [];
+        commands.forEach(cmd => {
+          cmd.index = Math.max(cmd.index - 1, 0);
+          if (cmd.index === 0) iconCommands.push(cmd);
+        });
+      }
+      return { firstIcon, iconCommands, parsedText, commands };
+    }
+
+    sc.ru.IconTextGui = ig.GuiElementBase.extend({
+      font: null,
+      text: '',
+      iconTextBlock: null,
+      textBlock: null,
+      tickerHook: null,
+
+      init(text, options) {
+        this.parent();
+
+        if (options == null) options = {};
+        this.font = options.font;
+        if (this.font == null) this.font = sc.fontsystem.font;
+
+        this.text = text;
+        let { firstIcon, iconCommands, parsedText, commands } = parseIconText(
+          text,
+          this.font,
+        );
+        if (firstIcon == null) {
+          throw new Error(
+            'sc.ru.IconTextGui: not implemented for text without icons yet',
+          );
+        }
+
+        // TODO: limit `options` here
+        this.iconTextBlock = new sc.ru.RawTextBlock(
+          this.font,
+          firstIcon,
+          iconCommands,
+          options,
+        );
+        this.textBlock = new sc.ru.RawTextBlock(
+          this.font,
+          parsedText,
+          commands,
+          options,
+        );
+
+        this.tickerHook = new sc.ru.TickerDisplayHook(
+          this.hook,
+          (renderer, x, y) => {
+            renderer.addText(this.textBlock, x, y);
+          },
+        );
+
+        this._updateDimensions();
+      },
+
+      setText(text) {
+        if (this.text !== text) this.tickerHook.timer = 0;
+        this.text = text;
+
+        let { firstIcon, iconCommands, parsedText, commands } = parseIconText(
+          text,
+          this.font,
+        );
+        if (firstIcon == null) {
+          throw new Error(
+            'sc.ru.IconTextGui: not implemented for text without icons yet',
+          );
+        }
+
+        this.iconTextBlock.setText(firstIcon, iconCommands);
+        this.textBlock.setText(parsedText, commands);
+        if (this.isVisible()) this.prerender();
+
+        this._updateDimensions();
+      },
+
+      _updateDimensions() {
+        this.setSize(
+          this.textBlock.size.x + this.iconTextBlock.size.x,
+          Math.max(this.textBlock.size.y, this.iconTextBlock.size.y),
+        );
+        this.setPivot(
+          Math.floor(this.hook.size.x / 2),
+          Math.floor(this.hook.size.y / 2),
+        );
+        this.tickerHook.constantTextOffset.x = this.iconTextBlock.size.x;
+      },
+
+      setDrawCallback(callback) {
+        this.iconTextBlock.setDrawCallback(callback);
+      },
+
+      prerender() {
+        this.iconTextBlock.prerender();
+        this.textBlock.prerender();
+      },
+
+      clear() {
+        this.iconTextBlock.clearPrerendered();
+        this.textBlock.clearPrerendered();
+      },
+
+      onVisibilityChange(visible) {
+        visible ? this.prerender() : this.clear();
+        this.tickerHook.timer = 0;
+      },
 
       onAttach() {
-        if (this.isVisible()) {
-          this.textBlocks.forEach(tb => tb.prerender());
-        }
+        if (this.isVisible()) this.prerender();
       },
 
       onDetach() {
         this.clear();
       },
+
+      update() {
+        this.iconTextBlock.update();
+        this.textBlock.update();
+        this.tickerHook.update();
+      },
+
+      updateDrawables(renderer) {
+        this.tickerHook.updateDrawables(renderer);
+
+        // icon is drawn after the text so that debug boundary boxes don't get
+        // in the way
+
+        let iconX = 0;
+        let iconY = 0;
+
+        let { maxSize } = this.tickerHook;
+        if (maxSize != null) {
+          // TODO: merge these calculations with the ones in
+          // sc.ru.TickerDisplayHook#_tryRenderTicker
+          let { size, align } = this.hook;
+
+          maxSize = {
+            x: maxSize.x != null ? maxSize.x : size.x,
+            y: maxSize.y != null ? maxSize.y : size.y,
+          };
+
+          if (align.x === ig.GUI_ALIGN.X_CENTER) {
+            iconX = Math.max(0, Math.ceil((size.x - maxSize.x) / 2));
+          } else if (align.x === ig.GUI_ALIGN.X_RIGHT) {
+            iconX = Math.max(0, size.x - maxSize.x);
+          }
+          if (align.y === ig.GUI_ALIGN.X_CENTER) {
+            iconY = Math.max(0, Math.ceil((size.y - maxSize.y) / 2));
+          } else if (align.y === ig.GUI_ALIGN.X_RIGHT) {
+            iconY = Math.max(0, size.y - maxSize.y);
+          }
+        }
+
+        renderer.addText(this.iconTextBlock, iconX, iconY);
+      },
     });
-    // the splitting width is a smaller than ig.system.width, just to be safe
-    sc.ru.LongHorizontalTextGui.SPLIT_WIDTH = 500;
   });
