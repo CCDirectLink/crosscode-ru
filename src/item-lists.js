@@ -1,3 +1,12 @@
+function guiMapChildren(gui, callback) {
+  let oldChildHooks = [...gui.hook.children];
+  gui.removeAllChildren();
+  oldChildHooks.forEach(oldChildHook => {
+    let newChild = callback(oldChildHook.gui);
+    gui.addChildGui(newChild);
+  });
+}
+
 ig.module('crosscode-ru.fixes.item-lists')
   .requires('game.feature.menu.gui.menu-misc', 'crosscode-ru.ticker-display')
   .defines(() => {
@@ -269,10 +278,8 @@ ig.module('crosscode-ru.fixes.item-lists.social-menu')
     sc.SocialInfoBox.inject({
       setCharacter(id) {
         this.parent(id);
-        // make a copy of array of children GUIs because I'll be modifying
-        // `this.equip.hook.children`
-        let oldGuis = this.equip.hook.children.map(hook => hook.gui);
-        oldGuis.forEach(gui => {
+
+        guiMapChildren(this.equip, gui => {
           let newGui = new sc.ru.IconTextGui(gui.text);
           newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
           let { level, numberGfx } = gui;
@@ -283,8 +290,7 @@ ig.module('crosscode-ru.fixes.item-lists.social-menu')
             x: this.equip.hook.size.x,
           });
 
-          this.equip.removeChildGui(gui);
-          this.equip.addChildGui(newGui);
+          return newGui;
         });
       },
     });
@@ -334,7 +340,7 @@ ig.module('crosscode-ru.fixes.item-lists.quests')
     });
   });
 
-ig.module('crosscode-ru.fixes.equipment-menu')
+ig.module('crosscode-ru.fixes.item-lists.equipment-menu')
   .requires(
     'game.feature.menu.gui.equip.equip-bodypart',
     'crosscode-ru.ticker-display',
@@ -363,6 +369,35 @@ ig.module('crosscode-ru.fixes.equipment-menu')
         this.button.removeChildGui(oldTextChild);
         this.button.addChildGui(newTextChild);
         this.button.textChild = newTextChild;
+      },
+    });
+  });
+
+ig.module('crosscode-ru.fixes.item-lists.quest-dialog')
+  .requires(
+    'game.feature.menu.gui.equip.equip-bodypart',
+    'crosscode-ru.ticker-display',
+  )
+  .defines(() => {
+    sc.QuestDialog.inject({
+      setQuestRewards(quest, hideRewards, finished) {
+        this.parent(quest, hideRewards, finished);
+
+        guiMapChildren(this.itemsGui, gui => {
+          let newGui = new sc.ru.IconTextGui(gui.text);
+          newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
+          let { level, numberGfx } = gui;
+          if (level > 0 && !hideRewards) {
+            newGui.setDrawCallback((width, height) =>
+              sc.MenuHelper.drawLevel(level, width, height, numberGfx),
+            );
+          }
+          newGui.tickerHook.setMaxSize({
+            x: this.itemsGui.hook.size.x,
+          });
+
+          return newGui;
+        });
       },
     });
   });

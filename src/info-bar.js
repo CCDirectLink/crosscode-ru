@@ -30,6 +30,7 @@ ig.module('crosscode-ru.fixes.info-bar')
         this.doStateTransition('HIDDEN', true);
         // END OF THE ORIGINAL COdE
 
+        // TODO: does this really speed up?
         this.text.tickerHook.speed.x *= 1.5;
         this._updateTickerMaxSize();
       },
