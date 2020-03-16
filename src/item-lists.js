@@ -11,12 +11,12 @@ ig.module('crosscode-ru.fixes.item-lists')
   .requires('game.feature.menu.gui.menu-misc', 'crosscode-ru.ticker-display')
   .defines(() => {
     sc.ListBoxButton.inject({
-      init(text, ...args) {
-        this.parent(text, ...args);
+      init(...args) {
+        this.parent(...args);
 
         if (this.enableTickerDisplay) {
           let oldTextChild = this.button.textChild;
-          let newTextChild = new sc.ru.IconTextGui(text);
+          let newTextChild = new sc.ru.IconTextGui(this.button.textChild.text);
           newTextChild.setAlign(
             oldTextChild.hook.align.x,
             oldTextChild.hook.align.y,
