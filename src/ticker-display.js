@@ -88,10 +88,12 @@ ig.module('crosscode-ru.ticker-display')
           prtPos.y = size.y - maxSize.y;
         }
 
-        // renderer.addColor('red', 0, 0, size.x, size.y).setAlpha(0.25);
-        // renderer
-        //   .addColor('green', prtPos.x, prtPos.y, maxSize.x, maxSize.y)
-        //   .setAlpha(0.25);
+        if (sc.ru.debug.showTickerBoundaryBoxes) {
+          renderer.addColor('red', 0, 0, size.x, size.y).setAlpha(0.25);
+          renderer
+            .addColor('green', prtPos.x, prtPos.y, maxSize.x, maxSize.y)
+            .setAlpha(0.25);
+        }
 
         let overflow = {
           x: size.x > maxSize.x,

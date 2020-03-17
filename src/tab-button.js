@@ -18,8 +18,8 @@ function createPatch(
     });
 }
 
-createPatch('quests.quest-tab-list', 'QuestListBox', 95, '_createTabButton');
-createPatch('quest-hub.quest-hub-list', 'QuestHubList', 105);
+createPatch('quests.quest-tab-list', 'QuestListBox', 120, '_createTabButton');
+createPatch('quest-hub.quest-hub-list', 'QuestHubList', 120);
 createPatch('enemies.enemy-list', 'EnemyListBox', 120);
 createPatch('lore.lore-list', 'LoreListBoxNew', 120);
 createPatch('social.social-list', 'SocialList', 95);

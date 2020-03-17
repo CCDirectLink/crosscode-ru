@@ -1,8 +1,14 @@
-if (sc.ru == null) sc.ru = {};
-
+import initDebug from './src/debug.js';
+import initLocale from './src/locale.js';
 /* <tool> */
 import { RuTranslationToolNgClient } from './tool/dist/tool-client.js';
-sc.ru.translationTool = new RuTranslationToolNgClient();
 /* </tool> */
 
-import './src/locale.js';
+if (sc.ru == null) sc.ru = {};
+
+initDebug();
+initLocale();
+
+/* <tool> */
+sc.ru.translationTool = new RuTranslationToolNgClient();
+/* </tool> */

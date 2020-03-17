@@ -67,7 +67,7 @@ $(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME):
 
 define download_crosscode_mod
 mkdir -pv $1 && \
-curl --location --fail $2 | tar -v --directory $1 --gzip --strip-components 1 --extract
+curl --location --fail $2 | tar --verbose --directory $1 --gzip --strip-components 1 --extract
 endef
 
 $(LOCALIZE_ME_MOD_DIR):
@@ -78,7 +78,7 @@ $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
 # Unfortuntately, the following file copying rules can't be merged together
 $(MOD_DIR)/$(TRANSLATIONS_DIR)/%.json: $(TOOL_DATA_DIR)/%.json
 > mkdir -pv $(@D)
-> jq -c . $< > $@
+> jq --compact-output . $< > $@
 $(MOD_DIR)/%.js: ../%.js
 > mkdir -pv $(@D) && cp -r $< $@
 # The following sed command removes all text in the source file between
