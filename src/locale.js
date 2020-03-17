@@ -19,12 +19,15 @@ window.localizeMe.add_locale('ru_RU', {
     de_DE: 'Russisch',
     fr_FR: 'Russe',
     ru_RU: 'Русский',
+    zh_CN: '俄文',
+    ja_JP: 'ロシア語',
+    ko_KR: '러시아어',
   },
   flag: 'media/font/ru_RU/flag.png',
 
   missing_cb: (langLabelOrString, dictPath) => {
     let original = langLabelOrString.en_US || langLabelOrString;
-    if (/^credits\/[^/]+.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)) {
+    if (/^credits\/[^/]+\.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)) {
       return original;
     }
     return `--${original}`;
