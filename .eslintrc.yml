@@ -1,0 +1,35 @@
+extends: eslint-config-dmitmel/presets/node
+env:
+  browser: true
+parserOptions:
+  sourceType: module
+
+globals:
+  ig: true
+  sc: true
+  nw: true
+
+rules:
+  no-shadow:
+    - error
+    - builtinGlobals: true
+      hoist: functions
+      allow:
+        - name
+        - length
+        - location
+
+  func-names: off
+  node/no-unsupported-features/es-syntax:
+    - error
+    - ignores:
+        - modules
+
+overrides:
+  - files: 'tool/scripts/**/*.js'
+    rules:
+      node/shebang: off
+
+  - files: 'tool/src/node-builtin-modules/**/*.js'
+    rules:
+      global-require: off

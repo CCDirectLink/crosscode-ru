@@ -9,7 +9,7 @@ function createPatch(
     .requires(`game.feature.menu.gui.${gameMenuModule}`)
     .defines(() => {
       sc[className].inject({
-        [methodName]: function(...args) {
+        [methodName](...args) {
           let btn = this.parent(...args);
           btn._largeWidth = Math.max(btn._largeWidth, minLargeWidth);
           return btn;

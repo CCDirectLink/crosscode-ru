@@ -1,6 +1,7 @@
 import initDebug from './src/debug.js';
 import initLocale from './src/locale.js';
 /* <tool> */
+// eslint-disable-next-line node/no-unpublished-import
 import { RuTranslationToolNgClient } from './tool/dist/tool-client.js';
 /* </tool> */
 

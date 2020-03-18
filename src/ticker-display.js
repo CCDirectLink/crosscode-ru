@@ -66,7 +66,7 @@ ig.module('crosscode-ru.ticker-display')
           delayAtBorders,
           constantTextOffset,
         } = this;
-        if (maxSize == null) return;
+        if (maxSize == null) return false;
 
         let { size, align } = this.hook;
 
@@ -339,7 +339,8 @@ ig.module('crosscode-ru.ticker-display')
       },
 
       onVisibilityChange(visible) {
-        visible ? this.prerender() : this.clear();
+        if (visible) this.prerender();
+        else this.clear();
         this.tickerHook.timer = 0;
       },
 
@@ -481,7 +482,8 @@ ig.module('crosscode-ru.ticker-display')
       },
 
       onVisibilityChange(visible) {
-        visible ? this.prerender() : this.clear();
+        if (visible) this.prerender();
+        else this.clear();
         this.tickerHook.timer = 0;
       },
 

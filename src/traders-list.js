@@ -14,7 +14,7 @@ ig.module('crosscode-ru.fixes.traders-list')
     function setTraderLocationText(location, traderId) {
       let foundTrader = sc.trade.getFoundTrader(traderId);
       location.setText(
-        (foundTrader.area || '???') + '\n> ' + (foundTrader.map || '???'),
+        `${foundTrader.area || '???'}\\n> ${foundTrader.map || '???'}`,
       );
     }
 

@@ -12,6 +12,7 @@ const PATCHED_FONT_URLS = [
 
 export default function initLocale() {
   window.localizeMe.add_locale('ru_RU', {
+    /* eslint-disable camelcase */
     from_locale: 'en_US',
     map_file: LOCALIZE_ME_MAPPING_FILE,
     url_prefix: LOCALIZE_ME_PACKS_DIR,
@@ -25,7 +26,9 @@ export default function initLocale() {
       ko_KR: '러시아어',
     },
     flag: 'media/font/ru_RU/flag.png',
+    /* eslint-enable camelcase */
 
+    // eslint-disable-next-line camelcase
     missing_cb: (langLabelOrString, dictPath) => {
       let original = langLabelOrString.en_US || langLabelOrString;
 
@@ -40,20 +43,23 @@ export default function initLocale() {
       return `--${original}`;
     },
 
+    // eslint-disable-next-line camelcase
     pre_patch_font: async context => {
       let url = PATCHED_FONT_URLS[context.size_index];
       if (url != null) {
         const font = new ig.Font(url, context.char_height);
         context.russianFont = font;
-        return new Promise(resolve => {
+        await new Promise(resolve => {
           const oldOnload = font.onload;
-          font.onload = (...a) => {
-            oldOnload.apply(font, a);
+          font.onload = (...args) => {
+            oldOnload.apply(font, args);
             resolve();
           };
         });
       }
     },
+
+    // eslint-disable-next-line camelcase
     patch_base_font: (canvas, context) => {
       let { russianFont } = context;
       if (russianFont != null) {
@@ -81,6 +87,7 @@ export default function initLocale() {
       return canvas;
     },
 
+    // eslint-disable-next-line camelcase
     misc_time_function: () => {
       let date = new Date();
       // https://pikabu.ru/story/a_gdeto_seychas_rovno_polden_4223194

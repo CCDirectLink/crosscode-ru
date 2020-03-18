@@ -8,7 +8,7 @@ export default function initDebug() {
     .requires('impact.feature.gui.gui')
     .defines(() => {
       sc.ru.debug.highlightGuiInstances = function(clazz) {
-        let updateDrawables = clazz.prototype.updateDrawables;
+        let { updateDrawables } = clazz.prototype;
         clazz.prototype.updateDrawables = function(renderer) {
           updateDrawables.call(this, renderer);
           renderer

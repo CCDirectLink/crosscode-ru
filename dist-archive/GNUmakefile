@@ -31,8 +31,8 @@ endif
 # including slashes (`/`), unlike in shells.
 find_by_patterns = $(shell find $1 -type f \( $(foreach w,$2,-path '$1/$(w)' -or) -false \) -printf '%P\n')
 
-MOD_ID := $(shell jq -r '.name' ../package.json)
-MOD_VERSION := $(shell jq -r '.version' ../package.json)
+MOD_ID := $(shell jq -r '.name' ../ccmod.json)
+MOD_VERSION := $(shell jq -r '.version' ../ccmod.json)
 MOD_DIR := $(MOD_ID)
 TOOL_DIR := $(MOD_ID)-tool
 LOCALIZE_ME_MOD_DIR := Localize-me

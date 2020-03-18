@@ -1,12 +1,10 @@
 {
-  "name": "crosscode-ru-ng",
-  "description": "Русский перевод CrossCode",
-  "homepage": "https://github.com/dmitmel/crosscode-ru-ng",
-  "version": "0.0.0",
-  "module": true,
-  "postload": "postload.js",
-  "prestart": "prestart.js",
-  "ccmodDependencies": {
-    "Localize Me": ">=0.4 <1"
+  "private": true,
+  "preload": "ccloader-incompatible.js",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.24.0",
+    "eslint": "^6.8.0",
+    "eslint-config-dmitmel": "dmitmel/eslint-config-dmitmel",
+    "eslint-plugin-node": "^11.0.0"
   }
 }
