@@ -36,6 +36,7 @@ export class RuTranslationToolNgClient {
         this.toolWindow = toolWindow;
         this.toolWindowIsOpening = false;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (this.toolWindow.window as any).gameWindow = this.gameWindow;
         this.toolWindow.on('closed', () => {
           this.toolWindow = null;

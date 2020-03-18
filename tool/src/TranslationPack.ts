@@ -7,7 +7,7 @@ type LocalizeMePack = Record<string, { orig: string; text: string }>;
 
 export class LocalizeMePacker {
   packs: Map<string, LocalizeMePack> = new Map();
-  private assetsCache: Map<string, any> = new Map();
+  private assetsCache: Map<string, unknown> = new Map();
 
   async addNotaFragments(fragments: Nota.Fragment[]): Promise<void> {
     for (let f of fragments) {
@@ -63,7 +63,7 @@ export class LocalizeMePacker {
       if (Object.prototype.hasOwnProperty.call(obj, currentKey)) {
         if (jsonPath.length > 0) jsonPath += '/';
         jsonPath += currentKey;
-        obj = obj[currentKey];
+        obj = (obj as Record<string, unknown>)[currentKey];
         currentKey = '';
       }
     }
@@ -73,8 +73,10 @@ export class LocalizeMePacker {
       if (typeof obj !== 'string') return null;
       realOriginalText = obj;
     } else {
-      if (typeof obj !== 'object' || typeof obj.en_US !== 'string') return null;
-      realOriginalText = obj.en_US;
+      if (typeof obj !== 'object' || obj == null) return null;
+      let obj2 = obj as { en_US?: unknown };
+      if (typeof obj2.en_US !== 'string') return null;
+      realOriginalText = obj2.en_US;
     }
     if (text === realOriginalText.trimRight()) text = realOriginalText;
 
@@ -85,7 +87,7 @@ export class LocalizeMePacker {
     return { file, jsonPath, text };
   }
 
-  private async getAsset(file: string): Promise<any> {
+  private async getAsset(file: string): Promise<unknown> {
     if (this.assetsCache.has(file)) {
       return this.assetsCache.get(file);
     } else {

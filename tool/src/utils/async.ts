@@ -10,26 +10,26 @@ export function wait(ms: number): Promise<void> {
 }
 
 export async function limitConcurrency(
-  promises: Iterator<PromiseLike<any>>,
+  promises: Iterator<PromiseLike<void>>,
   threads: number,
 ): Promise<void> {
   let iteratorFinished = false;
 
-  function next(): PromiseLike<any> | null {
+  async function next(): Promise<null> {
     if (iteratorFinished) return null;
     let { done, value } = promises.next();
     if (done) {
       iteratorFinished = true;
       return null;
     }
-    return (value as PromiseLike<any>).then(() => next());
+    return (value as PromiseLike<void>).then(() => next());
   }
 
   let threadPromises = [];
   for (let i = 0; i < threads; i++) {
     let promise = next();
     if (iteratorFinished) break;
-    threadPromises.push(promise!);
+    threadPromises.push(promise);
   }
   await Promise.all(threadPromises);
 }

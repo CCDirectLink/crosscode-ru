@@ -30,6 +30,7 @@ export type ChapterStatuses = Record<string, ChapterStatus>;
 export interface ChapterStatus {
   id: string;
   name: string;
+  fetchTimestamp: number;
   modificationTimestamp: number;
   translatedFragments: number;
   totalFragments: number;
@@ -128,6 +129,9 @@ export class NotaClient {
 
 function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   let cs: Partial<ChapterStatus> = {};
+  // TODO: test the difference between this and the 'Date' HTTP header on slow
+  // Internet connections
+  cs.fetchTimestamp = Date.now();
 
   let { id } = element.dataset;
   if (id == null) return null;
@@ -245,7 +249,7 @@ function parseTranslation(
     Date.UTC(2000 + year, month - 1, day, hour - 3, minute),
   );
 
-  let flags: Record<string, any> = {};
+  let flags: Record<string, boolean | string> = {};
   t.text = t.rawText
     .replace(/\n?⟪(.*)⟫\s*/, (_match: string, group: string) => {
       group.split('|').forEach(s => {
