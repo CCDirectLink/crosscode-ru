@@ -14,6 +14,7 @@ export class LocalizeMePacker {
       if (f.translations.length === 0) continue;
       let { file, jsonPath, text: originalText } = f.original;
 
+      // eslint-disable-next-line no-await-in-loop
       let fixedOriginal = await this.fixNotaOriginal(f.original);
       if (fixedOriginal == null) continue;
       ({ file, jsonPath, text: originalText } = fixedOriginal);

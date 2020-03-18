@@ -1,4 +1,4 @@
-import { readSettings, Settings } from './settings.js';
+import { Settings, readSettings } from './settings.js';
 
 let scriptUrl: string = import.meta.url;
 let scriptDir = scriptUrl.slice(0, scriptUrl.lastIndexOf('/'));

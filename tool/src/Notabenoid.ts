@@ -93,7 +93,7 @@ export class NotaClient {
     let result: ChapterStatuses = {};
     doc.querySelectorAll<HTMLElement>('#Chapters > tbody > tr').forEach(tr => {
       let chapterStatus = parseChapterStatus(tr);
-      if (chapterStatus == null) return null;
+      if (chapterStatus == null) return;
       result[chapterStatus.name] = chapterStatus;
     });
     return result;
@@ -101,12 +101,13 @@ export class NotaClient {
 
   createChapterFragmentFetcher(status: ChapterStatus): Fetcher<Fragment[]> {
     let pages = Math.ceil(status.totalFragments / CHAPTER_PAGE_SIZE);
-    // seriously... JS has regular generator function, yet it doesn't have
+    // seriously... JS has regular generator functions, yet it doesn't have
     // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern again.
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let self = this;
     return {
       total: pages,
-      iterator: (function*() {
+      iterator: (function*(): Iterator<Promise<Fragment[]>> {
         for (let i = 0; i < pages; i++) {
           console.log(`${status.name}, page ${i + 1}/${pages}`);
           yield self
@@ -128,7 +129,7 @@ export class NotaClient {
 function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   let cs: Partial<ChapterStatus> = {};
 
-  let id = element.dataset.id;
+  let { id } = element.dataset;
   if (id == null) return null;
   cs.id = id;
   let anchor = element.querySelector(':scope > td:nth-child(1) > a');
@@ -299,7 +300,7 @@ function parseTranslation(
     if (originalEscapeSequences != null) {
       let i = 0;
       t.text = t.text.replace(/№/g, s => {
-        s = originalEscapeSequences![i];
+        s = originalEscapeSequences[i];
         i++;
         return s;
       });

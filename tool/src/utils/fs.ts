@@ -40,6 +40,7 @@ export function writeJsonFile(
 ): Promise<void> {
   return fs.promises.writeFile(
     path,
+    // eslint-disable-next-line no-undefined
     JSON.stringify(data, undefined, ENABLE_PRETTY_PRINT ? 2 : undefined),
     options,
   );

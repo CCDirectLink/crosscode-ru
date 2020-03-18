@@ -1,10 +1,10 @@
 /// <reference types="nw.js" />
 
 import {
-  NotaClient,
-  Fragment,
   ChapterStatus,
   ChapterStatuses,
+  Fragment,
+  NotaClient,
 } from './Notabenoid.js';
 import { LocalizeMePacker } from './TranslationPack.js';
 import { readSettings, writeSettings } from './settings.js';
@@ -95,6 +95,7 @@ class Main {
 
       let chapterFragments: Record<string, Fragment[]> = {};
 
+      /* eslint-disable no-await-in-loop */
       for (let i = 0, len = chaptersWithoutUpdates.length; i < len; i++) {
         let id = chaptersWithoutUpdates[i].name;
         console.log(`loading ${id} from disk`);
@@ -176,6 +177,7 @@ class Main {
           packContents,
         );
       }
+      /* eslint-enable no-await-in-loop */
 
       this.progressBar.setTaskInfo(
         `Запись таблицы маппингов транслейт-паков...`,
@@ -206,6 +208,7 @@ class Main {
 
 function showDevTools(): Promise<void> {
   return new Promise(resolve =>
+    // eslint-disable-next-line no-undefined
     nw.Window.get().showDevTools(undefined, () => resolve()),
   );
 }
@@ -214,15 +217,13 @@ class ProgressBar {
   element = document.getElementById(
     'settings_translations_progress',
   )! as HTMLProgressElement;
-  taskElement = document.getElementById(
-    'settings_translations_progressTask',
-  )! as HTMLElement;
+  taskElement = document.getElementById('settings_translations_progressTask')!;
   taskErrorElement = document.getElementById(
     'settings_translations_progressTask_error',
-  )! as HTMLElement;
+  )!;
   countElement = document.getElementById(
     'settings_translations_progressCount',
-  )! as HTMLElement;
+  )!;
 
   setTaskInfo(info: { toString(): string }): void {
     this.taskErrorElement.style.display = 'none';

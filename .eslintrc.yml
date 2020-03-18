@@ -18,8 +18,11 @@ rules:
         - name
         - length
         - location
+        - self
+        - status
 
   func-names: off
+
   node/no-unsupported-features/es-syntax:
     - error
     - ignores:
@@ -33,3 +36,53 @@ overrides:
   - files: 'tool/src/node-builtin-modules/**/*.js'
     rules:
       global-require: off
+
+  - files:
+      - 'tool/src/**/*.{,d.}ts'
+    extends:
+      - 'plugin:@typescript-eslint/eslint-recommended'
+      - 'plugin:@typescript-eslint/recommended'
+      - 'plugin:@typescript-eslint/recommended-requiring-type-checking'
+    parser: '@typescript-eslint/parser'
+    plugins:
+      - '@typescript-eslint'
+    parserOptions:
+      project: tool/tsconfig.json
+
+    # TODO: add TS preset to https://github.com/dmitmel/eslint-config-dmitmel
+    rules:
+      prefer-const: off
+
+      # copied from camelcase
+      '@typescript-eslint/camelcase':
+        - warn
+        - allow:
+            - '^NWJS_Helpers$'
+
+      # copied from no-unused-vars
+      '@typescript-eslint/no-unused-vars':
+        - warn
+        - vars: all
+          varsIgnorePattern: '^_'
+          args: all
+          argsIgnorePattern: '^_'
+          ignoreRestSiblings: true
+          caughtErrors: all
+          caughtErrorsIgnorePattern: '^_'
+
+      # copied from no-use-before-define
+      '@typescript-eslint/no-use-before-define':
+        - error
+        - functions: false
+          classes: false
+          enums: false
+          variables: true
+          typedefs: false # maybe?
+
+      # @typescript-eslint/no-useless-constructor is used instead
+      no-useless-constructor: off
+
+      # because I have to use '.js' file extensions in imports
+      node/no-missing-import: off
+
+      '@typescript-eslint/no-non-null-assertion': off
