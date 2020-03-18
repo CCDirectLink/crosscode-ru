@@ -3,13 +3,17 @@ node_js: node
 
 cache:
   yarn: true
+  directories:
+    - .eslintcache
 
 install:
+  - yarn install
   - (cd tool && yarn install)
   - yarn global add prettier
 script:
   - (cd tool && yarn build:scripts && yarn build:styles)
-  - prettier --check "**/*.{js,ts,json,css,scss,html}"
+  - eslint . --ignore-path .gitignore --cache --cache-location .eslintcache/
+  - prettier --check "**/*.{ts,json,css,scss,html}"
 
 notifications:
   webhooks: https://fathomless-fjord-24024.herokuapp.com/notify

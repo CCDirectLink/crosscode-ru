@@ -1,2 +1,4 @@
-/tool/node_modules/
+node_modules/
 /tool/dist/
+/dist-archive/*
+!/dist-archive/GNUmakefile
