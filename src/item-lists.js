@@ -282,6 +282,7 @@ ig.module('crosscode-ru.fixes.item-lists.equipment-menu')
         newTextChild.tickerHook.setMaxSize({
           x: this.button.hook.size.x - 5 * 2,
         });
+        newTextChild.tickerHook.focusTarget = this.button;
 
         this.button.removeChildGui(oldTextChild);
         this.button.addChildGui(newTextChild);

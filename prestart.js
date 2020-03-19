@@ -6,6 +6,7 @@ import './src/info-bar.js';
 import './src/item-lists.js';
 import './src/pvp.js';
 import './src/quest-menu.js';
+import './src/saves-menu.js';
 import './src/status-combat-arts.js';
 import './src/status-lines.js';
 import './src/tab-button.js';
