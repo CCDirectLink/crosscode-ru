@@ -1,5 +1,4 @@
-/* <tool> */
-ig.module('crosscode-ru.translation-tool-ng')
+ig.module('crosscode-ru.translation-tool')
   .requires('game.main', 'game.feature.gui.screen.title-screen')
   .defines(() => {
     sc.CrossCode.inject({
@@ -72,4 +71,3 @@ ig.module('crosscode-ru.translation-tool-ng')
       },
     });
   });
-/* </tool> */

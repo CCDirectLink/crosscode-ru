@@ -12,7 +12,3 @@ import './src/status-lines.js';
 import './src/tab-button.js';
 import './src/time-and-money-gui.js';
 import './src/traders-list.js';
-
-/* <tool> */
-import './src/open-translation-tool-button.js';
-/* </tool> */
