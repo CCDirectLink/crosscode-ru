@@ -31,19 +31,19 @@ endif
 # including slashes (`/`), unlike in shells.
 find_by_patterns = $(shell find $1 -type f \( $(foreach w,$2,-path '$1/$(w)' -or) -false \) -printf '%P\n')
 
-MOD_ID := $(shell jq -r '.name' ../ccmod.json)
-MOD_VERSION := $(shell jq -r '.version' ../ccmod.json)
+MOD_ID := $(shell jq -r '.name' ../package.json)
+MOD_VERSION := $(shell jq -r '.version' ../package.json)
 MOD_DIR := $(MOD_ID)
-TOOL_MOD_ID := $(shell jq -r '.name' ../tool/ccmod.json)
-TOOL_MOD_VERSION := $(shell jq -r '.version' ../tool/ccmod.json)
+TOOL_MOD_ID := $(shell jq -r '.name' ../tool/package.json)
+TOOL_MOD_VERSION := $(shell jq -r '.version' ../tool/package.json)
 TOOL_DIR := $(TOOL_MOD_ID)
 LOCALIZE_ME_MOD_DIR := Localize-me
 CC_WORLD_MAP_OVERHAUL_MOD_DIR := cc-world-map-overhaul
 TRANSLATIONS_DIR := assets/ru-translation-tool-ng
 
-TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map main.html ccmod.json prestart.js postload.js
+TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map main.html package.json prestart.js postload.js
 TOOL_FILES := $(call find_by_patterns,../tool,$(TOOL_FILES))
-MOD_FILES := assets/*.png src/*.js LICENSE ccmod.json postload.js prestart.js README.md
+MOD_FILES := assets/*.png src/*.js LICENSE package.json postload.js prestart.js README.md
 MOD_FILES := $(call find_by_patterns,..,$(MOD_FILES))
 TRANSLATIONS_FILES := localize-me-packs/*.json localize-me-mapping.json
 TRANSLATIONS_FILES := $(call find_by_patterns,$(TOOL_DATA_DIR),$(TRANSLATIONS_FILES))

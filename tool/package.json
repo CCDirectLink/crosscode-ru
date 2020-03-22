@@ -1,5 +1,10 @@
 {
   "private": true,
+  "name": "crosscode-ru-ng-translation-tool",
+  "version": "0.0.0",
+  "license": "MIT",
+  "description": "Russian translation tool for CrossCode",
+  "homepage": "https://github.com/dmitmel/crosscode-ru-ng",
   "engines": {
     "node": ">=11.0.0"
   },
@@ -8,6 +13,12 @@
     "watch:scripts": "../node_modules/.bin/tsc --watch",
     "build:styles": "node-sass --recursive --output dist/styles --source-map true src/styles",
     "watch:styles": "node-sass --recursive --output dist/styles --source-map true src/styles --watch"
+  },
+  "module": true,
+  "postload": "postload.js",
+  "prestart": "prestart.js",
+  "ccmodDependencies": {
+    "crosscode-ru-ng": "*"
   },
   "devDependencies": {
     "@types/node": "^13.7.0",

@@ -1,8 +1,18 @@
 {
   "private": true,
-  "preload": "ccloader-incompatible.js",
+  "name": "crosscode-ru-ng",
+  "version": "0.0.0",
+  "license": "(MIT AND CC-BY-4.0)",
+  "description": "Russian translation for CrossCode",
+  "homepage": "https://github.com/dmitmel/crosscode-ru-ng",
   "engines": {
     "node": ">=11.0.0"
+  },
+  "module": true,
+  "postload": "postload.js",
+  "prestart": "prestart.js",
+  "ccmodDependencies": {
+    "Localize Me": ">=0.4 <1"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.24.0",
