@@ -4,6 +4,7 @@ import './src/circuit-menu.js';
 import './src/help-boxes.js';
 import './src/info-bar.js';
 import './src/item-lists.js';
+import './src/options-menu.js';
 import './src/pvp.js';
 import './src/quest-menu.js';
 import './src/saves-menu.js';

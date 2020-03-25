@@ -18,11 +18,12 @@ function createPatch(
     });
 }
 
-createPatch('quests.quest-tab-list', 'QuestListBox', 120, '_createTabButton');
-createPatch('quest-hub.quest-hub-list', 'QuestHubList', 120);
+createPatch('arena.arena-list', 'ArenaCupList', 145);
+createPatch('botanics.botanics-list', 'BotanicsListBox', 160);
 createPatch('enemies.enemy-list', 'EnemyListBox', 120);
 createPatch('lore.lore-list', 'LoreListBoxNew', 120);
+createPatch('options.options-list', 'OptionsTabBox', 105, '_createTabButton');
+createPatch('quest-hub.quest-hub-list', 'QuestHubList', 120);
+createPatch('quests.quest-tab-list', 'QuestListBox', 120, '_createTabButton');
 createPatch('social.social-list', 'SocialList', 95);
 createPatch('trade.trader-list', 'TradersListBox', 160);
-createPatch('botanics.botanics-list', 'BotanicsListBox', 160);
-createPatch('arena.arena-list', 'ArenaCupList', 145);

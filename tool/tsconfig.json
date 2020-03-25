@@ -6,7 +6,6 @@
     "sourceMap": true,
     "strict": true,
     "module": "esnext",
-    "target": "es6",
-    "allowJs": true
+    "target": "es6"
   }
 }

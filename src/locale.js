@@ -11,7 +11,7 @@ const PATCHED_FONT_URLS = [
 ];
 
 export default function initLocale() {
-  window.localizeMe.add_locale('ru_RU', {
+  localizeMe.add_locale('ru_RU', {
     /* eslint-disable camelcase */
     from_locale: 'en_US',
     map_file: LOCALIZE_ME_MAPPING_FILE,

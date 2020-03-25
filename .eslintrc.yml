@@ -8,6 +8,7 @@ globals:
   ig: true
   sc: true
   nw: true
+  localizeMe: true
 
 rules:
   no-shadow:
