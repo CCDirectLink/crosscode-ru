@@ -31,6 +31,7 @@ export default function initLocale() {
     // eslint-disable-next-line camelcase
     missing_cb: (langLabelOrString, dictPath) => {
       let original = langLabelOrString.en_US || langLabelOrString;
+
       // `missing_cb` is called even when the lang label actually contains a
       // corresponding language field. You see, a lot of lang labels were
       // "translated" into French simply by setting their translations to the
@@ -42,6 +43,7 @@ export default function initLocale() {
       // assets with localizable strings directly in the repository, before I
       // migrate them to Notabenoid or something else.
       let translated = langLabelOrString.ru_RU;
+      if (translated) return translated;
 
       if (!sc.ru.debug.showUntranslatedStrings) return original;
 
@@ -49,13 +51,6 @@ export default function initLocale() {
         /^credits\/[^/]+\.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)
       ) {
         return original;
-      }
-
-      if (
-        /^credits\/crosscode-ru\.json\//.test(dictPath) ||
-        /^credits\/radicalfish-core.json\/entries\/ru_/.test(dictPath)
-      ) {
-        return translated;
       }
 
       return `--${original}`;
