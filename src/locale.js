@@ -31,6 +31,17 @@ export default function initLocale() {
     // eslint-disable-next-line camelcase
     missing_cb: (langLabelOrString, dictPath) => {
       let original = langLabelOrString.en_US || langLabelOrString;
+      // `missing_cb` is called even when the lang label actually contains a
+      // corresponding language field. You see, a lot of lang labels were
+      // "translated" into French simply by setting their translations to the
+      // string "fr_FR". Unfortunately for Satcher, the author of Localize-me
+      // and French-CC, this meant that they couldn't reliably detect
+      // untranslated lang labels. So, translation is considered missing ONLY
+      // AND ONLY IF the translation pack doesn't contain a translation. Which
+      // kind of makes my life a bit harder because for now I want to put some
+      // assets with localizable strings directly in the repository, before I
+      // migrate them to Notabenoid or something else.
+      let translated = langLabelOrString.ru_RU;
 
       if (!sc.ru.debug.showUntranslatedStrings) return original;
 
@@ -38,6 +49,13 @@ export default function initLocale() {
         /^credits\/[^/]+\.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)
       ) {
         return original;
+      }
+
+      if (
+        /^credits\/crosscode-ru\.json\//.test(dictPath) ||
+        /^credits\/radicalfish-core.json\/entries\/ru_/.test(dictPath)
+      ) {
+        return translated;
       }
 
       return `--${original}`;

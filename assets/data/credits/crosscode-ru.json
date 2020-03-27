@@ -1,0 +1,142 @@
+{
+  "align": "CENTER",
+  "entries": {
+    "ru_interrupt": {
+      "header": {
+        "en_US": "We are interrupting the broadcast...",
+        "ru_RU": "Мы прерываем программу телевещания..."
+      },
+      "key": "BASE",
+      "columns": 1,
+      "names": []
+    },
+
+    "ru_translated": {
+      "header": {
+        "en_US": "Translated by CRUSsCode team",
+        "ru_RU": "Переведено командой CRUSsCode"
+      },
+      "key": "BASE",
+      "columns": 1,
+      "bottomPad": 45,
+      "names": []
+    },
+
+    "ru_generalAssembler": {
+      "header": {
+        "en_US": "General Assembler",
+        "ru_RU": "Генеральный сборщик"
+      },
+      "columns": 1,
+      "order": 0,
+      "key": "BASE",
+      "names": [{ "en_US": "Dimava" }]
+    },
+
+    "ru_modProgrammers": {
+      "header": {
+        "en_US": "Mod Programmers",
+        "ru_RU": "Программисты мода"
+      },
+      "columns": 1,
+      "order": 0,
+      "key": "BASE",
+      "names": [{ "en_US": "dmitmel" }, { "en_US": "L-Sherry" }]
+    },
+
+    "ru_editor": {
+      "header": {
+        "en_US": "Chief Editor",
+        "ru_RU": "Главный редактор"
+      },
+      "columns": 1,
+      "order": 0,
+      "key": "BASE",
+      "names": [{ "en_US": "Packy" }]
+    },
+
+    "ru_tester": {
+      "header": {
+        "en_US": "Toster",
+        "ru_RU": "Тостер"
+      },
+      "columns": 1,
+      "order": 0,
+      "key": "BASE",
+      "names": [{ "en_US": "Sage the Voity" }]
+    },
+
+    "ru_translators": {
+      "header": {
+        "en_US": "Translators",
+        "ru_RU": "Переводчики"
+      },
+      "columns": 2,
+      "order": 0,
+      "key": "BASE",
+      "names": [
+        { "en_US": "Packy" },
+        { "en_US": "Sandorik" },
+        { "en_US": "dymeon" },
+        { "en_US": "MegaGazon" },
+        { "en_US": "Dimava" },
+        { "en_US": "Dustex" },
+        { "en_US": "Rik'Zun" },
+        { "en_US": "Death_Gun" },
+        { "en_US": "RarityDash" },
+        { "en_US": "Sage the Voity" },
+        { "en_US": "ArgonLain" },
+        { "en_US": "DeSio" },
+        { "en_US": "Cilez" },
+        { "en_US": "aspadm" },
+        { "en_US": "ArchonT3" },
+        { "en_US": "MystAxe" }
+      ]
+    },
+
+    "ru_correctors": {
+      "header": {
+        "en_US": "Correctors",
+        "ru_RU": "Корректоры"
+      },
+      "columns": 1,
+      "order": 0,
+      "key": "BASE",
+      "names": [
+        { "en_US": "Packy" },
+        { "en_US": "Sandorik" },
+        { "en_US": "dymeon" }
+      ]
+    },
+
+    "ru_specialThanks": {
+      "header": {
+        "en_US": "Special Thanks",
+        "ru_RU": "Благодарности"
+      },
+      "columns": 2,
+      "order": 0,
+      "key": "BASE",
+      "names": [
+        { "en_US": "MrSuperParadox" },
+        { "en_US": "ElectroPlayer" },
+        { "en_US": "Yen" },
+        { "en_US": "Nastechka", "ru_RU": "Настечка" },
+        { "en_US": "MystAxe" },
+        { "en_US": "WatDuhHekBro" }
+      ]
+    },
+
+    "ru_end": {
+      "header": {
+        "en_US": "Thank you for playing with our translation!",
+        "ru_RU": "Спасибо за то, что играли с нашим переводом!"
+      },
+      "columns": 1,
+      "order": 0,
+      "key": "BASE",
+      "bottomPad": 100,
+      "names": []
+    }
+  }
+}

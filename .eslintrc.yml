@@ -21,6 +21,7 @@ rules:
         - location
         - self
         - status
+        - event
 
   func-names: off
 
