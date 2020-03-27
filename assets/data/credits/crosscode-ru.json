@@ -58,12 +58,12 @@
     "ru_tester": {
       "header": {
         "en_US": "Toster",
-        "ru_RU": "Тостер"
+        "ru_RU": "Тостеры (тестировщики)"
       },
       "columns": 1,
       "order": 0,
       "key": "BASE",
-      "names": [{ "en_US": "Sage the Voity" }]
+      "names": [{ "en_US": "ElectroPlayer" }, { "en_US": "Sage the Voity" }]
     },
 
     "ru_translators": {
@@ -94,6 +94,17 @@
       ]
     },
 
+    "ru_mainCorrector": {
+      "header": {
+        "en_US": "Chief Corrector",
+        "ru_RU": "Главный корректор"
+      },
+      "columns": 1,
+      "order": 0,
+      "key": "BASE",
+      "names": [{ "en_US": "dymeon" }]
+    },
+
     "ru_correctors": {
       "header": {
         "en_US": "Correctors",
@@ -102,11 +113,7 @@
       "columns": 1,
       "order": 0,
       "key": "BASE",
-      "names": [
-        { "en_US": "Packy" },
-        { "en_US": "Sandorik" },
-        { "en_US": "dymeon" }
-      ]
+      "names": [{ "en_US": "Packy" }, { "en_US": "Sandorik" }]
     },
 
     "ru_specialThanks": {
@@ -114,12 +121,11 @@
         "en_US": "Special Thanks",
         "ru_RU": "Благодарности"
       },
-      "columns": 2,
+      "columns": 1,
       "order": 0,
       "key": "BASE",
       "names": [
         { "en_US": "MrSuperParadox" },
-        { "en_US": "ElectroPlayer" },
         { "en_US": "Yen" },
         { "en_US": "Nastechka", "ru_RU": "Настечка" },
         { "en_US": "MystAxe" },
