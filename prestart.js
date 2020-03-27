@@ -2,6 +2,7 @@ import './src/ticker-display.js';
 
 import './src/circuit-menu.js';
 import './src/credits-section.js';
+import './src/event-steps-patches.js';
 import './src/help-boxes.js';
 import './src/info-bar.js';
 import './src/item-lists.js';
