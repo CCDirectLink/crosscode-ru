@@ -4,6 +4,7 @@ import './src/circuit-menu.js';
 import './src/credits-section.js';
 import './src/event-steps-patches.js';
 import './src/help-boxes.js';
+import './src/help-info-box.js';
 import './src/info-bar.js';
 import './src/item-lists.js';
 import './src/options-menu.js';
