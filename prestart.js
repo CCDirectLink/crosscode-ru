@@ -1,3 +1,4 @@
+import './src/localization-utils.js';
 import './src/ticker-display.js';
 
 import './src/circuit-menu.js';
