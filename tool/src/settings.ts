@@ -15,6 +15,7 @@ export async function readSettings(): Promise<Settings> {
       autoOpen: true,
     };
   }
+  // TODO: remove this
   console.log('settings:', settings);
   return settings;
 }
