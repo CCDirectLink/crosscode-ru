@@ -2,6 +2,7 @@ ig.module('crosscode-ru.fixes.options-menu')
   .requires(
     'game.feature.menu.gui.options.options-types',
     'crosscode-ru.ticker-display',
+    'localize-me.final-locale.ready',
   )
   .defines(() => {
     // poor man's Localize-me
@@ -65,66 +66,63 @@ ig.module('crosscode-ru.fixes.options-menu')
       },
     });
 
-    (async () => {
-      let locale = await localizeMe.game_locale_config.get_final_locale();
-      if (locale !== 'ru_RU') return;
+    if (ig.currentLang !== 'ru_RU') return;
 
-      let allMods = window.activeMods.concat(window.inactiveMods);
-      allMods.forEach(mod => {
-        let descriptionFragment = TRANSLATED_MOD_DESCRIPTIONS[mod.name];
-        if (descriptionFragment != null) {
-          localize(mod.manifest, 'description', descriptionFragment);
-        }
+    let allMods = window.activeMods.concat(window.inactiveMods);
+    allMods.forEach(mod => {
+      let descriptionFragment = TRANSLATED_MOD_DESCRIPTIONS[mod.name];
+      if (descriptionFragment != null) {
+        localize(mod.manifest, 'description', descriptionFragment);
+      }
+    });
+
+    // TODO: I hope I'll remove the event listener once I rewrite simplify.
+    document.body.addEventListener('simplifyInitialized', () => {
+      let lang = ig.lang.labels.sc.gui;
+
+      localize(lang.menu.option, 'mods', {
+        orig: 'Mods',
+        text: 'Моды',
+      });
+      localize(lang.options['mods-description'], 'description', {
+        orig:
+          'In this menu you can \\c[3]enable or disable installed mods\\c[0]. Mod descriptions are shown below. \\c[1]The game needs to be restarted\\c[0] if you change any options here!',
+        text:
+          'В этом меню вы можете \\c[3]включать или выключать установленные моды\\c[0]. Описания модов отображаются внизу. \\c[1]Игра должна быть перезапущена\\c[0], если вы измените здесь какие-либо параметры!',
       });
 
-      // TODO: I hope I'll remove the event listener once I rewrite simplify.
-      document.body.addEventListener('simplifyInitialized', () => {
-        let lang = ig.lang.labels.sc.gui;
-
-        localize(lang.menu.option, 'mods', {
-          orig: 'Mods',
-          text: 'Моды',
-        });
-        localize(lang.options['mods-description'], 'description', {
-          orig:
-            'In this menu you can \\c[3]enable or disable installed mods\\c[0]. Mod descriptions are shown below. \\c[1]The game needs to be restarted\\c[0] if you change any options here!',
-          text:
-            'В этом меню вы можете \\c[3]включать или выключать установленные моды\\c[0]. Описания модов отображаются внизу. \\c[1]Игра должна быть перезапущена\\c[0], если вы измените здесь какие-либо параметры!',
-        });
-
-        localize(lang.options.headers, 'logLevel', {
-          orig: 'Log levels',
-          text: 'Настройки логирования через CCLoader',
-        });
-
-        localize(lang.options['logLevel-log'], 'name', {
-          orig: 'Log level: Default',
-          text: 'Информационные сообщения',
-        });
-        localize(lang.options['logLevel-log'], 'description', {
-          orig: 'Enables default message popups. \\c[1]Needs a restart!',
-          text:
-            'Включает всплывающие окна информационных сообщений. \\c[1]Требуется перезапуск!',
-        });
-
-        localize(lang.options['logLevel-warn'], 'name', {
-          orig: 'Log level: Warnings',
-          text: 'Предупреждения',
-        });
-        localize(lang.options['logLevel-warn'], 'description', {
-          orig: 'Enables warning popups. \\c[1]Needs a restart!',
-          text:
-            'Включает всплывающие окна предупреждений. \\c[1]Требуется перезапуск!',
-        });
-
-        localize(lang.options['logLevel-error'], 'name', {
-          orig: 'Log level: Errors',
-          text: 'Ошибки',
-        });
-        localize(lang.options['logLevel-error'], 'description', {
-          orig: 'Enables error popups. \\c[1]Needs a restart!',
-          text: 'Включает всплывающие окна ошибок. \\c[1]Требуется перезапуск!',
-        });
+      localize(lang.options.headers, 'logLevel', {
+        orig: 'Log levels',
+        text: 'Настройки логирования через CCLoader',
       });
-    })();
+
+      localize(lang.options['logLevel-log'], 'name', {
+        orig: 'Log level: Default',
+        text: 'Информационные сообщения',
+      });
+      localize(lang.options['logLevel-log'], 'description', {
+        orig: 'Enables default message popups. \\c[1]Needs a restart!',
+        text:
+          'Включает всплывающие окна информационных сообщений. \\c[1]Требуется перезапуск!',
+      });
+
+      localize(lang.options['logLevel-warn'], 'name', {
+        orig: 'Log level: Warnings',
+        text: 'Предупреждения',
+      });
+      localize(lang.options['logLevel-warn'], 'description', {
+        orig: 'Enables warning popups. \\c[1]Needs a restart!',
+        text:
+          'Включает всплывающие окна предупреждений. \\c[1]Требуется перезапуск!',
+      });
+
+      localize(lang.options['logLevel-error'], 'name', {
+        orig: 'Log level: Errors',
+        text: 'Ошибки',
+      });
+      localize(lang.options['logLevel-error'], 'description', {
+        orig: 'Enables error popups. \\c[1]Needs a restart!',
+        text: 'Включает всплывающие окна ошибок. \\c[1]Требуется перезапуск!',
+      });
+    });
   });
