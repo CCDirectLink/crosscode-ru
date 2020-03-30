@@ -1,6 +1,34 @@
-/* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
+/* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface, @typescript-eslint/unbound-method */
 
 // TODO: replace default parameter syntax with `== null` checks
+
+declare namespace ig {
+  interface TextParser {
+    parse(
+      this: this,
+      text: sc.ru.ParsedTextData,
+      commands: TextCommand[],
+      font: MultiFont,
+    ): string;
+  }
+
+  interface TextBlock {
+    init(
+      this: this,
+      text: sc.ru.ParsedTextData,
+      commands: TextCommand[],
+      font: MultiFont,
+    ): void;
+    setText(this: this, text: sc.ru.ParsedTextData): void;
+  }
+  interface TextBlockConstructor {
+    new (
+      font: MultiFont,
+      text: sc.ru.ParsedTextData,
+      settings: ig.TextBlock.Settings,
+    ): TextBlock;
+  }
+}
 
 declare namespace sc {
   interface TextGui {
@@ -41,30 +69,20 @@ declare namespace sc.ru {
     extends ImpactClass<TickerDisplayHook> {}
   let TickerDisplayHook: TickerDisplayHookConstructor;
 
-  type RawTextBlockSafeMethods = {
-    [P in Exclude<
-      keyof ig.TextBlock,
-      'init' | 'setText'
-    >]: ReplaceThisParameter<ig.TextBlock[P], sc.ru.RawTextBlock>;
-  };
-  interface RawTextBlock extends RawTextBlockSafeMethods {
-    init(
-      this: this,
-      font: ig.MultiFont,
-      parsedText: string,
-      commands: ig.TextCommand[],
-      settings: ig.TextBlock.Settings,
-    ): void;
-    setText(this: this, parsedText: string, commands: ig.TextCommand[]): void;
+  interface ParsedTextData extends ig.Class {
+    parsedText: string;
+    commands: ig.TextCommand[];
+
+    init(this: this, parsedText: string, commands: ig.TextCommand[]): void;
   }
-  interface RawTextBlockConstructor extends ImpactClass<RawTextBlock> {}
-  let RawTextBlock: RawTextBlockConstructor;
+  interface ParsedTextDataConstructor extends ImpactClass<ParsedTextData> {}
+  let ParsedTextData: ParsedTextDataConstructor;
 
   interface LongHorizontalTextGui extends ig.GuiElementBase {
     text: string;
     parsedText: string;
     commands: ig.TextCommand[];
-    textBlocks: sc.ru.RawTextBlock[];
+    textBlocks: ig.TextBlock[];
     font: ig.MultiFont;
     linePadding: number;
     tickerHook: sc.ru.TickerDisplayHook;
@@ -84,8 +102,8 @@ declare namespace sc.ru {
   interface IconTextGui extends ig.GuiElementBase {
     font: ig.MultiFont;
     text: string;
-    iconTextBlock: sc.ru.RawTextBlock;
-    textBlock: sc.ru.RawTextBlock;
+    iconTextBlock: ig.TextBlock;
+    textBlock: ig.TextBlock;
     tickerHook: sc.ru.TickerDisplayHook;
 
     init(this: this, text: TextLike, settings: sc.TextGui.Settings): void;
@@ -278,37 +296,42 @@ ig.module('crosscode-ru.ticker-display')
       },
     });
 
-    sc.ru.RawTextBlock = ig.TextBlock.extend({
-      init(
-        font,
-        parsedText,
-        commands,
-        {
-          speed = ig.TextBlock.SPEED.IMMEDIATE,
-          textAlign = ig.Font.ALIGN.LEFT,
-          maxWidth,
-          bestRatio,
-          linePadding = 1,
-        },
-      ) {
-        this.font = font;
-        this.speed = speed;
-        this.align = textAlign;
-        this.maxWidth = maxWidth;
-        this.bestRatio =
-          ig.LANG_DETAILS[ig.currentLang] &&
-          ig.LANG_DETAILS[ig.currentLang].fixedMsgWidth
-            ? 0
-            : bestRatio;
-        this.linePadding = linePadding;
-        this.setText(parsedText, commands);
-        this.reset();
-      },
-
-      setText(parsedText, commands) {
-        this.clearPrerendered();
+    sc.ru.ParsedTextData = ig.Class.extend({
+      init(parsedText, commands) {
         this.parsedText = parsedText;
         this.commands = commands;
+      },
+    });
+
+    let textParserParse = ig.TextParser.parse;
+    ig.TextParser.parse = function(
+      text: string | sc.ru.ParsedTextData,
+      commands: ig.TextCommand[],
+      font: ig.MultiFont,
+    ): string {
+      if (text instanceof sc.ru.ParsedTextData) {
+        commands.push(...text.commands);
+        return text.parsedText;
+      }
+      return textParserParse.call(this, text, commands, font);
+    };
+
+    ig.TextBlock.inject({
+      setText(this: ig.TextBlock, text: string | sc.ru.ParsedTextData) {
+        this.clearPrerendered();
+
+        if (text instanceof sc.ru.ParsedTextData) {
+          this.parsedText = text.parsedText;
+          this.commands = text.commands;
+        } else {
+          this.commands.length = 0;
+          this.parsedText = ig.TextParser.parse(
+            textLikeToString(text).trim(),
+            this.commands,
+            this.font,
+          );
+        }
+
         if (this.maxWidth) {
           this.parsedText = this.font.wrapText(
             this.parsedText,
@@ -393,10 +416,9 @@ ig.module('crosscode-ru.ticker-display')
             }));
           blockCommands.unshift({ index: 0, command: { color: lastColor } });
 
-          let textBlock = new sc.ru.RawTextBlock(
+          let textBlock = new ig.TextBlock(
             this.font,
-            blockParsedText,
-            blockCommands,
+            new sc.ru.ParsedTextData(blockParsedText, blockCommands),
             textBlockSettings,
           );
           this.textBlocks.push(textBlock);
@@ -527,23 +549,21 @@ ig.module('crosscode-ru.ticker-display')
         );
 
         // TODO: limit `settings` here
-        this.iconTextBlock = new sc.ru.RawTextBlock(
+        this.iconTextBlock = new ig.TextBlock(
           this.font,
-          firstIcon,
-          iconCommands,
+          new sc.ru.ParsedTextData(firstIcon, iconCommands),
           settings,
         );
-        this.textBlock = new sc.ru.RawTextBlock(
+        this.textBlock = new ig.TextBlock(
           this.font,
-          parsedText,
-          commands,
+          new sc.ru.ParsedTextData(parsedText, commands),
           settings,
         );
 
         this.tickerHook = new sc.ru.TickerDisplayHook(
           this.hook,
           (renderer, x, y) => {
-            renderer.addText((this.textBlock as unknown) as ig.TextBlock, x, y);
+            renderer.addText(this.textBlock, x, y);
           },
         );
 
@@ -559,8 +579,10 @@ ig.module('crosscode-ru.ticker-display')
           this.font,
         );
 
-        this.iconTextBlock.setText(firstIcon, iconCommands);
-        this.textBlock.setText(parsedText, commands);
+        this.iconTextBlock.setText(
+          new sc.ru.ParsedTextData(firstIcon, iconCommands),
+        );
+        this.textBlock.setText(new sc.ru.ParsedTextData(parsedText, commands));
         if (this.isVisible()) this.prerender();
 
         this._updateDimensions();
@@ -639,11 +661,7 @@ ig.module('crosscode-ru.ticker-display')
           }
         }
 
-        renderer.addText(
-          (this.iconTextBlock as unknown) as ig.TextBlock,
-          iconX,
-          iconY,
-        );
+        renderer.addText(this.iconTextBlock, iconX, iconY);
       },
     });
   });
