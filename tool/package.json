@@ -9,6 +9,7 @@
     "node": ">=11.0.0"
   },
   "scripts": {
+    "build": "node \"$npm_execpath\" run build:scripts && node \"$npm_execpath\" run build:styles",
     "build:scripts": "../node_modules/.bin/tsc",
     "watch:scripts": "../node_modules/.bin/tsc --watch",
     "build:styles": "node-sass --recursive --output dist/styles --source-map true src/styles",

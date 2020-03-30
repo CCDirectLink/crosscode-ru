@@ -21,5 +21,9 @@
     "eslint-config-dmitmel": "dmitmel/eslint-config-dmitmel",
     "eslint-plugin-node": "^11.0.0",
     "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
   }
 }

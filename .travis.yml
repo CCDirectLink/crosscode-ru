@@ -11,7 +11,8 @@ install:
   - (cd tool && yarn install)
   - yarn global add prettier
 script:
-  - (cd tool && yarn build:scripts && yarn build:styles)
+  - yarn build
+  - (cd tool && yarn build)
   - eslint . --ext .js,.ts,.d.ts --ignore-path .gitignore --cache --cache-location .eslintcache/
   - prettier --check "**/*.{json,css,scss,html}"
 

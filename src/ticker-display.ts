@@ -1,4 +1,104 @@
+/* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
+
 // TODO: replace default parameter syntax with `== null` checks
+
+declare namespace sc {
+  interface TextGui {
+    tickerHook: sc.ru.TickerDisplayHook;
+  }
+}
+
+declare namespace sc.ru.debug {
+  let showTickerBoundaryBoxes: boolean;
+}
+
+declare namespace sc.ru {
+  type RenderTextCallback = (
+    renderer: ig.GuiRenderer,
+    x: number,
+    y: number,
+  ) => void;
+
+  interface TickerDisplayHook {
+    hook: ig.GuiHook;
+    renderText: RenderTextCallback;
+    timer: number;
+    speed: Vec2;
+    delayAtBorders: Vec2;
+    constantTextOffset: Vec2;
+    maxSize: Partial<Vec2> | null;
+    focusTarget: ig.FocusGui | null;
+
+    init(this: this, hook: ig.GuiHook, renderText: RenderTextCallback): void;
+
+    setMaxSize(this: this, maxSize: Partial<Vec2> | null): void;
+    update(this: this): void;
+    updateDrawables(this: this, renderer: ig.GuiRenderer): void;
+    _tryRenderTicker(this: this, renderer: ig.GuiRenderer): boolean;
+    _computeMaxSize(this: this): Vec2 | null;
+  }
+  interface TickerDisplayHookConstructor
+    extends ImpactClass<TickerDisplayHook> {}
+  let TickerDisplayHook: TickerDisplayHookConstructor;
+
+  type RawTextBlockSafeMethods = {
+    [P in Exclude<
+      keyof ig.TextBlock,
+      'init' | 'setText'
+    >]: ReplaceThisParameter<ig.TextBlock[P], sc.ru.RawTextBlock>;
+  };
+  interface RawTextBlock extends RawTextBlockSafeMethods {
+    init(
+      this: this,
+      font: ig.MultiFont,
+      parsedText: string,
+      commands: ig.TextCommand[],
+      settings: ig.TextBlock.Settings,
+    ): void;
+    setText(this: this, parsedText: string, commands: ig.TextCommand[]): void;
+  }
+  interface RawTextBlockConstructor extends ImpactClass<RawTextBlock> {}
+  let RawTextBlock: RawTextBlockConstructor;
+
+  interface LongHorizontalTextGui extends ig.GuiElementBase {
+    text: string;
+    parsedText: string;
+    commands: ig.TextCommand[];
+    textBlocks: sc.ru.RawTextBlock[];
+    font: ig.MultiFont;
+    linePadding: number;
+    tickerHook: sc.ru.TickerDisplayHook;
+
+    init(this: this, text: TextLike, settings: sc.TextGui.Settings): void;
+
+    setText(this: this, text: TextLike): void;
+    prerender(this: this): void;
+    clear(this: this): void;
+  }
+  interface LongHorizontalTextGuiConstructor
+    extends ImpactClass<LongHorizontalTextGui> {
+    SPLIT_WIDTH: number;
+  }
+  let LongHorizontalTextGui: LongHorizontalTextGuiConstructor;
+
+  interface IconTextGui extends ig.GuiElementBase {
+    font: ig.MultiFont;
+    text: string;
+    iconTextBlock: sc.ru.RawTextBlock;
+    textBlock: sc.ru.RawTextBlock;
+    tickerHook: sc.ru.TickerDisplayHook;
+
+    init(this: this, text: TextLike, settings: sc.TextGui.Settings): void;
+
+    setText(this: this, text: TextLike): void;
+    _updateDimensions(this: this): void;
+    setDrawCallback(this: this, callback: ig.TextBlock.DrawCallback): void;
+    prerender(this: this): void;
+    clear(this: this): void;
+  }
+  interface IconTextGuiConstructor extends ImpactClass<IconTextGui> {}
+  let IconTextGui: IconTextGuiConstructor;
+}
 
 ig.module('crosscode-ru.ticker-display')
   .requires(
@@ -9,8 +109,14 @@ ig.module('crosscode-ru.ticker-display')
     'game.feature.font.font-system',
   )
   .defines(() => {
-    function triangleWave(x, a) {
+    function triangleWave(x: number, a: number): number {
       return Math.abs(Math.abs((x - a) % (2 * a)) - a);
+    }
+
+    function textLikeToString(text: sc.TextLike): string {
+      if (text == null) return '';
+      if (typeof text === 'object') return text.toString();
+      return text;
     }
 
     sc.ru.TickerDisplayHook = ig.Class.extend({
@@ -59,21 +165,10 @@ ig.module('crosscode-ru.ticker-display')
       },
 
       _tryRenderTicker(renderer) {
-        let {
-          maxSize,
-          timer,
-          speed,
-          delayAtBorders,
-          constantTextOffset,
-        } = this;
+        let maxSize = this._computeMaxSize();
         if (maxSize == null) return false;
 
         let { size, align } = this.hook;
-
-        maxSize = {
-          x: maxSize.x != null ? maxSize.x : size.x,
-          y: maxSize.y != null ? maxSize.y : size.y,
-        };
 
         let prtPos = { x: 0, y: 0 };
         if (align.x === ig.GUI_ALIGN.X_CENTER) {
@@ -84,7 +179,7 @@ ig.module('crosscode-ru.ticker-display')
         }
         if (align.y === ig.GUI_ALIGN.Y_CENTER) {
           prtPos.y = Math.ceil((size.y - maxSize.y) / 2);
-        } else if (align.y === ig.GUI_ALIGN.Y_RIGHT) {
+        } else if (align.y === ig.GUI_ALIGN.Y_BOTTOM) {
           prtPos.y = size.y - maxSize.y;
         }
 
@@ -104,27 +199,32 @@ ig.module('crosscode-ru.ticker-display')
         renderer
           .addTransform()
           .setTranslate(
-            prtPos.x + constantTextOffset.x,
-            prtPos.y + constantTextOffset.y,
+            prtPos.x + this.constantTextOffset.x,
+            prtPos.y + this.constantTextOffset.y,
           )
           .setClip(
-            maxSize.x - constantTextOffset.x,
-            maxSize.y - constantTextOffset.y,
+            maxSize.x - this.constantTextOffset.x,
+            maxSize.y - this.constantTextOffset.y,
           );
 
         // TODO: display shadows at the overflowing side
-        function calculateOffset(axis) {
+        const calculateOffset = (axis: 'x' | 'y'): number => {
           if (!overflow[axis]) return 0;
-          let length = size[axis] - maxSize[axis];
-          let spd = speed[axis];
+          // well, control flow based type analysis is limited only to local
+          // function scopes, so I have to make a non-null assertion here
+          let length = size[axis] - maxSize![axis];
+          let spd = this.speed[axis];
           // multiply the delay by speed so that delay isn't affected by speed
           // and always means the same time in seconds
-          let scaledDelay = delayAtBorders[axis] * spd;
+          let scaledDelay = this.delayAtBorders[axis] * spd;
           return (
-            triangleWave(timer * spd - scaledDelay / 2, length + scaledDelay) -
+            triangleWave(
+              this.timer * spd - scaledDelay / 2,
+              length + scaledDelay,
+            ) -
             scaledDelay / 2
           ).limit(0, length);
-        }
+        };
 
         let offsetX = calculateOffset('x');
         let offsetY = calculateOffset('y');
@@ -134,6 +234,14 @@ ig.module('crosscode-ru.ticker-display')
         renderer.undoTransform();
 
         return true;
+      },
+
+      _computeMaxSize() {
+        if (this.maxSize == null) return null;
+        return {
+          x: this.maxSize.x != null ? this.maxSize.x : this.hook.size.x,
+          y: this.maxSize.y != null ? this.maxSize.y : this.hook.size.y,
+        };
       },
     });
 
@@ -219,15 +327,15 @@ ig.module('crosscode-ru.ticker-display')
     });
 
     sc.ru.LongHorizontalTextGui = ig.GuiElementBase.extend({
-      config: {},
       text: '',
       parsedText: '',
       commands: [],
       textBlocks: [],
-      tickerConfig: null,
+      font: null,
+      linePadding: null,
       tickerHook: null,
 
-      init(text, { font = sc.fontsystem.font, linePadding } = {}) {
+      init(text, { font = sc.fontsystem.font, linePadding = 1 } = {}) {
         this.parent();
         this.font = font;
         this.linePadding = linePadding;
@@ -236,11 +344,12 @@ ig.module('crosscode-ru.ticker-display')
           (renderer, x, y) => {
             let offset = 0;
             this.textBlocks.forEach(tb => {
+              // TODO: enable this via a debug flag
               // let color = ['red', 'green', 'blue'][blockIndex % 3];
               // renderer
               //   .addColor(color, x + offset, y, tb.size.x, tb.size.y)
               //   .setAlpha(0.3);
-              renderer.addText(tb, x + offset, y);
+              renderer.addText((tb as unknown) as ig.TextBlock, x + offset, y);
               offset += tb.size.x;
             });
           },
@@ -253,14 +362,12 @@ ig.module('crosscode-ru.ticker-display')
         this.textBlocks = [];
         if (this.text !== text) this.tickerHook.timer = 0;
 
-        let textBlockConfig = {
+        let textBlockSettings = {
           speed: ig.TextBlock.SPEED.IMMEDIATE,
           linePadding: this.linePadding,
         };
 
-        if (text == null) text = '';
-        if (typeof text === 'object') text = text.toString();
-        this.text = text.trim();
+        this.text = textLikeToString(text);
         this.commands = [];
         this.parsedText = ig.TextParser.parse(
           this.text,
@@ -273,7 +380,7 @@ ig.module('crosscode-ru.ticker-display')
         let blockStart = 0;
         let lastColor = 0;
 
-        const flushBlock = blockEnd => {
+        const flushBlock = (blockEnd: number): void => {
           let blockParsedText = this.parsedText.slice(blockStart, blockEnd + 1);
           let blockCommands = this.commands
             .filter(
@@ -290,7 +397,7 @@ ig.module('crosscode-ru.ticker-display')
             this.font,
             blockParsedText,
             blockCommands,
-            textBlockConfig,
+            textBlockSettings,
           );
           this.textBlocks.push(textBlock);
           this.setSize(
@@ -364,17 +471,22 @@ ig.module('crosscode-ru.ticker-display')
     // the splitting width is a smaller than ig.system.width, just to be safe
     sc.ru.LongHorizontalTextGui.SPLIT_WIDTH = 500;
 
-    function parseIconText(text, font) {
-      if (text == null) text = '';
-      if (typeof text === 'object') text = text.toString();
-
-      let commands = [];
+    function parseIconText(
+      text: string,
+      font: ig.MultiFont,
+    ): {
+      firstIcon: string;
+      iconCommands: ig.TextCommand[];
+      parsedText: string;
+      commands: ig.TextCommand[];
+    } {
+      let commands: ig.TextCommand[] = [];
       let parsedText = ig.TextParser.parse(text, commands, font);
       // NOTE: setDrawCallback might not be handled correctly when the icon
       // string is empty. I should check for changes in draw callback usages in
       // future updates.
       let firstIcon = '';
-      let iconCommands = [];
+      let iconCommands: ig.TextCommand[] = [];
 
       if (parsedText.length > 0 && font.iconSets.length > 0) {
         let firstChar = parsedText.charCodeAt(0);
@@ -402,37 +514,36 @@ ig.module('crosscode-ru.ticker-display')
       textBlock: null,
       tickerHook: null,
 
-      init(text, options) {
+      init(text, settings) {
         this.parent();
 
-        if (options == null) options = {};
-        this.font = options.font;
-        if (this.font == null) this.font = sc.fontsystem.font;
+        if (settings == null) settings = {};
+        this.font = settings.font != null ? settings.font : sc.fontsystem.font;
 
-        this.text = text;
+        this.text = textLikeToString(text);
         let { firstIcon, iconCommands, parsedText, commands } = parseIconText(
-          text,
+          this.text,
           this.font,
         );
 
-        // TODO: limit `options` here
+        // TODO: limit `settings` here
         this.iconTextBlock = new sc.ru.RawTextBlock(
           this.font,
           firstIcon,
           iconCommands,
-          options,
+          settings,
         );
         this.textBlock = new sc.ru.RawTextBlock(
           this.font,
           parsedText,
           commands,
-          options,
+          settings,
         );
 
         this.tickerHook = new sc.ru.TickerDisplayHook(
           this.hook,
           (renderer, x, y) => {
-            renderer.addText(this.textBlock, x, y);
+            renderer.addText((this.textBlock as unknown) as ig.TextBlock, x, y);
           },
         );
 
@@ -441,10 +552,10 @@ ig.module('crosscode-ru.ticker-display')
 
       setText(text) {
         if (this.text !== text) this.tickerHook.timer = 0;
-        this.text = text;
+        this.text = textLikeToString(text);
 
         let { firstIcon, iconCommands, parsedText, commands } = parseIconText(
-          text,
+          this.text,
           this.font,
         );
 
@@ -510,16 +621,11 @@ ig.module('crosscode-ru.ticker-display')
         let iconX = 0;
         let iconY = 0;
 
-        let { maxSize } = this.tickerHook;
+        let maxSize = this.tickerHook._computeMaxSize();
         if (maxSize != null) {
           // TODO: merge these calculations with the ones in
           // sc.ru.TickerDisplayHook#_tryRenderTicker
           let { size, align } = this.hook;
-
-          maxSize = {
-            x: maxSize.x != null ? maxSize.x : size.x,
-            y: maxSize.y != null ? maxSize.y : size.y,
-          };
 
           if (align.x === ig.GUI_ALIGN.X_CENTER) {
             iconX = Math.max(0, Math.ceil((size.x - maxSize.x) / 2));
@@ -533,7 +639,11 @@ ig.module('crosscode-ru.ticker-display')
           }
         }
 
-        renderer.addText(this.iconTextBlock, iconX, iconY);
+        renderer.addText(
+          (this.iconTextBlock as unknown) as ig.TextBlock,
+          iconX,
+          iconY,
+        );
       },
     });
   });

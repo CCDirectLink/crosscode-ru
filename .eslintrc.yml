@@ -30,6 +30,8 @@ rules:
     - ignores:
         - modules
 
+  node/no-unpublished-import: off
+
 overrides:
   - files: 'tool/scripts/**/*.js'
     rules:
@@ -40,7 +42,7 @@ overrides:
       global-require: off
 
   - files:
-      - 'tool/src/**/*.{,d.}ts'
+      - '{,*/}src/**/*.ts'
     extends:
       - 'plugin:@typescript-eslint/eslint-recommended'
       - 'plugin:@typescript-eslint/recommended'
@@ -48,8 +50,6 @@ overrides:
     parser: '@typescript-eslint/parser'
     plugins:
       - '@typescript-eslint'
-    parserOptions:
-      project: tool/tsconfig.json
 
     # TODO: add TS preset to https://github.com/dmitmel/eslint-config-dmitmel
     rules:
@@ -88,3 +88,21 @@ overrides:
       node/no-missing-import: off
 
       '@typescript-eslint/no-non-null-assertion': off
+
+  - files:
+      - 'src/**/*.ts'
+    parserOptions:
+      project: tsconfig.json
+    globals:
+      ig: off
+      sc: off
+
+  - files:
+      - 'tool/src/**/*.ts'
+    parserOptions:
+      project: tool/tsconfig.json
+
+  - files:
+      - 'src/types/**/*.d.ts'
+    rules:
+      '@typescript-eslint/no-empty-interface': off
