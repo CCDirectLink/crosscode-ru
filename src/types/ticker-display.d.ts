@@ -85,7 +85,7 @@ declare namespace sc.ru {
     linePadding: number;
     tickerHook: sc.ru.TickerDisplayHook;
 
-    init(this: this, text: sc.TextLike, settings: sc.TextGui.Settings): void;
+    init(this: this, text: sc.TextLike, settings?: sc.TextGui.Settings): void;
 
     setText(this: this, text: sc.TextLike): void;
     prerender(this: this): void;
@@ -104,7 +104,7 @@ declare namespace sc.ru {
     textBlock: ig.TextBlock;
     tickerHook: sc.ru.TickerDisplayHook;
 
-    init(this: this, text: sc.TextLike, settings: sc.TextGui.Settings): void;
+    init(this: this, text: sc.TextLike, settings?: sc.TextGui.Settings): void;
 
     setText(this: this, text: sc.TextLike): void;
     _updateDimensions(this: this): void;

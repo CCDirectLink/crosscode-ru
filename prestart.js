@@ -6,7 +6,7 @@ import './src/credits-section.js';
 import './dist/event-steps-patches.js';
 import './dist/help-boxes.js';
 import './dist/help-info-box.js';
-import './src/info-bar.js';
+import './dist/info-bar.js';
 import './src/item-lists.js';
 import './dist/map-menu.js';
 import './src/options-menu.js';

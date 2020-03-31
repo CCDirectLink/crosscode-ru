@@ -245,10 +245,14 @@ ig.module('crosscode-ru.ticker-display')
       linePadding: null,
       tickerHook: null,
 
-      init(text, { font = sc.fontsystem.font, linePadding = 1 } = {}) {
+      init(text, settings) {
         this.parent();
-        this.font = font;
-        this.linePadding = linePadding;
+
+        if (settings == null) settings = {};
+        this.font = settings.font != null ? settings.font : sc.fontsystem.font;
+        this.linePadding =
+          settings.linePadding != null ? settings.linePadding : 1;
+
         this.tickerHook = new sc.ru.TickerDisplayHook(
           this.hook,
           (renderer, x, y) => {

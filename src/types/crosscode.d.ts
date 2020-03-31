@@ -50,6 +50,29 @@ declare interface ImpactClass<Instance> {
   readonly prototype: Instance;
 }
 
+interface KeySpline {
+  get(this: this, t: number): number;
+}
+interface KeySplineConstructor {
+  new (x1: number, y1: number, x2: number, y2: number): KeySpline;
+}
+interface Window {
+  KeySpline: KeySplineConstructor;
+}
+
+// eslint-disable-next-line @typescript-eslint/class-name-casing
+interface KEY_SPLINES {
+  EASE_IN_OUT: KeySpline;
+  EASE_OUT: KeySpline;
+  EASE_IN: KeySpline;
+  EASE: KeySpline;
+  EASE_SOUND: KeySpline;
+  LINEAR: KeySpline;
+  JUMPY: KeySpline;
+  EASE_OUT_STRONG: KeySpline;
+  EASE_IN_STRONG: KeySpline;
+}
+
 declare namespace ig {
   // eslint-disable-next-line no-shadow
   function module(this: typeof ig, name: string): typeof ig;
@@ -448,7 +471,25 @@ declare namespace ig {
     X_RIGHT,
   }
 
+  namespace GuiHook {
+    interface State {
+      offsetX: number;
+      offsetY: number;
+      alpha: number;
+      scaleX: number;
+      scaleY: number;
+      angle: number;
+    }
+
+    interface Transition {
+      state: Partial<ig.GuiHook.State>;
+      time: number;
+      timeFunction: KeySpline;
+    }
+  }
   interface GuiHook extends ig.Class {
+    transitions: { [name: string]: ig.GuiHook.Transition };
+
     pos: Vec2;
     size: Vec2;
     align: { x: ig.GUI_ALIGN; y: ig.GUI_ALIGN };
@@ -479,10 +520,20 @@ declare namespace ig {
     setPivot(this: this, x: number, y: number): void;
     setAlign(this: this, x: ig.GUI_ALIGN, y: ig.GUI_ALIGN): void;
     isVisible(this: this): boolean;
+    addChildGui(this: this, guiElement: ig.GuiElementBase): void;
+    removeChildGui(this: this, guiElement: ig.GuiElementBase): void;
     update(this: this): void;
     updateDrawables(this: this, renderer: ig.GuiRenderer): void;
     onAttach(this: this, parentHook: ig.GuiHook): void;
     onDetach(this: this): void;
+    doStateTransition(
+      this: this,
+      name: string,
+      skipTransition?: boolean,
+      removeAfter?: boolean,
+      callback?: (() => void) | null,
+      initDelay?: number,
+    ): void;
 
     onVisibilityChange(this: this, visible: boolean): void;
   }
@@ -689,6 +740,40 @@ declare namespace sc {
     SIZE: number;
     MAX_PER_ROW: number;
   };
+
+  interface BuffInfo extends ig.GuiElementBase {
+    _width: number;
+
+    setText(this: this, text: sc.TextLike, initDelay: number): void;
+  }
+  interface BuffInfoConstructor extends ImpactClass<BuffInfo> {}
+  let BuffInfo: BuffInfoConstructor;
+
+  interface InfoBar extends ig.GuiElementBase {
+    text: sc.TextGui;
+    sizeTransition: {
+      startWidth: number;
+      width: number;
+      startHeight: number;
+      height: number;
+      time: number;
+      timeFunction: KeySpline;
+      timer: number;
+    };
+
+    init(this: this, width: number, height: number, skipRender: boolean): void;
+
+    doSizeTransition(
+      this: this,
+      width: number,
+      height: number,
+      time: number,
+      timeFunction: KeySpline,
+      delay: number,
+    ): void;
+  }
+  interface InfoBarConstructor extends ImpactClass<InfoBar> {}
+  let InfoBar: InfoBarConstructor;
 
   interface ListBoxButton extends ig.FocusGui {
     button: sc.ButtonGui;
