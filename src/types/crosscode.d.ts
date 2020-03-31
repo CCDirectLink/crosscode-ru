@@ -376,6 +376,7 @@ declare namespace ig {
     size: Vec2;
     align: { x: ig.GUI_ALIGN; y: ig.GUI_ALIGN };
     children: ig.GuiHook[];
+    gui: ig.GuiElementBase;
   }
   interface GuiHookConstructor extends ImpactClass<GuiHook> {}
   let GuiHook: GuiHookConstructor;
@@ -836,7 +837,17 @@ declare namespace sc {
 /* module game.feature.combat.entities.burst-spawner */
 /* module game.feature.combat.entities.stone */
 /* module game.feature.combat.gui.status-bar */
+
 /* module game.feature.combat.gui.pvp-gui */
+
+declare namespace sc {
+  interface PvpRoundGui extends ig.GuiElementBase {
+    init(this: this, roundNumber: number, autoContinue: number): void;
+  }
+  interface PvpRoundGuiConstructor extends ImpactClass<PvpRoundGui> {}
+  let PvpRoundGui: PvpRoundGuiConstructor;
+}
+
 /* module game.feature.combat.model.combat-status */
 /* module game.feature.combat.combat-target-event */
 /* module game.feature.combat.model.enemy-reaction */

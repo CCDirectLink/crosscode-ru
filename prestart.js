@@ -10,7 +10,7 @@ import './src/info-bar.js';
 import './src/item-lists.js';
 import './src/map-menu.js';
 import './src/options-menu.js';
-import './src/pvp.js';
+import './dist/pvp.js';
 import './src/quest-menu.js';
 import './src/saves-menu.js';
 import './src/status-combat-arts.js';
