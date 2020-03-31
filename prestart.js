@@ -8,7 +8,7 @@ import './dist/help-boxes.js';
 import './dist/help-info-box.js';
 import './src/info-bar.js';
 import './src/item-lists.js';
-import './src/map-menu.js';
+import './dist/map-menu.js';
 import './src/options-menu.js';
 import './dist/pvp.js';
 import './dist/quest-menu.js';

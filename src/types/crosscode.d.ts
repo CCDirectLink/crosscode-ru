@@ -764,6 +764,17 @@ declare namespace sc {
 /* module game.feature.player.player-model */
 /* module game.feature.msg.message-model */
 /* module game.feature.menu.area-loadable */
+
+declare namespace sc {
+  namespace AreaLoadable {
+    interface Map {
+      path: string;
+      name: ig.LangLabel.Data;
+      offset: Vec2;
+    }
+  }
+}
+
 /* module game.feature.menu.gui.base-menu */
 
 /* module game.feature.menu.gui.list-boxes */
@@ -812,7 +823,37 @@ declare namespace sc {
 /* module game.feature.gui.screen.intro-screen */
 /* module game.feature.gui.screen.title-logo */
 /* module game.feature.gui.screen.title-preset */
+
 /* module game.feature.gui.widget.modal-dialog */
+
+declare namespace sc {
+  enum DIALOG_INFO_ICON {
+    NONE,
+    INFO,
+    WARNING,
+    ERROR,
+    QUESTION,
+  }
+
+  interface ModalButtonInteract extends ig.GuiElementBase {}
+  interface ModalButtonInteractConstructor
+    extends ImpactClass<ModalButtonInteract> {}
+  let ModalButtonInteract: ModalButtonInteractConstructor;
+
+  interface Dialogs {
+    showYesNoDialog(
+      this: this,
+      text?: sc.TextLike,
+      icon?: sc.DIALOG_INFO_ICON,
+      callback?: (
+        button: sc.ButtonGui,
+        dialog?: sc.ModalButtonInteract,
+      ) => void,
+      noSubmitSound?: boolean,
+    ): void;
+  }
+  let Dialogs: Dialogs;
+}
 
 /* module game.feature.menu.gui.save.save-misc */
 
@@ -911,10 +952,30 @@ declare namespace sc {
 }
 
 /* module game.feature.menu.gui.item.item-menu */
+
 /* module game.feature.menu.gui.map.map-misc */
+
+declare namespace sc {
+  interface LandmarkGui extends ig.FocusGui {
+    map: sc.AreaLoadable.Map;
+  }
+  interface LandmarkGuiConstructor extends ImpactClass<LandmarkGui> {}
+  let LandmarkGui: LandmarkGuiConstructor;
+}
+
 /* module game.feature.menu.gui.map.map-stamp */
 /* module game.feature.menu.gui.map.map-floor */
+
 /* module game.feature.menu.gui.map.map-area */
+
+declare namespace sc {
+  interface MapAreaContainer extends ig.GuiElementBase {
+    onLandmarkPressed(this: this, landmark: sc.LandmarkGui): void;
+  }
+  interface MapAreaContainerConstructor extends ImpactClass<MapAreaContainer> {}
+  let MapAreaContainer: MapAreaContainerConstructor;
+}
+
 /* module game.feature.menu.gui.map.map-worldmap */
 /* module game.feature.menu.gui.map.map-menu */
 /* module game.feature.menu.gui.options.options-misc */

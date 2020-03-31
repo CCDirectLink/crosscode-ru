@@ -10,7 +10,7 @@ ig.module('crosscode-ru.fixes.map-menu.teleport-to-prepositions')
     // https://en.wikipedia.org/wiki/Grammatical_case
     // https://en.wikipedia.org/wiki/Inflection
 
-    const CORRECT_MAP_NAMES_WITH_PREPOSITIONS = {
+    const CORRECT_MAP_NAMES_WITH_PREPOSITIONS: Record<string, string> = {
       'arid.town-2': 'в Западный город',
       'autumn.path4': 'к Озеру у обелиска',
       'autumn.path-8': 'на Последний путь',
@@ -58,10 +58,10 @@ ig.module('crosscode-ru.fixes.map-menu.teleport-to-prepositions')
     sc.MapAreaContainer.inject({
       onLandmarkPressed(landmark) {
         let show = sc.Dialogs.showYesNoDialog;
-        sc.Dialogs.showYesNoDialog = function(text, icon, callback) {
+        sc.Dialogs.showYesNoDialog = function(text, ...args): void {
           let mapName = CORRECT_MAP_NAMES_WITH_PREPOSITIONS[landmark.map.path];
           if (mapName != null) text = `Телепортироваться ${mapName}?`;
-          let result = show.call(this, text, icon, callback);
+          let result = show.call(this, text, ...args);
 
           sc.Dialogs.showYesNoDialog = show;
           return result;
