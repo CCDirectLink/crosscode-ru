@@ -245,7 +245,21 @@ declare namespace ig {
 }
 
 /* module impact.base.input */
+
 /* module impact.base.lang */
+
+declare namespace ig {
+  namespace LangLabel {
+    type Data = { [locale: string]: string } & { langUid?: number };
+  }
+  interface LangLabel extends ig.Class {
+    value: string;
+    data: ig.LangLabel.Data;
+
+    toString(this: this): string;
+  }
+}
+
 /* module impact.base.impact */
 /* module impact.base.sprite-fx */
 /* module impact.base.animation */
@@ -262,18 +276,18 @@ declare namespace ig {
 /* module game.config */
 
 declare namespace ig {
-  let LANG_DETAILS: {
-    [locale: string]: {
-      systemFont?: string;
-      useFor?: string;
-      commaDigits?: boolean;
-      fixedMsgWidth?: boolean;
-      newlineAnywhere?: boolean;
-      newlineException?: string[];
-      newlineAfter?: string[];
-      metrics?: typeof ig.SYSTEM_FONT_METRICS;
-    };
-  };
+  interface LangOptions {
+    systemFont?: string;
+    useFor?: string;
+    commaDigits?: boolean;
+    fixedMsgWidth?: boolean;
+    newlineAnywhere?: boolean;
+    newlineException?: string[];
+    newlineAfter?: string[];
+    metrics?: typeof ig.SYSTEM_FONT_METRICS;
+  }
+
+  let LANG_DETAILS: { [locale: string]: ig.LangOptions };
 
   let SYSTEM_FONT_METRICS: { size: number[]; baseLine: number[] };
 }
@@ -499,7 +513,15 @@ declare namespace ig {
 /* module impact.feature.terrain.terrain */
 /* module impact.feature.terrain.plug-in */
 /* module impact.feature.interact.interact */
+
 /* module impact.feature.interact.button-interact */
+
+declare namespace ig {
+  interface ButtonGroup extends ig.Class {}
+  interface ButtonGroupConstructor extends ImpactClass<ButtonGroup> {}
+  let ButtonGroup: ButtonGroupConstructor;
+}
+
 /* module impact.feature.interact.press-repeater */
 
 /* module impact.feature.interact.gui.focus-gui */
@@ -583,7 +605,23 @@ declare namespace sc {
 }
 
 /* module game.feature.interact.button-group */
+
+declare namespace sc {
+  interface ButtonGroup extends ig.ButtonGroup {}
+  interface ButtonGroupConstructor extends ImpactClass<ButtonGroup> {}
+  let ButtonGroup: ButtonGroupConstructor;
+}
+
 /* module game.feature.gui.base.button */
+
+declare namespace sc {
+  interface ButtonGui extends ig.FocusGui {
+    textChild: sc.TextGui;
+  }
+  interface ButtonGuiConstructor extends ImpactClass<ButtonGui> {}
+  let ButtonGui: ButtonGuiConstructor;
+}
+
 /* module game.feature.gui.base.boxes */
 
 /* module game.feature.gui.base.numbers */
@@ -597,9 +635,19 @@ declare namespace sc {
 /* module game.feature.menu.gui.menu-misc */
 
 declare namespace sc {
+  interface ListBoxButton extends ig.FocusGui {
+    button: sc.ButtonGui;
+  }
+  interface ListBoxButtonConstructor extends ImpactClass<ListBoxButton> {}
+  let ListBoxButton: ListBoxButtonConstructor;
+
   interface MenuPanel extends ig.BoxGui {}
   interface MenuPanelConstructor extends ImpactClass<MenuPanel> {}
   let MenuPanel: MenuPanelConstructor;
+
+  interface ScrollPane extends ig.GuiElementBase {}
+  interface ScrollPaneConstructor extends ImpactClass<ScrollPane> {}
+  let ScrollPane: ScrollPaneConstructor;
 
   interface TimeAndMoneyGUI extends sc.MenuPanel {
     gfx: ig.Image;
@@ -643,7 +691,17 @@ declare namespace sc {
 /* module game.feature.msg.message-model */
 /* module game.feature.menu.area-loadable */
 /* module game.feature.menu.gui.base-menu */
+
 /* module game.feature.menu.gui.list-boxes */
+
+declare namespace sc {
+  interface ButtonListBox extends sc.ScrollPane {
+    contentPane: ig.GuiElementBase;
+  }
+  interface ButtonListBoxConstructor extends ImpactClass<ButtonListBox> {}
+  let ButtonListBox: ButtonListBoxConstructor;
+}
+
 /* module game.feature.menu.gui.main-menu */
 /* module game.feature.menu.gui.start-menu */
 /* module game.feature.gui.base.slick-box */
@@ -780,7 +838,27 @@ declare namespace sc {
 /* module game.feature.menu.gui.shop.shop-start */
 /* module game.feature.menu.gui.shop.shop-misc */
 /* module game.feature.menu.gui.shop.shop-list */
+
 /* module game.feature.trade.trade-model */
+
+declare namespace sc {
+  namespace TradeModel {
+    interface FoundTrader {
+      characterName: string;
+      map: ig.LangLabel;
+      area: ig.LangLabel;
+      time: number;
+    }
+  }
+
+  interface TradeModel extends ig.GameAddon {
+    getFoundTrader(this: this, key: string): sc.TradeModel.FoundTrader;
+  }
+  interface TradeModelConstructor extends TradeModel {}
+  let TradeModel: TradeModelConstructor;
+  let trade: TradeModel;
+}
+
 /* module game.feature.trade.gui.equip-toggle-stats */
 /* module game.feature.menu.gui.shop.shop-stats */
 /* module game.feature.menu.gui.shop.shop-cart */
@@ -807,7 +885,29 @@ declare namespace sc {
 /* module game.feature.npc.gui.npc-display-gui */
 /* module game.feature.menu.gui.quests.quest-details */
 /* module game.feature.menu.gui.quests.quest-menu */
+
 /* module game.feature.menu.gui.tab-box */
+
+declare namespace sc {
+  interface TabbedPane extends ig.GuiElementBase {
+    setPanelSize(this: this, width: number, height: number): void;
+  }
+  interface TabbedPaneConstructor extends ImpactClass<TabbedPane> {}
+  let TabbedPane: TabbedPaneConstructor;
+
+  interface ListTabbedPane extends sc.TabbedPane {
+    onCreateListEntries(
+      this: this,
+      list: sc.ButtonListBox,
+      buttonGroup: sc.ButtonGroup,
+      type: any,
+      sort: any,
+    ): void;
+  }
+  interface ListTabbedPaneConstructor extends ImpactClass<ListTabbedPane> {}
+  let ListTabbedPane: ListTabbedPaneConstructor;
+}
+
 /* module game.feature.msg.gui.msg-skip-hud */
 /* module game.feature.msg.gui.side-message-hud */
 /* module game.feature.combat.gui.enemy-display-gui */
@@ -839,9 +939,64 @@ declare namespace sc {
 /* module game.feature.menu.gui.trophy.trophy-menu */
 /* module game.feature.menu.gui.social.social-list */
 /* module game.feature.menu.gui.social.social-menu */
+
 /* module game.feature.trade.gui.trade-dialog */
+
+declare namespace sc {
+  interface TradeItem extends sc.ListBoxButton {}
+  interface TradeItemConstructor extends ImpactClass<TradeItem> {}
+  let TradeItem: TradeItemConstructor;
+
+  interface TradeItemBox extends ig.GuiElementBase {}
+  interface TradeItemBoxConstructor extends ImpactClass<TradeItemBox> {}
+  let TradeItemBox: TradeItemBoxConstructor;
+}
+
 /* module game.feature.menu.gui.trade.trade-misc */
+
+declare namespace sc {
+  interface TradeButtonBox extends ig.GuiElementBase {
+    location: sc.TextGui;
+
+    init(
+      this: this,
+      trader: string,
+      buttonGroup: sc.ButtonGroup,
+      buttonStartIndex: number,
+    ): void;
+  }
+  interface TradeButtonBoxConstructor extends ImpactClass<TradeButtonBox> {}
+  let TradeButtonBox: TradeButtonBoxConstructor;
+
+  interface TradeDetailsView extends ig.BoxGui {
+    location: sc.TextGui;
+    getGui: sc.TradeItemBox;
+    requireGui: sc.TradeItemBox;
+    _trader: string;
+
+    init(this: this): void;
+
+    setTraderData(
+      this: this,
+      trader: string,
+      offer: any,
+      buttonPos: number,
+    ): void;
+  }
+  interface TradeDetailsViewConstructor extends ImpactClass<TradeDetailsView> {}
+  let TradeDetailsView: TradeDetailsViewConstructor;
+}
+
 /* module game.feature.menu.gui.trade.trader-list */
+
+declare namespace sc {
+  interface TradersListBox extends sc.ListTabbedPane {
+    init(this: this): void;
+  }
+  interface TradersListBoxConstructor extends ImpactClass<TradersListBox> {}
+  let TradersListBox: TradersListBoxConstructor;
+}
+
 /* module game.feature.menu.gui.trade.trader-menu */
 /* module game.feature.menu.gui.botanics.botanics-misc */
 /* module game.feature.menu.gui.botanics.botanics-list */

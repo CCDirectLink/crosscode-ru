@@ -17,4 +17,4 @@ import './src/status-combat-arts.js';
 import './src/status-lines.js';
 import './src/tab-button.js';
 import './dist/time-and-money-gui.js';
-import './src/traders-list.js';
+import './dist/traders-list.js';

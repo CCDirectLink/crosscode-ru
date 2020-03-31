@@ -7,11 +7,14 @@ ig.module('crosscode-ru.fixes.traders-list')
     'game.feature.menu.gui.trade.trader-list',
   )
   .defines(() => {
-    function patchTraderLocation(location) {
+    function patchTraderLocation(location: sc.TextGui): void {
       location.textBlock.linePadding = -3;
     }
 
-    function setTraderLocationText(location, traderId) {
+    function setTraderLocationText(
+      location: sc.TextGui,
+      traderId: string,
+    ): void {
       let foundTrader = sc.trade.getFoundTrader(traderId);
       location.setText(
         `${foundTrader.area || '???'}\n> ${foundTrader.map || '???'}`,
@@ -28,18 +31,18 @@ ig.module('crosscode-ru.fixes.traders-list')
 
     const TRADERS_LIST_ADDITIONAL_WIDTH = 32;
     sc.TradersListBox.inject({
-      init(...args) {
+      init() {
         let setSizeOld = this.setSize;
         let setPivotOld = this.setPivot;
         let setPanelSizeOld = this.setPanelSize;
-        this.setSize = (w, h) =>
+        this.setSize = (w, h): void =>
           setSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
-        this.setPivot = (x, y) =>
+        this.setPivot = (x, y): void =>
           setPivotOld.call(this, x + TRADERS_LIST_ADDITIONAL_WIDTH, y);
-        this.setPanelSize = (w, h) =>
+        this.setPanelSize = (w, h): void =>
           setPanelSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
 
-        this.parent(...args);
+        this.parent();
 
         this.setSize = setSizeOld;
         this.setPivot = setPivotOld;
@@ -48,7 +51,7 @@ ig.module('crosscode-ru.fixes.traders-list')
 
       onCreateListEntries(list, ...args) {
         let listSetSizeOld = list.setSize;
-        list.setSize = (w, h) =>
+        list.setSize = (w, h): void =>
           listSetSizeOld.call(list, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
 
         this.parent(list, ...args);
@@ -58,15 +61,17 @@ ig.module('crosscode-ru.fixes.traders-list')
         list.contentPane.hook.children.forEach(hook => {
           hook.pos.x += TRADERS_LIST_ADDITIONAL_WIDTH;
         });
-        list.traderInfoGui.hook.children.forEach(hook => {
+        (list as sc.ButtonListBox & {
+          traderInfoGui: ig.GuiElementBase;
+        }).traderInfoGui.hook.children.forEach(hook => {
           hook.size.x += TRADERS_LIST_ADDITIONAL_WIDTH;
         });
       },
     });
 
     sc.TradeDetailsView.inject({
-      init(...args) {
-        this.parent(...args);
+      init() {
+        this.parent();
         this.hook.pos.x -= TRADERS_LIST_ADDITIONAL_WIDTH / 2;
         patchTraderLocation(this.location);
       },
