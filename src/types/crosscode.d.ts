@@ -394,8 +394,10 @@ declare namespace ig {
   interface GuiElementBase extends ig.Class {
     hook: ig.GuiHook;
 
+    setPos(this: this, x: number, y: number): void;
     setSize(this: this, w: number, h: number): void;
     setPivot(this: this, x: number, y: number): void;
+    setAlign(this: this, x: ig.GUI_ALIGN, y: ig.GUI_ALIGN): void;
     isVisible(this: this): boolean;
     update(this: this): void;
     updateDrawables(this: this, renderer: ig.GuiRenderer): void;
@@ -410,7 +412,15 @@ declare namespace ig {
 
 /* module impact.feature.gui.gui-images */
 /* module impact.feature.gui.gui-steps */
+
 /* module impact.feature.gui.base.box */
+
+declare namespace ig {
+  interface BoxGui extends ig.GuiElementBase {}
+  interface BoxGuiConstructor extends ImpactClass<BoxGui> {}
+  let BoxGui: BoxGuiConstructor;
+}
+
 /* module impact.feature.gui.plug-in */
 /* module impact.feature.light.light */
 /* module impact.feature.light.light-steps */
@@ -537,7 +547,15 @@ declare namespace sc {
 /* module game.feature.gui.base.button */
 /* module game.feature.gui.base.boxes */
 /* module game.feature.gui.base.numbers */
+
 /* module game.feature.menu.gui.menu-misc */
+
+declare namespace sc {
+  interface MenuPanel extends ig.BoxGui {}
+  interface MenuPanelConstructor extends ImpactClass<MenuPanel> {}
+  let MenuPanel: MenuPanelConstructor;
+}
+
 /* module game.feature.version.gui.changelog-gui */
 /* module game.feature.version.gui.dlc-gui */
 /* module game.feature.version.plug-in */
@@ -638,7 +656,19 @@ declare namespace sc {
 /* module game.feature.skills.skills */
 /* module game.feature.skills.skilltree */
 /* module game.feature.menu.gui.circuit.circuit-misc */
+
 /* module game.feature.menu.gui.circuit.circuit-detail-elements */
+
+declare namespace sc {
+  interface CircuitInfoBox extends sc.MenuPanel {
+    special: sc.TextGui;
+
+    init(this: this, scrollHook: ig.GuiHook): void;
+  }
+  interface CircuitInfoBoxConstructor extends ImpactClass<CircuitInfoBox> {}
+  let CircuitInfoBox: CircuitInfoBoxConstructor;
+}
+
 /* module game.feature.menu.gui.circuit.circuit-overview */
 /* module game.feature.menu.gui.circuit.circuit-effect-display */
 /* module game.feature.menu.gui.circuit.circuit-detail */
