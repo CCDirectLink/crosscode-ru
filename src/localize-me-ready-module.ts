@@ -1,4 +1,4 @@
-export default async function initLocalizeMeReady() {
+export default async function initLocalizeMeReady(): Promise<void> {
   const NAME = 'localize-me.final-locale.ready';
   if (ig.modules[NAME] != null) return;
 

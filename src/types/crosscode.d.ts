@@ -6,9 +6,9 @@ declare interface Vec2 {
 }
 
 declare type ImpactClassGetInitArgs<Instance> = Instance extends {
-  init(...args: infer P): void;
+  init(...args: infer Args): void;
 }
-  ? P
+  ? Args
   : unknown[];
 
 type ReplaceThisParameter<T, This2> = T extends (
@@ -42,18 +42,29 @@ type ImpactClassPrototype<Instance, ParentInstance> = {
 declare interface ImpactClass<Instance> {
   new (...args: ImpactClassGetInitArgs<Instance>): Instance;
   extend<ChildConstructor extends { prototype: unknown }>(
+    this: this,
     obj: ImpactClassPrototype<ChildConstructor['prototype'], Instance>,
   ): ChildConstructor;
-  inject(obj: ImpactClassPrototype<Instance, Instance>): void;
+  inject(this: this, obj: ImpactClassPrototype<Instance, Instance>): void;
   readonly classId: number;
   readonly prototype: Instance;
 }
 
 declare namespace ig {
   // eslint-disable-next-line no-shadow
-  function module(name: string): typeof ig;
-  function requires(...names: string[]): typeof ig;
-  function defines(body: () => void): void;
+  function module(this: typeof ig, name: string): typeof ig;
+  function requires(this: typeof ig, ...names: string[]): typeof ig;
+  function defines(this: typeof ig, body: () => void): void;
+
+  interface Module {
+    requires: string[];
+    loaded: boolean;
+    body: (() => void) | null;
+  }
+
+  let modules: Record<string, Module>;
+  let _waitForOnload: number;
+  function _execModules(this: typeof ig): void;
 
   interface Class {
     readonly classId: number;
