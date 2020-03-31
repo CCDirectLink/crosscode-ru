@@ -4,10 +4,10 @@ declare namespace sc.ru {
     text: string;
   }
 
-  function localize(value: string, fragment: LocalizableFragment): string;
+  function localize(value: string, fragment: sc.ru.LocalizableFragment): string;
   function localizeProp<K extends keyof any>(
     obj: { [key in K]: string },
     prop: K,
-    fragment: LocalizableFragment,
+    fragment: sc.ru.LocalizableFragment,
   ): void;
 }

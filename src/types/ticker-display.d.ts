@@ -3,8 +3,8 @@ declare namespace ig {
     parse(
       this: this,
       text: sc.ru.ParsedTextData,
-      commands: TextCommand[],
-      font: MultiFont,
+      commands: ig.TextCommand[],
+      font: ig.MultiFont,
     ): string;
   }
 
@@ -12,17 +12,17 @@ declare namespace ig {
     init(
       this: this,
       text: sc.ru.ParsedTextData,
-      commands: TextCommand[],
-      font: MultiFont,
+      commands: ig.TextCommand[],
+      font: ig.MultiFont,
     ): void;
     setText(this: this, text: sc.ru.ParsedTextData): void;
   }
   interface TextBlockConstructor {
     new (
-      font: MultiFont,
+      font: ig.MultiFont,
       text: sc.ru.ParsedTextData,
       settings: ig.TextBlock.Settings,
-    ): TextBlock;
+    ): ig.TextBlock;
   }
 }
 
@@ -33,15 +33,17 @@ declare namespace sc {
 }
 
 declare namespace sc.ru {
-  type RenderTextCallback = (
-    renderer: ig.GuiRenderer,
-    x: number,
-    y: number,
-  ) => void;
+  namespace TickerDisplayHook {
+    type RenderTextCallback = (
+      renderer: ig.GuiRenderer,
+      x: number,
+      y: number,
+    ) => void;
+  }
 
   interface TickerDisplayHook {
     hook: ig.GuiHook;
-    renderText: RenderTextCallback;
+    renderText: sc.ru.TickerDisplayHook.RenderTextCallback;
     timer: number;
     speed: Vec2;
     delayAtBorders: Vec2;
@@ -49,7 +51,11 @@ declare namespace sc.ru {
     maxSize: Partial<Vec2> | null;
     focusTarget: ig.FocusGui | null;
 
-    init(this: this, hook: ig.GuiHook, renderText: RenderTextCallback): void;
+    init(
+      this: this,
+      hook: ig.GuiHook,
+      renderText: sc.ru.TickerDisplayHook.RenderTextCallback,
+    ): void;
 
     setMaxSize(this: this, maxSize: Partial<Vec2> | null): void;
     update(this: this): void;
@@ -79,9 +85,9 @@ declare namespace sc.ru {
     linePadding: number;
     tickerHook: sc.ru.TickerDisplayHook;
 
-    init(this: this, text: TextLike, settings: sc.TextGui.Settings): void;
+    init(this: this, text: sc.TextLike, settings: sc.TextGui.Settings): void;
 
-    setText(this: this, text: TextLike): void;
+    setText(this: this, text: sc.TextLike): void;
     prerender(this: this): void;
     clear(this: this): void;
   }
@@ -98,9 +104,9 @@ declare namespace sc.ru {
     textBlock: ig.TextBlock;
     tickerHook: sc.ru.TickerDisplayHook;
 
-    init(this: this, text: TextLike, settings: sc.TextGui.Settings): void;
+    init(this: this, text: sc.TextLike, settings: sc.TextGui.Settings): void;
 
-    setText(this: this, text: TextLike): void;
+    setText(this: this, text: sc.TextLike): void;
     _updateDimensions(this: this): void;
     setDrawCallback(this: this, callback: ig.TextBlock.DrawCallback): void;
     prerender(this: this): void;

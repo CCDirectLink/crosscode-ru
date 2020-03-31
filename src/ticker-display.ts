@@ -204,7 +204,7 @@ ig.module('crosscode-ru.ticker-display')
     };
 
     ig.TextBlock.inject({
-      setText(this: ig.TextBlock, text: string | sc.ru.ParsedTextData) {
+      setText(this: ig.TextBlock, text: sc.TextLike | sc.ru.ParsedTextData) {
         this.clearPrerendered();
 
         if (text instanceof sc.ru.ParsedTextData) {
