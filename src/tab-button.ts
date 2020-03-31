@@ -1,15 +1,20 @@
-function createPatch(
-  gameMenuModule,
-  className,
-  minLargeWidth,
+function createPatch<C extends keyof typeof sc>(
+  gameMenuModule: string,
+  className: C,
+  minLargeWidth: number,
   methodName = 'onTabButtonCreation',
-) {
+): void {
   return ig
     .module(`crosscode-ru.fixes.tab-button.${gameMenuModule}`)
     .requires(`game.feature.menu.gui.${gameMenuModule}`)
     .defines(() => {
-      sc[className].inject({
-        [methodName](...args) {
+      (sc[className] as ImpactClass<ig.Class>).inject({
+        [methodName](
+          this: ig.Class & {
+            parent: (...args: unknown[]) => sc.ItemTabbedBox.TabButton;
+          },
+          ...args: unknown[]
+        ): sc.ItemTabbedBox.TabButton {
           let btn = this.parent(...args);
           btn._largeWidth = Math.max(btn._largeWidth, minLargeWidth);
           return btn;

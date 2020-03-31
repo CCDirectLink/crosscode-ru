@@ -823,7 +823,19 @@ declare namespace sc {
 /* module game.feature.menu.gui.item.item-status-favs */
 /* module game.feature.menu.gui.item.item-status-trade */
 /* module game.feature.menu.gui.item.item-sort-menu */
+
 /* module game.feature.menu.gui.item.item-list */
+
+declare namespace sc {
+  namespace ItemTabbedBox {
+    interface TabButton extends ig.FocusGui {
+      _largeWidth: number;
+    }
+    interface TabButtonConstructor extends ImpactClass<TabButton> {}
+    let TabButton: TabButtonConstructor;
+  }
+}
+
 /* module game.feature.menu.gui.item.item-menu */
 /* module game.feature.menu.gui.map.map-misc */
 /* module game.feature.menu.gui.map.map-stamp */
@@ -833,7 +845,15 @@ declare namespace sc {
 /* module game.feature.menu.gui.map.map-menu */
 /* module game.feature.menu.gui.options.options-misc */
 /* module game.feature.menu.gui.options.options-types */
+
 /* module game.feature.menu.gui.options.options-list */
+
+declare namespace sc {
+  interface OptionsTabBox extends ig.GuiElementBase {}
+  interface OptionsTabBoxConstructor extends ImpactClass<OptionsTabBox> {}
+  let OptionsTabBox: OptionsTabBoxConstructor;
+}
+
 /* module game.feature.menu.gui.options.options-menu */
 /* module game.feature.menu.gui.shop.shop-start */
 /* module game.feature.menu.gui.shop.shop-misc */
@@ -881,7 +901,15 @@ declare namespace sc {
 /* module game.feature.menu.gui.synop.synop-misc */
 /* module game.feature.menu.gui.synop.synop-menu */
 /* module game.feature.menu.gui.quests.quest-misc */
+
 /* module game.feature.menu.gui.quests.quest-tab-list */
+
+declare namespace sc {
+  interface QuestListBox extends ig.GuiElementBase {}
+  interface QuestListBoxConstructor extends ImpactClass<QuestListBox> {}
+  let QuestListBox: QuestListBoxConstructor;
+}
+
 /* module game.feature.npc.gui.npc-display-gui */
 /* module game.feature.menu.gui.quests.quest-details */
 /* module game.feature.menu.gui.quests.quest-menu */
@@ -914,13 +942,37 @@ declare namespace sc {
 /* module game.feature.menu.gui.enemies.enemy-pages */
 /* module game.feature.menu.gui.social.social-misc */
 /* module game.feature.menu.gui.quest-hub.quest-hub-misc */
+
 /* module game.feature.menu.gui.quest-hub.quest-hub-list */
+
+declare namespace sc {
+  interface QuestHubList extends sc.ListTabbedPane {}
+  interface QuestHubListConstructor extends ImpactClass<QuestHubList> {}
+  let QuestHubList: QuestHubListConstructor;
+}
+
 /* module game.feature.menu.gui.quest-hub.quest-hub-menu */
+
 /* module game.feature.menu.gui.enemies.enemy-list */
+
+declare namespace sc {
+  interface EnemyListBox extends sc.ListTabbedPane {}
+  interface EnemyListBoxConstructor extends ImpactClass<EnemyListBox> {}
+  let EnemyListBox: EnemyListBoxConstructor;
+}
+
 /* module game.feature.menu.gui.enemies.enemy-misc */
 /* module game.feature.menu.gui.enemies.enemy-menu */
 /* module game.feature.menu.gui.lore.lore-misc */
+
 /* module game.feature.menu.gui.lore.lore-list */
+
+declare namespace sc {
+  interface LoreListBoxNew extends sc.ListTabbedPane {}
+  interface LoreListBoxNewConstructor extends ImpactClass<LoreListBoxNew> {}
+  let LoreListBoxNew: LoreListBoxNewConstructor;
+}
+
 /* module game.feature.menu.gui.lore.lore-menu */
 /* module game.feature.menu.gui.status.status-misc */
 /* module game.feature.menu.gui.status.status-view-main */
@@ -937,7 +989,15 @@ declare namespace sc {
 /* module game.feature.menu.gui.trophy.trophy-misc */
 /* module game.feature.menu.gui.trophy.trophy-list */
 /* module game.feature.menu.gui.trophy.trophy-menu */
+
 /* module game.feature.menu.gui.social.social-list */
+
+declare namespace sc {
+  interface SocialList extends sc.ListTabbedPane {}
+  interface SocialListConstructor extends ImpactClass<SocialList> {}
+  let SocialList: SocialListConstructor;
+}
+
 /* module game.feature.menu.gui.social.social-menu */
 
 /* module game.feature.trade.gui.trade-dialog */
@@ -999,12 +1059,28 @@ declare namespace sc {
 
 /* module game.feature.menu.gui.trade.trader-menu */
 /* module game.feature.menu.gui.botanics.botanics-misc */
+
 /* module game.feature.menu.gui.botanics.botanics-list */
+
+declare namespace sc {
+  interface BotanicsListBox extends sc.ListTabbedPane {}
+  interface BotanicsListBoxConstructor extends ImpactClass<BotanicsListBox> {}
+  let BotanicsListBox: BotanicsListBoxConstructor;
+}
+
 /* module game.feature.menu.gui.botanics.botanics-menu */
 /* module game.feature.menu.gui.arena.arena-cup-page */
 /* module game.feature.menu.gui.arena.arena-round-page */
 /* module game.feature.menu.gui.arena.arena-misc */
+
 /* module game.feature.menu.gui.arena.arena-list */
+
+declare namespace sc {
+  interface ArenaCupList extends sc.ListTabbedPane {}
+  interface ArenaCupListConstructor extends ImpactClass<ArenaCupList> {}
+  let ArenaCupList: ArenaCupListConstructor;
+}
+
 /* module game.feature.menu.gui.arena.arena-menu */
 /* module game.feature.menu.gui.new-game.new-game-misc */
 /* module game.feature.menu.gui.new-game.new-game-list */
