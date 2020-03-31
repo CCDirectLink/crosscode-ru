@@ -5,21 +5,48 @@ declare interface Vec2 {
   y: number;
 }
 
-declare type ImpactClassGetInitArgs<T> = T extends {
+declare type ImpactClassGetInitArgs<Instance> = Instance extends {
   init(...args: infer P): void;
 }
   ? P
   : unknown[];
 
-declare interface ImpactClass<T> {
-  new (...args: ImpactClassGetInitArgs<T>): T;
-  // extend<U extends ImpactClass<InstanceType<U>>>(
-  extend<U extends new (...args: any) => unknown>(
-    obj: NullablePartial<InstanceType<U>>,
-  ): U;
-  inject(obj: NullablePartial<T>): void;
-  classId: number;
-  prototype: T;
+type ReplaceThisParameter<T, This2> = T extends (
+  this: infer This,
+  ...args: infer Args
+) => infer Return
+  ? unknown extends This
+    ? T
+    : (this: This2, ...args: Args) => Return
+  : T;
+
+type ImpactClassMember<
+  K extends keyof Instance,
+  Instance,
+  ParentInstance
+> = ReplaceThisParameter<
+  Instance[K],
+  Instance & {
+    // definition ends up becoming too complicated when I try to implement
+    // inference of argument and return types of `this.parent`, and as I'm
+    // concerned about compiler performance, I defined a much simpler version
+    // instead.
+    parent(this: ParentInstance, ...args: unknown[]): unknown;
+  }
+>;
+
+type ImpactClassPrototype<Instance, ParentInstance> = {
+  [K in keyof Instance]?: ImpactClassMember<K, Instance, ParentInstance> | null;
+};
+
+declare interface ImpactClass<Instance> {
+  new (...args: ImpactClassGetInitArgs<Instance>): Instance;
+  extend<ChildConstructor extends { prototype: unknown }>(
+    obj: ImpactClassPrototype<ChildConstructor['prototype'], Instance>,
+  ): ChildConstructor;
+  inject(obj: ImpactClassPrototype<Instance, Instance>): void;
+  readonly classId: number;
+  readonly prototype: Instance;
 }
 
 declare namespace ig {
@@ -29,8 +56,7 @@ declare namespace ig {
   function defines(body: () => void): void;
 
   interface Class {
-    // TODO: define this.parent somehow
-    parent(this: this, ...args: unknown[]): unknown;
+    readonly classId: number;
   }
   interface ClassConstructor extends ImpactClass<Class> {}
   let Class: ClassConstructor;
