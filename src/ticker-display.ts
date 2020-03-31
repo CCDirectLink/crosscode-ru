@@ -259,7 +259,7 @@ ig.module('crosscode-ru.ticker-display')
               // renderer
               //   .addColor(color, x + offset, y, tb.size.x, tb.size.y)
               //   .setAlpha(0.3);
-              renderer.addText((tb as unknown) as ig.TextBlock, x + offset, y);
+              renderer.addText(tb, x + offset, y);
               offset += tb.size.x;
             });
           },

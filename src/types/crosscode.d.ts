@@ -89,6 +89,10 @@ declare namespace ig {
   interface Loadable extends ig.Class {}
   interface LoadableConstructor extends ImpactClass<Loadable> {}
   let Loadable: LoadableConstructor;
+
+  interface SingleLoadable extends ig.Class {}
+  interface SingleLoadableConstructor extends ImpactClass<SingleLoadable> {}
+  let SingleLoadable: SingleLoadableConstructor;
 }
 
 /* module impact.base.image */
@@ -249,6 +253,13 @@ declare namespace ig {
 /* module impact.base.lang */
 
 declare namespace ig {
+  interface Lang extends ig.SingleLoadable {
+    get<T = string>(this: this, path: string): T;
+  }
+  interface LangConstructor extends ImpactClass<Lang> {}
+  let Lang: LangConstructor;
+  let lang: Lang;
+
   namespace LangLabel {
     type Data = { [locale: string]: string } & { langUid?: number };
   }
@@ -258,6 +269,8 @@ declare namespace ig {
 
     toString(this: this): string;
   }
+  interface LangLabelConstructor extends ImpactClass<LangLabel> {}
+  let LangLabel: LangLabelConstructor;
 }
 
 /* module impact.base.impact */
@@ -725,7 +738,19 @@ declare namespace sc {
 /* module game.feature.auto-control.auto-control-steps */
 /* module game.feature.auto-control.plug-in */
 /* module game.feature.inventory.inventory */
+
 /* module game.feature.combat.model.combat-params */
+
+declare namespace sc {
+  enum ELEMENT {
+    NEUTRAL,
+    HEAT,
+    COLD,
+    SHOCK,
+    WAVE,
+  }
+}
+
 /* module game.feature.combat.entities.projectile */
 /* module game.feature.combat.model.ball-behavior */
 /* module game.feature.combat.model.proxy */
@@ -1056,7 +1081,18 @@ declare namespace sc {
 /* module game.feature.menu.gui.stats.stats-misc */
 /* module game.feature.menu.gui.status.status-view-parameters */
 /* module game.feature.menu.gui.status.status-view-modifiers */
+
 /* module game.feature.menu.gui.status.status-view-combat-arts */
+
+declare namespace sc {
+  interface StatusViewCombatArtsEntry extends ig.GuiElementBase {
+    getConditionType(this: this): string;
+  }
+  interface StatusViewCombatArtsEntryConstructor
+    extends ImpactClass<StatusViewCombatArtsEntry> {}
+  let StatusViewCombatArtsEntry: StatusViewCombatArtsEntryConstructor;
+}
+
 /* module game.feature.menu.gui.status.status-menu */
 /* module game.feature.menu.gui.museum.museum-menu */
 /* module game.feature.menu.gui.stats.stats-types */
@@ -1166,6 +1202,7 @@ declare namespace sc {
 
 declare namespace sc {
   interface MenuModel extends ig.GameAddon {
+    statusElement: sc.ELEMENT;
     statusDiff: boolean;
   }
   interface MenuModelConstructor extends ImpactClass<MenuModel> {}
