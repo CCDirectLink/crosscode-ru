@@ -118,7 +118,9 @@ declare namespace ig {
     type ALIGN = FontALIGN_;
   }
 
-  interface Font extends ig.Image {}
+  interface Font extends ig.Image {
+    charHeight: number;
+  }
   interface FontConstructor extends ImpactClass<Font> {
     ALIGN: typeof FontALIGN_;
   }
@@ -532,6 +534,7 @@ declare namespace sc {
   }
 
   interface TextGui extends ig.GuiElementBase {
+    font: ig.MultiFont;
     text: sc.TextLike;
     textBlock: ig.TextBlock;
 
@@ -702,7 +705,19 @@ declare namespace sc {
 /* module game.feature.menu.gui.shop.shop-quantity */
 /* module game.feature.menu.gui.shop.shop-confirm */
 /* module game.feature.menu.gui.shop.shop-menu */
+
 /* module game.feature.menu.gui.help-boxes */
+
+declare namespace sc {
+  interface MultiPageBoxGui extends ig.GuiElementBase {
+    header: sc.TextGui;
+
+    _createInitContent(this: this, width: number): void;
+  }
+  interface MultiPageBoxGuiConstructor extends ImpactClass<MultiPageBoxGui> {}
+  let MultiPageBoxGui: MultiPageBoxGuiConstructor;
+}
+
 /* module game.feature.menu.gui.synop.synop-misc */
 /* module game.feature.menu.gui.synop.synop-menu */
 /* module game.feature.menu.gui.quests.quest-misc */
