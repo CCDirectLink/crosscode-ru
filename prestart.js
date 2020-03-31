@@ -5,7 +5,7 @@ import './dist/circuit-menu.js';
 import './src/credits-section.js';
 import './src/event-steps-patches.js';
 import './dist/help-boxes.js';
-import './src/help-info-box.js';
+import './dist/help-info-box.js';
 import './src/info-bar.js';
 import './src/item-lists.js';
 import './src/map-menu.js';

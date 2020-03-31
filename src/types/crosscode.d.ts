@@ -513,6 +513,14 @@ declare namespace ig {
 /* module game.feature.font.font-system */
 
 declare namespace sc {
+  enum FONT_COLORS {
+    RED,
+    GREEN,
+    PURPLE,
+    GREY,
+    ORANGE,
+  }
+
   interface FontSystem extends ig.GameAddon {
     font: ig.MultiFont;
   }
@@ -653,7 +661,20 @@ declare namespace sc {
 /* module game.feature.menu.gui.equip.equip-status */
 /* module game.feature.menu.gui.equip.equip-misc */
 /* module game.feature.menu.gui.equip.equip-bodypart */
+
 /* module game.feature.menu.gui.help.help-misc */
+
+declare namespace sc {
+  interface HelpLevelEntry extends ig.GuiElementBase {
+    color: sc.TextGui;
+    desc: sc.TextGui;
+
+    init(this: this, colorId: string, fontColor: sc.FONT_COLORS): void;
+  }
+  interface HelpLevelEntryConstructor extends ImpactClass<HelpLevelEntry> {}
+  let HelpLevelEntry: HelpLevelEntryConstructor;
+}
+
 /* module game.feature.menu.gui.help.help-menu */
 /* module game.feature.menu.gui.equip.equip-menu */
 /* module game.feature.skills.skills */

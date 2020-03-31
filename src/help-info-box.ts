@@ -6,7 +6,7 @@ ig.module('crosscode-ru.fixes.help-level-entry')
       init(colorId, fontColor) {
         this.parent(colorId, fontColor);
         this.desc.hook.pos.x += LEVEL_COLOR_ADDITIONAL_WIDTH;
-        this.desc.textBlock.maxWidth -= LEVEL_COLOR_ADDITIONAL_WIDTH;
+        this.desc.textBlock.maxWidth! -= LEVEL_COLOR_ADDITIONAL_WIDTH;
         this.desc.setText(this.desc.text);
         this.setSize(
           Math.max(
