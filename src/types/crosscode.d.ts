@@ -523,6 +523,10 @@ declare namespace ig {
   interface ImageGui extends ig.GuiElementBase {}
   interface ImageGuiConstructor extends ImpactClass<ImageGui> {}
   let ImageGui: ImageGuiConstructor;
+
+  interface ColorGui extends ig.GuiElementBase {}
+  interface ColorGuiConstructor extends ImpactClass<ColorGui> {}
+  let ColorGui: ColorGuiConstructor;
 }
 
 /* module impact.feature.parallax.parallax */
@@ -970,7 +974,22 @@ declare namespace sc {
 
 /* module game.feature.menu.gui.synop.synop-misc */
 /* module game.feature.menu.gui.synop.synop-menu */
+
 /* module game.feature.menu.gui.quests.quest-misc */
+
+declare namespace sc {
+  interface QuestBaseBox extends ig.BoxGui {}
+  interface QuestBaseBoxConstructor extends ImpactClass<QuestBaseBox> {}
+  let QuestBaseBox: QuestBaseBoxConstructor;
+
+  interface QuestInfoBox extends sc.QuestBaseBox {
+    locationGui: ig.ColorGui;
+    locationText: sc.TextGui;
+    init(this: this): void;
+  }
+  interface QuestInfoBoxConstructor extends ImpactClass<QuestInfoBox> {}
+  let QuestInfoBox: QuestInfoBoxConstructor;
+}
 
 /* module game.feature.menu.gui.quests.quest-tab-list */
 

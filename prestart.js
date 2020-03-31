@@ -11,7 +11,7 @@ import './src/item-lists.js';
 import './src/map-menu.js';
 import './src/options-menu.js';
 import './dist/pvp.js';
-import './src/quest-menu.js';
+import './dist/quest-menu.js';
 import './dist/saves-menu.js';
 import './dist/status-combat-arts.js';
 import './dist/status-lines.js';
