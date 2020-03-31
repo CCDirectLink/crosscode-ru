@@ -503,7 +503,15 @@ declare namespace ig {
 /* module impact.feature.dream-fx.dream-fx */
 /* module impact.feature.dream-fx.dream-fx-steps */
 /* module impact.feature.dream-fx.plug-in */
+
 /* module impact.feature.gui.base.basic-gui */
+
+declare namespace ig {
+  interface ImageGui extends ig.GuiElementBase {}
+  interface ImageGuiConstructor extends ImpactClass<ImageGui> {}
+  let ImageGui: ImageGuiConstructor;
+}
+
 /* module impact.feature.parallax.parallax */
 /* module impact.feature.parallax.parallax-steps */
 /* module impact.feature.parallax.plug-in */
@@ -635,11 +643,48 @@ declare namespace sc {
 /* module game.feature.menu.gui.menu-misc */
 
 declare namespace sc {
+  let MODIFIER_ICON_DRAW: {
+    X: number;
+    Y: number;
+    SIZE: number;
+    MAX_PER_ROW: number;
+  };
+
   interface ListBoxButton extends ig.FocusGui {
     button: sc.ButtonGui;
   }
   interface ListBoxButtonConstructor extends ImpactClass<ListBoxButton> {}
   let ListBoxButton: ListBoxButtonConstructor;
+
+  interface SimpleStatusDisplay extends ig.GuiElementBase {
+    gfx: ig.Image;
+    lineID: number;
+    iconIndex: Vec2;
+    currentValueGui: sc.NumberGui;
+    arrowGui: ig.ImageGui;
+    percentCurrentGui: sc.PercentChar;
+    simpleMode: boolean;
+    noPercentMode: boolean;
+
+    init(
+      this: this,
+      name: string,
+      lineID: number,
+      iconID: number,
+      usePercent: boolean,
+      maxValue: number,
+      simpleMode: boolean,
+      width: number,
+      noPercentMode: boolean,
+    ): void;
+  }
+  interface SimpleStatusDisplayConstructor
+    extends ImpactClass<SimpleStatusDisplay> {}
+  let SimpleStatusDisplay: SimpleStatusDisplayConstructor;
+
+  interface PercentChar extends ig.GuiElementBase {}
+  interface PercentCharConstructor extends ImpactClass<PercentChar> {}
+  let PercentChar: PercentCharConstructor;
 
   interface MenuPanel extends ig.BoxGui {}
   interface MenuPanelConstructor extends ImpactClass<MenuPanel> {}
@@ -939,7 +984,19 @@ declare namespace sc {
 /* module game.feature.msg.gui.msg-skip-hud */
 /* module game.feature.msg.gui.side-message-hud */
 /* module game.feature.combat.gui.enemy-display-gui */
+
 /* module game.feature.menu.gui.enemies.enemy-pages */
+
+declare namespace sc {
+  interface EnemyBaseParamLine extends ig.GuiElementBase {
+    gfx: ig.Image;
+    icon: number;
+  }
+  interface EnemyBaseParamLineConstructor
+    extends ImpactClass<EnemyBaseParamLine> {}
+  let EnemyBaseParamLine: EnemyBaseParamLineConstructor;
+}
+
 /* module game.feature.menu.gui.social.social-misc */
 /* module game.feature.menu.gui.quest-hub.quest-hub-misc */
 
@@ -974,7 +1031,26 @@ declare namespace sc {
 }
 
 /* module game.feature.menu.gui.lore.lore-menu */
+
 /* module game.feature.menu.gui.status.status-misc */
+
+declare namespace sc {
+  interface StatusParamBar extends ig.GuiElementBase {
+    gfx: ig.Image;
+    lineID: number;
+    usePercent: boolean;
+    iconIndex: Vec2;
+    skipVertLine: boolean;
+    _baseRed: boolean;
+    _equipRed: boolean;
+    _skillsRed: boolean;
+    _hideAll: boolean;
+    _skillHidden: boolean;
+  }
+  interface StatusParamBarConstructor extends ImpactClass<StatusParamBar> {}
+  let StatusParamBar: StatusParamBarConstructor;
+}
+
 /* module game.feature.menu.gui.status.status-view-main */
 /* module game.feature.menu.gui.stats.stats-gui-builds */
 /* module game.feature.menu.gui.stats.stats-misc */
@@ -1085,7 +1161,18 @@ declare namespace sc {
 /* module game.feature.menu.gui.new-game.new-game-misc */
 /* module game.feature.menu.gui.new-game.new-game-list */
 /* module game.feature.menu.gui.new-game.new-game-menu */
+
 /* module game.feature.menu.menu-model */
+
+declare namespace sc {
+  interface MenuModel extends ig.GameAddon {
+    statusDiff: boolean;
+  }
+  interface MenuModelConstructor extends ImpactClass<MenuModel> {}
+  let MenuModel: MenuModelConstructor;
+  let menu: MenuModel;
+}
+
 /* module game.feature.model.game-model */
 /* module game.feature.inventory.detectors */
 /* module game.feature.inventory.plug-in */

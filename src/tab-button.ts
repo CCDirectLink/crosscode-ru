@@ -4,14 +4,13 @@ function createPatch<C extends keyof typeof sc>(
   minLargeWidth: number,
   methodName = 'onTabButtonCreation',
 ): void {
-  return ig
-    .module(`crosscode-ru.fixes.tab-button.${gameMenuModule}`)
+  ig.module(`crosscode-ru.fixes.tab-button.${gameMenuModule}`)
     .requires(`game.feature.menu.gui.${gameMenuModule}`)
     .defines(() => {
       (sc[className] as ImpactClass<ig.Class>).inject({
         [methodName](
           this: ig.Class & {
-            parent: (...args: unknown[]) => sc.ItemTabbedBox.TabButton;
+            parent(...args: unknown[]): sc.ItemTabbedBox.TabButton;
           },
           ...args: unknown[]
         ): sc.ItemTabbedBox.TabButton {
