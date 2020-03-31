@@ -1,4 +1,4 @@
-import initDebug from './src/debug.js';
+import initDebug from './dist/debug.js';
 import initLocale from './src/locale.js';
 import initLocalizeMeReady from './src/localize-me-ready-module.js';
 import initJsonPatches from './src/json-patches.js';

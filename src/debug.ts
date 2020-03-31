@@ -1,11 +1,11 @@
-export default function initDebug() {
+export default function initDebug(): void {
   sc.ru.debug = {
     showTickerBoundaryBoxes: false,
     showUntranslatedStrings: false,
-  };
+  } as typeof sc.ru.debug;
 
   // this function is meant to be injected in place of updateDrawables
-  sc.ru.debug.highlightUpdateDrawables = function(renderer) {
+  sc.ru.debug.highlightUpdateDrawables = function(renderer): void {
     this.parent(renderer);
     let { size } = this.hook;
     renderer.addColor('red', 0, 0, size.x, size.y).setAlpha(0.25);
@@ -14,9 +14,9 @@ export default function initDebug() {
   ig.module('crosscode-ru.debug.gui')
     .requires('impact.feature.gui.gui')
     .defines(() => {
-      sc.ru.debug.highlightGuiInstances = function(clazz) {
+      sc.ru.debug.highlightGuiInstances = function(clazz): void {
         let { updateDrawables } = clazz.prototype;
-        clazz.prototype.updateDrawables = function(renderer) {
+        clazz.prototype.updateDrawables = function(renderer): void {
           updateDrawables.call(this, renderer);
           renderer
             .addColor('red', 0, 0, this.hook.size.x, this.hook.size.y)

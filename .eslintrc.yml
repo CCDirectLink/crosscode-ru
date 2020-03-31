@@ -96,13 +96,12 @@ overrides:
     globals:
       ig: off
       sc: off
+    rules:
+      '@typescript-eslint/no-namespace': off
+      '@typescript-eslint/no-empty-interface': off
+      '@typescript-eslint/unbound-method': off
 
   - files:
       - 'tool/src/**/*.ts'
     parserOptions:
       project: tool/tsconfig.json
-
-  - files:
-      - 'src/types/**/*.d.ts'
-    rules:
-      '@typescript-eslint/no-empty-interface': off
