@@ -634,7 +634,20 @@ declare namespace sc {
 /* module game.feature.gui.screen.title-logo */
 /* module game.feature.gui.screen.title-preset */
 /* module game.feature.gui.widget.modal-dialog */
+
 /* module game.feature.menu.gui.save.save-misc */
+
+declare namespace sc {
+  interface SaveSlotButton extends ig.FocusGui {
+    content: ig.GuiElementBase;
+
+    // TODO: write definitions for `save` (see https://crosscode.gamepedia.com/Savegame)
+    init(this: this, save: any, slot: number): void;
+  }
+  interface SaveSlotButtonConstructor extends ImpactClass<SaveSlotButton> {}
+  let SaveSlotButton: SaveSlotButtonConstructor;
+}
+
 /* module game.feature.menu.gui.save.save-list */
 /* module game.feature.menu.gui.save.save-menu */
 /* module game.feature.menu.gui.new-game.new-game-dialogs */

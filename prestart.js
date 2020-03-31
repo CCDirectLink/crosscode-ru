@@ -12,7 +12,7 @@ import './src/map-menu.js';
 import './src/options-menu.js';
 import './dist/pvp.js';
 import './src/quest-menu.js';
-import './src/saves-menu.js';
+import './dist/saves-menu.js';
 import './src/status-combat-arts.js';
 import './src/status-lines.js';
 import './src/tab-button.js';
