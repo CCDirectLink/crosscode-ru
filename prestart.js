@@ -3,7 +3,7 @@ import './dist/ticker-display.js';
 
 import './dist/circuit-menu.js';
 import './src/credits-section.js';
-import './src/event-steps-patches.js';
+import './dist/event-steps-patches.js';
 import './dist/help-boxes.js';
 import './dist/help-info-box.js';
 import './src/info-bar.js';

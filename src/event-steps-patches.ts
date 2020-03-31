@@ -2,7 +2,7 @@ ig.module('crosscode-ru.fixes.event-steps.shakeit')
   .requires('game.feature.npc.npc-steps')
   .defines(() => {
     // well, RFG doesn't use their own utility functions, so do I :shrug_face:
-    function randomElement(array) {
+    function randomElement<T>(array: T[]): T {
       return array[Math.floor(Math.random() * array.length)];
     }
 
@@ -14,7 +14,7 @@ ig.module('crosscode-ru.fixes.event-steps.shakeit')
 
         let start = ig.lang.get('sc.gui.shakeit.start');
 
-        let parts = ['first', 'second', 'third'].map(s =>
+        let parts: string[] = ['first', 'second', 'third'].map(s =>
           randomElement(ig.lang.get(`sc.gui.shakeit.${s}`)),
         );
         let swapFirstAndSecond = Math.random() >= 0.5;

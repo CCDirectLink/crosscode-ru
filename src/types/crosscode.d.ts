@@ -86,6 +86,10 @@ declare interface Number {
 /* module impact.base.loader */
 
 declare namespace ig {
+  interface Cacheable extends ig.Class {}
+  interface CacheableConstructor extends ImpactClass<Cacheable> {}
+  let Cacheable: CacheableConstructor;
+
   interface Loadable extends ig.Class {}
   interface LoadableConstructor extends ImpactClass<Loadable> {}
   let Loadable: LoadableConstructor;
@@ -278,8 +282,27 @@ declare namespace ig {
 /* module impact.base.animation */
 /* module impact.base.coll-entry */
 /* module impact.base.entity */
+
 /* module impact.base.steps */
+
+declare namespace ig {
+  interface StepBase extends ig.Class {
+    start(this: this): void;
+  }
+  interface StepBaseConstructor extends ImpactClass<StepBase> {}
+  let StepBase: StepBaseConstructor;
+}
+
 /* module impact.base.event */
+
+declare namespace ig {
+  type EventStepBase = StepBase;
+  type EventStepBaseConstructor = StepBaseConstructor;
+  let EventStepBase: EventStepBaseConstructor;
+
+  namespace EVENT_STEP {}
+}
+
 /* module impact.base.sprite */
 /* module impact.base.renderer */
 /* module impact.base.physics */
@@ -762,7 +785,28 @@ declare namespace sc {
 /* module game.feature.player.player-config */
 /* module game.feature.player.player-level */
 /* module game.feature.player.player-model */
+
 /* module game.feature.msg.message-model */
+
+declare namespace sc {
+  interface MessageModel extends ig.GameAddon {
+    showMessage(
+      this: this,
+      personName: string,
+      message: string,
+      autoContinue: boolean,
+    ): void;
+    setExpression(
+      this: this,
+      personName: string,
+      expression: sc.CharacterExpression,
+    ): void;
+  }
+  interface MessageModelConstructor extends ImpactClass<MessageModel> {}
+  let MessageModel: MessageModelConstructor;
+  let message: sc.MessageModel;
+}
+
 /* module game.feature.menu.area-loadable */
 
 declare namespace sc {
@@ -1011,7 +1055,7 @@ declare namespace sc {
   }
   interface TradeModelConstructor extends TradeModel {}
   let TradeModel: TradeModelConstructor;
-  let trade: TradeModel;
+  let trade: sc.TradeModel;
 }
 
 /* module game.feature.trade.gui.equip-toggle-stats */
@@ -1287,10 +1331,20 @@ declare namespace sc {
   }
   interface MenuModelConstructor extends ImpactClass<MenuModel> {}
   let MenuModel: MenuModelConstructor;
-  let menu: MenuModel;
+  let menu: sc.MenuModel;
 }
 
 /* module game.feature.model.game-model */
+
+declare namespace sc {
+  interface GameModel extends ig.GameAddon {
+    message: sc.MessageModel;
+  }
+  interface GameModelConstructor extends ImpactClass<GameModel> {}
+  let GameModel: GameModelConstructor;
+  let model: sc.GameModel;
+}
+
 /* module game.feature.inventory.detectors */
 /* module game.feature.inventory.plug-in */
 /* module game.feature.ar.gui.ar-box */
@@ -1304,7 +1358,16 @@ declare namespace sc {
 /* module game.feature.bgm.volume-map */
 /* module game.feature.bgm.plug-in */
 /* module game.feature.character.abstract-face */
+
 /* module game.feature.character.character */
+
+declare namespace sc {
+  interface CharacterExpression extends ig.Cacheable {}
+  interface CharacterExpressionConstructor
+    extends ImpactClass<CharacterExpression> {}
+  let CharacterExpression: CharacterExpressionConstructor;
+}
+
 /* module game.feature.character.char-templates */
 /* module game.feature.character.plug-in */
 /* module game.feature.combat.combat */
@@ -1387,7 +1450,23 @@ declare namespace sc {
 /* module game.feature.npc.entities.npc-entity */
 /* module game.feature.npc.entities.npc-runner-entity */
 /* module game.feature.npc.npc-runners */
+
 /* module game.feature.npc.npc-steps */
+
+/* eslint-disable @typescript-eslint/class-name-casing, @typescript-eslint/camelcase */
+declare namespace ig {
+  namespace EVENT_STEP {
+    interface DO_THE_SHAKE extends ig.EventStepBase {
+      person: string;
+      message: string;
+      charExpression: sc.CharacterExpression;
+    }
+    interface DO_THE_SHAKE_Constructor extends ImpactClass<DO_THE_SHAKE> {}
+    let DO_THE_SHAKE: DO_THE_SHAKE_Constructor;
+  }
+}
+/* eslint-enable @typescript-eslint/class-name-casing, @typescript-eslint/camelcase */
+
 /* module game.feature.npc.plug-in */
 /* module game.feature.player.entities.crosshair */
 /* module game.feature.player.player-level-notifier */
