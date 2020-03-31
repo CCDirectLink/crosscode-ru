@@ -98,6 +98,11 @@ declare namespace ig {
   interface ImageConstructor extends ImpactClass<Image> {}
   // eslint-disable-next-line no-shadow
   let Image: ImageConstructor;
+
+  interface ImageAtlasFragment extends ig.Class {}
+  interface ImageAtlasFragmentConstructor
+    extends ImpactClass<ImageAtlasFragment> {}
+  let ImageAtlasFragment: ImageAtlasFragmentConstructor;
 }
 
 /* module impact.base.font */
@@ -343,19 +348,41 @@ declare namespace ig {
 
 declare namespace ig {
   interface GuiRenderer extends ig.Class {
+    addGfx(
+      this: this,
+      gfx: ig.Image | ig.ImageAtlasFragment,
+      posX: number,
+      posY: number,
+      srcX: number,
+      srcY: number,
+      sizeX: number,
+      sizeY: number,
+    ): void;
+    addGfx(
+      this: this,
+      gfx: ig.Image | ig.ImageAtlasFragment,
+      posX: number,
+      posY: number,
+      srcX: number,
+      srcY: number,
+      sizeX: number,
+      sizeY: number,
+      flipX: boolean,
+      flipY: boolean,
+    ): void;
     addColor(
       this: this,
       color: string,
-      x: number,
-      y: number,
-      w: number,
-      h: number,
+      posX: number,
+      posY: number,
+      sizeX: number,
+      sizeY: number,
     ): ig.GuiDrawable;
     addText(
       this: this,
       textBlock: ig.TextBlock,
-      x: number,
-      y: number,
+      posX: number,
+      posY: number,
     ): ig.GuiDrawable;
 
     addTransform(this: this): ig.GuiTransform;
@@ -558,7 +585,14 @@ declare namespace sc {
 /* module game.feature.interact.button-group */
 /* module game.feature.gui.base.button */
 /* module game.feature.gui.base.boxes */
+
 /* module game.feature.gui.base.numbers */
+
+declare namespace sc {
+  interface NumberGui extends ig.GuiElementBase {}
+  interface NumberGuiConstructor extends ImpactClass<NumberGui> {}
+  let NumberGui: NumberGuiConstructor;
+}
 
 /* module game.feature.menu.gui.menu-misc */
 
@@ -566,6 +600,19 @@ declare namespace sc {
   interface MenuPanel extends ig.BoxGui {}
   interface MenuPanelConstructor extends ImpactClass<MenuPanel> {}
   let MenuPanel: MenuPanelConstructor;
+
+  interface TimeAndMoneyGUI extends sc.MenuPanel {
+    gfx: ig.Image;
+    timeGfx: ig.Image;
+    credit: sc.NumberGui;
+    timeSec: sc.NumberGui;
+    timeMin: sc.NumberGui;
+    timeHour: sc.NumberGui;
+
+    init(this: this): void;
+  }
+  interface TimeAndMoneyGUIConstructor extends ImpactClass<TimeAndMoneyGUI> {}
+  let TimeAndMoneyGUI: TimeAndMoneyGUIConstructor;
 }
 
 /* module game.feature.version.gui.changelog-gui */
