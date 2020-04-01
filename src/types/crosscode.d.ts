@@ -11,7 +11,7 @@ declare type ImpactClassGetInitArgs<Instance> = Instance extends {
   ? Args
   : unknown[];
 
-type ReplaceThisParameter<T, This2> = T extends (
+declare type ReplaceThisParameter<T, This2> = T extends (
   this: infer This,
   ...args: infer Args
 ) => infer Return
@@ -20,7 +20,7 @@ type ReplaceThisParameter<T, This2> = T extends (
     : (this: This2, ...args: Args) => Return
   : T;
 
-type ImpactClassMember<
+declare type ImpactClassMember<
   K extends keyof Instance,
   Instance,
   ParentInstance
@@ -35,7 +35,7 @@ type ImpactClassMember<
   }
 >;
 
-type ImpactClassPrototype<Instance, ParentInstance> = {
+declare type ImpactClassPrototype<Instance, ParentInstance> = {
   [K in keyof Instance]?: ImpactClassMember<K, Instance, ParentInstance> | null;
 };
 
@@ -260,7 +260,23 @@ declare namespace ig {
 }
 
 /* module impact.base.system.web-audio */
+
 /* module impact.base.sound */
+
+declare namespace ig {
+  interface SoundDefault extends ig.Class {}
+  interface SoundDefaultConstructor extends ImpactClass<SoundDefault> {}
+  let SoundDefault: SoundDefaultConstructor;
+
+  interface SoundWebAudio extends ig.Class {}
+  interface SoundWebAudioConstructor extends ImpactClass<SoundWebAudio> {}
+  let SoundWebAudio: SoundWebAudioConstructor;
+
+  type Sound = SoundDefault | SoundWebAudio;
+  type SoundConstructor = SoundDefaultConstructor | SoundWebAudioConstructor;
+  let Sound: SoundConstructor;
+}
+
 /* module impact.base.timer */
 /* module impact.base.vars */
 
@@ -648,6 +664,7 @@ declare namespace ig {
     isVisible(this: this): boolean;
     addChildGui(this: this, guiElement: ig.GuiElementBase): void;
     removeChildGui(this: this, guiElement: ig.GuiElementBase): void;
+    removeAllChildren(this: this): void;
     update(this: this): void;
     updateDrawables(this: this, renderer: ig.GuiRenderer): void;
     onAttach(this: this, parentHook: ig.GuiHook): void;
@@ -759,6 +776,7 @@ declare namespace ig {
 declare namespace ig {
   interface FocusGui extends ig.GuiElementBase {
     focus: boolean;
+    active: boolean;
     keepPressed: boolean;
     pressed: boolean;
   }
@@ -803,6 +821,7 @@ declare namespace sc {
 
   interface FontSystem extends ig.GameAddon {
     font: ig.MultiFont;
+    smallFont: ig.MultiFont;
   }
   interface FontSystemConstructor extends ImpactClass<FontSystem> {}
   let FontSystem: FontSystemConstructor;
@@ -815,6 +834,8 @@ declare namespace sc {
   type TextLike = string | { toString(): string } | null;
 
   namespace TextGui {
+    type LevelDrawData = { level: number; numberGfx: ig.Image };
+
     interface Settings extends ig.TextBlock.Settings {
       font?: ig.MultiFont;
       drawCallback?: ig.TextBlock.DrawCallback;
@@ -849,8 +870,19 @@ declare namespace sc {
 /* module game.feature.gui.base.button */
 
 declare namespace sc {
+  let BUTTON_SOUND: { [name: string]: ig.Sound };
+
+  namespace ButtonGui {
+    interface Type {
+      alignXPadding?: number;
+    }
+  }
   interface ButtonGui extends ig.FocusGui {
+    text: sc.TextLike;
     textChild: sc.TextGui;
+
+    setWidth(this: this, width: number): void;
+    getButtonText(this: this): string;
   }
   interface ButtonGuiConstructor extends ImpactClass<ButtonGui> {}
   let ButtonGui: ButtonGuiConstructor;
@@ -858,6 +890,8 @@ declare namespace sc {
   interface CheckboxGui extends sc.ButtonGui {}
   interface CheckboxGuiConstructor extends ImpactClass<CheckboxGui> {}
   let CheckboxGui: CheckboxGuiConstructor;
+
+  let BUTTON_TYPE: { [type: string]: ButtonGui.Type };
 }
 
 /* module game.feature.gui.base.boxes */
@@ -914,11 +948,33 @@ declare namespace sc {
   interface InfoBarConstructor extends ImpactClass<InfoBar> {}
   let InfoBar: InfoBarConstructor;
 
-  interface ListBoxButton extends ig.FocusGui {
+  interface ListBoxButtonCommon extends ig.FocusGui {
     button: sc.ButtonGui;
+    data: { id: string | number; description: string };
+    _width: number;
+
+    setButtonText(this: this, text: sc.TextLike): void;
+    setText(this: this, text: sc.TextLike): void;
+  }
+  interface ListBoxButton extends ListBoxButtonCommon {
+    init(
+      this: this,
+      text: sc.TextLike,
+      buttonWidth: number,
+      lineWidth: number,
+      id?: string | number,
+      description?: string,
+      noLine?: boolean,
+      alignCenter?: boolean,
+      sound?: ig.Sound,
+    ): void;
   }
   interface ListBoxButtonConstructor extends ImpactClass<ListBoxButton> {}
   let ListBoxButton: ListBoxButtonConstructor;
+
+  interface ItemBoxButton extends sc.ListBoxButton {}
+  interface ItemBoxButtonConstructor extends ImpactClass<ItemBoxButton> {}
+  let ItemBoxButton: ItemBoxButtonConstructor;
 
   interface SimpleStatusDisplay extends ig.GuiElementBase {
     gfx: ig.Image;
@@ -988,7 +1044,16 @@ declare namespace sc {
 /* module game.feature.auto-control.auto-control */
 /* module game.feature.auto-control.auto-control-steps */
 /* module game.feature.auto-control.plug-in */
+
 /* module game.feature.inventory.inventory */
+
+declare namespace sc {
+  namespace Inventory {
+    interface Item {
+      // TODO
+    }
+  }
+}
 
 /* module game.feature.combat.model.combat-params */
 
@@ -1168,7 +1233,40 @@ declare namespace sc {
 /* module game.feature.gui.hud.key-hud */
 /* module game.feature.gui.hud.status-hud */
 /* module game.feature.gui.hud.exp-hud */
+
 /* module game.feature.menu.gui.quests.quest-entries */
+
+declare namespace sc {
+  interface SubTaskEntryBase extends ig.BoxGui {
+    textGui: sc.TextGui;
+
+    init(
+      this: this,
+      quest: sc.Quest,
+      taskIndex: number,
+      subTaskIndex: number,
+      subTask?: sc.QuestSubTaskBase,
+    ): void;
+  }
+  interface SubTaskEntryBaseConstructor extends ImpactClass<SubTaskEntryBase> {}
+  let SubTaskEntryBase: SubTaskEntryBaseConstructor;
+
+  interface TaskEntry extends ig.GuiElementBase {
+    _subtasks: sc.SubTaskEntryBase[];
+
+    setTask(
+      this: this,
+      taskIndex?: number,
+      quest?: sc.Quest,
+      hide?: boolean,
+      large?: boolean,
+      minimize?: boolean,
+    ): void;
+  }
+  interface TaskEntryConstructor extends ImpactClass<TaskEntry> {}
+  let TaskEntry: TaskEntryConstructor;
+}
+
 /* module game.feature.gui.hud.quest-hud */
 /* module game.feature.gui.hud.landmark-hud */
 /* module game.feature.menu.lore-model */
@@ -1253,8 +1351,38 @@ declare namespace sc {
 /* module game.feature.gui.widget.skip-scene */
 /* module game.feature.gui.plug-in */
 /* module game.feature.menu.gui.equip.equip-status */
+
 /* module game.feature.menu.gui.equip.equip-misc */
+
+declare namespace sc {
+  interface BodyPartButton extends sc.ButtonGui {}
+  interface BodyPartButtonConstructor extends ImpactClass<BodyPartButton> {}
+  let BodyPartButton: BodyPartButtonConstructor;
+}
+
 /* module game.feature.menu.gui.equip.equip-bodypart */
+
+declare namespace sc {
+  namespace EquipBodyPartContainer {
+    interface Entry extends ig.GuiElementBase {
+      numberGfx: ig.Image;
+      button: sc.BodyPartButton;
+      level: number;
+
+      init(
+        this: this,
+        bodyPart: string,
+        equip: sc.Inventory.Item,
+        x: number,
+        y: number,
+        globalButton: sc.BodyPartButton,
+        topY: number,
+      ): void;
+    }
+    interface EntryConstructor extends ImpactClass<Entry> {}
+    let Entry: EntryConstructor;
+  }
+}
 
 /* module game.feature.menu.gui.help.help-misc */
 
@@ -1418,7 +1546,14 @@ declare namespace sc {
 /* module game.feature.menu.gui.options.options-menu */
 /* module game.feature.menu.gui.shop.shop-start */
 /* module game.feature.menu.gui.shop.shop-misc */
+
 /* module game.feature.menu.gui.shop.shop-list */
+
+declare namespace sc {
+  interface ShopItemButton extends sc.ListBoxButton {}
+  interface ShopItemButtonConstructor extends ImpactClass<ShopItemButton> {}
+  let ShopItemButton: ShopItemButtonConstructor;
+}
 
 /* module game.feature.trade.trade-model */
 
@@ -1441,7 +1576,27 @@ declare namespace sc {
 }
 
 /* module game.feature.trade.gui.equip-toggle-stats */
+
+declare namespace sc {
+  interface TradeToggleStats extends ig.BoxGui {
+    compareItem: sc.TextGui;
+    compareHelpText: sc.TextGui;
+    _createContent(this: this): void;
+  }
+  interface TradeToggleStatsConstructor extends ImpactClass<TradeToggleStats> {}
+  let TradeToggleStats: TradeToggleStatsConstructor;
+}
+
 /* module game.feature.menu.gui.shop.shop-stats */
+
+declare namespace sc {
+  interface ShopEquipStats extends sc.TradeToggleStats {
+    init(this: this): void;
+  }
+  interface ShopEquipStatsConstructor extends ImpactClass<ShopEquipStats> {}
+  let ShopEquipStats: ShopEquipStatsConstructor;
+}
+
 /* module game.feature.menu.gui.shop.shop-cart */
 /* module game.feature.menu.gui.shop.shop-quantity */
 /* module game.feature.menu.gui.shop.shop-confirm */
@@ -1476,6 +1631,19 @@ declare namespace sc {
   }
   interface QuestInfoBoxConstructor extends ImpactClass<QuestInfoBox> {}
   let QuestInfoBox: QuestInfoBoxConstructor;
+
+  interface QuestDialog extends sc.QuestBaseBox {
+    itemsGui: ig.GuiElementBase;
+
+    setQuestRewards(
+      this: this,
+      quest: sc.Quest,
+      hideRewards: boolean,
+      finished: boolean,
+    ): void;
+  }
+  interface QuestDialogConstructor extends ImpactClass<QuestDialog> {}
+  let QuestDialog: QuestDialogConstructor;
 }
 
 /* module game.feature.menu.gui.quests.quest-tab-list */
@@ -1529,6 +1697,17 @@ declare namespace sc {
 }
 
 /* module game.feature.menu.gui.social.social-misc */
+
+declare namespace sc {
+  interface SocialInfoBox extends ig.BoxGui {
+    equip: ig.GuiElementBase;
+
+    setCharacter(this: this, id: string): void;
+  }
+  interface SocialInfoBoxConstructor extends ImpactClass<SocialInfoBox> {}
+  let SocialInfoBox: SocialInfoBoxConstructor;
+}
+
 /* module game.feature.menu.gui.quest-hub.quest-hub-misc */
 
 /* module game.feature.menu.gui.quest-hub.quest-hub-list */
@@ -1583,6 +1762,20 @@ declare namespace sc {
 }
 
 /* module game.feature.menu.gui.status.status-view-main */
+
+declare namespace sc {
+  namespace StatusViewMainEquipment {
+    interface Entry extends ig.GuiElementBase {
+      textGui: sc.TextGui;
+      itemGui: sc.TextGui & sc.TextGui.LevelDrawData;
+
+      init(this: this, bodyPart: string): void;
+    }
+    interface EntryConstructor extends ImpactClass<Entry> {}
+    let Entry: EntryConstructor;
+  }
+}
+
 /* module game.feature.menu.gui.stats.stats-gui-builds */
 /* module game.feature.menu.gui.stats.stats-misc */
 /* module game.feature.menu.gui.status.status-view-parameters */
@@ -1676,7 +1869,15 @@ declare namespace sc {
 }
 
 /* module game.feature.menu.gui.trade.trader-menu */
+
 /* module game.feature.menu.gui.botanics.botanics-misc */
+
+declare namespace sc {
+  interface BotanicsEntryButton extends sc.ListBoxButton {}
+  interface BotanicsEntryButtonConstructor
+    extends ImpactClass<BotanicsEntryButton> {}
+  let BotanicsEntryButton: BotanicsEntryButtonConstructor;
+}
 
 /* module game.feature.menu.gui.botanics.botanics-list */
 
@@ -1700,13 +1901,48 @@ declare namespace sc {
 }
 
 /* module game.feature.menu.gui.arena.arena-menu */
+
 /* module game.feature.menu.gui.new-game.new-game-misc */
+
+declare namespace sc {
+  interface NewGameToggleSet extends ig.GuiElementBase {}
+  interface NewGameToggleSetConstructor extends ImpactClass<NewGameToggleSet> {}
+  let NewGameToggleSet: NewGameToggleSetConstructor;
+
+  interface NewGameOptionButton extends sc.ListBoxButtonCommon {
+    data: { id: string; description: string };
+
+    set: sc.NewGameToggleSet.SetOptions;
+
+    init(
+      this: this,
+      name: string,
+      amount: number,
+      id: string,
+      description: string,
+      setKey: string,
+      setOptions: sc.NewGameToggleSet.SetOptions,
+      setGui: sc.NewGameToggleSet,
+    ): void;
+
+    updateToggleState(this: this): void;
+  }
+  interface NewGameOptionButtonConstructor
+    extends ImpactClass<NewGameOptionButton> {}
+  let NewGameOptionButton: NewGameOptionButtonConstructor;
+}
+
 /* module game.feature.menu.gui.new-game.new-game-list */
 /* module game.feature.menu.gui.new-game.new-game-menu */
 
 /* module game.feature.menu.menu-model */
 
 declare namespace sc {
+  enum TOGGLE_SET_TYPE {
+    SINGLE,
+    MULTI,
+  }
+
   interface MenuModel extends ig.GameAddon {
     statusElement: sc.ELEMENT;
     statusDiff: boolean;
@@ -1714,6 +1950,17 @@ declare namespace sc {
   interface MenuModelConstructor extends ImpactClass<MenuModel> {}
   let MenuModel: MenuModelConstructor;
   let menu: sc.MenuModel;
+
+  interface MenuHelper {
+    drawLevel(
+      this: this,
+      level: number,
+      width: number,
+      height: number,
+      numberGfx: ig.Image,
+    ): void;
+  }
+  let MenuHelper: MenuHelper;
 }
 
 /* module game.feature.model.game-model */
@@ -1770,7 +2017,27 @@ declare namespace sc {
 /* module game.feature.combat.model.combat-condition */
 /* module game.feature.combat.model.enemy-type */
 /* module game.feature.combat.model.enemy-annotation */
+
 /* module game.feature.new-game.new-game-model */
+
+declare namespace sc {
+  namespace NewGameToggleSet {
+    interface SetOptions {
+      type: sc.TOGGLE_SET_TYPE;
+      order: number;
+    }
+  }
+
+  let NEW_GAME_SETS: { [id: string]: sc.NewGameToggleSet.SetOptions };
+
+  interface NewGamePlusModel extends ig.GameAddon {
+    options: { [id: string]: boolean };
+  }
+  interface NewGamePlusModelConstructor extends ImpactClass<NewGamePlusModel> {}
+  let NewGamePlusModel: NewGamePlusModelConstructor;
+  let newgame: sc.NewGamePlusModel;
+}
+
 /* module game.feature.combat.entities.enemy */
 /* module game.feature.combat.entities.enemy-spawner */
 /* module game.feature.combat.entities.respawn-blocker */
@@ -1918,7 +2185,22 @@ declare namespace ig {
 /* module game.feature.tutorial.input-forcer */
 /* module game.feature.tutorial.tutorial-steps */
 /* module game.feature.tutorial.plug-in */
+
 /* module game.feature.trade.gui.trade-icon */
+
+declare namespace sc {
+  interface TradeIconGui extends ig.BoxGui {
+    entries: Array<{
+      require: any;
+      gui: sc.TextGui & { tradeName: string } & sc.TextGui.LevelDrawData;
+    }>;
+
+    _createContent(this: this): void;
+  }
+  interface TradeIconGuiConstructor extends ImpactClass<TradeIconGui> {}
+  let TradeIconGui: TradeIconGuiConstructor;
+}
+
 /* module game.feature.trade.trade-steps */
 /* module game.feature.trade.plug-in */
 /* module game.feature.save-preset.save-preset */
@@ -1926,7 +2208,19 @@ declare namespace ig {
 /* module game.feature.xeno-dialogs.entities.xeno-dialog */
 /* module game.feature.xeno-dialogs.gui.xeno-icon */
 /* module game.feature.xeno-dialogs.plug-in */
+
 /* module game.feature.quest.quest-types */
+
+declare namespace sc {
+  interface QuestSubTaskBase extends ig.Class {}
+  interface QuestSubTaskBaseConstructor extends ImpactClass<QuestSubTaskBase> {}
+  let QuestSubTaskBase: QuestSubTaskBaseConstructor;
+
+  interface Quest extends ig.Class {}
+  interface QuestConstructor extends ImpactClass<Quest> {}
+  let Quest: QuestConstructor;
+}
+
 /* module game.feature.quest.quest-model */
 /* module game.feature.quest.quest-steps */
 /* module game.feature.quest.plug-in */

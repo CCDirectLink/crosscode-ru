@@ -1,9 +1,12 @@
-function guiMapChildren(gui, callback) {
+function guiMapChildren<T extends ig.GuiElementBase = ig.GuiElementBase>(
+  gui: ig.GuiElementBase,
+  callback: (child: T) => T,
+): void {
   let oldChildHooks = [...gui.hook.children];
   gui.removeAllChildren();
   oldChildHooks.forEach(oldChildHook => {
-    let newChild = callback(oldChildHook.gui);
-    gui.addChildGui(newChild);
+    let newChild = callback(oldChildHook.gui as T);
+    gui.addChildGui(newChild as ig.GuiElementBase);
   });
 }
 
@@ -23,13 +26,13 @@ ig.module('crosscode-ru.fixes.item-lists')
           );
           newTextChild.setPos(oldTextChild.hook.pos.x, oldTextChild.hook.pos.y);
           newTextChild.tickerHook.setMaxSize({
-            x: this.button.hook.size.x - sc.BUTTON_TYPE.ITEM.alignXPadding * 2,
+            x: this.button.hook.size.x - sc.BUTTON_TYPE.ITEM.alignXPadding! * 2,
           });
           newTextChild.tickerHook.focusTarget = this.button;
 
           this.button.removeChildGui(oldTextChild);
           this.button.addChildGui(newTextChild);
-          this.button.textChild = newTextChild;
+          this.button.textChild = (newTextChild as unknown) as sc.TextGui;
         }
       },
 
@@ -81,7 +84,7 @@ ig.module('crosscode-ru.fixes.new-game-menu')
       },
 
       updateToggleState() {
-        let enabled = sc.newgame.options[this.data.id] || false;
+        let enabled = sc.newgame.options[this.data.id];
         let text = '\\i[toggle-item-';
         text += enabled ? 'on' : 'off';
         if (this.set.type === sc.TOGGLE_SET_TYPE.SINGLE) text += '-radio';
@@ -114,7 +117,7 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
 
         this.removeChildGui(this.compareItem);
         this.addChildGui(newCompareItem);
-        this.compareItem = newCompareItem;
+        this.compareItem = (newCompareItem as unknown) as sc.TextGui;
 
         this._updateTickerMaxSize();
       },
@@ -144,7 +147,9 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
         this.parent();
         this.entries.forEach(entry => {
           let { gui } = entry;
-          let newGui = new sc.ru.IconTextGui(gui.text);
+          let newGui = new sc.ru.IconTextGui(gui.text) as sc.ru.IconTextGui & {
+            tradeName: string;
+          };
           newGui.tradeName = gui.tradeName;
           newGui.setAlign(gui.hook.align.x, gui.hook.align.y);
           newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
@@ -158,7 +163,9 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
 
           this.removeChildGui(gui);
           this.addChildGui(newGui);
-          entry.gui = newGui;
+          entry.gui = (newGui as unknown) as sc.TextGui & {
+            tradeName: string;
+          } & sc.TextGui.LevelDrawData;
         });
       },
     });
@@ -181,7 +188,8 @@ ig.module('crosscode-ru.fixes.item-lists.status-main-equipment')
 
         this.removeChildGui(this.itemGui);
         this.addChildGui(newItemGui);
-        this.itemGui = newItemGui;
+        this.itemGui = (newItemGui as unknown) as sc.TextGui &
+          sc.TextGui.LevelDrawData;
       },
     });
   });
@@ -196,19 +204,22 @@ ig.module('crosscode-ru.fixes.item-lists.social-menu')
       setCharacter(id) {
         this.parent(id);
 
-        guiMapChildren(this.equip, gui => {
-          let newGui = new sc.ru.IconTextGui(gui.text);
-          newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
-          let { level, numberGfx } = gui;
-          newGui.setDrawCallback((width, height) =>
-            sc.MenuHelper.drawLevel(level, width, height, numberGfx),
-          );
-          newGui.tickerHook.setMaxSize({
-            x: this.equip.hook.size.x,
-          });
+        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
+          this.equip,
+          gui => {
+            let newGui = new sc.ru.IconTextGui(gui.text);
+            newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
+            let { level, numberGfx } = gui;
+            newGui.setDrawCallback((width, height) =>
+              sc.MenuHelper.drawLevel(level, width, height, numberGfx),
+            );
+            newGui.tickerHook.setMaxSize({
+              x: this.equip.hook.size.x,
+            });
 
-          return newGui;
-        });
+            return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
+          },
+        );
       },
     });
   });
@@ -230,7 +241,7 @@ ig.module('crosscode-ru.fixes.item-lists.quests')
 
         this.removeChildGui(this.textGui);
         this.addChildGui(newTextGui);
-        this.textGui = newTextGui;
+        this.textGui = (newTextGui as unknown) as sc.TextGui;
 
         this._updateTickerMaxSize();
       },
@@ -240,8 +251,10 @@ ig.module('crosscode-ru.fixes.item-lists.quests')
         maxWidth -= this.textGui.hook.pos.x; // left margin
         maxWidth -= this.textGui.hook.pos.x / 2; // right margin
         // check GUI elements created in subclasses
-        if (this.numberGui != null) {
-          maxWidth -= this.numberGui.hook.pos.x + this.numberGui.hook.size.x;
+        // eslint-disable-next-line prefer-destructuring
+        let numberGui: ig.GuiElementBase = (this as any).numberGui;
+        if (numberGui != null) {
+          maxWidth -= numberGui.hook.pos.x + numberGui.hook.size.x;
         }
         this.textGui.tickerHook.setMaxSize({ x: maxWidth });
       },
@@ -286,7 +299,7 @@ ig.module('crosscode-ru.fixes.item-lists.equipment-menu')
 
         this.button.removeChildGui(oldTextChild);
         this.button.addChildGui(newTextChild);
-        this.button.textChild = newTextChild;
+        this.button.textChild = (newTextChild as unknown) as sc.TextGui;
       },
     });
   });
@@ -301,21 +314,24 @@ ig.module('crosscode-ru.fixes.item-lists.quest-dialog')
       setQuestRewards(quest, hideRewards, finished) {
         this.parent(quest, hideRewards, finished);
 
-        guiMapChildren(this.itemsGui, gui => {
-          let newGui = new sc.ru.IconTextGui(gui.text);
-          newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
-          let { level, numberGfx } = gui;
-          if (level > 0 && !hideRewards) {
-            newGui.setDrawCallback((width, height) =>
-              sc.MenuHelper.drawLevel(level, width, height, numberGfx),
-            );
-          }
-          newGui.tickerHook.setMaxSize({
-            x: this.itemsGui.hook.size.x,
-          });
+        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
+          this.itemsGui,
+          gui => {
+            let newGui = new sc.ru.IconTextGui(gui.text);
+            newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
+            let { level, numberGfx } = gui;
+            if (level > 0 && !hideRewards) {
+              newGui.setDrawCallback((width, height) =>
+                sc.MenuHelper.drawLevel(level, width, height, numberGfx),
+              );
+            }
+            newGui.tickerHook.setMaxSize({
+              x: this.itemsGui.hook.size.x,
+            });
 
-          return newGui;
-        });
+            return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
+          },
+        );
       },
     });
   });

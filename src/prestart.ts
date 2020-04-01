@@ -7,7 +7,7 @@ import './event-steps-patches.js';
 import './help-boxes.js';
 import './help-info-box.js';
 import './info-bar.js';
-import '../src/item-lists.js';
+import './item-lists.js';
 import './map-menu.js';
 import './options-menu.js';
 import './pvp.js';
