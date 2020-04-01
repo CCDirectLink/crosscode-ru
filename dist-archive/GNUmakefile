@@ -43,7 +43,7 @@ TRANSLATIONS_DIR := assets/ru-translation-tool-ng
 
 TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map main.html package.json prestart.js postload.js
 TOOL_FILES := $(call find_by_patterns,../tool,$(TOOL_FILES))
-MOD_FILES := assets/*.png src/*.js LICENSE package.json postload.js prestart.js README.md
+MOD_FILES := assets/*.png dist/*.js src/*.js LICENSE package.json README.md
 MOD_FILES := $(call find_by_patterns,..,$(MOD_FILES))
 TRANSLATIONS_FILES := localize-me-packs/*.json localize-me-mapping.json
 TRANSLATIONS_FILES := $(call find_by_patterns,$(TOOL_DATA_DIR),$(TRANSLATIONS_FILES))
