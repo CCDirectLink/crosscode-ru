@@ -5,12 +5,6 @@ declare interface Vec2 {
   y: number;
 }
 
-declare type ImpactClassGetInitArgs<Instance> = Instance extends {
-  init(...args: infer Args): void;
-}
-  ? Args
-  : unknown[];
-
 declare type ReplaceThisParameter<T, This2> = T extends (
   this: infer This,
   ...args: infer Args
@@ -24,28 +18,54 @@ declare type ImpactClassMember<
   K extends keyof Instance,
   Instance,
   ParentInstance
-> = ReplaceThisParameter<
-  Instance[K],
-  Instance & {
-    // definition ends up becoming too complicated when I try to implement
-    // inference of argument and return types of `this.parent`, and as I'm
-    // concerned about compiler performance, I defined a much simpler version
-    // instead.
-    parent(this: ParentInstance, ...args: unknown[]): unknown;
-  }
->;
+> = K extends keyof ParentInstance
+  ? ReplaceThisParameter<Instance[K], Instance & { parent: ParentInstance[K] }>
+  : Instance[K];
 
-declare type ImpactClassPrototype<Instance, ParentInstance> = {
-  [K in keyof Instance]?: ImpactClassMember<K, Instance, ParentInstance> | null;
+type ImpactClassConstructorInit<
+  This,
+  Constructor,
+  Instance
+> = Constructor extends new (...args: infer Args) => Instance
+  ? (this: This, ...args: Args) => void
+  : never;
+
+declare type ImpactClassExtendObj<
+  Constructor,
+  Instance,
+  ParentConstructor,
+  ParentInstance
+> = {
+  [K in 'init' | keyof Instance]?: K extends keyof Instance
+    ? ImpactClassMember<K, Instance, ParentInstance> | null
+    : ImpactClassConstructorInit<
+        Instance & {
+          parent: ImpactClassConstructorInit<
+            ParentInstance,
+            ParentConstructor,
+            ParentInstance
+          >;
+        },
+        Constructor,
+        Instance
+      >;
 };
 
 declare interface ImpactClass<Instance> {
-  new (...args: ImpactClassGetInitArgs<Instance>): Instance;
   extend<ChildConstructor extends { prototype: unknown }>(
     this: this,
-    obj: ImpactClassPrototype<ChildConstructor['prototype'], Instance>,
+    obj: ImpactClassExtendObj<
+      ChildConstructor,
+      ChildConstructor['prototype'],
+      this,
+      Instance
+    >,
   ): ChildConstructor;
-  inject(this: this, obj: ImpactClassPrototype<Instance, Instance>): void;
+  inject(
+    this: this,
+    obj: ImpactClassExtendObj<this, Instance, this, Instance>,
+  ): void;
+
   readonly classId: number;
   readonly prototype: Instance;
 }
@@ -92,7 +112,9 @@ declare namespace ig {
   interface Class {
     readonly classId: number;
   }
-  interface ClassConstructor extends ImpactClass<Class> {}
+  interface ClassConstructor extends ImpactClass<Class> {
+    new (): this['prototype'];
+  }
   let Class: ClassConstructor;
 
   let currentLang: string;
@@ -126,7 +148,9 @@ declare namespace ig {
 
 declare namespace ig {
   interface Image extends ig.Loadable {}
-  interface ImageConstructor extends ImpactClass<Image> {}
+  interface ImageConstructor extends ImpactClass<Image> {
+    new (pathOrData: string): this['prototype'];
+  }
   // eslint-disable-next-line no-shadow
   let Image: ImageConstructor;
 
@@ -229,12 +253,6 @@ declare namespace ig {
     bestRatio?: number;
     linePadding: number;
 
-    init(
-      this: this,
-      font: ig.MultiFont,
-      text: sc.TextLike,
-      settings: ig.TextBlock.Settings,
-    ): void;
     setText(this: this, text: sc.TextLike): void;
     setDrawCallback(this: this, drawCallback: ig.TextBlock.DrawCallback): void;
     prerender(this: this): void;
@@ -244,6 +262,12 @@ declare namespace ig {
     update(this: this): void;
   }
   interface TextBlockConstructor extends ImpactClass<TextBlock> {
+    new (
+      font: ig.MultiFont,
+      text: sc.TextLike,
+      settings: ig.TextBlock.Settings,
+    ): this['prototype'];
+
     SPEED: typeof TextBlockSPEED_;
   }
   let TextBlock: TextBlockConstructor;
@@ -685,7 +709,9 @@ declare namespace ig {
     // is specified in a callback.
     onVisibilityChange?(this: ig.GuiElementBase, visible: boolean): void;
   }
-  interface GuiElementBaseConstructor extends ImpactClass<GuiElementBase> {}
+  interface GuiElementBaseConstructor extends ImpactClass<GuiElementBase> {
+    new (): this['prototype'];
+  }
   let GuiElementBase: GuiElementBaseConstructor;
 }
 
@@ -841,17 +867,18 @@ declare namespace sc {
       drawCallback?: ig.TextBlock.DrawCallback;
     }
   }
-
   interface TextGui extends ig.GuiElementBase {
     font: ig.MultiFont;
     text: sc.TextLike;
     textBlock: ig.TextBlock;
 
-    init(this: this, text: sc.TextLike, settings?: sc.TextGui.Settings): void;
+    onVisibilityChange(this: this, visible: boolean): void;
 
     setText(this: this, text: sc.TextLike): void;
   }
-  interface TextGuiConstructor extends ImpactClass<TextGui> {}
+  interface TextGuiConstructor extends ImpactClass<TextGui> {
+    new (text: sc.TextLike, settings?: sc.TextGui.Settings): this['prototype'];
+  }
   let TextGui: TextGuiConstructor;
 }
 
@@ -919,7 +946,9 @@ declare namespace sc {
 
     setText(this: this, text: sc.TextLike, initDelay: number): void;
   }
-  interface BuffInfoConstructor extends ImpactClass<BuffInfo> {}
+  interface BuffInfoConstructor extends ImpactClass<BuffInfo> {
+    new (): this['prototype'];
+  }
   let BuffInfo: BuffInfoConstructor;
 
   interface InfoBar extends ig.GuiElementBase {
@@ -934,8 +963,6 @@ declare namespace sc {
       timer: number;
     };
 
-    init(this: this, width: number, height: number, skipRender: boolean): void;
-
     doSizeTransition(
       this: this,
       width: number,
@@ -945,7 +972,9 @@ declare namespace sc {
       delay: number,
     ): void;
   }
-  interface InfoBarConstructor extends ImpactClass<InfoBar> {}
+  interface InfoBarConstructor extends ImpactClass<InfoBar> {
+    new (width: number, height: number, skipRender: boolean): this['prototype'];
+  }
   let InfoBar: InfoBarConstructor;
 
   interface ListBoxButtonCommon extends ig.FocusGui {
@@ -956,9 +985,9 @@ declare namespace sc {
     setButtonText(this: this, text: sc.TextLike): void;
     setText(this: this, text: sc.TextLike): void;
   }
-  interface ListBoxButton extends ListBoxButtonCommon {
-    init(
-      this: this,
+  interface ListBoxButton extends ListBoxButtonCommon {}
+  interface ListBoxButtonConstructor extends ImpactClass<ListBoxButton> {
+    new (
       text: sc.TextLike,
       buttonWidth: number,
       lineWidth: number,
@@ -967,9 +996,8 @@ declare namespace sc {
       noLine?: boolean,
       alignCenter?: boolean,
       sound?: ig.Sound,
-    ): void;
+    ): this['prototype'];
   }
-  interface ListBoxButtonConstructor extends ImpactClass<ListBoxButton> {}
   let ListBoxButton: ListBoxButtonConstructor;
 
   interface ItemBoxButton extends sc.ListBoxButton {}
@@ -985,9 +1013,10 @@ declare namespace sc {
     percentCurrentGui: sc.PercentChar;
     simpleMode: boolean;
     noPercentMode: boolean;
-
-    init(
-      this: this,
+  }
+  interface SimpleStatusDisplayConstructor
+    extends ImpactClass<SimpleStatusDisplay> {
+    new (
       name: string,
       lineID: number,
       iconID: number,
@@ -996,10 +1025,8 @@ declare namespace sc {
       simpleMode: boolean,
       width: number,
       noPercentMode: boolean,
-    ): void;
+    ): this['prototype'];
   }
-  interface SimpleStatusDisplayConstructor
-    extends ImpactClass<SimpleStatusDisplay> {}
   let SimpleStatusDisplay: SimpleStatusDisplayConstructor;
 
   interface PercentChar extends ig.GuiElementBase {}
@@ -1021,10 +1048,10 @@ declare namespace sc {
     timeSec: sc.NumberGui;
     timeMin: sc.NumberGui;
     timeHour: sc.NumberGui;
-
-    init(this: this): void;
   }
-  interface TimeAndMoneyGUIConstructor extends ImpactClass<TimeAndMoneyGUI> {}
+  interface TimeAndMoneyGUIConstructor extends ImpactClass<TimeAndMoneyGUI> {
+    new (): this['prototype'];
+  }
   let TimeAndMoneyGUI: TimeAndMoneyGUIConstructor;
 }
 
@@ -1239,16 +1266,15 @@ declare namespace sc {
 declare namespace sc {
   interface SubTaskEntryBase extends ig.BoxGui {
     textGui: sc.TextGui;
-
-    init(
-      this: this,
+  }
+  interface SubTaskEntryBaseConstructor extends ImpactClass<SubTaskEntryBase> {
+    new (
       quest: sc.Quest,
       taskIndex: number,
       subTaskIndex: number,
       subTask?: sc.QuestSubTaskBase,
-    ): void;
+    ): this['prototype'];
   }
-  interface SubTaskEntryBaseConstructor extends ImpactClass<SubTaskEntryBase> {}
   let SubTaskEntryBase: SubTaskEntryBaseConstructor;
 
   interface TaskEntry extends ig.GuiElementBase {
@@ -1318,11 +1344,11 @@ declare namespace sc {
 declare namespace sc {
   interface SaveSlotButton extends ig.FocusGui {
     content: ig.GuiElementBase;
-
-    // TODO: write definitions for `save` (see https://crosscode.gamepedia.com/Savegame)
-    init(this: this, save: any, slot: number): void;
   }
-  interface SaveSlotButtonConstructor extends ImpactClass<SaveSlotButton> {}
+  interface SaveSlotButtonConstructor extends ImpactClass<SaveSlotButton> {
+    // TODO: write definitions for `save` (see https://crosscode.gamepedia.com/Savegame)
+    new (save: any, slot: number): this['prototype'];
+  }
   let SaveSlotButton: SaveSlotButtonConstructor;
 }
 
@@ -1368,18 +1394,17 @@ declare namespace sc {
       numberGfx: ig.Image;
       button: sc.BodyPartButton;
       level: number;
-
-      init(
-        this: this,
+    }
+    interface EntryConstructor extends ImpactClass<Entry> {
+      new (
         bodyPart: string,
         equip: sc.Inventory.Item,
         x: number,
         y: number,
         globalButton: sc.BodyPartButton,
         topY: number,
-      ): void;
+      ): this['prototype'];
     }
-    interface EntryConstructor extends ImpactClass<Entry> {}
     let Entry: EntryConstructor;
   }
 }
@@ -1390,10 +1415,10 @@ declare namespace sc {
   interface HelpLevelEntry extends ig.GuiElementBase {
     color: sc.TextGui;
     desc: sc.TextGui;
-
-    init(this: this, colorId: string, fontColor: sc.FONT_COLORS): void;
   }
-  interface HelpLevelEntryConstructor extends ImpactClass<HelpLevelEntry> {}
+  interface HelpLevelEntryConstructor extends ImpactClass<HelpLevelEntry> {
+    new (colorId: string, fontColor: sc.FONT_COLORS): this['prototype'];
+  }
   let HelpLevelEntry: HelpLevelEntryConstructor;
 }
 
@@ -1408,10 +1433,10 @@ declare namespace sc {
 declare namespace sc {
   interface CircuitInfoBox extends sc.MenuPanel {
     special: sc.TextGui;
-
-    init(this: this, scrollHook: ig.GuiHook): void;
   }
-  interface CircuitInfoBoxConstructor extends ImpactClass<CircuitInfoBox> {}
+  interface CircuitInfoBoxConstructor extends ImpactClass<CircuitInfoBox> {
+    new (scrollHook: ig.GuiHook): this['prototype'];
+  }
   let CircuitInfoBox: CircuitInfoBoxConstructor;
 }
 
@@ -1519,18 +1544,17 @@ declare namespace sc {
       | sc.OPTION_GUIS_defs.CONTROLS
       | sc.OPTION_GUIS_defs.LANGUAGE;
     _hasEntered: boolean;
-
-    init(
-      this: this,
+  }
+  interface OptionRowConstructor extends ImpactClass<OptionRow> {
+    new (
       option: string,
       row: number,
       rowGroup: sc.RowButtonGroup,
       local?: boolean,
       width?: number,
       height?: number,
-    ): void;
+    ): this['prototype'];
   }
-  interface OptionRowConstructor extends ImpactClass<OptionRow> {}
   let OptionRow: OptionRowConstructor;
   /* eslint-enable @typescript-eslint/class-name-casing, @typescript-eslint/camelcase */
 }
@@ -1590,10 +1614,10 @@ declare namespace sc {
 /* module game.feature.menu.gui.shop.shop-stats */
 
 declare namespace sc {
-  interface ShopEquipStats extends sc.TradeToggleStats {
-    init(this: this): void;
+  interface ShopEquipStats extends sc.TradeToggleStats {}
+  interface ShopEquipStatsConstructor extends ImpactClass<ShopEquipStats> {
+    new (): this['prototype'];
   }
-  interface ShopEquipStatsConstructor extends ImpactClass<ShopEquipStats> {}
   let ShopEquipStats: ShopEquipStatsConstructor;
 }
 
@@ -1627,9 +1651,10 @@ declare namespace sc {
   interface QuestInfoBox extends sc.QuestBaseBox {
     locationGui: ig.ColorGui;
     locationText: sc.TextGui;
-    init(this: this): void;
   }
-  interface QuestInfoBoxConstructor extends ImpactClass<QuestInfoBox> {}
+  interface QuestInfoBoxConstructor extends ImpactClass<QuestInfoBox> {
+    new (): this['prototype'];
+  }
   let QuestInfoBox: QuestInfoBoxConstructor;
 
   interface QuestDialog extends sc.QuestBaseBox {
@@ -1768,10 +1793,10 @@ declare namespace sc {
     interface Entry extends ig.GuiElementBase {
       textGui: sc.TextGui;
       itemGui: sc.TextGui & sc.TextGui.LevelDrawData;
-
-      init(this: this, bodyPart: string): void;
     }
-    interface EntryConstructor extends ImpactClass<Entry> {}
+    interface EntryConstructor extends ImpactClass<Entry> {
+      new (bodyPart: string): this['prototype'];
+    }
     let Entry: EntryConstructor;
   }
 }
@@ -1815,7 +1840,18 @@ declare namespace sc {
 
 declare namespace sc {
   interface TradeItem extends sc.ListBoxButton {}
-  interface TradeItemConstructor extends ImpactClass<TradeItem> {}
+  interface TradeItemConstructor extends ImpactClass<TradeItem> {
+    // TODO name, id, description, amount, required, isTrade
+    new (
+      b: any,
+      a: any,
+      d: any,
+      c: any,
+      e: any,
+      f: any,
+      g: any,
+    ): this['prototype'];
+  }
   let TradeItem: TradeItemConstructor;
 
   interface TradeItemBox extends ig.GuiElementBase {}
@@ -1828,15 +1864,14 @@ declare namespace sc {
 declare namespace sc {
   interface TradeButtonBox extends ig.GuiElementBase {
     location: sc.TextGui;
-
-    init(
-      this: this,
+  }
+  interface TradeButtonBoxConstructor extends ImpactClass<TradeButtonBox> {
+    new (
       trader: string,
       buttonGroup: sc.ButtonGroup,
       buttonStartIndex: number,
-    ): void;
+    ): this['prototype'];
   }
-  interface TradeButtonBoxConstructor extends ImpactClass<TradeButtonBox> {}
   let TradeButtonBox: TradeButtonBoxConstructor;
 
   interface TradeDetailsView extends ig.BoxGui {
@@ -1845,8 +1880,6 @@ declare namespace sc {
     requireGui: sc.TradeItemBox;
     _trader: string;
 
-    init(this: this): void;
-
     setTraderData(
       this: this,
       trader: string,
@@ -1854,17 +1887,19 @@ declare namespace sc {
       buttonPos: number,
     ): void;
   }
-  interface TradeDetailsViewConstructor extends ImpactClass<TradeDetailsView> {}
+  interface TradeDetailsViewConstructor extends ImpactClass<TradeDetailsView> {
+    new (): this['prototype'];
+  }
   let TradeDetailsView: TradeDetailsViewConstructor;
 }
 
 /* module game.feature.menu.gui.trade.trader-list */
 
 declare namespace sc {
-  interface TradersListBox extends sc.ListTabbedPane {
-    init(this: this): void;
+  interface TradersListBox extends sc.ListTabbedPane {}
+  interface TradersListBoxConstructor extends ImpactClass<TradersListBox> {
+    new (): this['prototype'];
   }
-  interface TradersListBoxConstructor extends ImpactClass<TradersListBox> {}
   let TradersListBox: TradersListBoxConstructor;
 }
 
@@ -1914,8 +1949,11 @@ declare namespace sc {
 
     set: sc.NewGameToggleSet.SetOptions;
 
-    init(
-      this: this,
+    updateToggleState(this: this): void;
+  }
+  interface NewGameOptionButtonConstructor
+    extends ImpactClass<NewGameOptionButton> {
+    new (
       name: string,
       amount: number,
       id: string,
@@ -1923,12 +1961,8 @@ declare namespace sc {
       setKey: string,
       setOptions: sc.NewGameToggleSet.SetOptions,
       setGui: sc.NewGameToggleSet,
-    ): void;
-
-    updateToggleState(this: this): void;
+    ): this['prototype'];
   }
-  interface NewGameOptionButtonConstructor
-    extends ImpactClass<NewGameOptionButton> {}
   let NewGameOptionButton: NewGameOptionButtonConstructor;
 }
 
@@ -2048,10 +2082,10 @@ declare namespace sc {
 /* module game.feature.combat.gui.pvp-gui */
 
 declare namespace sc {
-  interface PvpRoundGui extends ig.GuiElementBase {
-    init(this: this, roundNumber: number, autoContinue: number): void;
+  interface PvpRoundGui extends ig.GuiElementBase {}
+  interface PvpRoundGuiConstructor extends ImpactClass<PvpRoundGui> {
+    new (roundNumber: number, autoContinue: number): this['prototype'];
   }
-  interface PvpRoundGuiConstructor extends ImpactClass<PvpRoundGui> {}
   let PvpRoundGui: PvpRoundGuiConstructor;
 }
 

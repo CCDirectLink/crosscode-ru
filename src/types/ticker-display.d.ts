@@ -22,7 +22,7 @@ declare namespace ig {
       font: ig.MultiFont,
       text: sc.ru.ParsedTextData,
       settings: ig.TextBlock.Settings,
-    ): ig.TextBlock;
+    ): this['prototype'];
   }
 }
 
@@ -51,12 +51,6 @@ declare namespace sc.ru {
     maxSize: Partial<Vec2> | null;
     focusTarget: ig.FocusGui | null;
 
-    init(
-      this: this,
-      hook: ig.GuiHook,
-      renderText: sc.ru.TickerDisplayHook.RenderTextCallback,
-    ): void;
-
     setMaxSize(this: this, maxSize: Partial<Vec2> | null): void;
     update(this: this): void;
     updateDrawables(this: this, renderer: ig.GuiRenderer): void;
@@ -64,16 +58,21 @@ declare namespace sc.ru {
     _computeMaxSize(this: this): Vec2 | null;
   }
   interface TickerDisplayHookConstructor
-    extends ImpactClass<TickerDisplayHook> {}
+    extends ImpactClass<TickerDisplayHook> {
+    new (
+      hook: ig.GuiHook,
+      renderText: sc.ru.TickerDisplayHook.RenderTextCallback,
+    ): this['prototype'];
+  }
   let TickerDisplayHook: TickerDisplayHookConstructor;
 
   interface ParsedTextData extends ig.Class {
     parsedText: string;
     commands: ig.TextCommand[];
-
-    init(this: this, parsedText: string, commands: ig.TextCommand[]): void;
   }
-  interface ParsedTextDataConstructor extends ImpactClass<ParsedTextData> {}
+  interface ParsedTextDataConstructor extends ImpactClass<ParsedTextData> {
+    new (parsedText: string, commands: ig.TextCommand[]): this['prototype'];
+  }
   let ParsedTextData: ParsedTextDataConstructor;
 
   interface LongHorizontalTextGui extends ig.GuiElementBase {
@@ -85,14 +84,14 @@ declare namespace sc.ru {
     linePadding: number;
     tickerHook: sc.ru.TickerDisplayHook;
 
-    init(this: this, text: sc.TextLike, settings?: sc.TextGui.Settings): void;
-
     setText(this: this, text: sc.TextLike): void;
     prerender(this: this): void;
     clear(this: this): void;
   }
   interface LongHorizontalTextGuiConstructor
     extends ImpactClass<LongHorizontalTextGui> {
+    new (text: sc.TextLike, settings?: sc.TextGui.Settings): this['prototype'];
+
     SPLIT_WIDTH: number;
   }
   let LongHorizontalTextGui: LongHorizontalTextGuiConstructor;
@@ -104,14 +103,14 @@ declare namespace sc.ru {
     textBlock: ig.TextBlock;
     tickerHook: sc.ru.TickerDisplayHook;
 
-    init(this: this, text: sc.TextLike, settings?: sc.TextGui.Settings): void;
-
     setText(this: this, text: sc.TextLike): void;
     _updateDimensions(this: this): void;
     setDrawCallback(this: this, callback: ig.TextBlock.DrawCallback): void;
     prerender(this: this): void;
     clear(this: this): void;
   }
-  interface IconTextGuiConstructor extends ImpactClass<IconTextGui> {}
+  interface IconTextGuiConstructor extends ImpactClass<IconTextGui> {
+    new (text: sc.TextLike, settings?: sc.TextGui.Settings): this['prototype'];
+  }
   let IconTextGui: IconTextGuiConstructor;
 }

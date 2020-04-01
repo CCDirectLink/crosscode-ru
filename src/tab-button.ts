@@ -7,7 +7,7 @@ function createPatch<C extends keyof typeof sc>(
   ig.module(`crosscode-ru.fixes.tab-button.${gameMenuModule}`)
     .requires(`game.feature.menu.gui.${gameMenuModule}`)
     .defines(() => {
-      (sc[className] as ImpactClass<ig.Class>).inject({
+      (sc[className] as ig.ClassConstructor).inject({
         [methodName](
           this: ig.Class & {
             parent(...args: unknown[]): sc.ItemTabbedBox.TabButton;

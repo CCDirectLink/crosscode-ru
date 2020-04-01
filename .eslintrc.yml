@@ -51,6 +51,10 @@ overrides:
     plugins:
       - '@typescript-eslint'
 
+    globals:
+      ig: off
+      sc: off
+
     # TODO: add TS preset to https://github.com/dmitmel/eslint-config-dmitmel
     rules:
       prefer-const: off
@@ -93,9 +97,6 @@ overrides:
       - 'src/**/*.ts'
     parserOptions:
       project: tsconfig.json
-    globals:
-      ig: off
-      sc: off
     rules:
       '@typescript-eslint/no-namespace': off
       '@typescript-eslint/no-empty-interface': off

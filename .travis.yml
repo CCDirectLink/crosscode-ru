@@ -13,7 +13,7 @@ install:
 script:
   - yarn build
   - (cd tool && yarn build)
-  - eslint . --ext .js,.ts,.d.ts --ignore-path .gitignore --cache --cache-location .eslintcache/
+  - eslint . --ext .js,.ts --ignore-path .gitignore --cache --cache-location .eslintcache/
   - prettier --check "**/*.{json,css,scss,html}"
 
 notifications:
