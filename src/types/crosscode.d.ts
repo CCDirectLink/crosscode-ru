@@ -136,7 +136,9 @@ declare namespace ig {
   let Cacheable: CacheableConstructor;
 
   interface Loadable extends ig.Class {}
-  interface LoadableConstructor extends ImpactClass<Loadable> {}
+  interface LoadableConstructor extends ImpactClass<Loadable> {
+    new (pathOrData: string): this['prototype'];
+  }
   let Loadable: LoadableConstructor;
 
   interface SingleLoadable extends ig.Class {}
@@ -177,11 +179,18 @@ declare namespace ig {
   namespace Font {
     type ALIGN = FontALIGN_;
   }
-
   interface Font extends ig.Image {
     charHeight: number;
   }
   interface FontConstructor extends ImpactClass<Font> {
+    new (
+      path: string,
+      charHeight: number,
+      firstChar: number,
+      sizeIndex: number,
+      color: string,
+    ): this['prototype'];
+
     ALIGN: typeof FontALIGN_;
   }
   let Font: FontConstructor;
@@ -517,6 +526,10 @@ declare namespace ig {
 /* module impact.base.game */
 
 declare namespace ig {
+  interface Game extends ig.Class {}
+  interface GameConstructor extends ImpactClass<Game> {}
+  let Game: GameConstructor;
+
   interface GameAddon extends ig.Class {}
   interface GameAddonConstructor extends ImpactClass<GameAddon> {}
   let GameAddon: GameAddonConstructor;
@@ -790,7 +803,16 @@ declare namespace ig {
 /* module impact.feature.interact.button-interact */
 
 declare namespace ig {
-  interface ButtonGroup extends ig.Class {}
+  interface ButtonGroup extends ig.Class {
+    largestIndex: Vec2;
+
+    addFocusGui(
+      gui: ig.FocusGui,
+      x: number,
+      y: number,
+      asBackButton?: boolean,
+    ): void;
+  }
   interface ButtonGroupConstructor extends ImpactClass<ButtonGroup> {}
   let ButtonGroup: ButtonGroupConstructor;
 }
@@ -805,6 +827,8 @@ declare namespace ig {
     active: boolean;
     keepPressed: boolean;
     pressed: boolean;
+
+    onButtonPress(this: this): void;
   }
   interface FocusGuiConstructor extends ImpactClass<FocusGui> {}
   let FocusGui: FocusGuiConstructor;
@@ -897,6 +921,7 @@ declare namespace sc {
 /* module game.feature.gui.base.button */
 
 declare namespace sc {
+  let BUTTON_DEFAULT_WIDTH: number;
   let BUTTON_SOUND: { [name: string]: ig.Sound };
 
   namespace ButtonGui {
@@ -911,7 +936,17 @@ declare namespace sc {
     setWidth(this: this, width: number): void;
     getButtonText(this: this): string;
   }
-  interface ButtonGuiConstructor extends ImpactClass<ButtonGui> {}
+  interface ButtonGuiConstructor extends ImpactClass<ButtonGui> {
+    new (
+      text: sc.TextLike,
+      width: number,
+      active?: boolean,
+      type?: sc.ButtonGui.Type,
+      submitSound?: ig.Sound,
+      keepPressed?: boolean,
+      blockedSound?: ig.Sound,
+    ): this['prototype'];
+  }
   let ButtonGui: ButtonGuiConstructor;
 
   interface CheckboxGui extends sc.ButtonGui {}
@@ -1355,8 +1390,39 @@ declare namespace sc {
 /* module game.feature.menu.gui.save.save-list */
 /* module game.feature.menu.gui.save.save-menu */
 /* module game.feature.menu.gui.new-game.new-game-dialogs */
+
 /* module game.feature.gui.screen.title-screen */
+
+declare namespace sc {
+  interface TitleScreenButtonGui extends ig.GuiElementBase {
+    buttonGroup: sc.ButtonGroup;
+    buttons: sc.ButtonGui[];
+
+    show(this: this): void;
+    hide(this: this, skipTransition: boolean): void;
+  }
+  interface TitleScreenButtonGuiConstructor
+    extends ImpactClass<TitleScreenButtonGui> {
+    new (): this['prototype'];
+  }
+  let TitleScreenButtonGui: TitleScreenButtonGuiConstructor;
+}
+
 /* module game.feature.gui.screen.pause-screen */
+
+declare namespace sc {
+  interface PauseScreenGui extends ig.GuiElementBase {
+    buttonGroup: sc.ButtonGroup;
+    toTitleButton: sc.ButtonGui;
+
+    updateButtons(this: this, refocus: boolean): void;
+  }
+  interface PauseScreenGuiConstructor extends ImpactClass<PauseScreenGui> {
+    new (): this['prototype'];
+  }
+  let PauseScreenGui: PauseScreenGuiConstructor;
+}
+
 /* module game.feature.gui.screen.credits-screen */
 /* module game.feature.gui.widget.click-box */
 /* module game.feature.gui.widget.gamepad-box */
@@ -2328,4 +2394,13 @@ declare namespace ig {
 /* module impact.feature.lang-edit.lang-edit */
 /* module impact.feature.lang-edit.plug-in */
 /* module game.beta */
+
 /* module game.main */
+
+declare namespace sc {
+  interface CrossCode extends ig.Game {
+    onGameLoopStart(this: this): void;
+  }
+  interface CrossCodeConstructor extends ImpactClass<CrossCode> {}
+  let CrossCode: CrossCodeConstructor;
+}

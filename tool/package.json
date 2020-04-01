@@ -17,7 +17,7 @@
   },
   "module": true,
   "postload": "postload.js",
-  "prestart": "prestart.js",
+  "prestart": "dist/mod/open-button.js",
   "ccmodDependencies": {
     "crosscode-ru-ng": "*"
   },

@@ -1,4 +1,7 @@
-ig.module('crosscode-ru.translation-tool')
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="../../../src/types/crosscode.d.ts" />
+
+ig.module('crosscode-ru.translation-tool.open-button')
   .requires('game.main', 'game.feature.gui.screen.title-screen')
   .defines(() => {
     sc.CrossCode.inject({
@@ -10,9 +13,10 @@ ig.module('crosscode-ru.translation-tool')
       },
     });
 
-    function createTranslationToolButton() {
+    function createTranslationToolButton(): sc.ButtonGui {
       let btn = new sc.ButtonGui('Переводилка', sc.BUTTON_DEFAULT_WIDTH);
-      btn.onButtonPress = () => sc.ru.translationTool.open();
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      btn.onButtonPress = (): void => sc.ru.translationTool.open();
       return btn;
     }
 
@@ -57,11 +61,11 @@ ig.module('crosscode-ru.translation-tool')
         this.addChildGui(btn);
       },
 
-      updateButtons() {
+      updateButtons(refocus) {
         let btn = this.translationToolButton;
         this.removeChildGui(btn);
 
-        this.parent();
+        this.parent(refocus);
 
         this.addChildGui(btn);
         const toTitleButtonHook = this.toTitleButton.hook;
