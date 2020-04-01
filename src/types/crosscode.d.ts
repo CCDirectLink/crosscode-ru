@@ -268,11 +268,14 @@ declare namespace ig {
 
 declare namespace ig {
   interface System extends ig.Class {
+    width: number;
+    height: number;
     tick: number;
+    actualTick: number;
   }
   interface SystemConstructor extends ImpactClass<System> {}
   let System: SystemConstructor;
-  let system: System;
+  let system: ig.System;
 }
 
 /* module impact.base.input */
@@ -285,7 +288,7 @@ declare namespace ig {
   }
   interface LangConstructor extends ImpactClass<Lang> {}
   let Lang: LangConstructor;
-  let lang: Lang;
+  let lang: ig.Lang;
 
   namespace LangLabel {
     type Data = { [locale: string]: string } & { langUid?: number };
@@ -462,6 +465,8 @@ declare namespace ig {
     undoTransform(this: this): void;
   }
 
+  namespace GUI {}
+
   enum GUI_ALIGN {
     Y_TOP,
     Y_CENTER,
@@ -495,6 +500,15 @@ declare namespace ig {
     align: { x: ig.GUI_ALIGN; y: ig.GUI_ALIGN };
     children: ig.GuiHook[];
     gui: ig.GuiElementBase;
+
+    doStateTransition(
+      this: this,
+      name: string,
+      skipTransition?: boolean,
+      removeAfter?: boolean,
+      callback?: (() => void) | null,
+      initDelay?: number,
+    ): void;
   }
   interface GuiHookConstructor extends ImpactClass<GuiHook> {}
   let GuiHook: GuiHookConstructor;
@@ -535,7 +549,12 @@ declare namespace ig {
       initDelay?: number,
     ): void;
 
-    onVisibilityChange(this: this, visible: boolean): void;
+    // For whatever reason if I change type of `onVisibilityChange` to field
+    // which contains a callback this will confuse the TS compiler and I won't
+    // be able to cast children of `ig.GuiElementBase` to the base class.
+    // Probably because TS can't upgrade `this` type in sub-interfaces when it
+    // is specified in a callback.
+    onVisibilityChange?(this: ig.GuiElementBase, visible: boolean): void;
   }
   interface GuiElementBaseConstructor extends ImpactClass<GuiElementBase> {}
   let GuiElementBase: GuiElementBaseConstructor;
@@ -675,7 +694,7 @@ declare namespace sc {
   }
   interface FontSystemConstructor extends ImpactClass<FontSystem> {}
   let FontSystem: FontSystemConstructor;
-  let fontsystem: FontSystem;
+  let fontsystem: sc.FontSystem;
 }
 
 /* module game.feature.gui.base.text */
@@ -1644,7 +1663,36 @@ declare namespace ig {
 /* module game.feature.voice-acting.va-config */
 /* module game.feature.voice-acting.plug-in */
 /* module game.feature.credits.credit-loadable */
+
 /* module game.feature.credits.gui.credits-gui */
+
+declare namespace ig {
+  namespace GUI {
+    interface CreditSection extends ig.GuiElementBase {
+      content: ig.GuiElementBase;
+      finished: boolean;
+      isOffscreen: boolean;
+
+      remove(this: this): void;
+      createHeader(
+        this: this,
+        text: ig.LangLabel.Data | string,
+        pos: Vec2,
+        namesEmpty: boolean,
+      ): void;
+      createNames(
+        this: this,
+        names: Array<ig.LangLabel.Data | string>,
+        columns: number,
+        columnGuis: ig.GuiElementBase[],
+        pos: Vec2,
+      ): void;
+    }
+    interface CreditSectionConstructor extends ImpactClass<CreditSection> {}
+    let CreditSection: CreditSectionConstructor;
+  }
+}
+
 /* module game.feature.credits.credits-steps */
 /* module game.feature.credits.plug-in */
 /* module game.feature.arena.entities.arena-spawn */

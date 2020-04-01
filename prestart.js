@@ -2,7 +2,7 @@ import './dist/localization-utils.js';
 import './dist/ticker-display.js';
 
 import './dist/circuit-menu.js';
-import './src/credits-section.js';
+import './dist/credits-section.js';
 import './dist/event-steps-patches.js';
 import './dist/help-boxes.js';
 import './dist/help-info-box.js';

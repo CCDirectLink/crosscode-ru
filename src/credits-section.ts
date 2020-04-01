@@ -22,10 +22,10 @@ ig.module('crosscode-ru.fixes.credits-section')
         let addedChildren = this.content.hook.children.slice(
           -(namesEmpty ? 1 : 2),
         );
-        addedChildren.forEach(hook => {
-          hook.onVisibilityChange = visible => {
+        addedChildren.forEach(({ gui }) => {
+          gui.onVisibilityChange = (visible): void => {
             if (visible) {
-              hook.doStateTransition(
+              gui.doStateTransition(
                 'DEFAULT',
                 false,
                 false,
@@ -33,7 +33,7 @@ ig.module('crosscode-ru.fixes.credits-section')
                 HEADER_TRANSITION_DELAY,
               );
             } else {
-              hook.doStateTransition('HIDDEN', true);
+              gui.doStateTransition('HIDDEN', true);
             }
           };
         });
@@ -46,7 +46,9 @@ ig.module('crosscode-ru.fixes.credits-section')
         let columnContainerGui = columnGuis[0];
         for (let i = 0; i < columns; i++) {
           let columnGui = columnGuis[i + 1];
-          columnGui.onVisibilityChange = null;
+          // unfortunately the '?' marker on fields in TS allows only undefined
+          // and not null, so I have to make an obviously wrong assertion here
+          columnGui.onVisibilityChange = null!;
           columnGui.hook.children.forEach(nameHook => {
             nameHook.doStateTransition('HIDDEN', true);
           });
@@ -55,7 +57,8 @@ ig.module('crosscode-ru.fixes.credits-section')
           // of 'columnGui'. Well, I have one more trick up my sleeve:
           let currentNameIndex = 0;
           let { update } = columnGui;
-          columnGui.update = () => {
+          // eslint-disable-next-line no-loop-func
+          columnGui.update = (): void => {
             update.call(columnGui);
 
             // as you can see, I'm using a simple optimization instead of
