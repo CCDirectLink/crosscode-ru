@@ -18,9 +18,10 @@ ig.module('crosscode-ru.fixes.options-menu')
           // does, but apply it to every checkbox.
           this.option.checkboxRightAlign = false;
 
-          this.typeGui.button.hook.align.x = ig.GUI_ALIGN.X_RIGHT;
+          let checkbox = (this.typeGui as sc.OPTION_GUIS_defs.CHECKBOX).button;
+          checkbox.hook.align.x = ig.GUI_ALIGN.X_RIGHT;
           const additionalWidth =
-            this.typeGui.hook.size.x - this.typeGui.button.hook.size.x;
+            this.typeGui.hook.size.x - checkbox.hook.size.x;
           lineHook.size.x += additionalWidth;
           slopeHook.pos.x += additionalWidth;
         }
@@ -41,7 +42,10 @@ ig.module('crosscode-ru.fixes.options-menu')
 
     if (ig.currentLang !== 'ru_RU') return;
 
-    const TRANSLATED_MOD_DESCRIPTIONS = {
+    const TRANSLATED_MOD_DESCRIPTIONS: Record<
+      string,
+      sc.ru.LocalizableFragment
+    > = {
       'crosscode-ru-ng': {
         orig: 'Russian translation for CrossCode',
         text: 'Русский перевод CrossCode',
@@ -64,8 +68,12 @@ ig.module('crosscode-ru.fixes.options-menu')
     let allMods = window.activeMods.concat(window.inactiveMods);
     allMods.forEach(mod => {
       let descriptionFragment = TRANSLATED_MOD_DESCRIPTIONS[mod.name];
-      if (descriptionFragment != null) {
-        sc.ru.localizeProp(mod.manifest, 'description', descriptionFragment);
+      if (descriptionFragment != null && mod.manifest.description != null) {
+        sc.ru.localizeProp(
+          mod.manifest as { description: string },
+          'description',
+          descriptionFragment,
+        );
       }
     });
 

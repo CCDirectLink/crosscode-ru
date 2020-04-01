@@ -9,7 +9,7 @@ import './dist/help-info-box.js';
 import './dist/info-bar.js';
 import './src/item-lists.js';
 import './dist/map-menu.js';
-import './src/options-menu.js';
+import './dist/options-menu.js';
 import './dist/pvp.js';
 import './dist/quest-menu.js';
 import './dist/saves-menu.js';

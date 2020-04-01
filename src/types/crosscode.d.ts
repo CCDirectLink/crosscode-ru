@@ -280,10 +280,122 @@ declare namespace ig {
 
 /* module impact.base.input */
 
+declare namespace ig {
+  enum KEY {
+    MOUSE1,
+    MOUSE2,
+    MWHEEL_UP,
+    MWHEEL_DOWN,
+    BACKSPACE,
+    TAB,
+    ENTER,
+    PAUSE,
+    CAPS,
+    ESC,
+    SPACE,
+    PAGE_UP,
+    PAGE_DOWN,
+    END,
+    HOME,
+    LEFT_ARROW,
+    UP_ARROW,
+    RIGHT_ARROW,
+    DOWN_ARROW,
+    INSERT,
+    DELETE,
+    _0,
+    _1,
+    _2,
+    _3,
+    _4,
+    _5,
+    _6,
+    _7,
+    _8,
+    _9,
+    A,
+    B,
+    C,
+    D,
+    E,
+    F,
+    G,
+    H,
+    I,
+    J,
+    K,
+    L,
+    M,
+    N,
+    O,
+    P,
+    Q,
+    R,
+    S,
+    T,
+    U,
+    V,
+    W,
+    X,
+    Y,
+    Z,
+    NUMPAD_0,
+    NUMPAD_1,
+    NUMPAD_2,
+    NUMPAD_3,
+    NUMPAD_4,
+    NUMPAD_5,
+    NUMPAD_6,
+    NUMPAD_7,
+    NUMPAD_8,
+    NUMPAD_9,
+    MULTIPLY,
+    ADD,
+    SUBSTRACT,
+    DECIMAL,
+    DIVIDE,
+    F1,
+    F2,
+    F3,
+    F4,
+    F5,
+    F6,
+    F7,
+    F8,
+    F9,
+    F10,
+    F11,
+    F12,
+    SHIFT,
+    CTRL,
+    ALT,
+    EQUAL,
+    PLUS,
+    COMMA,
+    MINUS,
+    PERIOD,
+    SEMICOLON,
+    UE,
+    GRAVE_ACCENT,
+    OE,
+    SLASH,
+    HASH,
+    BRACKET_OPEN,
+    SZ,
+    BACKSLASH,
+    BRACKET_CLOSE,
+    SINGLE_QUOTE,
+    AE,
+  }
+}
+
 /* module impact.base.lang */
 
 declare namespace ig {
   interface Lang extends ig.SingleLoadable {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    labels: any;
+
     get<T = string>(this: this, path: string): T;
   }
   interface LangConstructor extends ImpactClass<Lang> {}
@@ -728,6 +840,10 @@ declare namespace sc {
   interface ButtonGroup extends ig.ButtonGroup {}
   interface ButtonGroupConstructor extends ImpactClass<ButtonGroup> {}
   let ButtonGroup: ButtonGroupConstructor;
+
+  interface RowButtonGroup extends sc.ButtonGroup {}
+  interface RowButtonGroupConstructor extends ImpactClass<RowButtonGroup> {}
+  let RowButtonGroup: RowButtonGroupConstructor;
 }
 
 /* module game.feature.gui.base.button */
@@ -738,6 +854,10 @@ declare namespace sc {
   }
   interface ButtonGuiConstructor extends ImpactClass<ButtonGui> {}
   let ButtonGui: ButtonGuiConstructor;
+
+  interface CheckboxGui extends sc.ButtonGui {}
+  interface CheckboxGuiConstructor extends ImpactClass<CheckboxGui> {}
+  let CheckboxGui: CheckboxGuiConstructor;
 }
 
 /* module game.feature.gui.base.boxes */
@@ -941,7 +1061,99 @@ declare namespace sc {
 /* module game.feature.gui.base.misc */
 /* module game.feature.gui.base.compact-choice-box */
 /* module game.feature.gui.hud.combat-hud */
+
 /* module game.feature.model.options-model */
+
+declare namespace sc {
+  enum OPTION_TYPES {
+    BUTTON_GROUP = 0,
+    ARRAY_SLIDER = 1,
+    OBJECT_SLIDER = 2,
+    CHECKBOX = 3,
+    CONTROLS = 4,
+    LANGUAGE = 5,
+    INFO = 6,
+  }
+
+  enum OPTION_CATEGORY {
+    GENERAL = 0,
+    INTERFACE = 1,
+    VIDEO = 2,
+    AUDIO = 3,
+    GAMEPAD = 4,
+    CONTROLS = 5,
+    ASSISTS = 6,
+    ARENA = 7,
+  }
+
+  namespace OptionDefinition {
+    /* eslint-disable @typescript-eslint/class-name-casing */
+    interface BUTTON_GROUP {
+      type: 'BUTTON_GROUP';
+      data: Record<string, number>;
+      init: number;
+    }
+
+    interface ARRAY_SLIDER {
+      type: 'ARRAY_SLIDER';
+      data: number[];
+      init: number;
+      snap: boolean;
+      fill: boolean;
+    }
+
+    interface OBJECT_SLIDER {
+      type: 'OBJECT_SLIDER';
+      data: Record<string, number>;
+      init: number;
+      snap: boolean;
+      fill: boolean;
+      showPercentage: boolean;
+    }
+
+    interface CHECKBOX {
+      type: 'CHECKBOX';
+      init: boolean;
+      checkboxRightAlign: boolean; // added by simplify
+    }
+
+    interface CONTROLS {
+      type: 'CONTROLS';
+      init: { key: ig.KEY; key2?: ig.KEY };
+    }
+
+    interface LANGUAGE {
+      type: 'LANGUAGE';
+      data: Record<string, number>;
+      init: number;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/interface-name-prefix
+    interface INFO {
+      type: 'INFO';
+      data: string;
+    }
+  }
+
+  type OptionDefinition = {
+    cat: sc.OPTION_CATEGORY;
+    hasDivider: boolean;
+    header: string;
+    restart: boolean;
+  } & (
+    | sc.OptionDefinition.BUTTON_GROUP
+    | sc.OptionDefinition.ARRAY_SLIDER
+    | sc.OptionDefinition.OBJECT_SLIDER
+    | sc.OptionDefinition.CHECKBOX
+    | sc.OptionDefinition.CONTROLS
+    | sc.OptionDefinition.LANGUAGE
+    | sc.OptionDefinition.INFO
+  );
+
+  let OPTIONS_DEFINITION: { [name: string]: OptionDefinition };
+  /* eslint-enable @typescript-eslint/class-name-casing */
+}
+
 /* module game.feature.gui.hud.item-hud */
 /* module game.feature.gui.hud.element-hud */
 /* module game.feature.gui.hud.money-hud */
@@ -1127,7 +1339,73 @@ declare namespace sc {
 /* module game.feature.menu.gui.map.map-worldmap */
 /* module game.feature.menu.gui.map.map-menu */
 /* module game.feature.menu.gui.options.options-misc */
+
 /* module game.feature.menu.gui.options.options-types */
+
+declare namespace sc {
+  /* eslint-disable @typescript-eslint/class-name-casing, @typescript-eslint/camelcase */
+  namespace OPTION_GUIS_defs {
+    interface BUTTON_GROUP extends ig.GuiElementBase {}
+    interface BUTTON_GROUP_Constructor extends ImpactClass<BUTTON_GROUP> {}
+
+    interface ARRAY_SLIDER extends ig.GuiElementBase {}
+    interface ARRAY_SLIDER_Constructor extends ImpactClass<ARRAY_SLIDER> {}
+
+    interface OBJECT_SLIDER extends ig.GuiElementBase {}
+    interface OBJECT_SLIDER_Constructor extends ImpactClass<OBJECT_SLIDER> {}
+
+    interface CHECKBOX extends ig.GuiElementBase {
+      button: sc.CheckboxGui;
+    }
+    interface CHECKBOX_Constructor extends ImpactClass<CHECKBOX> {}
+
+    interface CONTROLS extends ig.GuiElementBase {}
+    interface CONTROLS_Constructor extends ImpactClass<CONTROLS> {}
+
+    interface LANGUAGE extends ig.GuiElementBase {}
+    interface LANGUAGE_Constructor extends ImpactClass<LANGUAGE> {}
+
+    /* eslint-disable @typescript-eslint/interface-name-prefix */
+    interface INFO extends ig.GuiElementBase {}
+    interface INFO_Constructor extends ImpactClass<INFO> {}
+    /* eslint-enable @typescript-eslint/interface-name-prefix */
+  }
+  let OPTION_GUIS: [
+    sc.OPTION_GUIS_defs.BUTTON_GROUP_Constructor,
+    sc.OPTION_GUIS_defs.ARRAY_SLIDER_Constructor,
+    sc.OPTION_GUIS_defs.OBJECT_SLIDER_Constructor,
+    sc.OPTION_GUIS_defs.CHECKBOX_Constructor,
+    sc.OPTION_GUIS_defs.CONTROLS_Constructor,
+    sc.OPTION_GUIS_defs.LANGUAGE_Constructor,
+    sc.OPTION_GUIS_defs.INFO_Constructor,
+  ];
+
+  interface OptionRow extends ig.GuiElementBase {
+    option: sc.OptionDefinition;
+    nameGui: sc.TextGui;
+    typeGui:
+      | sc.OPTION_GUIS_defs.BUTTON_GROUP
+      | sc.OPTION_GUIS_defs.ARRAY_SLIDER
+      | sc.OPTION_GUIS_defs.OBJECT_SLIDER
+      | sc.OPTION_GUIS_defs.CHECKBOX
+      | sc.OPTION_GUIS_defs.CONTROLS
+      | sc.OPTION_GUIS_defs.LANGUAGE;
+    _hasEntered: boolean;
+
+    init(
+      this: this,
+      option: string,
+      row: number,
+      rowGroup: sc.RowButtonGroup,
+      local?: boolean,
+      width?: number,
+      height?: number,
+    ): void;
+  }
+  interface OptionRowConstructor extends ImpactClass<OptionRow> {}
+  let OptionRow: OptionRowConstructor;
+  /* eslint-enable @typescript-eslint/class-name-casing, @typescript-eslint/camelcase */
+}
 
 /* module game.feature.menu.gui.options.options-list */
 
