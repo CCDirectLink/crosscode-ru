@@ -9,8 +9,8 @@
     "node": ">=11.0.0"
   },
   "module": true,
-  "postload": "postload.js",
-  "prestart": "prestart.js",
+  "postload": "dist/postload.js",
+  "prestart": "dist/prestart.js",
   "ccmodDependencies": {
     "Localize Me": ">=0.4 <1"
   },
