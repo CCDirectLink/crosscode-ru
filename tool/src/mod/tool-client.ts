@@ -1,9 +1,9 @@
-import { Settings, readSettings } from './settings.js';
+import { Settings, readSettings } from '../settings.js';
 
 let scriptUrl: string = import.meta.url;
 let scriptDir = scriptUrl.slice(0, scriptUrl.lastIndexOf('/'));
 
-export class RuTranslationToolNgClient {
+export class TranslationToolClient {
   gameWindow: NWJS_Helpers.win = nw.Window.get();
   toolWindow: NWJS_Helpers.win | null = null;
   toolWindowIsOpening = false;
@@ -27,7 +27,7 @@ export class RuTranslationToolNgClient {
 
     this.toolWindowIsOpening = true;
     nw.Window.open(
-      `${scriptDir}/../main.html`,
+      `${scriptDir}/../../main.html`,
       // magic values from the game's package.json
       { width: 1136, height: 640 },
       toolWindow => {

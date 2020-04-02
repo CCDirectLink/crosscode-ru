@@ -1,9 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../../../src/types/crosscode.d.ts" />
+import { TranslationToolClient } from './tool-client.js';
 
-ig.module('crosscode-ru.translation-tool.open-button')
+ig.module('crosscode-ru.translation-tool')
   .requires('game.main', 'game.feature.gui.screen.title-screen')
   .defines(() => {
+    sc.ru.translationTool = new TranslationToolClient();
+
     sc.CrossCode.inject({
       onGameLoopStart() {
         this.parent();

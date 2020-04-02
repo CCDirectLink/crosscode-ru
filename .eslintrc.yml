@@ -54,6 +54,7 @@ overrides:
     globals:
       ig: off
       sc: off
+      localizeMe: off
 
     # TODO: add TS preset to https://github.com/dmitmel/eslint-config-dmitmel
     rules:

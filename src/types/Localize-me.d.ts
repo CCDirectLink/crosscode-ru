@@ -8,9 +8,4 @@ interface LocalizeMe {
   game_locale_config: GameLocaleConfiguration;
 }
 
-// mark this file as a module to enable global scope augmentation
-export {};
-
-declare global {
-  let localizeMe: LocalizeMe;
-}
+declare let localizeMe: LocalizeMe;
