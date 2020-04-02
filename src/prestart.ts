@@ -10,6 +10,7 @@ import './info-bar.js';
 import './item-lists.js';
 import './map-menu.js';
 import './options-menu.js';
+import './pause-screen.js';
 import './pvp.js';
 import './quest-menu.js';
 import './saves-menu.js';

@@ -1420,7 +1420,14 @@ declare namespace sc {
 declare namespace sc {
   interface PauseScreenGui extends ig.GuiElementBase {
     buttonGroup: sc.ButtonGroup;
+    resumeButton: sc.ButtonGui;
+    skipButton: sc.ButtonGui;
+    cancelButton: sc.ButtonGui;
     toTitleButton: sc.ButtonGui;
+    saveGameButton: sc.ButtonGui;
+    optionsButton: sc.ButtonGui;
+    arenaRestart: sc.ButtonGui;
+    arenaLobby: sc.ButtonGui;
 
     updateButtons(this: this, refocus: boolean): void;
   }
