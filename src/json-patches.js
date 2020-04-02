@@ -208,6 +208,76 @@ const PATCHES = {
 
     return data;
   },
+
+  'data/scale-props/rhombus-sqr.json': data => {
+    function createRhombusSignProp({ srcX, srcY, width }) {
+      return {
+        baseSize: {
+          x: 16,
+          y: 16,
+          z: 0,
+        },
+        scalableX: true,
+        scalableY: false,
+        scalableStep: 4,
+        renderMode: 'lighter',
+        collType: 'NONE',
+        gfx: 'media/map/rhombus-sign.ru_RU.png',
+        gfxBaseX: 0,
+        gfxBaseY: 0,
+        patterns: {
+          x: srcX,
+          y: srcY,
+          w: width,
+          h: 16,
+          xCount: 1,
+          yCount: 1,
+        },
+        timePadding: {
+          x: 16,
+          y: 0,
+        },
+      };
+    }
+
+    data.entries.wallARweapon = createRhombusSignProp({
+      srcX: 63,
+      srcY: 0,
+      width: 64,
+    });
+    data.entries.wallARcrosscentral = createRhombusSignProp({
+      srcX: 47,
+      srcY: 16,
+      width: 80,
+    });
+    data.entries.wallARitem = createRhombusSignProp({
+      srcX: 71,
+      srcY: 32,
+      width: 56,
+    });
+    data.entries.wallARbooster = createRhombusSignProp({
+      srcX: 71,
+      srcY: 48,
+      width: 56,
+    });
+    data.entries.wallARarena = createRhombusSignProp({
+      srcX: 15,
+      srcY: 32,
+      width: 56,
+    });
+    data.entries.wallARcurios = createRhombusSignProp({
+      srcX: 13,
+      srcY: 48,
+      width: 50,
+    });
+    data.entries.wallARclosed = createRhombusSignProp({
+      srcX: 7,
+      srcY: 0,
+      width: 48,
+    });
+
+    return data;
+  },
 };
 
 export default function initJsonPatches() {
