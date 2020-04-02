@@ -1,6 +1,7 @@
 ig.module('crosscode-ru.fixes.options-menu')
   .requires(
     'game.feature.menu.gui.options.options-types',
+    'game.feature.menu.gui.options.options-misc',
     'crosscode-ru.ticker-display',
     'crosscode-ru.utils.localization',
   )
@@ -37,6 +38,37 @@ ig.module('crosscode-ru.fixes.options-menu')
         this.parent();
         // this._hasEntered is set in onMouseInteract of this class
         if (!this._hasEntered) this.nameGui.tickerHook.timer = 0;
+      },
+    });
+
+    sc.KeyBinderGui.inject({
+      init() {
+        this.parent();
+        this.anykeyText = this.box.hook.children[2].gui as sc.TextGui;
+      },
+
+      show(...args) {
+        this.parent(...args);
+
+        let maxButtonWidth = Math.max(
+          this.button.hook.size.x,
+          this.back.hook.size.x,
+        );
+        this.button.setWidth(maxButtonWidth);
+        this.back.setWidth(maxButtonWidth);
+
+        this.box.setSize(
+          Math.max(
+            150,
+            this.anykeyText.hook.size.x + this.anykeyText.hook.pos.y * 2,
+            this.button.hook.pos.x +
+              maxButtonWidth +
+              4 +
+              maxButtonWidth +
+              this.back.hook.pos.x,
+          ),
+          this.box.hook.size.y,
+        );
       },
     });
 

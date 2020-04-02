@@ -958,6 +958,12 @@ declare namespace sc {
 
 /* module game.feature.gui.base.boxes */
 
+declare namespace sc {
+  interface BlackWhiteBox extends ig.BoxGui {}
+  interface BlackWhiteBoxConstructor extends ImpactClass<BlackWhiteBox> {}
+  let BlackWhiteBox: BlackWhiteBoxConstructor;
+}
+
 /* module game.feature.gui.base.numbers */
 
 declare namespace sc {
@@ -1565,7 +1571,31 @@ declare namespace sc {
 
 /* module game.feature.menu.gui.map.map-worldmap */
 /* module game.feature.menu.gui.map.map-menu */
+
 /* module game.feature.menu.gui.options.options-misc */
+
+declare namespace sc {
+  interface KeyBinderGui extends ig.ColorGui {
+    box: sc.BlackWhiteBox;
+    button: sc.ButtonGui;
+    back: sc.ButtonGui;
+
+    show(
+      this: this,
+      finishCallback: (
+        keyCode: number | null,
+        isAlternative: boolean,
+        unbind: boolean,
+      ) => void,
+      forAction: string,
+      isAlternative: boolean,
+    ): void;
+  }
+  interface KeyBinderGuiConstructor extends ImpactClass<KeyBinderGui> {
+    new (): this['prototype'];
+  }
+  let KeyBinderGui: KeyBinderGuiConstructor;
+}
 
 /* module game.feature.menu.gui.options.options-types */
 
