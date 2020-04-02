@@ -188,19 +188,23 @@ ig.module('crosscode-ru.ticker-display')
     let textParserParse = ig.TextParser.parse;
     ig.TextParser.parse = function(
       text: string | sc.ru.ParsedTextData,
-      commands: ig.TextCommand[],
+      commands: ig.TextCommand[] | null,
       font: ig.MultiFont,
+      ignoreCommands?: boolean,
     ): string {
       if (text instanceof sc.ru.ParsedTextData) {
-        commands.push(...text.commands);
+        if (commands != null && !ignoreCommands) {
+          commands.push(...text.commands);
+        }
         return text.parsedText;
       }
       return (textParserParse as (
         this: ig.TextParser,
         text: string,
-        commands: ig.TextCommand[],
+        commands: ig.TextCommand[] | null,
         font: ig.MultiFont,
-      ) => string).call(this, text, commands, font);
+        ignoreCommands?: boolean,
+      ) => string).call(this, text, commands, font, ignoreCommands);
     };
 
     ig.TextBlock.inject({

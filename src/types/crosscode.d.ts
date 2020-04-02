@@ -285,8 +285,9 @@ declare namespace ig {
     parse(
       this: this,
       text: string,
-      commands: ig.TextCommand[],
+      commands: ig.TextCommand[] | null,
       font: ig.MultiFont,
+      ignoreCommands?: boolean,
     ): string;
   }
   let TextParser: TextParser;

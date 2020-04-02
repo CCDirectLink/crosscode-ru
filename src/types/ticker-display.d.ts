@@ -3,18 +3,13 @@ declare namespace ig {
     parse(
       this: this,
       text: sc.ru.ParsedTextData,
-      commands: ig.TextCommand[],
+      commands: ig.TextCommand[] | null,
       font: ig.MultiFont,
+      ignoreCommands?: boolean,
     ): string;
   }
 
   interface TextBlock {
-    init(
-      this: this,
-      text: sc.ru.ParsedTextData,
-      commands: ig.TextCommand[],
-      font: ig.MultiFont,
-    ): void;
     setText(this: this, text: sc.ru.ParsedTextData): void;
   }
   interface TextBlockConstructor {
