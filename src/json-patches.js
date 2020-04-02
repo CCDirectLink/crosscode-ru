@@ -1,5 +1,67 @@
 /* global simplify, simplifyResources */
 
+// my answer to CC's JSON templates
+function createRussianDungeonArText({ gfx, srcX, srcY, width, reverse }) {
+  // well, I haven't implemented deepCopy yet, so... TODO I guess?
+  return {
+    baseSize: {
+      x: 16,
+      y: 8,
+      z: 8,
+    },
+    scalableX: true,
+    scalableY: false,
+    scalableStep: 16,
+    wallY: 0,
+    renderMode: 'lighter',
+    collType: 'NONE',
+    gfx,
+    gfxBaseX: 0,
+    gfxBaseY: 0,
+    patterns: {
+      x: srcX,
+      y: srcY,
+      w: width,
+      h: 16,
+      xCount: 1,
+      yCount: 1,
+    },
+    gfxEnds: {
+      west: {
+        STOP: {
+          x: 0,
+          y: 0,
+          w: 8,
+          h: 16,
+          xCount: 6,
+          animFrames: reverse ? [0, 1, 2, 3, 4, 5] : [5, 4, 3, 2, 1, 0],
+          flipX: true,
+        },
+      },
+      east: {
+        STOP: {
+          x: 0,
+          y: 0,
+          w: 8,
+          h: 16,
+          xCount: 6,
+          animFrames: reverse ? [5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5],
+        },
+      },
+    },
+    animTime: 0.05,
+    timePadding: {
+      x: (reverse ? 1 : -1) * 24,
+      y: 0,
+    },
+    effects: {
+      sheet: 'ar',
+      show: 'show',
+      hide: 'hide',
+    },
+  };
+}
+
 const PATCHES = {
   // sorry, Felix... not many people watch credits until the end, so I'll have
   // to inject our names in the first data file. hope RFG doesn't mind :P
@@ -25,6 +87,42 @@ const PATCHES = {
       return obj;
     }, {});
 
+    return data;
+  },
+
+  'data/scale-props/dungeon-ar.json': data => {
+    data.entries.textWelcome = createRussianDungeonArText({
+      gfx: 'media/entity/objects/dungeon-ar.ru_RU.png',
+      srcX: 0,
+      srcY: 16,
+      width: 128,
+      reverse: false,
+    });
+    data.entries.textComplete = createRussianDungeonArText({
+      gfx: 'media/entity/objects/dungeon-ar.ru_RU.png',
+      srcX: 0,
+      srcY: 32,
+      width: 128,
+      reverse: false,
+    });
+    return data;
+  },
+
+  'data/scale-props/dungeon-ar-special.json': data => {
+    data.entries.textWait = createRussianDungeonArText({
+      gfx: 'media/entity/objects/dungeon-ar-special.ru_RU.png',
+      srcX: 0,
+      srcY: 16,
+      width: 96,
+      reverse: true,
+    });
+    data.entries.textLea = createRussianDungeonArText({
+      gfx: 'media/entity/objects/dungeon-ar-special.ru_RU.png',
+      srcX: 0,
+      srcY: 32,
+      width: 144,
+      reverse: true,
+    });
     return data;
   },
 };
