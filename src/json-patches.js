@@ -1,20 +1,31 @@
 /* global simplify, simplifyResources */
 
+function createArTextProp(rest) {
+  return {
+    scalableX: true,
+    scalableY: false,
+    wallY: 0,
+    renderMode: 'lighter',
+    collType: 'NONE',
+    effects: {
+      sheet: 'ar',
+      show: 'show',
+      hide: 'hide',
+    },
+    ...rest,
+  };
+}
+
 // my answer to CC's JSON templates
 function createRussianDungeonArText({ gfx, srcX, srcY, width, reverse }) {
   // well, I haven't implemented deepCopy yet, so... TODO I guess?
-  return {
+  return createArTextProp({
     baseSize: {
       x: 16,
       y: 8,
       z: 8,
     },
-    scalableX: true,
-    scalableY: false,
     scalableStep: 16,
-    wallY: 0,
-    renderMode: 'lighter',
-    collType: 'NONE',
     gfx,
     gfxBaseX: 0,
     gfxBaseY: 0,
@@ -54,12 +65,7 @@ function createRussianDungeonArText({ gfx, srcX, srcY, width, reverse }) {
       x: (reverse ? 1 : -1) * 24,
       y: 0,
     },
-    effects: {
-      sheet: 'ar',
-      show: 'show',
-      hide: 'hide',
-    },
-  };
+  });
 }
 
 const PATCHES = {
@@ -123,6 +129,83 @@ const PATCHES = {
       width: 144,
       reverse: true,
     });
+    return data;
+  },
+
+  'data/scale-props/trading-ar.json': data => {
+    function createTradingArProp({ srcX, srcY, width }) {
+      return createArTextProp({
+        baseSize: {
+          x: 16,
+          y: 8,
+          z: 4,
+        },
+        scalableStep: 4,
+        gfx: 'media/map/trading-autumn.ru_RU.png',
+        gfxBaseX: 0,
+        gfxBaseY: 0,
+        patterns: {
+          x: srcX,
+          y: srcY,
+          w: width,
+          h: 12,
+          xCount: 1,
+          yCount: 1,
+        },
+        gfxEnds: {
+          west: {
+            SHORT: {
+              x: 0,
+              y: 0,
+              w: 3,
+              h: 12,
+              xCount: 1,
+            },
+            LONG: {
+              x: 0,
+              y: 0,
+              w: 3,
+              h: 24,
+              xCount: 1,
+              renderHeight: 4,
+            },
+          },
+          east: {
+            SHORT: {
+              x: 0,
+              y: 0,
+              w: 3,
+              h: 12,
+              xCount: 1,
+            },
+            LONG: {
+              x: 0,
+              y: 0,
+              w: 3,
+              h: 24,
+              xCount: 1,
+              renderHeight: 4,
+            },
+          },
+        },
+        timePadding: {
+          x: 12,
+          y: 0,
+        },
+      });
+    }
+
+    data.entries.textCups = createTradingArProp({
+      srcX: 8,
+      srcY: 0,
+      width: 45,
+    });
+    data.entries.textInfo = createTradingArProp({
+      srcX: 8,
+      srcY: 12,
+      width: 39,
+    });
+
     return data;
   },
 };
