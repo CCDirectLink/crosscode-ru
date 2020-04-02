@@ -1497,6 +1497,14 @@ declare namespace sc {
 /* module game.feature.menu.gui.circuit.circuit-detail-elements */
 
 declare namespace sc {
+  interface CircuitNodeMenu extends sc.MenuPanel {
+    activate: sc.ButtonGui;
+  }
+  interface CircuitNodeMenuConstructor extends ImpactClass<CircuitNodeMenu> {
+    new (scrollHook: ig.GuiHook): this['prototype'];
+  }
+  let CircuitNodeMenu: CircuitNodeMenuConstructor;
+
   interface CircuitInfoBox extends sc.MenuPanel {
     special: sc.TextGui;
   }
