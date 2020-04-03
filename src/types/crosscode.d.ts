@@ -772,7 +772,19 @@ declare namespace ig {
 /* module impact.feature.gui.base.basic-gui */
 
 declare namespace ig {
-  interface ImageGui extends ig.GuiElementBase {}
+  interface ImageGui extends ig.GuiElementBase {
+    offsetX: number;
+    offsetY: number;
+
+    setImage(
+      this: this,
+      image: ig.Image,
+      offsetX?: number,
+      offsetY?: number,
+      width?: number,
+      height?: number,
+    ): void;
+  }
   interface ImageGuiConstructor extends ImpactClass<ImageGui> {}
   let ImageGui: ImageGuiConstructor;
 
@@ -798,6 +810,7 @@ declare namespace ig {
     largestIndex: Vec2;
 
     addFocusGui(
+      this: this,
       gui: ig.FocusGui,
       x: number,
       y: number,
@@ -1015,6 +1028,7 @@ declare namespace sc {
     _width: number;
 
     setButtonText(this: this, text: sc.TextLike): void;
+    setWidth(this: this, buttonWidth?: number, lineWidth?: number): void;
     setText(this: this, text: sc.TextLike): void;
   }
   interface ListBoxButton extends ListBoxButtonCommon {}
@@ -1068,6 +1082,10 @@ declare namespace sc {
   interface MenuPanel extends ig.BoxGui {}
   interface MenuPanelConstructor extends ImpactClass<MenuPanel> {}
   let MenuPanel: MenuPanelConstructor;
+
+  interface MenuScanLines extends ig.GuiElementBase {}
+  interface MenuScanLinesConstructor extends ImpactClass<ItemBoxButton> {}
+  let MenuScanLines: ItemBoxButtonConstructor;
 
   interface ScrollPane extends ig.GuiElementBase {}
   interface ScrollPaneConstructor extends ImpactClass<ScrollPane> {}
@@ -1804,6 +1822,8 @@ declare namespace sc {
   let TabbedPane: TabbedPaneConstructor;
 
   interface ListTabbedPane extends sc.TabbedPane {
+    bg: sc.MenuScanLines;
+
     onCreateListEntries(
       this: this,
       list: sc.ButtonListBox,
@@ -1842,6 +1862,26 @@ declare namespace sc {
   }
   interface SocialInfoBoxConstructor extends ImpactClass<SocialInfoBox> {}
   let SocialInfoBox: SocialInfoBoxConstructor;
+
+  interface SocialEntryButton extends sc.ListBoxButton {
+    gfx2: ig.Image;
+    head: sc.SocialHead;
+    status: ig.ImageGui;
+    key: string;
+
+    updateMemberStatus(this: this): void;
+  }
+  interface SocialEntryButtonConstructor
+    extends ImpactClass<SocialEntryButton> {
+    new (name: string, model: sc.PartyMemberModel): this['prototype'];
+  }
+  let SocialEntryButton: SocialEntryButtonConstructor;
+
+  interface SocialHead extends ig.GuiElementBase {
+    active: boolean;
+  }
+  interface SocialHeadConstructor extends ImpactClass<SocialHead> {}
+  let SocialHead: SocialHeadConstructor;
 }
 
 /* module game.feature.menu.gui.quest-hub.quest-hub-misc */
@@ -1941,7 +1981,9 @@ declare namespace sc {
 
 declare namespace sc {
   interface SocialList extends sc.ListTabbedPane {}
-  interface SocialListConstructor extends ImpactClass<SocialList> {}
+  interface SocialListConstructor extends ImpactClass<SocialList> {
+    new (): this['prototype'];
+  }
   let SocialList: SocialListConstructor;
 }
 
@@ -2268,7 +2310,32 @@ declare namespace ig {
 /* module game.feature.player.entities.player-base */
 /* module game.feature.player.entities.player-pet */
 /* module game.feature.player.entities.player */
+
 /* module game.feature.party.party */
+
+declare namespace sc {
+  enum PARTY_MEMBER_TYPE {
+    UNKNOWN,
+    CONTACT,
+    FRIEND,
+  }
+
+  namespace PartyModel {
+    interface Contact {
+      status: sc.PARTY_MEMBER_TYPE;
+      online: boolean;
+      locked: boolean;
+    }
+  }
+  interface PartyModel extends ig.GameAddon {
+    contacts: { [name: string]: sc.PartyModel.Contact };
+    isPartyMember(name: string): boolean;
+  }
+  interface PartyModelConstructor extends PartyModel {}
+  let PartyModel: PartyModelConstructor;
+  let party: sc.PartyModel;
+}
+
 /* module game.feature.player.player-steps */
 /* module game.feature.player.crosshair-steps */
 /* module game.feature.player.modifiers */
@@ -2370,7 +2437,15 @@ declare namespace sc {
 /* module game.feature.quest.quest-steps */
 /* module game.feature.quest.plug-in */
 /* module game.feature.party.party-steps */
+
 /* module game.feature.party.party-member-model */
+
+declare namespace sc {
+  interface PartyMemberModel extends ig.Class {}
+  interface PartyMemberModelConstructor extends ImpactClass<PartyMemberModel> {}
+  let PartyMemberModel: PartyMemberModelConstructor;
+}
+
 /* module game.feature.party.entities.party-member-entity */
 /* module game.feature.party.plug-in */
 /* module game.feature.common-event.common-event */

@@ -15,6 +15,7 @@ import './pause-screen.js';
 import './pvp.js';
 import './quest-menu.js';
 import './saves-menu.js';
+import './social-menu.js';
 import './status-combat-arts.js';
 import './status-lines.js';
 import './tab-button.js';
