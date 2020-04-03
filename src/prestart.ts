@@ -8,6 +8,7 @@ import './help-boxes.js';
 import './help-info-box.js';
 import './info-bar.js';
 import './item-lists.js';
+import './level-up.js';
 import './map-menu.js';
 import './options-menu.js';
 import './pause-screen.js';

@@ -163,8 +163,8 @@ ig.module('crosscode-ru.ticker-display')
         this.parent(text);
       },
 
-      onVisibilityChange(...args) {
-        this.parent(...args);
+      onVisibilityChange(visible) {
+        this.parent(visible);
         this.tickerHook.timer = 0;
       },
 

@@ -599,18 +599,8 @@ declare namespace ig {
       srcY: number,
       sizeX: number,
       sizeY: number,
-    ): void;
-    addGfx(
-      this: this,
-      gfx: ig.Image | ig.ImageAtlasFragment,
-      posX: number,
-      posY: number,
-      srcX: number,
-      srcY: number,
-      sizeX: number,
-      sizeY: number,
-      flipX: boolean,
-      flipY: boolean,
+      flipX?: boolean,
+      flipY?: boolean,
     ): void;
     addColor(
       this: this,
@@ -721,7 +711,7 @@ declare namespace ig {
     // be able to cast children of `ig.GuiElementBase` to the base class.
     // Probably because TS can't upgrade `this` type in sub-interfaces when it
     // is specified in a callback.
-    onVisibilityChange?(this: ig.GuiElementBase, visible: boolean): void;
+    onVisibilityChange?(this: this, visible: boolean): void;
   }
   interface GuiElementBaseConstructor extends ImpactClass<GuiElementBase> {
     new (): this['prototype'];
@@ -1445,7 +1435,16 @@ declare namespace sc {
 /* module game.feature.combat.gui.hp-bar-boss */
 /* module game.feature.gui.widget.bar-widget */
 /* module game.feature.gui.widget.indiegogo-gui */
+
 /* module game.feature.gui.widget.level-up-hud */
+
+declare namespace sc {
+  interface LevelUpContentGui extends ig.GuiElementBase {}
+  interface LevelUpContentGuiConstructor
+    extends ImpactClass<LevelUpContentGui> {}
+  let LevelUpContentGui: LevelUpContentGuiConstructor;
+}
+
 /* module game.feature.gui.widget.social */
 /* module game.feature.gui.widget.timer-gui */
 /* module game.feature.gui.widget.sergey-mode */

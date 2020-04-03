@@ -15,7 +15,7 @@ ig.module('crosscode-ru.fixes.status-line-graphics.enemy-list')
   .requires('game.feature.menu.gui.enemies.enemy-pages')
   .defines(() => {
     sc.EnemyBaseParamLine.inject({
-      patchedGfx: new ig.Image('media/gui/status-lines.png'),
+      patchedGfx: new ig.Image('media/gui/menu.ru_RU.png'),
 
       updateDrawables(renderer) {
         renderer.addGfx(this.patchedGfx, 0, 0, 0, 0, 118, 11);
@@ -36,7 +36,7 @@ ig.module('crosscode-ru.fixes.status-line-graphics.simple-status-display')
   .requires('game.feature.menu.gui.menu-misc')
   .defines(() => {
     sc.SimpleStatusDisplay.inject({
-      patchedGfx: new ig.Image('media/gui/status-lines.png'),
+      patchedGfx: new ig.Image('media/gui/menu.ru_RU.png'),
 
       init(...args) {
         this.parent(...args);
@@ -117,7 +117,7 @@ ig.module('crosscode-ru.fixes.status-line-graphics.status-menu')
     ];
 
     sc.StatusParamBar.inject({
-      patchedGfx: new ig.Image('media/gui/status-lines.png'),
+      patchedGfx: new ig.Image('media/gui/menu.ru_RU.png'),
 
       updateDrawables(renderer) {
         // goddammit, RFG, you are kidding me...
