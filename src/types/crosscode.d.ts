@@ -1,5 +1,7 @@
 // TypeScript definitions for CrossCode v1.2.0-5
 
+/* eslint-disable no-shadow */
+
 declare interface Vec2 {
   x: number;
   y: number;
@@ -94,19 +96,25 @@ interface KEY_SPLINES {
 }
 
 declare namespace ig {
-  // eslint-disable-next-line no-shadow
-  function module(this: typeof ig, name: string): typeof ig;
-  function requires(this: typeof ig, ...names: string[]): typeof ig;
-  function defines(this: typeof ig, body: () => void): void;
+  let currentLang: string;
 
   interface Module {
     requires: string[];
     loaded: boolean;
     body: (() => void) | null;
   }
-
   let modules: Record<string, Module>;
   let _waitForOnload: number;
+
+  function $new<K extends keyof HTMLElementTagNameMap>(
+    tagName: K,
+  ): HTMLElementTagNameMap[K];
+  function $new(tagName: string): HTMLElement;
+
+  function module(this: typeof ig, name: string): typeof ig;
+  function requires(this: typeof ig, ...names: string[]): typeof ig;
+  function defines(this: typeof ig, body: () => void): void;
+
   function _execModules(this: typeof ig): void;
 
   interface Class {
@@ -116,8 +124,6 @@ declare namespace ig {
     new (): this['prototype'];
   }
   let Class: ClassConstructor;
-
-  let currentLang: string;
 }
 
 declare namespace sc {}
@@ -135,7 +141,11 @@ declare namespace ig {
   interface CacheableConstructor extends ImpactClass<Cacheable> {}
   let Cacheable: CacheableConstructor;
 
-  interface Loadable extends ig.Class {}
+  interface Loadable extends ig.Class {
+    path: string;
+
+    loadingFinished(this: this, success: boolean): void;
+  }
   interface LoadableConstructor extends ImpactClass<Loadable> {
     new (pathOrData: string): this['prototype'];
   }
@@ -149,11 +159,19 @@ declare namespace ig {
 /* module impact.base.image */
 
 declare namespace ig {
-  interface Image extends ig.Loadable {}
+  namespace Image {
+    type Data = Exclude<CanvasImageSource, SVGImageElement>;
+  }
+  interface Image extends ig.Loadable {
+    data: ig.Image.Data;
+    width: number;
+    height: number;
+
+    onload(this: this, event: Event): void;
+  }
   interface ImageConstructor extends ImpactClass<Image> {
     new (pathOrData: string): this['prototype'];
   }
-  // eslint-disable-next-line no-shadow
   let Image: ImageConstructor;
 
   interface ImageAtlasFragment extends ig.Class {}
