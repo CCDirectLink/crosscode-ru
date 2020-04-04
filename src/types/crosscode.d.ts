@@ -1904,6 +1904,22 @@ declare namespace sc {
 
 /* module game.feature.menu.gui.quest-hub.quest-hub-misc */
 
+declare namespace sc {
+  interface QuestHubListEntry extends ig.FocusGui {
+    questLocation: sc.TextGui;
+    rewards: sc.QuestHubRewards;
+  }
+  interface QuestHubListEntryConstructor
+    extends ImpactClass<QuestHubListEntry> {
+    new (questID: string, tab: sc.MENU_QUEST_HUB_TABS): this['prototype'];
+  }
+  let QuestHubListEntry: QuestHubListEntryConstructor;
+
+  interface QuestHubRewards extends ig.BoxGui {}
+  interface QuestHubRewardsConstructor extends ImpactClass<QuestHubRewards> {}
+  let QuestHubRewards: QuestHubRewardsConstructor;
+}
+
 /* module game.feature.menu.gui.quest-hub.quest-hub-list */
 
 declare namespace sc {
@@ -2143,6 +2159,12 @@ declare namespace sc {
 /* module game.feature.menu.menu-model */
 
 declare namespace sc {
+  enum MENU_QUEST_HUB_TABS {
+    OPEN,
+    ACTIVE,
+    FINISHED,
+  }
+
   enum TOGGLE_SET_TYPE {
     SINGLE,
     MULTI,
