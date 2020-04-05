@@ -1,4 +1,18 @@
-ig.module('crosscode-ru.fixes.help-level-entry')
+ig.module('crosscode-ru.fixes.help.boxes')
+  .requires('game.feature.menu.gui.help-boxes', 'crosscode-ru.ticker-display')
+  .defines(() => {
+    sc.MultiPageBoxGui.inject({
+      _createInitContent(width) {
+        this.parent(width);
+        this.header.tickerHook.setMaxSize({
+          x: width,
+          y: this.header.font.charHeight + this.header.textBlock.linePadding,
+        });
+      },
+    });
+  });
+
+ig.module('crosscode-ru.fixes.help.level-entry')
   .requires('game.feature.menu.gui.help.help-misc')
   .defines(() => {
     const LEVEL_COLOR_ADDITIONAL_WIDTH = 10;
