@@ -681,13 +681,13 @@ declare namespace ig {
     }
   }
   interface GuiHook extends ig.Class {
-    transitions: { [name: string]: ig.GuiHook.Transition };
-
     pos: Vec2;
     size: Vec2;
     align: { x: ig.GUI_ALIGN; y: ig.GUI_ALIGN };
     children: ig.GuiHook[];
     gui: ig.GuiElementBase;
+    transitions: { [name: string]: ig.GuiHook.Transition };
+    currentStateName: string;
 
     doStateTransition(
       this: this,
@@ -970,6 +970,7 @@ declare namespace sc {
     textChild: sc.TextGui;
 
     setWidth(this: this, width: number): void;
+    setText(this: this, text: sc.TextLike, ignoreWidth?: boolean): void;
     getButtonText(this: this): string;
   }
   interface ButtonGuiConstructor extends ImpactClass<ButtonGui> {
@@ -1472,6 +1473,7 @@ declare namespace sc {
   interface TitleScreenButtonGui extends ig.GuiElementBase {
     buttonGroup: sc.ButtonGroup;
     buttons: sc.ButtonGui[];
+    changelogButton: sc.ButtonGui;
 
     followButton: sc.ButtonGui;
 

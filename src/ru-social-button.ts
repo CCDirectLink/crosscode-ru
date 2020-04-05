@@ -1,7 +1,7 @@
 /// <reference types="nw.js" />
 
 ig.module('crosscode-ru.social-button')
-  .requires('game.feature.gui.screen.title-screen')
+  .requires('game.feature.gui.screen.title-screen', 'dom.ready')
   .defines(() => {
     const BUTTON_GAP = 4;
 
