@@ -14,12 +14,12 @@
     "ru_translated": {
       "header": {
         "en_US": "Translated by CRUSsCode team",
-        "ru_RU": "Переведено командой CRUSsCode"
+        "ru_RU": "Переведено командой CRUSsCode "
       },
       "key": "BASE",
       "columns": 1,
       "bottomPad": 45,
-      "names": []
+      "names": [{ "en_US": "vk.com/crusscode" }]
     },
 
     "ru_generalAssembler": {

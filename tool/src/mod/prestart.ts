@@ -35,7 +35,7 @@ ig.module('crosscode-ru.translation-tool')
         btn.hook.transitions = exitButtonHook.transitions;
         btn.doStateTransition('HIDDEN', true);
         let btnGroup = this.buttonGroup;
-        btnGroup.addFocusGui(btn, btnGroup.largestIndex.x + 1, 0);
+        btnGroup.addFocusGui(btn, 0, btnGroup.largestIndex.y + 1);
         this.addChildGui(btn);
       },
 

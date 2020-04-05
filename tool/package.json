@@ -21,8 +21,6 @@
     "crosscode-ru-ng": "*"
   },
   "devDependencies": {
-    "@types/node": "^13.7.0",
-    "@types/nw.js": "^0.13.9",
     "node-sass": "^4.13.1"
   }
 }

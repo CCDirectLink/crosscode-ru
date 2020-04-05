@@ -124,6 +124,16 @@ declare namespace ig {
     new (): this['prototype'];
   }
   let Class: ClassConstructor;
+
+  enum PLATFORM_TYPES {
+    UNKNOWN,
+    DESKTOP,
+    BROWSER,
+    MOBILE,
+    WIIU,
+  }
+
+  let platform: ig.PLATFORM_TYPES;
 }
 
 declare namespace sc {}
@@ -340,6 +350,10 @@ declare namespace ig {
     height: number;
     tick: number;
     actualTick: number;
+
+    setFocusLost(this: this): void;
+    regainFocus(this: this): void;
+    addFocusListener(this: this, listener: (focusLost: boolean) => void): void;
   }
   interface SystemConstructor extends ImpactClass<System> {}
   let System: SystemConstructor;
@@ -1458,6 +1472,8 @@ declare namespace sc {
   interface TitleScreenButtonGui extends ig.GuiElementBase {
     buttonGroup: sc.ButtonGroup;
     buttons: sc.ButtonGui[];
+
+    followButton: sc.ButtonGui;
 
     show(this: this): void;
     hide(this: this, skipTransition: boolean): void;
