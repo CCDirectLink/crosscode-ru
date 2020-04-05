@@ -1102,8 +1102,8 @@ declare namespace sc {
   let MenuPanel: MenuPanelConstructor;
 
   interface MenuScanLines extends ig.GuiElementBase {}
-  interface MenuScanLinesConstructor extends ImpactClass<ItemBoxButton> {}
-  let MenuScanLines: ItemBoxButtonConstructor;
+  interface MenuScanLinesConstructor extends ImpactClass<MenuScanLines> {}
+  let MenuScanLines: MenuScanLinesConstructor;
 
   interface ScrollPane extends ig.GuiElementBase {}
   interface ScrollPaneConstructor extends ImpactClass<ScrollPane> {}
@@ -1216,6 +1216,34 @@ declare namespace sc {
 }
 
 /* module game.feature.menu.gui.main-menu */
+
+declare namespace sc {
+  namespace MainMenu {
+    interface SubMenuBox extends ig.BoxGui {
+      text: sc.TextGui;
+    }
+    interface SubMenuBoxConstructor extends ImpactClass<SubMenuBox> {
+      new (text: sc.TextLike): this['prototype'];
+    }
+
+    interface CurrentMenuDisplay extends ig.GuiElementBase {
+      boxes: sc.MainMenu.SubMenuBox[];
+
+      pushMenuDisplay(this: this, name: sc.TextLike): void;
+    }
+    interface CurrentMenuDisplayConstructor
+      extends ImpactClass<CurrentMenuDisplay> {
+      new (): this['prototype'];
+    }
+  }
+  interface MainMenu extends ig.GuiElementBase {}
+  interface MainMenuConstructor extends ImpactClass<MainMenu> {
+    SubMenuBox: MainMenu.SubMenuBoxConstructor;
+    CurrentMenuDisplay: MainMenu.CurrentMenuDisplayConstructor;
+  }
+  let MainMenu: MainMenuConstructor;
+}
+
 /* module game.feature.menu.gui.start-menu */
 /* module game.feature.gui.base.slick-box */
 /* module game.feature.gui.base.misc */
