@@ -278,6 +278,20 @@ const PATCHES = {
 
     return data;
   },
+
+  'data/props/rhombus-area-text.json': data => {
+    data.props.forEach(prop => {
+      if (
+        prop.name === 'titleItem' ||
+        prop.name === 'titleScore' ||
+        prop.name === 'contentItem' ||
+        prop.name === 'contentScore'
+      ) {
+        prop.fix.gfx = 'media/entity/objects/rhombus-arena-text.ru_RU.png';
+      }
+    });
+    return data;
+  },
 };
 
 export default function initJsonPatches() {
