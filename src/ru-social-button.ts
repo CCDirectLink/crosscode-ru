@@ -63,9 +63,11 @@ ig.module('crosscode-ru.social-button')
       document.body.append(container);
       ig.system.setFocusLost();
 
-      ig.system.addFocusListener(() => {
+      let callback = (): void => {
         container.remove();
-      });
+        ig.system.removeFocusListener(callback);
+      };
+      ig.system.addFocusListener(callback);
       closeBtn.focus();
     }
 

@@ -29,6 +29,15 @@ const PATCHES: { [path: string]: ImagePatchFunction } = {
     ctx.clearRect(187, 21, 24, 1);
     ctx.drawImage(ruImage.data, 0, 0, 21, 7, 187, 15, 21, 7);
   },
+
+  'media/map/jungle-props.png': async ctx => {
+    let ruImage = await waitForLoadable(
+      new ig.Image('media/map/jungle-props.ru_RU.png'),
+    );
+
+    ctx.clearRect(361, 118, 6, 19);
+    ctx.drawImage(ruImage.data, 0, 0, 6, 19, 361, 118, 6, 19);
+  },
 };
 
 export default function initImagePatches(): void {

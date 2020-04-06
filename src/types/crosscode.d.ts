@@ -354,6 +354,10 @@ declare namespace ig {
     setFocusLost(this: this): void;
     regainFocus(this: this): void;
     addFocusListener(this: this, listener: (focusLost: boolean) => void): void;
+    removeFocusListener(
+      this: this,
+      listener: (focusLost: boolean) => void,
+    ): void;
   }
   interface SystemConstructor extends ImpactClass<System> {}
   let System: SystemConstructor;
