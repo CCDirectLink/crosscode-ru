@@ -23,3 +23,4 @@ import './status-lines.js';
 import './tab-button.js';
 import './title-screen.js';
 import './traders-list.js';
+import './trophies-menu.js';

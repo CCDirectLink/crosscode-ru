@@ -1582,7 +1582,7 @@ declare namespace sc {
     desc: sc.TextGui;
   }
   interface HelpLevelEntryConstructor extends ImpactClass<HelpLevelEntry> {
-    new (colorId: string, fontColor: sc.FONT_COLORS): this['prototype'];
+    new (colorID: string, fontColor: sc.FONT_COLORS): this['prototype'];
   }
   let HelpLevelEntry: HelpLevelEntryConstructor;
 }
@@ -2057,7 +2057,24 @@ declare namespace sc {
 /* module game.feature.menu.gui.stats.stats-types */
 /* module game.feature.menu.gui.stats.stats-list */
 /* module game.feature.menu.gui.stats.stats-menu */
+
 /* module game.feature.menu.gui.trophy.trophy-misc */
+
+declare namespace sc {
+  interface TrophyListEntry extends ig.FocusGui {
+    description: sc.TextGui;
+  }
+  interface TrophyListEntryConstructor extends ImpactClass<TrophyListEntry> {
+    new (
+      key: string,
+      groupID: string,
+      sectionID: string,
+      showProgress: boolean,
+    ): this['prototype'];
+  }
+  let TrophyListEntry: TrophyListEntryConstructor;
+}
+
 /* module game.feature.menu.gui.trophy.trophy-list */
 /* module game.feature.menu.gui.trophy.trophy-menu */
 
