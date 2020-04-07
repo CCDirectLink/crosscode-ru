@@ -17,7 +17,7 @@ declare namespace ig {
       font: ig.MultiFont,
       text: sc.ru.ParsedTextData,
       settings: ig.TextBlock.Settings,
-    ): this['prototype'];
+    ): this['__instance'];
   }
 }
 
@@ -57,7 +57,7 @@ declare namespace sc.ru {
     new (
       hook: ig.GuiHook,
       renderText: sc.ru.TickerDisplayHook.RenderTextCallback,
-    ): this['prototype'];
+    ): this['__instance'];
   }
   let TickerDisplayHook: TickerDisplayHookConstructor;
 
@@ -66,7 +66,7 @@ declare namespace sc.ru {
     commands: ig.TextCommand[];
   }
   interface ParsedTextDataConstructor extends ImpactClass<ParsedTextData> {
-    new (parsedText: string, commands: ig.TextCommand[]): this['prototype'];
+    new (parsedText: string, commands: ig.TextCommand[]): this['__instance'];
   }
   let ParsedTextData: ParsedTextDataConstructor;
 
@@ -85,7 +85,7 @@ declare namespace sc.ru {
   }
   interface LongHorizontalTextGuiConstructor
     extends ImpactClass<LongHorizontalTextGui> {
-    new (text: sc.TextLike, settings?: sc.TextGui.Settings): this['prototype'];
+    new (text: sc.TextLike, settings?: sc.TextGui.Settings): this['__instance'];
 
     SPLIT_WIDTH: number;
   }
@@ -105,7 +105,7 @@ declare namespace sc.ru {
     clear(this: this): void;
   }
   interface IconTextGuiConstructor extends ImpactClass<IconTextGui> {
-    new (text: sc.TextLike, settings?: sc.TextGui.Settings): this['prototype'];
+    new (text: sc.TextLike, settings?: sc.TextGui.Settings): this['__instance'];
   }
   let IconTextGui: IconTextGuiConstructor;
 }

@@ -204,7 +204,7 @@ ig.module('crosscode-ru.ticker-display')
         commands: ig.TextCommand[] | null,
         font: ig.MultiFont,
         ignoreCommands?: boolean,
-      ) => string).call(this, text, commands, font, ignoreCommands);
+      ) => string).call(this, text as string, commands, font, ignoreCommands);
     };
 
     ig.TextBlock.inject({

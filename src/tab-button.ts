@@ -1,13 +1,13 @@
-function createPatch<C extends keyof typeof sc>(
+function createPatch<T extends ImpactClass<unknown>>(
   gameMenuModule: string,
-  className: C,
+  getConstructor: () => T,
   minLargeWidth: number,
   methodName = 'onTabButtonCreation',
 ): void {
   ig.module(`crosscode-ru.fixes.tab-button.${gameMenuModule}`)
     .requires(`game.feature.menu.gui.${gameMenuModule}`)
     .defines(() => {
-      (sc[className] as ig.ClassConstructor).inject({
+      ((getConstructor() as unknown) as ig.ClassConstructor).inject({
         [methodName](
           this: ig.Class & {
             parent(...args: unknown[]): sc.ItemTabbedBox.TabButton;
@@ -22,12 +22,14 @@ function createPatch<C extends keyof typeof sc>(
     });
 }
 
-createPatch('arena.arena-list', 'ArenaCupList', 145);
-createPatch('botanics.botanics-list', 'BotanicsListBox', 160);
-createPatch('enemies.enemy-list', 'EnemyListBox', 120);
-createPatch('lore.lore-list', 'LoreListBoxNew', 120);
-createPatch('options.options-list', 'OptionsTabBox', 105, '_createTabButton');
-createPatch('quest-hub.quest-hub-list', 'QuestHubList', 120);
-createPatch('quests.quest-tab-list', 'QuestListBox', 120, '_createTabButton');
-createPatch('social.social-list', 'SocialList', 95);
-createPatch('trade.trader-list', 'TradersListBox', 160);
+createPatch('arena.arena-list', () => sc.ArenaCupList, 145);
+createPatch('botanics.botanics-list', () => sc.BotanicsListBox, 160);
+createPatch('enemies.enemy-list', () => sc.EnemyListBox, 120);
+createPatch('lore.lore-list', () => sc.LoreListBoxNew, 120);
+// prettier-ignore
+createPatch('options.options-list', () => sc.OptionsTabBox, 105, '_createTabButton');
+createPatch('quest-hub.quest-hub-list', () => sc.QuestHubList, 120);
+// prettier-ignore
+createPatch('quests.quest-tab-list', () => sc.QuestListBox, 120, '_createTabButton');
+createPatch('social.social-list', () => sc.SocialList, 95);
+createPatch('trade.trader-list', () => sc.TradersListBox, 160);
