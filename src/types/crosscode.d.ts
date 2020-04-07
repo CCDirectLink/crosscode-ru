@@ -1050,7 +1050,7 @@ declare namespace sc {
   }
   let InfoBar: InfoBarConstructor;
 
-  interface ListBoxButtonCommon extends ig.FocusGui {
+  interface ListBoxButton extends ig.FocusGui {
     button: sc.ButtonGui;
     data: { id: string | number; description: string };
     _width: number;
@@ -1059,7 +1059,6 @@ declare namespace sc {
     setWidth(this: this, buttonWidth?: number, lineWidth?: number): void;
     setText(this: this, text: sc.TextLike): void;
   }
-  interface ListBoxButton extends ListBoxButtonCommon {}
   interface ListBoxButtonConstructor extends ImpactClass<ListBoxButton> {
     new (
       text: sc.TextLike,
@@ -2189,7 +2188,7 @@ declare namespace sc {
   interface NewGameToggleSetConstructor extends ImpactClass<NewGameToggleSet> {}
   let NewGameToggleSet: NewGameToggleSetConstructor;
 
-  interface NewGameOptionButton extends sc.ListBoxButtonCommon {
+  interface NewGameOptionButton extends sc.ListBoxButton {
     data: { id: string; description: string };
 
     set: sc.NewGameToggleSet.SetOptions;

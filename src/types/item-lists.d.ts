@@ -1,5 +1,5 @@
 declare namespace sc {
-  interface ListBoxButtonCommon {
+  interface ListBoxButton {
     enableTickerDisplay: boolean;
   }
 
