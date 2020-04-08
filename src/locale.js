@@ -104,6 +104,7 @@ export default function initLocale() {
     misc_time_function: () => {
       let date = new Date();
       // https://pikabu.ru/story/a_gdeto_seychas_rovno_polden_4223194
+      // TODO: add this to Nota
       if (date.getHours() >= 11 && date.getHours() <= 13) return 'час расплаты';
       let h = date.getHours().toString();
       let m = date

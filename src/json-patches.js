@@ -68,7 +68,19 @@ function createRussianDungeonArText({ gfx, srcX, srcY, width, reverse }) {
   });
 }
 
+function addEnglishLabelsToLangFile(data) {
+  data.labels['combat-hud']['pvp-round'] = 'Round';
+  data.labels['title-screen'].changelog = 'Changelog';
+  return data;
+}
+
 const PATCHES = {
+  'data/lang/sc/gui.de_DE.json': addEnglishLabelsToLangFile,
+  'data/lang/sc/gui.en_US.json': addEnglishLabelsToLangFile,
+  'data/lang/sc/gui.ja_JP.json': addEnglishLabelsToLangFile,
+  'data/lang/sc/gui.ko_KR.json': addEnglishLabelsToLangFile,
+  'data/lang/sc/gui.zh_CN.json': addEnglishLabelsToLangFile,
+
   // sorry, Felix... not many people watch credits until the end, so I'll have
   // to inject our names in the first data file. hope RFG doesn't mind :P
   'data/credits/radicalfish-core.json': async data => {

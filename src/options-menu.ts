@@ -113,6 +113,7 @@ ig.module('crosscode-ru.fixes.options-menu')
     document.body.addEventListener('simplifyInitialized', () => {
       let lang = ig.lang.labels.sc.gui;
 
+      // TODO: add this to Nota
       sc.ru.localizeProp(lang.menu.option, 'mods', {
         orig: 'Mods',
         text: 'Моды',

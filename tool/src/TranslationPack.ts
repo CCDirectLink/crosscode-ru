@@ -5,6 +5,8 @@ import * as fsUtils from './utils/fs.js';
 
 type LocalizeMePack = Record<string, { orig: string; text: string }>;
 
+const INJECTED_IN_MOD_TAG = 'INJECTED_IN_MOD';
+
 export class LocalizeMePacker {
   packs: Map<string, LocalizeMePack> = new Map();
   private assetsCache: Map<string, unknown> = new Map();
@@ -67,21 +69,27 @@ export class LocalizeMePacker {
         currentKey = '';
       }
     }
-
-    let realOriginalText: string;
-    if (file.endsWith('.en_US.json')) {
-      if (typeof obj !== 'string') return null;
-      realOriginalText = obj;
-    } else {
-      if (typeof obj !== 'object' || obj == null) return null;
-      let obj2 = obj as { en_US?: unknown };
-      if (typeof obj2.en_US !== 'string') return null;
-      realOriginalText = obj2.en_US;
+    if (currentKey.length > 0) {
+      if (jsonPath.length > 0) jsonPath += '/';
+      jsonPath += currentKey;
     }
-    if (text === realOriginalText.trimRight()) text = realOriginalText;
 
-    if (text !== realOriginalText) {
-      console.warn(`stale translation in ${file} at ${jsonPath}`);
+    if (!nota.descriptionText.includes(INJECTED_IN_MOD_TAG)) {
+      let realOriginalText: string;
+      if (file.endsWith('.en_US.json')) {
+        if (typeof obj !== 'string') return null;
+        realOriginalText = obj;
+      } else {
+        if (typeof obj !== 'object' || obj == null) return null;
+        let obj2 = obj as { en_US?: unknown };
+        if (typeof obj2.en_US !== 'string') return null;
+        realOriginalText = obj2.en_US;
+      }
+      if (text === realOriginalText.trimRight()) text = realOriginalText;
+
+      if (text !== realOriginalText) {
+        console.warn(`${file} ${jsonPath}: stale translation`);
+      }
     }
 
     return { file, jsonPath, text };

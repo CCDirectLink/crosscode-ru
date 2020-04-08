@@ -7,10 +7,7 @@ ig.module('crosscode.fixes.title-screen')
 
         let oldChangelogButtonWidth = this.changelogButton.hook.size.x;
         this.changelogButton.setText(
-          sc.ru.localize(this.changelogButton.text as string, {
-            orig: '\\i[menu]Changelog',
-            text: '\\i[menu]История изменений',
-          }),
+          `\\i[menu]${ig.lang.get('sc.gui.title-screen.changelog')}`,
         );
 
         this.changelogButton.hook.transitions.HIDDEN.state.offsetX! -=
