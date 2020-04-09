@@ -1,6 +1,11 @@
 ig.module('crosscode-ru.fixes.level-up')
-  .requires('game.feature.gui.widget.level-up-hud')
+  .requires(
+    'game.feature.gui.widget.level-up-hud',
+    'localize-me.final-locale.ready',
+  )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.LevelUpContentGui.inject({
       patchedGfx: new ig.Image('media/gui/status-gui.ru_RU.png'),
 

@@ -2,8 +2,11 @@ ig.module('crosscode-ru.fixes.social-menu')
   .requires(
     'game.feature.menu.gui.social.social-list',
     'game.feature.menu.gui.social.social-misc',
+    'localize-me.final-locale.ready',
   )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.SocialList.inject({
       init() {
         this.parent();

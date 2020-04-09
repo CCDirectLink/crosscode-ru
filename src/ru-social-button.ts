@@ -1,8 +1,14 @@
 /// <reference types="nw.js" />
 
 ig.module('crosscode-ru.social-button')
-  .requires('game.feature.gui.screen.title-screen', 'dom.ready')
+  .requires(
+    'game.feature.gui.screen.title-screen',
+    'dom.ready',
+    'localize-me.final-locale.ready',
+  )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     const BUTTON_GAP = 4;
 
     const LINKS = [

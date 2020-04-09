@@ -1,6 +1,11 @@
 ig.module('crosscode.fixes.title-screen')
-  .requires('game.feature.gui.screen.title-screen')
+  .requires(
+    'game.feature.gui.screen.title-screen',
+    'localize-me.final-locale.ready',
+  )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.TitleScreenButtonGui.inject({
       init() {
         this.parent();

@@ -21,6 +21,8 @@ const PATCHES = {
   'data/lang/sc/gui.zh_CN.json': addEnglishLabelsToLangFile,
 
   'data/maps/jungle/grove/grove-path-02.json': data => {
+    if (ig.currentLang !== 'ru_RU') return data;
+
     sc.ru.localizeProp(data.entities[892].settings.event[0], 'value', {
       orig: '[Inspecting]',
       text: '[Изучает]',
@@ -35,6 +37,8 @@ const PATCHES = {
   // sorry, Felix... not many people watch credits until the end, so I'll have
   // to inject our names in the first data file. hope RFG doesn't mind :P
   'data/credits/radicalfish-core.json': async data => {
+    if (ig.currentLang !== 'ru_RU') return data;
+
     let entries = Object.entries(data.entries);
 
     // TODO: get mod instance through the Plugin constructor and use
@@ -60,6 +64,8 @@ const PATCHES = {
   },
 
   'data/scale-props/dungeon-ar.json': data => {
+    if (ig.currentLang !== 'ru_RU') return data;
+
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/entity/objects/dungeon-ar.ru_RU.png',
       gfxBaseX: 0,
@@ -83,6 +89,8 @@ const PATCHES = {
   },
 
   'data/scale-props/dungeon-ar-special.json': data => {
+    if (ig.currentLang !== 'ru_RU') return data;
+
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/entity/objects/dungeon-ar-special.ru_RU.png',
       gfxBaseX: 0,
@@ -105,6 +113,8 @@ const PATCHES = {
   },
 
   'data/scale-props/trading-ar.json': data => {
+    if (ig.currentLang !== 'ru_RU') return data;
+
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/map/trading-autumn.ru_RU.png',
       gfxBaseX: 0,
@@ -128,6 +138,8 @@ const PATCHES = {
   },
 
   'data/scale-props/rhombus-sqr.json': data => {
+    if (ig.currentLang !== 'ru_RU') return data;
+
     function patchProp(prop, { srcX, srcY, width }) {
       Object.assign(prop, {
         gfx: 'media/map/rhombus-sign.ru_RU.png',
@@ -177,6 +189,8 @@ const PATCHES = {
   },
 
   'data/props/rhombus-area-text.json': data => {
+    if (ig.currentLang !== 'ru_RU') return data;
+
     data.props.forEach(prop => {
       if (
         prop.name === 'titleItem' ||

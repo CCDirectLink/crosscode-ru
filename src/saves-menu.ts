@@ -1,6 +1,11 @@
 ig.module('crosscode-ru.fixes.saves-menu')
-  .requires('game.feature.menu.gui.save.save-misc')
+  .requires(
+    'game.feature.menu.gui.save.save-misc',
+    'localize-me.final-locale.ready',
+  )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.SaveSlotButton.inject({
       init(...args) {
         this.parent(...args);

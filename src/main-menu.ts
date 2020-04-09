@@ -1,6 +1,8 @@
 ig.module('crosscode-ru.fixes.main-menu')
-  .requires('game.feature.menu.gui.main-menu')
+  .requires('game.feature.menu.gui.main-menu', 'localize-me.final-locale.ready')
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.MainMenu.CurrentMenuDisplay.inject({
       init(...args) {
         this.parent(...args);
@@ -16,8 +18,10 @@ ig.module('crosscode-ru.fixes.main-menu')
   });
 
 ig.module('crosscode-ru.fixes.main-menu.time-and-money-gui')
-  .requires('game.feature.menu.gui.menu-misc')
+  .requires('game.feature.menu.gui.menu-misc', 'localize-me.final-locale.ready')
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     const MONEY_ICON_WIDTH = 10;
     const MONEY_ICON_HEIGHT = 8;
     const MONEY_X_PADDING = 8 - 4;

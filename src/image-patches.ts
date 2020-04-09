@@ -21,6 +21,8 @@ type ImagePatchFunction = (
 
 const PATCHES: { [path: string]: ImagePatchFunction } = {
   'media/entity/objects/history-of-bergen.png': async ctx => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     let ruImage = await waitForLoadable(
       new ig.Image('media/entity/objects/history-of-bergen.ru_RU.png'),
     );
@@ -31,6 +33,8 @@ const PATCHES: { [path: string]: ImagePatchFunction } = {
   },
 
   'media/map/jungle-props.png': async ctx => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     let ruImage = await waitForLoadable(
       new ig.Image('media/map/jungle-props.ru_RU.png'),
     );

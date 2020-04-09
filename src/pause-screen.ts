@@ -1,6 +1,11 @@
 ig.module('crosscode-ru.fixes.pause-screen')
-  .requires('game.feature.gui.screen.pause-screen')
+  .requires(
+    'game.feature.gui.screen.pause-screen',
+    'localize-me.final-locale.ready',
+  )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.PauseScreenGui.inject({
       init() {
         this.parent();

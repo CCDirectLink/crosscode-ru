@@ -12,8 +12,13 @@ const STATUS_LINE_START_SIMPLE_X = 0;
 const STATUS_LINE_START_SIMPLE_Y = 84;
 
 ig.module('crosscode-ru.fixes.status-line-graphics.enemy-list')
-  .requires('game.feature.menu.gui.enemies.enemy-pages')
+  .requires(
+    'game.feature.menu.gui.enemies.enemy-pages',
+    'localize-me.final-locale.ready',
+  )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.EnemyBaseParamLine.inject({
       patchedGfx: new ig.Image('media/gui/menu.ru_RU.png'),
 
@@ -33,8 +38,10 @@ ig.module('crosscode-ru.fixes.status-line-graphics.enemy-list')
   });
 
 ig.module('crosscode-ru.fixes.status-line-graphics.simple-status-display')
-  .requires('game.feature.menu.gui.menu-misc')
+  .requires('game.feature.menu.gui.menu-misc', 'localize-me.final-locale.ready')
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.SimpleStatusDisplay.inject({
       patchedGfx: new ig.Image('media/gui/menu.ru_RU.png'),
 
@@ -105,8 +112,13 @@ ig.module('crosscode-ru.fixes.status-line-graphics.simple-status-display')
   });
 
 ig.module('crosscode-ru.fixes.status-line-graphics.status-menu')
-  .requires('game.feature.menu.gui.status.status-misc')
+  .requires(
+    'game.feature.menu.gui.status.status-misc',
+    'localize-me.final-locale.ready',
+  )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     const LINE_COLORS = [
       '#8bb5ff',
       '#ba0000',
