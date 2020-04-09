@@ -98,6 +98,9 @@ declare namespace ig {
   ): HTMLElementTagNameMap[K];
   function $new(tagName: string): HTMLElement;
 
+  function copy<T>(object: T): T;
+  function merge<T, U>(original: T, extended: U, noArrayMerge?: boolean): T & U;
+
   function module(this: typeof ig, name: string): typeof ig;
   function requires(this: typeof ig, ...names: string[]): typeof ig;
   function defines(this: typeof ig, body: () => void): void;

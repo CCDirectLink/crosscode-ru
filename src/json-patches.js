@@ -1,77 +1,16 @@
 /* global simplify, simplifyResources */
 
-function createArTextProp(rest) {
-  return {
-    scalableX: true,
-    scalableY: false,
-    wallY: 0,
-    renderMode: 'lighter',
-    collType: 'NONE',
-    effects: {
-      sheet: 'ar',
-      show: 'show',
-      hide: 'hide',
-    },
-    ...rest,
-  };
-}
-
-// my answer to CC's JSON templates
-function createRussianDungeonArText({ gfx, srcX, srcY, width, reverse }) {
-  // well, I haven't implemented deepCopy yet, so... TODO I guess?
-  return createArTextProp({
-    baseSize: {
-      x: 16,
-      y: 8,
-      z: 8,
-    },
-    scalableStep: 16,
-    gfx,
-    gfxBaseX: 0,
-    gfxBaseY: 0,
-    patterns: {
-      x: srcX,
-      y: srcY,
-      w: width,
-      h: 16,
-      xCount: 1,
-      yCount: 1,
-    },
-    gfxEnds: {
-      west: {
-        STOP: {
-          x: 0,
-          y: 0,
-          w: 8,
-          h: 16,
-          xCount: 6,
-          animFrames: reverse ? [0, 1, 2, 3, 4, 5] : [5, 4, 3, 2, 1, 0],
-          flipX: true,
-        },
+function addEnglishLabelsToLangFile(data) {
+  return ig.merge(data, {
+    labels: {
+      'combat-hud': {
+        'pvp-round': 'Round',
       },
-      east: {
-        STOP: {
-          x: 0,
-          y: 0,
-          w: 8,
-          h: 16,
-          xCount: 6,
-          animFrames: reverse ? [5, 4, 3, 2, 1, 0] : [0, 1, 2, 3, 4, 5],
-        },
+      'title-screen': {
+        changelog: 'Changelog',
       },
-    },
-    animTime: 0.05,
-    timePadding: {
-      x: (reverse ? 1 : -1) * 24,
-      y: 0,
     },
   });
-}
-
-function addEnglishLabelsToLangFile(data) {
-  data.labels['combat-hud']['pvp-round'] = 'Round';
-  data.labels['title-screen'].changelog = 'Changelog';
-  return data;
 }
 
 const PATCHES = {
@@ -121,110 +60,65 @@ const PATCHES = {
   },
 
   'data/scale-props/dungeon-ar.json': data => {
-    data.entries.textWelcome = createRussianDungeonArText({
+    data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/entity/objects/dungeon-ar.ru_RU.png',
+      gfxBaseX: 0,
+      gfxBaseY: 0,
+    });
+
+    Object.assign(data.entries.textWelcome, {
+      jsonINSTANCE: 'ArTextRu',
       srcX: 0,
       srcY: 16,
       width: 128,
-      reverse: false,
     });
-    data.entries.textComplete = createRussianDungeonArText({
-      gfx: 'media/entity/objects/dungeon-ar.ru_RU.png',
+    Object.assign(data.entries.textComplete, {
+      jsonINSTANCE: 'ArTextRu',
       srcX: 0,
       srcY: 32,
       width: 128,
-      reverse: false,
     });
+
     return data;
   },
 
   'data/scale-props/dungeon-ar-special.json': data => {
-    data.entries.textWait = createRussianDungeonArText({
+    data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/entity/objects/dungeon-ar-special.ru_RU.png',
+      gfxBaseX: 0,
+      gfxBaseY: 0,
+    });
+
+    Object.assign(data.entries.textWait, {
+      jsonINSTANCE: 'ArTextRu',
       srcX: 0,
       srcY: 16,
       width: 96,
-      reverse: true,
     });
-    data.entries.textLea = createRussianDungeonArText({
-      gfx: 'media/entity/objects/dungeon-ar-special.ru_RU.png',
+    Object.assign(data.entries.textLea, {
+      jsonINSTANCE: 'ArTextRu',
       srcX: 0,
       srcY: 32,
       width: 144,
-      reverse: true,
     });
     return data;
   },
 
   'data/scale-props/trading-ar.json': data => {
-    function createTradingArProp({ srcX, srcY, width }) {
-      return createArTextProp({
-        baseSize: {
-          x: 16,
-          y: 8,
-          z: 4,
-        },
-        scalableStep: 4,
-        gfx: 'media/map/trading-autumn.ru_RU.png',
-        gfxBaseX: 0,
-        gfxBaseY: 0,
-        patterns: {
-          x: srcX,
-          y: srcY,
-          w: width,
-          h: 12,
-          xCount: 1,
-          yCount: 1,
-        },
-        gfxEnds: {
-          west: {
-            SHORT: {
-              x: 0,
-              y: 0,
-              w: 3,
-              h: 12,
-              xCount: 1,
-            },
-            LONG: {
-              x: 0,
-              y: 0,
-              w: 3,
-              h: 24,
-              xCount: 1,
-              renderHeight: 4,
-            },
-          },
-          east: {
-            SHORT: {
-              x: 0,
-              y: 0,
-              w: 3,
-              h: 12,
-              xCount: 1,
-            },
-            LONG: {
-              x: 0,
-              y: 0,
-              w: 3,
-              h: 24,
-              xCount: 1,
-              renderHeight: 4,
-            },
-          },
-        },
-        timePadding: {
-          x: 12,
-          y: 0,
-        },
-      });
-    }
+    data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
+      gfx: 'media/map/trading-autumn.ru_RU.png',
+      gfxBaseX: 0,
+      gfxBaseY: 0,
+    });
 
-    data.entries.textCups = createTradingArProp({
+    Object.assign(data.entries.textCups, {
+      jsonINSTANCE: 'ArTextRu',
       srcX: 8,
       srcY: 0,
       width: 45,
     });
-    data.entries.textInfo = createTradingArProp({
+    Object.assign(data.entries.textInfo, {
+      jsonINSTANCE: 'ArTextRu',
       srcX: 8,
       srcY: 12,
       width: 39,
@@ -234,67 +128,46 @@ const PATCHES = {
   },
 
   'data/scale-props/rhombus-sqr.json': data => {
-    function createRhombusSignProp({ srcX, srcY, width }) {
-      return {
-        baseSize: {
-          x: 16,
-          y: 16,
-          z: 0,
-        },
-        scalableX: true,
-        scalableY: false,
-        scalableStep: 4,
-        renderMode: 'lighter',
-        collType: 'NONE',
+    function patchProp(prop, { srcX, srcY, width }) {
+      Object.assign(prop, {
         gfx: 'media/map/rhombus-sign.ru_RU.png',
         gfxBaseX: 0,
         gfxBaseY: 0,
-        patterns: {
-          x: srcX,
-          y: srcY,
-          w: width,
-          h: 16,
-          xCount: 1,
-          yCount: 1,
-        },
-        timePadding: {
-          x: 16,
-          y: 0,
-        },
-      };
+      });
+      Object.assign(prop.patterns, { x: srcX, y: srcY, w: width });
     }
 
-    data.entries.wallARweapon = createRhombusSignProp({
+    patchProp(data.entries.wallARweapon, {
       srcX: 63,
       srcY: 0,
       width: 64,
     });
-    data.entries.wallARcrosscentral = createRhombusSignProp({
+    patchProp(data.entries.wallARcrosscentral, {
       srcX: 47,
       srcY: 16,
       width: 80,
     });
-    data.entries.wallARitem = createRhombusSignProp({
+    patchProp(data.entries.wallARitem, {
       srcX: 71,
       srcY: 32,
       width: 56,
     });
-    data.entries.wallARbooster = createRhombusSignProp({
+    patchProp(data.entries.wallARbooster, {
       srcX: 71,
       srcY: 48,
       width: 56,
     });
-    data.entries.wallARarena = createRhombusSignProp({
+    patchProp(data.entries.wallARarena, {
       srcX: 15,
       srcY: 32,
       width: 56,
     });
-    data.entries.wallARcurios = createRhombusSignProp({
+    patchProp(data.entries.wallARcurios, {
       srcX: 13,
       srcY: 48,
       width: 50,
     });
-    data.entries.wallARclosed = createRhombusSignProp({
+    patchProp(data.entries.wallARclosed, {
       srcX: 7,
       srcY: 0,
       width: 48,
