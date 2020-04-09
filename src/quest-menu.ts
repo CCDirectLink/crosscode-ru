@@ -8,12 +8,12 @@ ig.module('crosscode-ru.fixes.quest-menu')
       init() {
         this.parent();
         let locationIconHook = this.locationGui.hook.children[1];
-        this.locationText.tickerHook.setMaxSize({
+        this.locationText.tickerHook.maxSize = {
           x:
             this.locationGui.hook.size.x -
             this.locationText.hook.pos.x -
             locationIconHook.pos.x,
-        });
+        };
       },
     });
   });

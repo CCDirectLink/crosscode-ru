@@ -4,10 +4,7 @@ ig.module('crosscode-ru.fixes.help.boxes')
     sc.MultiPageBoxGui.inject({
       _createInitContent(width) {
         this.parent(width);
-        this.header.tickerHook.setMaxSize({
-          x: width,
-          y: this.header.font.charHeight + this.header.textBlock.linePadding,
-        });
+        this.header.tickerHook.maxSize = { x: width };
       },
     });
   });

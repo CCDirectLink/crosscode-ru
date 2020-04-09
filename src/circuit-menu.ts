@@ -16,9 +16,9 @@ ig.module('crosscode-ru.fixes.circuit-menu')
       init(scrollHook) {
         this.parent(scrollHook);
         let btn = this.activate;
-        btn.textChild.tickerHook.setMaxSize({
+        btn.textChild.tickerHook.maxSize = {
           x: btn.hook.size.x - btn.textChild.hook.pos.x * 2 + 1,
-        });
+        };
       },
     });
   });

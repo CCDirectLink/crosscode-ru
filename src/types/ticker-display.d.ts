@@ -46,7 +46,6 @@ declare namespace sc.ru {
     maxSize: Partial<Vec2> | null;
     focusTarget: ig.FocusGui | null;
 
-    setMaxSize(this: this, maxSize: Partial<Vec2> | null): void;
     update(this: this): void;
     updateDrawables(this: this, renderer: ig.GuiRenderer): void;
     _tryRenderTicker(this: this, renderer: ig.GuiRenderer): boolean;

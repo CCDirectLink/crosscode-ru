@@ -34,11 +34,6 @@ ig.module('crosscode-ru.ticker-display')
         this.renderText = renderText;
       },
 
-      setMaxSize(maxSize) {
-        this.maxSize = maxSize;
-        this.timer = 0;
-      },
-
       update() {
         if (
           this.focusTarget != null &&
