@@ -5,6 +5,7 @@
     "composite": true,
     "rootDir": "src",
     "outDir": "dist",
+    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo",
     "sourceMap": true,
     "strict": true,
     "module": "esnext",

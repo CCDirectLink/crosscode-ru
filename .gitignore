@@ -1,6 +1,5 @@
 node_modules/
 yarn-error.log
 dist/
-*.tsbuildinfo
 /dist-archive/*
 !/dist-archive/GNUmakefile
