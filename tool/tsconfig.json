@@ -1,12 +1,13 @@
 {
-  "include": ["src", "../src/types/crosscode.d.ts"],
+  "include": ["src", "../ultimate-crosscode-typedefs"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "outDir": "./dist/",
+    "outDir": "dist",
     "sourceMap": true,
     "strict": true,
     "module": "esnext",
     "target": "es2017",
-    "allowJs": true
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true
   }
 }

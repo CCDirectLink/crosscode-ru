@@ -1314,7 +1314,6 @@ declare namespace sc {
     interface CHECKBOX {
       type: 'CHECKBOX';
       init: boolean;
-      checkboxRightAlign: boolean; // added by simplify
     }
 
     interface CONTROLS {

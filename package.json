@@ -26,6 +26,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "lint": "eslint . --ext .js,.ts --ignore-path .gitignore"
   }
 }

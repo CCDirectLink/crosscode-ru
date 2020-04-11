@@ -1,0 +1,9 @@
+{
+  "files": ["crosscode.d.ts", "ccloader.d.ts", "simplify.d.ts"],
+  "compilerOptions": {
+    "lib": ["ES6", "DOM"],
+    "noEmit": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
