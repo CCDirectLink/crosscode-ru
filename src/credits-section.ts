@@ -1,6 +1,11 @@
 ig.module('crosscode-ru.fixes.credits-section')
-  .requires('game.feature.credits.gui.credits-gui')
+  .requires(
+    'game.feature.credits.gui.credits-gui',
+    'localize-me.final-locale.ready',
+  )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     const CREDITS_SPPED_DEFAULT = 30;
     const CREDITS_SPEED = 36;
     const HEADER_TRANSITION_DELAY =

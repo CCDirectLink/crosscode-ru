@@ -5,8 +5,11 @@ ig.module('crosscode-ru.fixes.traders-list')
   .requires(
     'game.feature.menu.gui.trade.trade-misc',
     'game.feature.menu.gui.trade.trader-list',
+    'localize-me.final-locale.ready',
   )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     function patchTraderLocation(location: sc.TextGui): void {
       location.textBlock.linePadding = -3;
     }

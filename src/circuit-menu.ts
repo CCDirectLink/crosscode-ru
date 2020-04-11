@@ -2,8 +2,11 @@ ig.module('crosscode-ru.fixes.circuit-menu')
   .requires(
     'game.feature.menu.gui.circuit.circuit-detail-elements',
     'enchanced-ui.ticker-display',
+    'localize-me.final-locale.ready',
   )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.CircuitInfoBox.inject({
       init(scrollHook) {
         this.parent(scrollHook);

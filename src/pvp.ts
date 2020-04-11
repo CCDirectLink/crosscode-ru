@@ -1,8 +1,5 @@
 ig.module('crosscode-ru.fixes.pvp')
-  .requires(
-    'game.feature.combat.gui.pvp-gui',
-    'crosscode-ru.utils.localization',
-  )
+  .requires('game.feature.combat.gui.pvp-gui')
   .defines(() => {
     sc.PvpRoundGui.inject({
       init(...args) {
