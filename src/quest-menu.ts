@@ -1,7 +1,7 @@
 ig.module('crosscode-ru.fixes.quest-menu')
   .requires(
     'game.feature.menu.gui.quests.quest-misc',
-    'crosscode-ru.ticker-display',
+    'enchanced-ui.ticker-display',
   )
   .defines(() => {
     sc.QuestInfoBox.inject({

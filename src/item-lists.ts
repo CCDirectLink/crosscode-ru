@@ -11,7 +11,7 @@ function guiMapChildren<T extends ig.GuiElementBase = ig.GuiElementBase>(
 }
 
 ig.module('crosscode-ru.fixes.item-lists')
-  .requires('game.feature.menu.gui.menu-misc', 'crosscode-ru.ticker-display')
+  .requires('game.feature.menu.gui.menu-misc', 'enchanced-ui.ticker-display')
   .defines(() => {
     sc.ListBoxButton.inject({
       init(...args) {
@@ -19,7 +19,7 @@ ig.module('crosscode-ru.fixes.item-lists')
 
         if (this.enableTickerDisplay) {
           let oldTextChild = this.button.textChild;
-          let newTextChild = new sc.ru.IconTextGui(this.button.textChild.text);
+          let newTextChild = new sc.ui2.IconTextGui(this.button.textChild.text);
           newTextChild.setAlign(
             oldTextChild.hook.align.x,
             oldTextChild.hook.align.y,
@@ -102,14 +102,14 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
     'game.feature.trade.gui.trade-icon',
     'game.feature.trade.gui.equip-toggle-stats',
     'game.feature.menu.gui.shop.shop-stats',
-    'crosscode-ru.ticker-display',
+    'enchanced-ui.ticker-display',
   )
   .defines(() => {
     sc.TradeToggleStats.inject({
       _createContent() {
         this.parent();
 
-        let newCompareItem = new sc.ru.IconTextGui('');
+        let newCompareItem = new sc.ui2.IconTextGui('');
         newCompareItem.setPos(
           this.compareItem.hook.pos.x,
           this.compareItem.hook.pos.y,
@@ -147,7 +147,9 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
         this.parent();
         this.entries.forEach(entry => {
           let { gui } = entry;
-          let newGui = new sc.ru.IconTextGui(gui.text) as sc.ru.IconTextGui & {
+          let newGui = new sc.ui2.IconTextGui(
+            gui.text,
+          ) as sc.ui2.IconTextGui & {
             tradeName: string;
           };
           newGui.tradeName = gui.tradeName;
@@ -174,13 +176,13 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
 ig.module('crosscode-ru.fixes.item-lists.status-main-equipment')
   .requires(
     'game.feature.menu.gui.status.status-view-main',
-    'crosscode-ru.ticker-display',
+    'enchanced-ui.ticker-display',
   )
   .defines(() => {
     sc.StatusViewMainEquipment.Entry.inject({
       init(...args) {
         this.parent(...args);
-        let newItemGui = new sc.ru.IconTextGui(this.itemGui.text);
+        let newItemGui = new sc.ui2.IconTextGui(this.itemGui.text);
         newItemGui.setPos(this.textGui.hook.pos.x, this.itemGui.hook.pos.y);
         newItemGui.tickerHook.maxSize = {
           x: this.hook.size.x - this.itemGui.hook.pos.x * 2,
@@ -197,7 +199,7 @@ ig.module('crosscode-ru.fixes.item-lists.status-main-equipment')
 ig.module('crosscode-ru.fixes.item-lists.social-menu')
   .requires(
     'game.feature.menu.gui.social.social-misc',
-    'crosscode-ru.ticker-display',
+    'enchanced-ui.ticker-display',
   )
   .defines(() => {
     sc.SocialInfoBox.inject({
@@ -207,7 +209,7 @@ ig.module('crosscode-ru.fixes.item-lists.social-menu')
         guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
           this.equip,
           gui => {
-            let newGui = new sc.ru.IconTextGui(gui.text);
+            let newGui = new sc.ui2.IconTextGui(gui.text);
             newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
             let { level, numberGfx } = gui;
             newGui.setDrawCallback((width, height) =>
@@ -225,14 +227,14 @@ ig.module('crosscode-ru.fixes.item-lists.social-menu')
 ig.module('crosscode-ru.fixes.item-lists.quests')
   .requires(
     'game.feature.menu.gui.quests.quest-entries',
-    'crosscode-ru.ticker-display',
+    'enchanced-ui.ticker-display',
   )
   .defines(() => {
     sc.SubTaskEntryBase.inject({
       init(...args) {
         this.parent(...args);
 
-        let newTextGui = new sc.ru.IconTextGui('', {
+        let newTextGui = new sc.ui2.IconTextGui('', {
           font: sc.fontsystem.smallFont,
         });
         newTextGui.setPos(this.textGui.hook.pos.x, this.textGui.hook.pos.y);
@@ -271,7 +273,7 @@ ig.module('crosscode-ru.fixes.item-lists.quests')
 ig.module('crosscode-ru.fixes.item-lists.equipment-menu')
   .requires(
     'game.feature.menu.gui.equip.equip-bodypart',
-    'crosscode-ru.ticker-display',
+    'enchanced-ui.ticker-display',
   )
   .defines(() => {
     sc.EquipBodyPartContainer.Entry.inject({
@@ -279,7 +281,7 @@ ig.module('crosscode-ru.fixes.item-lists.equipment-menu')
         this.parent(...args);
 
         let oldTextChild = this.button.textChild;
-        let newTextChild = new sc.ru.IconTextGui(oldTextChild.text);
+        let newTextChild = new sc.ui2.IconTextGui(oldTextChild.text);
         newTextChild.setAlign(
           oldTextChild.hook.align.x,
           oldTextChild.hook.align.y,
@@ -305,7 +307,7 @@ ig.module('crosscode-ru.fixes.item-lists.equipment-menu')
 ig.module('crosscode-ru.fixes.item-lists.quest-dialog')
   .requires(
     'game.feature.menu.gui.equip.equip-bodypart',
-    'crosscode-ru.ticker-display',
+    'enchanced-ui.ticker-display',
   )
   .defines(() => {
     sc.QuestDialog.inject({
@@ -315,7 +317,7 @@ ig.module('crosscode-ru.fixes.item-lists.quest-dialog')
         guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
           this.itemsGui,
           gui => {
-            let newGui = new sc.ru.IconTextGui(gui.text);
+            let newGui = new sc.ui2.IconTextGui(gui.text);
             newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
             let { level, numberGfx } = gui;
             if (level > 0 && !hideRewards) {

@@ -94,12 +94,12 @@ overrides:
 
       '@typescript-eslint/no-non-null-assertion': off
 
+      '@typescript-eslint/unbound-method': off
+
   - files:
       - 'src/**/*.ts'
     parserOptions:
       project: 'tsconfig.json'
-    rules:
-      '@typescript-eslint/unbound-method': off
 
   - files:
       - 'ultimate-crosscode-typedefs/**/*.ts'
@@ -107,6 +107,11 @@ overrides:
       project: 'ultimate-crosscode-typedefs/tsconfig.json'
     rules:
       '@typescript-eslint/no-empty-interface': off
+
+  - files:
+      - 'enchanced-ui/src/**/*.ts'
+    parserOptions:
+      project: 'enchanced-ui/tsconfig.json'
 
   - files:
       - 'tool/src/**/*.ts'

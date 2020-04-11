@@ -1,7 +1,6 @@
 export default function initDebug(): void {
   sc.ru.debug = {
-    showTickerBoundaryBoxes: false,
-    showUntranslatedStrings: false,
+    showUntranslatedStrings: true,
   } as typeof sc.ru.debug;
 
   // this function is meant to be injected in place of updateDrawables

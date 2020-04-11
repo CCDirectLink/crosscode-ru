@@ -1,6 +1,6 @@
 // TODO: replace default parameter syntax with `== null` checks
 
-ig.module('crosscode-ru.ticker-display')
+ig.module('enchanced-ui.ticker-display')
   .requires(
     'impact.base.system',
     'impact.feature.gui.gui',
@@ -19,7 +19,7 @@ ig.module('crosscode-ru.ticker-display')
       return text;
     }
 
-    sc.ru.TickerDisplayHook = ig.Class.extend({
+    sc.ui2.TickerDisplayHook = ig.Class.extend({
       hook: null,
       renderText: null,
       timer: 0, // seconds
@@ -78,7 +78,7 @@ ig.module('crosscode-ru.ticker-display')
           prtPos.y = size.y - maxSize.y;
         }
 
-        if (sc.ru.debug.showTickerBoundaryBoxes) {
+        if (sc.ui2.debug.showTickerBoundaryBoxes) {
           renderer.addColor('red', 0, 0, size.x, size.y).setAlpha(0.25);
           renderer
             .addColor('green', prtPos.x, prtPos.y, maxSize.x, maxSize.y)
@@ -145,7 +145,7 @@ ig.module('crosscode-ru.ticker-display')
 
       init(...args) {
         this.parent(...args);
-        this.tickerHook = new sc.ru.TickerDisplayHook(
+        this.tickerHook = new sc.ui2.TickerDisplayHook(
           this.hook,
           (renderer, x, y) => {
             renderer.addText(this.textBlock, x, y);
@@ -173,7 +173,7 @@ ig.module('crosscode-ru.ticker-display')
       },
     });
 
-    sc.ru.ParsedTextData = ig.Class.extend({
+    sc.ui2.ParsedTextData = ig.Class.extend({
       init(parsedText, commands) {
         this.parsedText = parsedText;
         this.commands = commands;
@@ -182,15 +182,13 @@ ig.module('crosscode-ru.ticker-display')
 
     let textParserParse = ig.TextParser.parse;
     ig.TextParser.parse = function(
-      text: string | sc.ru.ParsedTextData,
+      text: string | sc.ui2.ParsedTextData,
       commands: ig.TextCommand[] | null,
       font: ig.MultiFont,
       ignoreCommands?: boolean,
     ): string {
-      if (text instanceof sc.ru.ParsedTextData) {
-        if (commands != null && !ignoreCommands) {
-          commands.push(...text.commands);
-        }
+      if (text instanceof sc.ui2.ParsedTextData) {
+        if (!ignoreCommands) commands!.push(...text.commands);
         return text.parsedText;
       }
       return (textParserParse as (
@@ -203,10 +201,10 @@ ig.module('crosscode-ru.ticker-display')
     };
 
     ig.TextBlock.inject({
-      setText(text: sc.TextLike | sc.ru.ParsedTextData) {
+      setText(text: sc.TextLike | sc.ui2.ParsedTextData) {
         this.clearPrerendered();
 
-        if (text instanceof sc.ru.ParsedTextData) {
+        if (text instanceof sc.ui2.ParsedTextData) {
           this.parsedText = text.parsedText;
           this.commands = text.commands;
         } else {
@@ -235,7 +233,7 @@ ig.module('crosscode-ru.ticker-display')
       },
     });
 
-    sc.ru.LongHorizontalTextGui = ig.GuiElementBase.extend({
+    sc.ui2.LongHorizontalTextGui = ig.GuiElementBase.extend({
       text: '',
       parsedText: '',
       commands: [],
@@ -252,7 +250,7 @@ ig.module('crosscode-ru.ticker-display')
         this.linePadding =
           settings.linePadding != null ? settings.linePadding : 1;
 
-        this.tickerHook = new sc.ru.TickerDisplayHook(
+        this.tickerHook = new sc.ui2.TickerDisplayHook(
           this.hook,
           (renderer, x, y) => {
             let offset = 0;
@@ -308,7 +306,7 @@ ig.module('crosscode-ru.ticker-display')
 
           let textBlock = new ig.TextBlock(
             this.font,
-            new sc.ru.ParsedTextData(blockParsedText, blockCommands),
+            new sc.ui2.ParsedTextData(blockParsedText, blockCommands),
             textBlockSettings,
           );
           this.textBlocks.push(textBlock);
@@ -334,7 +332,7 @@ ig.module('crosscode-ru.ticker-display')
         for (let i = 0; i < this.parsedText.length; i++) {
           let charWidth = this.font.getCharWidth(this.parsedText.charCodeAt(i));
           let willOverflow =
-            textWidth + charWidth > sc.ru.LongHorizontalTextGui.SPLIT_WIDTH;
+            textWidth + charWidth > sc.ui2.LongHorizontalTextGui.SPLIT_WIDTH;
           let isFirst = i <= 0;
           let isLast = i >= this.parsedText.length - 1;
 
@@ -381,7 +379,7 @@ ig.module('crosscode-ru.ticker-display')
       },
     });
     // the splitting width is a smaller than ig.system.width, just to be safe
-    sc.ru.LongHorizontalTextGui.SPLIT_WIDTH = 500;
+    sc.ui2.LongHorizontalTextGui.SPLIT_WIDTH = 500;
 
     function parseIconText(
       text: string,
@@ -419,7 +417,7 @@ ig.module('crosscode-ru.ticker-display')
       return { firstIcon, iconCommands, parsedText, commands };
     }
 
-    sc.ru.IconTextGui = ig.GuiElementBase.extend({
+    sc.ui2.IconTextGui = ig.GuiElementBase.extend({
       font: null,
       text: '',
       iconTextBlock: null,
@@ -441,16 +439,16 @@ ig.module('crosscode-ru.ticker-display')
         // TODO: limit `settings` here
         this.iconTextBlock = new ig.TextBlock(
           this.font,
-          new sc.ru.ParsedTextData(firstIcon, iconCommands),
+          new sc.ui2.ParsedTextData(firstIcon, iconCommands),
           settings,
         );
         this.textBlock = new ig.TextBlock(
           this.font,
-          new sc.ru.ParsedTextData(parsedText, commands),
+          new sc.ui2.ParsedTextData(parsedText, commands),
           settings,
         );
 
-        this.tickerHook = new sc.ru.TickerDisplayHook(
+        this.tickerHook = new sc.ui2.TickerDisplayHook(
           this.hook,
           (renderer, x, y) => {
             renderer.addText(this.textBlock, x, y);
@@ -470,9 +468,9 @@ ig.module('crosscode-ru.ticker-display')
         );
 
         this.iconTextBlock.setText(
-          new sc.ru.ParsedTextData(firstIcon, iconCommands),
+          new sc.ui2.ParsedTextData(firstIcon, iconCommands),
         );
-        this.textBlock.setText(new sc.ru.ParsedTextData(parsedText, commands));
+        this.textBlock.setText(new sc.ui2.ParsedTextData(parsedText, commands));
         if (this.isVisible()) this.prerender();
 
         this._updateDimensions();
@@ -536,7 +534,7 @@ ig.module('crosscode-ru.ticker-display')
         let maxSize = this.tickerHook._computeMaxSize();
         if (maxSize != null) {
           // TODO: merge these calculations with the ones in
-          // sc.ru.TickerDisplayHook#_tryRenderTicker
+          // sc.ui2.TickerDisplayHook#_tryRenderTicker
           let { size, align } = this.hook;
 
           if (align.x === ig.GUI_ALIGN.X_CENTER) {

@@ -2,7 +2,7 @@ declare namespace ig {
   interface TextParser {
     parse(
       this: this,
-      text: sc.ru.ParsedTextData,
+      text: sc.ui2.ParsedTextData,
       commands: ig.TextCommand[] | null,
       font: ig.MultiFont,
       ignoreCommands?: boolean,
@@ -10,12 +10,12 @@ declare namespace ig {
   }
 
   interface TextBlock {
-    setText(this: this, text: sc.ru.ParsedTextData): void;
+    setText(this: this, text: sc.ui2.ParsedTextData): void;
   }
   interface TextBlockConstructor {
     new (
       font: ig.MultiFont,
-      text: sc.ru.ParsedTextData,
+      text: sc.ui2.ParsedTextData,
       settings: ig.TextBlock.Settings,
     ): this['__instance'];
   }
@@ -23,11 +23,11 @@ declare namespace ig {
 
 declare namespace sc {
   interface TextGui {
-    tickerHook: sc.ru.TickerDisplayHook;
+    tickerHook: sc.ui2.TickerDisplayHook;
   }
 }
 
-declare namespace sc.ru {
+declare namespace sc.ui2 {
   namespace TickerDisplayHook {
     type RenderTextCallback = (
       renderer: ig.GuiRenderer,
@@ -38,7 +38,7 @@ declare namespace sc.ru {
 
   interface TickerDisplayHook {
     hook: ig.GuiHook;
-    renderText: sc.ru.TickerDisplayHook.RenderTextCallback;
+    renderText: sc.ui2.TickerDisplayHook.RenderTextCallback;
     timer: number;
     speed: Vec2;
     delayAtBorders: Vec2;
@@ -55,7 +55,7 @@ declare namespace sc.ru {
     extends ImpactClass<TickerDisplayHook> {
     new (
       hook: ig.GuiHook,
-      renderText: sc.ru.TickerDisplayHook.RenderTextCallback,
+      renderText: sc.ui2.TickerDisplayHook.RenderTextCallback,
     ): this['__instance'];
   }
   let TickerDisplayHook: TickerDisplayHookConstructor;
@@ -76,7 +76,7 @@ declare namespace sc.ru {
     textBlocks: ig.TextBlock[];
     font: ig.MultiFont;
     linePadding: number;
-    tickerHook: sc.ru.TickerDisplayHook;
+    tickerHook: sc.ui2.TickerDisplayHook;
 
     setText(this: this, text: sc.TextLike): void;
     prerender(this: this): void;
@@ -95,7 +95,7 @@ declare namespace sc.ru {
     text: string;
     iconTextBlock: ig.TextBlock;
     textBlock: ig.TextBlock;
-    tickerHook: sc.ru.TickerDisplayHook;
+    tickerHook: sc.ui2.TickerDisplayHook;
 
     setText(this: this, text: sc.TextLike): void;
     _updateDimensions(this: this): void;

@@ -3,16 +3,13 @@ node_js: node
 
 cache:
   yarn: true
-  directories:
-    - .eslintcache
 
 install:
   - yarn install
   - (cd tool && yarn install)
   - yarn global add prettier
 script:
-  - yarn build
-  - (cd tool && yarn run build)
+  - yarn run build
   - yarn run lint
   - prettier --check "**/*.{json,css,scss,html}"
 

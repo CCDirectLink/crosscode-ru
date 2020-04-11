@@ -1,5 +1,4 @@
 import './localization-utils.js';
-import './ticker-display.js';
 
 import './circuit-menu.js';
 import './credits-section.js';

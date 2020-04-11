@@ -1,5 +1,5 @@
 ig.module('crosscode-ru.fixes.info-bar')
-  .requires('game.feature.menu.gui.menu-misc', 'crosscode-ru.ticker-display')
+  .requires('game.feature.menu.gui.menu-misc', 'enchanced-ui.ticker-display')
   .defines(() => {
     sc.InfoBar.inject({
       _associatedBuffInfo: null,
@@ -7,7 +7,7 @@ ig.module('crosscode-ru.fixes.info-bar')
       init(...args) {
         this.parent(...args);
 
-        let newText = new sc.ru.LongHorizontalTextGui('');
+        let newText = new sc.ui2.LongHorizontalTextGui('');
         newText.setAlign(this.text.hook.align.x, this.text.hook.align.y);
         newText.setPos(this.text.hook.pos.x, this.text.hook.pos.y);
         newText.hook.transitions = this.text.hook.transitions;
@@ -15,7 +15,7 @@ ig.module('crosscode-ru.fixes.info-bar')
 
         this.removeChildGui(this.text);
         this.addChildGui(newText);
-        // API of sc.ru.LongHorizontalTextGui is almost identical to sc.TextGui,
+        // API of sc.ui2.LongHorizontalTextGui is almost identical to sc.TextGui,
         // so I hope that replacing the later with the former doesn't break
         // anything
         this.text = (newText as unknown) as sc.TextGui;

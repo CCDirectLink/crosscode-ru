@@ -12,7 +12,8 @@
   "postload": "dist/postload.js",
   "prestart": "dist/prestart.js",
   "ccmodDependencies": {
-    "Localize Me": ">=0.4 <1"
+    "Localize Me": ">=0.4 <1",
+    "enchanced-ui": "*"
   },
   "devDependencies": {
     "@types/node": "^13.11.0",
@@ -25,8 +26,8 @@
     "typescript": "^3.8.3"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
+    "build": "tsc --build",
+    "watch": "tsc --build --watch",
     "lint": "eslint . --ext .js,.ts --ignore-path .gitignore"
   }
 }

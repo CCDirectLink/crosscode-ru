@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "name": "enchanced-ui",
+  "version": "0.0.0",
+  "license": "MIT",
+  "description": "Various GUI enchancments and fixes",
+  "homepage": "https://github.com/dmitmel/crosscode-ru-ng/tree/master/enchanced-ui",
+  "engines": {
+    "node": ">=11.0.0"
+  },
+  "module": true,
+  "prestart": "dist/prestart.js",
+  "ccmodDependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "build": "../node_modules/.bin/tsc --build",
+    "watch": "../node_modules/.bin/tsc --build --watch"
+  }
+}

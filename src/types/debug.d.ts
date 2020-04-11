@@ -1,5 +1,4 @@
 declare namespace sc.ru.debug {
-  let showTickerBoundaryBoxes: boolean;
   let showUntranslatedStrings: boolean;
 
   function highlightUpdateDrawables(

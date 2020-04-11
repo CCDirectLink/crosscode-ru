@@ -2,7 +2,7 @@ ig.module('crosscode-ru.fixes.options-menu')
   .requires(
     'game.feature.menu.gui.options.options-types',
     'game.feature.menu.gui.options.options-misc',
-    'crosscode-ru.ticker-display',
+    'enchanced-ui.ticker-display',
     'crosscode-ru.utils.localization',
   )
   .defines(() => {
@@ -37,6 +37,7 @@ ig.module('crosscode-ru.fixes.options-menu')
       update() {
         this.parent();
         // this._hasEntered is set in onMouseInteract of this class
+        // TODO: check whether this.typeGui is focused
         if (!this._hasEntered) this.nameGui.tickerHook.timer = 0;
       },
     });
@@ -80,7 +81,8 @@ ig.module('crosscode-ru.fixes.options-menu')
     > = {
       'crosscode-ru-ng': {
         orig: 'Russian translation for CrossCode',
-        text: 'Русский перевод CrossCode',
+        text:
+          'Русский перевод CrossCode и соответствующие исправления интерфейса',
       },
       'crosscode-ru-ng-translation-tool': {
         orig: 'Russian translation tool for CrossCode',
@@ -94,6 +96,11 @@ ig.module('crosscode-ru.fixes.options-menu')
       'cc-world-map-overhaul': {
         orig: 'A better world map',
         text: 'Улучшенная карта мира',
+      },
+      'enchanced-ui': {
+        orig: 'Various GUI enchancments and fixes',
+        text:
+          'Различные улучшения и общие исправления графического интерфейса пользователя',
       },
     };
 
