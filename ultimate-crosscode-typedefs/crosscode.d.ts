@@ -142,6 +142,7 @@ declare namespace ig {
   let Cacheable: CacheableConstructor;
 
   interface Loadable extends ig.Class {
+    loaded: boolean;
     path: string;
 
     loadingFinished(this: this, success: boolean): void;

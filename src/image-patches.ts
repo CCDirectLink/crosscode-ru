@@ -1,5 +1,10 @@
 function waitForLoadable<T extends ig.Loadable>(loadable: T): Promise<T> {
   return new Promise((resolve, reject) => {
+    if (loadable.loaded) {
+      resolve(loadable);
+      return;
+    }
+
     let { loadingFinished } = loadable;
     loadable.loadingFinished = function(success: boolean): void {
       try {
@@ -22,11 +27,9 @@ type ImagePatchFunction = (
 const PATCHES: { [path: string]: ImagePatchFunction } = {
   'media/entity/objects/history-of-bergen.png': async ctx => {
     if (ig.currentLang !== 'ru_RU') return;
-
     let ruImage = await waitForLoadable(
       new ig.Image('media/entity/objects/history-of-bergen.ru_RU.png'),
     );
-
     ctx.clearRect(183, 15, 28, 5);
     ctx.clearRect(187, 21, 24, 1);
     ctx.drawImage(ruImage.data, 0, 0, 21, 7, 187, 15, 21, 7);
@@ -34,13 +37,38 @@ const PATCHES: { [path: string]: ImagePatchFunction } = {
 
   'media/map/jungle-props.png': async ctx => {
     if (ig.currentLang !== 'ru_RU') return;
-
     let ruImage = await waitForLoadable(
       new ig.Image('media/map/jungle-props.ru_RU.png'),
     );
-
     ctx.clearRect(361, 118, 6, 19);
     ctx.drawImage(ruImage.data, 0, 0, 6, 19, 361, 118, 6, 19);
+  },
+
+  'media/map/bergen-trail.png': async ctx => {
+    if (ig.currentLang !== 'ru_RU') return;
+    let innSign = await waitForLoadable(
+      new ig.Image('media/map/inn-sign.ru_RU.png'),
+    );
+    ctx.clearRect(128, 720, 32, 16);
+    ctx.drawImage(innSign.data, 0, 0, 32, 16, 128, 720, 32, 16);
+  },
+
+  'media/map/bergen-village-inner.png': async ctx => {
+    if (ig.currentLang !== 'ru_RU') return;
+    let innSign = await waitForLoadable(
+      new ig.Image('media/map/inn-sign.ru_RU.png'),
+    );
+    ctx.clearRect(432, 144, 32, 16);
+    ctx.drawImage(innSign.data, 0, 0, 32, 16, 432, 144, 32, 16);
+  },
+
+  'media/map/rookie-harbor.png': async ctx => {
+    if (ig.currentLang !== 'ru_RU') return;
+    let innSign = await waitForLoadable(
+      new ig.Image('media/map/inn-sign.ru_RU.png'),
+    );
+    ctx.clearRect(448, 432, 32, 16);
+    ctx.drawImage(innSign.data, 0, 0, 32, 16, 448, 432, 32, 16);
   },
 };
 
