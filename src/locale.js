@@ -60,15 +60,9 @@ export default function initLocale() {
     pre_patch_font: async context => {
       let url = PATCHED_FONT_URLS[context.size_index];
       if (url != null) {
-        const font = new ig.Font(url, context.char_height);
-        context.russianFont = font;
-        await new Promise(resolve => {
-          const oldOnload = font.onload;
-          font.onload = (...args) => {
-            oldOnload.apply(font, args);
-            resolve();
-          };
-        });
+        context.russianFont = await sc.ru.waitForLoadable(
+          new ig.Font(url, context.char_height),
+        );
       }
     },
 

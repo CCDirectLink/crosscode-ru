@@ -13,7 +13,7 @@ export default function initDebug(): void {
   ig.module('crosscode-ru.debug.gui')
     .requires('impact.feature.gui.gui')
     .defines(() => {
-      sc.ru.debug.highlightGuiInstances = function(clazz): void {
+      sc.ru.debug.highlightGuiInstances = (clazz): void => {
         let { updateDrawables } = clazz.prototype;
         clazz.prototype.updateDrawables = function(renderer): void {
           updateDrawables.call(this, renderer);

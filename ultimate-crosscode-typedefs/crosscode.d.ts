@@ -168,7 +168,9 @@ declare namespace ig {
     width: number;
     height: number;
 
+    loadInternal(this: this, path: string): void;
     onload(this: this, event: Event): void;
+    reload(this: this): void;
   }
   interface ImageConstructor extends ImpactClass<Image> {
     new (pathOrData: string): this['__instance'];

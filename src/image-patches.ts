@@ -1,23 +1,3 @@
-function waitForLoadable<T extends ig.Loadable>(loadable: T): Promise<T> {
-  return new Promise((resolve, reject) => {
-    if (loadable.loaded) {
-      resolve(loadable);
-      return;
-    }
-
-    let { loadingFinished } = loadable;
-    loadable.loadingFinished = function(success: boolean): void {
-      try {
-        loadingFinished.call(this, success);
-      } catch (err) {
-        reject(err);
-      }
-      if (success) resolve(loadable);
-      else reject(new Error(`Failed to load resource: ${this.path}`));
-    };
-  });
-}
-
 type MaybePromise<T> = T | Promise<T>;
 type ImagePatchFunction = (
   context: CanvasRenderingContext2D,
@@ -27,7 +7,7 @@ type ImagePatchFunction = (
 const PATCHES: { [path: string]: ImagePatchFunction } = {
   'media/entity/objects/history-of-bergen.png': async ctx => {
     if (ig.currentLang !== 'ru_RU') return;
-    let ruImage = await waitForLoadable(
+    let ruImage = await sc.ru.waitForLoadable(
       new ig.Image('media/entity/objects/history-of-bergen.ru_RU.png'),
     );
     ctx.clearRect(183, 15, 28, 5);
@@ -37,7 +17,7 @@ const PATCHES: { [path: string]: ImagePatchFunction } = {
 
   'media/map/jungle-props.png': async ctx => {
     if (ig.currentLang !== 'ru_RU') return;
-    let ruImage = await waitForLoadable(
+    let ruImage = await sc.ru.waitForLoadable(
       new ig.Image('media/map/jungle-props.ru_RU.png'),
     );
     ctx.clearRect(361, 118, 6, 19);
@@ -46,7 +26,7 @@ const PATCHES: { [path: string]: ImagePatchFunction } = {
 
   'media/map/bergen-trail.png': async ctx => {
     if (ig.currentLang !== 'ru_RU') return;
-    let innSign = await waitForLoadable(
+    let innSign = await sc.ru.waitForLoadable(
       new ig.Image('media/map/inn-sign.ru_RU.png'),
     );
     ctx.clearRect(128, 720, 32, 16);
@@ -55,7 +35,7 @@ const PATCHES: { [path: string]: ImagePatchFunction } = {
 
   'media/map/bergen-village-inner.png': async ctx => {
     if (ig.currentLang !== 'ru_RU') return;
-    let innSign = await waitForLoadable(
+    let innSign = await sc.ru.waitForLoadable(
       new ig.Image('media/map/inn-sign.ru_RU.png'),
     );
     ctx.clearRect(432, 144, 32, 16);
@@ -64,7 +44,7 @@ const PATCHES: { [path: string]: ImagePatchFunction } = {
 
   'media/map/rookie-harbor.png': async ctx => {
     if (ig.currentLang !== 'ru_RU') return;
-    let innSign = await waitForLoadable(
+    let innSign = await sc.ru.waitForLoadable(
       new ig.Image('media/map/inn-sign.ru_RU.png'),
     );
     ctx.clearRect(448, 432, 32, 16);
@@ -74,9 +54,21 @@ const PATCHES: { [path: string]: ImagePatchFunction } = {
 
 export default function initImagePatches(): void {
   ig.Image.inject({
-    async onload(...args) {
-      let oldOnload = this.parent;
+    loadInternal(...args) {
+      this.parent(...args);
+      (this.data as HTMLImageElement).onload = this._patchBeforeOnload.bind(
+        this,
+      );
+    },
 
+    reload(...args) {
+      this.parent(...args);
+      (this.data as HTMLImageElement).onload = this._patchBeforeOnload.bind(
+        this,
+      );
+    },
+
+    async _patchBeforeOnload(...args) {
       this.width = this.data.width;
       this.height = this.data.height;
 
@@ -115,7 +107,7 @@ export default function initImagePatches(): void {
         }
       }
 
-      oldOnload.apply(this, args);
+      this.onload(...args);
     },
   });
 }
