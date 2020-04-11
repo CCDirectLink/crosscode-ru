@@ -6,6 +6,7 @@ type ImagePatchFunction = (
 
 const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   'media/entity/objects/history-of-bergen.png': async ctx => {
+    // this label is practically a part of dialog, so I'm not making it optional
     if (ig.currentLang !== 'ru_RU') return;
     let ruImage = await sc.ru.waitForLoadable(
       new ig.Image('media/entity/objects/history-of-bergen.ru_RU.png'),
@@ -16,7 +17,12 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   },
 
   'media/map/jungle-props.png': async ctx => {
-    if (ig.currentLang !== 'ru_RU') return;
+    if (
+      ig.currentLang !== 'ru_RU' ||
+      !sc.options.get('crosscode-ru.localized-labels-in-maps')
+    ) {
+      return;
+    }
     let ruImage = await sc.ru.waitForLoadable(
       new ig.Image('media/map/jungle-props.ru_RU.png'),
     );
@@ -25,7 +31,12 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   },
 
   'media/map/bergen-trail.png': async ctx => {
-    if (ig.currentLang !== 'ru_RU') return;
+    if (
+      ig.currentLang !== 'ru_RU' ||
+      !sc.options.get('crosscode-ru.localized-labels-in-maps')
+    ) {
+      return;
+    }
     let innSign = await sc.ru.waitForLoadable(
       new ig.Image('media/map/inn-sign.ru_RU.png'),
     );
@@ -34,7 +45,12 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   },
 
   'media/map/bergen-village-inner.png': async ctx => {
-    if (ig.currentLang !== 'ru_RU') return;
+    if (
+      ig.currentLang !== 'ru_RU' ||
+      !sc.options.get('crosscode-ru.localized-labels-in-maps')
+    ) {
+      return;
+    }
     let innSign = await sc.ru.waitForLoadable(
       new ig.Image('media/map/inn-sign.ru_RU.png'),
     );
@@ -43,7 +59,12 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   },
 
   'media/map/rookie-harbor.png': async ctx => {
-    if (ig.currentLang !== 'ru_RU') return;
+    if (
+      ig.currentLang !== 'ru_RU' ||
+      !sc.options.get('crosscode-ru.localized-labels-in-maps')
+    ) {
+      return;
+    }
     let innSign = await sc.ru.waitForLoadable(
       new ig.Image('media/map/inn-sign.ru_RU.png'),
     );

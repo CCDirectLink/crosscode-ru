@@ -1,5 +1,5 @@
 ig.module('crosscode-ru.fixes.options-menu')
-  .requires('enchanced-ui.ticker-display', 'crosscode-ru.utils.localization')
+  .requires('crosscode-ru.utils.localization')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 
@@ -47,6 +47,17 @@ ig.module('crosscode-ru.fixes.options-menu')
     // TODO: I hope I'll remove the event listener once I rewrite simplify.
     document.body.addEventListener('simplifyInitialized', () => {
       let lang = ig.lang.labels.sc.gui;
+
+      simplify.options.addEntry(
+        'crosscode-ru.localized-labels-in-maps',
+        'CHECKBOX',
+        false,
+        sc.OPTION_CATEGORY.INTERFACE,
+        null,
+        true,
+        'crosscode-ru.options',
+      );
+      simplify.options.reload();
 
       // TODO: add this to Nota
       sc.ru.localizeProp(lang.menu.option, 'mods', {

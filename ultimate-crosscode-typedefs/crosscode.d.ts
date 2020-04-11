@@ -191,14 +191,14 @@ declare namespace ig {
     command: { brake: number } | { color: number } | { speed: number };
   }
 
-  enum FontALIGN_ {
+  enum Font$ALIGN {
     LEFT,
     RIGHT,
     CENTER,
   }
 
   namespace Font {
-    type ALIGN = FontALIGN_;
+    type ALIGN = Font$ALIGN;
   }
   interface Font extends ig.Image {
     charHeight: number;
@@ -212,7 +212,7 @@ declare namespace ig {
       color: string,
     ): this['__instance'];
 
-    ALIGN: typeof FontALIGN_;
+    ALIGN: typeof Font$ALIGN;
   }
   let Font: FontConstructor;
 
@@ -240,7 +240,7 @@ declare namespace ig {
   }
   let MultiFont: MultiFontConstructor;
 
-  enum TextBlockSPEED_ {
+  enum TextBlock$SPEED {
     SLOWEST,
     SLOWER,
     SLOW,
@@ -260,7 +260,7 @@ declare namespace ig {
       linePadding?: number;
     }
 
-    type SPEED = TextBlockSPEED_;
+    type SPEED = TextBlock$SPEED;
 
     type DrawCallback = (width: number, height: number) => void;
 
@@ -271,7 +271,6 @@ declare namespace ig {
       lineIdx: number[];
     }
   }
-
   interface TextBlock extends ig.Class {
     font: ig.MultiFont;
     maxWidth?: number;
@@ -298,7 +297,7 @@ declare namespace ig {
       settings: ig.TextBlock.Settings,
     ): this['__instance'];
 
-    SPEED: typeof TextBlockSPEED_;
+    SPEED: typeof TextBlock$SPEED;
   }
   let TextBlock: TextBlockConstructor;
 
@@ -1316,11 +1315,13 @@ declare namespace sc {
 
     interface CHECKBOX {
       type: 'CHECKBOX';
+      data: null | undefined;
       init: boolean;
     }
 
     interface CONTROLS {
       type: 'CONTROLS';
+      data: null | undefined;
       init: { key: ig.KEY; key2?: ig.KEY };
     }
 
@@ -1334,6 +1335,7 @@ declare namespace sc {
     interface INFO {
       type: 'INFO';
       data: string;
+      init: null | undefined;
     }
   }
 
@@ -1354,6 +1356,14 @@ declare namespace sc {
 
   let OPTIONS_DEFINITION: { [name: string]: OptionDefinition };
   /* eslint-enable @typescript-eslint/class-name-casing */
+
+  interface OptionModel extends ig.GameAddon {
+    // TODO: define this the same way as document.createElement for known options
+    get(this: this, key: string, local?: boolean): unknown;
+  }
+  interface OptionModelConstructor extends ImpactClass<OptionModel> {}
+  let OptionModel: OptionModelConstructor;
+  let options: OptionModel;
 }
 
 /* module game.feature.gui.hud.item-hud */
@@ -2431,7 +2441,7 @@ declare namespace sc {
   }
   interface PartyModel extends ig.GameAddon {
     contacts: { [name: string]: sc.PartyModel.Contact };
-    isPartyMember(name: string): boolean;
+    isPartyMember(this: this, name: string): boolean;
   }
   interface PartyModelConstructor extends PartyModel {}
   let PartyModel: PartyModelConstructor;
