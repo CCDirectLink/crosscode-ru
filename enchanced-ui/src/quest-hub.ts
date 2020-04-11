@@ -1,4 +1,4 @@
-ig.module('crosscode-ru.fixes.quest-hub')
+ig.module('enchanced-ui.fixes.quest-hub')
   .requires('game.feature.menu.gui.quest-hub.quest-hub-misc')
   .defines(() => {
     sc.QuestHubListEntry.inject({

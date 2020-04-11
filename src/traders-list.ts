@@ -80,16 +80,6 @@ ig.module('crosscode-ru.fixes.traders-list')
         let shouldUpdateLocation = this._trader !== trader;
         this.parent(trader, ...args);
         if (shouldUpdateLocation) setTraderLocationText(this.location, trader);
-
-        this.requireGui.hook.children
-          .concat(this.getGui.hook.children)
-          .forEach(({ gui }) => {
-            if (gui instanceof sc.TradeItem) {
-              // make ticker displays permanent here because there is no way to
-              // move the mouse over those "buttons"
-              gui.button.textChild.tickerHook.focusTarget = null;
-            }
-          });
       },
     });
   });

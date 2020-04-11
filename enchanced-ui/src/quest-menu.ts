@@ -1,4 +1,4 @@
-ig.module('crosscode-ru.fixes.quest-menu')
+ig.module('enchanced-ui.fixes.quest-menu')
   .requires(
     'game.feature.menu.gui.quests.quest-misc',
     'enchanced-ui.ticker-display',

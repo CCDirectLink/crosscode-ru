@@ -1,14 +1,3 @@
-ig.module('crosscode-ru.fixes.help.boxes')
-  .requires('game.feature.menu.gui.help-boxes', 'enchanced-ui.ticker-display')
-  .defines(() => {
-    sc.MultiPageBoxGui.inject({
-      _createInitContent(width) {
-        this.parent(width);
-        this.header.tickerHook.maxSize = { x: width };
-      },
-    });
-  });
-
 ig.module('crosscode-ru.fixes.help.level-entry')
   .requires(
     'game.feature.menu.gui.help.help-misc',

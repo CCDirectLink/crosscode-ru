@@ -1,4 +1,4 @@
-ig.module('crosscode-ru.fixes.info-bar')
+ig.module('enchanced-ui.fixes.info-bar')
   .requires('game.feature.menu.gui.menu-misc', 'enchanced-ui.ticker-display')
   .defines(() => {
     sc.InfoBar.inject({
@@ -15,9 +15,9 @@ ig.module('crosscode-ru.fixes.info-bar')
 
         this.removeChildGui(this.text);
         this.addChildGui(newText);
-        // API of sc.ui2.LongHorizontalTextGui is almost identical to sc.TextGui,
-        // so I hope that replacing the later with the former doesn't break
-        // anything
+        // API of sc.ui2.LongHorizontalTextGui is almost identical to that of
+        // sc.TextGui, so I hope that replacing the later with the former
+        // doesn't break anything
         this.text = (newText as unknown) as sc.TextGui;
 
         // TODO: does this really speed up?

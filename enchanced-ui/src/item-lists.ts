@@ -10,7 +10,7 @@ function guiMapChildren<T extends ig.GuiElementBase = ig.GuiElementBase>(
   });
 }
 
-ig.module('crosscode-ru.fixes.item-lists')
+ig.module('enchanced-ui.fixes.item-lists')
   .requires('game.feature.menu.gui.menu-misc', 'enchanced-ui.ticker-display')
   .defines(() => {
     sc.ListBoxButton.inject({
@@ -46,7 +46,7 @@ ig.module('crosscode-ru.fixes.item-lists')
         // well... [insert shrug face here]
         // setButtonText isn't used at all in the entire codebase
         throw new Error(
-          'crosscode-ru: sc.ListBoxButton.setButtonText: unimplemented',
+          'enchanced-ui: sc.ListBoxButton.setButtonText: unimplemented',
         );
       },
     });
@@ -72,7 +72,7 @@ ig.module('crosscode-ru.fixes.item-lists')
     sc.NewGameOptionButton.inject({ enableTickerDisplay: true });
   });
 
-ig.module('crosscode-ru.fixes.new-game-menu')
+ig.module('enchanced-ui.fixes.new-game-menu')
   .requires('game.feature.menu.gui.new-game.new-game-misc')
   .defines(() => {
     sc.NewGameOptionButton.inject({
@@ -97,11 +97,12 @@ ig.module('crosscode-ru.fixes.new-game-menu')
     });
   });
 
-ig.module('crosscode-ru.fixes.item-lists.trade-gui')
+ig.module('enchanced-ui.fixes.item-lists.trade-gui')
   .requires(
     'game.feature.trade.gui.trade-icon',
     'game.feature.trade.gui.equip-toggle-stats',
     'game.feature.menu.gui.shop.shop-stats',
+    'game.feature.menu.gui.trade.trade-misc',
     'enchanced-ui.ticker-display',
   )
   .defines(() => {
@@ -171,9 +172,25 @@ ig.module('crosscode-ru.fixes.item-lists.trade-gui')
         });
       },
     });
+
+    sc.TradeDetailsView.inject({
+      setTraderData(...args) {
+        this.parent(...args);
+
+        this.requireGui.hook.children
+          .concat(this.getGui.hook.children)
+          .forEach(({ gui }) => {
+            if (gui instanceof sc.TradeItem) {
+              // make ticker displays permanent here because there is no way to
+              // move the mouse over those "buttons"
+              gui.button.textChild.tickerHook.focusTarget = null;
+            }
+          });
+      },
+    });
   });
 
-ig.module('crosscode-ru.fixes.item-lists.status-main-equipment')
+ig.module('enchanced-ui.fixes.item-lists.status-main-equipment')
   .requires(
     'game.feature.menu.gui.status.status-view-main',
     'enchanced-ui.ticker-display',
@@ -196,7 +213,7 @@ ig.module('crosscode-ru.fixes.item-lists.status-main-equipment')
     });
   });
 
-ig.module('crosscode-ru.fixes.item-lists.social-menu')
+ig.module('enchanced-ui.fixes.item-lists.social-menu')
   .requires(
     'game.feature.menu.gui.social.social-misc',
     'enchanced-ui.ticker-display',
@@ -224,7 +241,7 @@ ig.module('crosscode-ru.fixes.item-lists.social-menu')
     });
   });
 
-ig.module('crosscode-ru.fixes.item-lists.quests')
+ig.module('enchanced-ui.fixes.item-lists.quests')
   .requires(
     'game.feature.menu.gui.quests.quest-entries',
     'enchanced-ui.ticker-display',
@@ -270,7 +287,7 @@ ig.module('crosscode-ru.fixes.item-lists.quests')
     });
   });
 
-ig.module('crosscode-ru.fixes.item-lists.equipment-menu')
+ig.module('enchanced-ui.fixes.item-lists.equipment-menu')
   .requires(
     'game.feature.menu.gui.equip.equip-bodypart',
     'enchanced-ui.ticker-display',
@@ -304,7 +321,7 @@ ig.module('crosscode-ru.fixes.item-lists.equipment-menu')
     });
   });
 
-ig.module('crosscode-ru.fixes.item-lists.quest-dialog')
+ig.module('enchanced-ui.fixes.item-lists.quest-dialog')
   .requires(
     'game.feature.menu.gui.equip.equip-bodypart',
     'enchanced-ui.ticker-display',

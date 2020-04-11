@@ -1,4 +1,4 @@
-ig.module('crosscode-ru.fixes.trophies-menu')
+ig.module('enchanced-ui.fixes.trophies-menu')
   .requires('game.feature.menu.gui.trophy.trophy-misc')
   .defines(() => {
     sc.TrophyListEntry.inject({
