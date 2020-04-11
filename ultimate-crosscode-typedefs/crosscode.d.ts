@@ -2607,7 +2607,28 @@ declare namespace ig {
 /* module game.feature.arena.arena-cheer */
 /* module game.feature.arena.arena */
 /* module game.feature.arena.gui.arena-effect-display */
+
 /* module game.feature.arena.gui.arena-round-gui */
+
+declare namespace sc {
+  interface ArenaRoundEndButtons extends ig.GuiElementBase {
+    buttons: sc.ButtonGui[];
+  }
+  interface ArenaRoundEndButtonsConstructor
+    extends ImpactClass<ArenaRoundEndButtons> {
+    new (
+      callback: (
+        rushMode: boolean,
+        buttonIndex: number,
+        isLastRound: boolean,
+      ) => void,
+      info: sc.InfoBar,
+      playerDeath: boolean,
+    ): this['__instance'];
+  }
+  let ArenaRoundEndButtons: ArenaRoundEndButtonsConstructor;
+}
+
 /* module game.feature.arena.gui.arena-trophy-gui */
 /* module game.feature.arena.gui.arena-rush-gui */
 /* module game.feature.arena.gui.arena-gui */

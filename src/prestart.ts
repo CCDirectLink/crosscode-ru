@@ -1,5 +1,6 @@
 import './localization-utils.js';
 
+import './arena-gui.js';
 import './circuit-menu.js';
 import './credits-section.js';
 import './event-steps-patches.js';

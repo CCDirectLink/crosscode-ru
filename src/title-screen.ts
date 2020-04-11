@@ -1,4 +1,4 @@
-ig.module('crosscode.fixes.title-screen')
+ig.module('crosscode-ru.fixes.title-screen')
   .requires('game.feature.gui.screen.title-screen')
   .defines(() => {
     sc.TitleScreenButtonGui.inject({
