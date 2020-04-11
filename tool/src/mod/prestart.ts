@@ -22,7 +22,6 @@ ig.module('crosscode-ru.translation-tool')
 
     function createTranslationToolButton(): sc.ButtonGui {
       let btn = new sc.ButtonGui('Переводилка', sc.BUTTON_DEFAULT_WIDTH);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       btn.onButtonPress = (): void => sc.ru.translationTool.open();
       return btn;
     }

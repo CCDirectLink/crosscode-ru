@@ -4,7 +4,7 @@ type ImagePatchFunction = (
   canvas: HTMLCanvasElement,
 ) => MaybePromise<void | null | ig.Image.Data>;
 
-const PATCHES: { [path: string]: ImagePatchFunction } = {
+const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   'media/entity/objects/history-of-bergen.png': async ctx => {
     if (ig.currentLang !== 'ru_RU') return;
     let ruImage = await sc.ru.waitForLoadable(
@@ -52,62 +52,56 @@ const PATCHES: { [path: string]: ImagePatchFunction } = {
   },
 };
 
-export default function initImagePatches(): void {
-  ig.Image.inject({
-    loadInternal(...args) {
-      this.parent(...args);
-      (this.data as HTMLImageElement).onload = this._patchBeforeOnload.bind(
-        this,
-      );
-    },
+ig.Image.inject({
+  loadInternal(...args) {
+    this.parent(...args);
+    (this.data as HTMLImageElement).onload = this._patchBeforeOnload.bind(this);
+  },
 
-    reload(...args) {
-      this.parent(...args);
-      (this.data as HTMLImageElement).onload = this._patchBeforeOnload.bind(
-        this,
-      );
-    },
+  reload(...args) {
+    this.parent(...args);
+    (this.data as HTMLImageElement).onload = this._patchBeforeOnload.bind(this);
+  },
 
-    async _patchBeforeOnload(...args) {
-      this.width = this.data.width;
-      this.height = this.data.height;
+  async _patchBeforeOnload(...args) {
+    this.width = this.data.width;
+    this.height = this.data.height;
 
-      let patchFunction = PATCHES[this.path];
-      if (patchFunction != null) {
-        let context: CanvasRenderingContext2D;
+    let patchFunction = IMAGE_PATCHES[this.path];
+    if (patchFunction != null) {
+      let context: CanvasRenderingContext2D;
 
-        // TODO: Consider supporting `OffscreenCanvas`. Also consider using
-        // `ig.system.getBufferContext`.
-        if (this.data instanceof HTMLCanvasElement) {
-          context = this.data.getContext('2d')!;
-        } else {
-          let canvas = ig.$new('canvas');
-          canvas.width = this.width;
-          canvas.height = this.height;
-          context = canvas.getContext('2d')!;
-          context.drawImage(
-            this.data,
-            0,
-            0,
-            this.width,
-            this.height,
-            0,
-            0,
-            this.width,
-            this.height,
-          );
-          this.data = canvas;
-        }
-
-        let newData = await patchFunction(context, this.data);
-        if (newData != null) {
-          this.data = newData;
-          this.width = newData.width;
-          this.height = newData.height;
-        }
+      // TODO: Consider supporting `OffscreenCanvas`. Also consider using
+      // `ig.system.getBufferContext`.
+      if (this.data instanceof HTMLCanvasElement) {
+        context = this.data.getContext('2d')!;
+      } else {
+        let canvas = ig.$new('canvas');
+        canvas.width = this.width;
+        canvas.height = this.height;
+        context = canvas.getContext('2d')!;
+        context.drawImage(
+          this.data,
+          0,
+          0,
+          this.width,
+          this.height,
+          0,
+          0,
+          this.width,
+          this.height,
+        );
+        this.data = canvas;
       }
 
-      this.onload(...args);
-    },
-  });
-}
+      let newData = await patchFunction(context, this.data);
+      if (newData != null) {
+        this.data = newData;
+        this.width = newData.width;
+        this.height = newData.height;
+      }
+    }
+
+    this.onload(...args);
+  },
+});
