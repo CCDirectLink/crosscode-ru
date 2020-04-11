@@ -1,8 +1,14 @@
 import { TranslationToolClient } from './tool-client.js';
 
 ig.module('crosscode-ru.translation-tool')
-  .requires('game.main', 'game.feature.gui.screen.title-screen')
+  .requires(
+    'game.main',
+    'game.feature.gui.screen.title-screen',
+    'localize-me.final-locale.ready',
+  )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.ru.translationTool = new TranslationToolClient();
 
     sc.CrossCode.inject({
