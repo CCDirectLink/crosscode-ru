@@ -65,11 +65,14 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     ) {
       return;
     }
-    let innSign = await sc.ru.waitForLoadable(
-      new ig.Image('media/map/inn-sign.ru_RU.png'),
-    );
+    let [innSign, ruImage] = await Promise.all([
+      sc.ru.waitForLoadable(new ig.Image('media/map/inn-sign.ru_RU.png')),
+      sc.ru.waitForLoadable(new ig.Image('media/map/rookie-harbor.ru_RU.png')),
+    ]);
     ctx.clearRect(448, 432, 32, 16);
     ctx.drawImage(innSign.data, 0, 0, 32, 16, 448, 432, 32, 16);
+    ctx.clearRect(432, 448, 48, 32);
+    ctx.drawImage(ruImage.data, 0, 0, 48, 32, 432, 448, 48, 32);
   },
 };
 
