@@ -16,10 +16,10 @@ function addEnglishLabelsToLangFile(data) {
           },
         },
         'crosscode-ru': {
-          'localized-labels-in-maps': {
-            name: 'localized-labels-in-maps',
+          'localized-labels-on-sprites': {
+            name: 'Localized labels on sprites',
             description:
-              'localized-labels-in-maps description. \\c[1]Needs a restart!',
+              'Enables translated labels on sprites such as signs in the game world. \\c[1]Needs a restart!',
           },
         },
       },

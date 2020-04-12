@@ -16,7 +16,9 @@ ig.module('crosscode-ru.utils.localization')
       return (
         ig.currentLang === 'ru_RU' &&
         (notOptional ||
-          (sc.options.get('crosscode-ru.localized-labels-in-maps') as boolean))
+          (sc.options.get(
+            'crosscode-ru.localized-labels-on-sprites',
+          ) as boolean))
       );
     };
   });

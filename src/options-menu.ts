@@ -49,9 +49,9 @@ ig.module('crosscode-ru.fixes.options-menu')
       let lang = ig.lang.labels.sc.gui;
 
       simplify.options.addEntry(
-        'crosscode-ru.localized-labels-in-maps',
+        'crosscode-ru.localized-labels-on-sprites',
         'CHECKBOX',
-        false,
+        true,
         sc.OPTION_CATEGORY.INTERFACE,
         null,
         true,
