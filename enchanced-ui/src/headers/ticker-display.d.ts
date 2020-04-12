@@ -39,19 +39,17 @@ declare namespace sc.ui2 {
     hook: ig.GuiHook;
     renderText: sc.ui2.TickerDisplayHook.RenderTextCallback;
     timer: number;
-    speed: Vec2;
-    delayAtBorders: Vec2;
+    speed: number;
+    delayAtBorders: number;
     constantTextOffset: Vec2;
-    shadowSize: Vec2;
     shadowGfx: ig.Image;
-    maxSize: Partial<Vec2> | null;
+    maxWidth: number | null;
     focusTarget: ig.FocusGui | null;
     focusTargetKeepPressed: boolean;
 
     update(this: this): void;
     updateDrawables(this: this, renderer: ig.GuiRenderer): void;
     _tryRenderTicker(this: this, renderer: ig.GuiRenderer): boolean;
-    _computeMaxSize(this: this): Vec2 | null;
   }
   interface TickerDisplayHookConstructor
     extends ImpactClass<TickerDisplayHook> {

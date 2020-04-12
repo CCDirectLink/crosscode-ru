@@ -25,9 +25,8 @@ ig.module('enchanced-ui.fixes.item-lists')
             oldTextChild.hook.align.y,
           );
           newTextChild.setPos(oldTextChild.hook.pos.x, oldTextChild.hook.pos.y);
-          newTextChild.tickerHook.maxSize = {
-            x: this.button.hook.size.x - sc.BUTTON_TYPE.ITEM.alignXPadding! * 2,
-          };
+          newTextChild.tickerHook.maxWidth =
+            this.button.hook.size.x - sc.BUTTON_TYPE.ITEM.alignXPadding! * 2;
           newTextChild.tickerHook.focusTarget = this.button;
 
           this.button.removeChildGui(oldTextChild);
@@ -124,12 +123,10 @@ ig.module('enchanced-ui.fixes.item-lists.trade-gui')
       },
 
       _updateTickerMaxSize() {
-        this.compareItem.tickerHook.maxSize = {
-          x:
-            this.hook.size.x -
-            this.compareItem.hook.pos.x -
-            this.compareHelpText.hook.pos.x,
-        };
+        this.compareItem.tickerHook.maxWidth =
+          this.hook.size.x -
+          this.compareItem.hook.pos.x -
+          this.compareHelpText.hook.pos.x;
       },
     });
 
@@ -162,7 +159,7 @@ ig.module('enchanced-ui.fixes.item-lists.trade-gui')
               sc.MenuHelper.drawLevel(level, width, height, numberGfx),
             );
           }
-          newGui.tickerHook.maxSize = { x: this.hook.size.x - 3 * 2 };
+          newGui.tickerHook.maxWidth = this.hook.size.x - 3 * 2;
 
           this.removeChildGui(gui);
           this.addChildGui(newGui);
@@ -201,9 +198,8 @@ ig.module('enchanced-ui.fixes.item-lists.status-main-equipment')
         this.parent(...args);
         let newItemGui = new sc.ui2.IconTextGui(this.itemGui.text);
         newItemGui.setPos(this.textGui.hook.pos.x, this.itemGui.hook.pos.y);
-        newItemGui.tickerHook.maxSize = {
-          x: this.hook.size.x - this.itemGui.hook.pos.x * 2,
-        };
+        newItemGui.tickerHook.maxWidth =
+          this.hook.size.x - this.itemGui.hook.pos.x * 2;
 
         this.removeChildGui(this.itemGui);
         this.addChildGui(newItemGui);
@@ -232,7 +228,7 @@ ig.module('enchanced-ui.fixes.item-lists.social-menu')
             newGui.setDrawCallback((width, height) =>
               sc.MenuHelper.drawLevel(level, width, height, numberGfx),
             );
-            newGui.tickerHook.maxSize = { x: this.equip.hook.size.x };
+            newGui.tickerHook.maxWidth = this.equip.hook.size.x;
 
             return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
           },
@@ -273,7 +269,7 @@ ig.module('enchanced-ui.fixes.item-lists.quests')
         if (numberGui != null) {
           maxWidth -= numberGui.hook.pos.x + numberGui.hook.size.x;
         }
-        this.textGui.tickerHook.maxSize = { x: maxWidth };
+        this.textGui.tickerHook.maxWidth = maxWidth;
       },
     });
 
@@ -309,9 +305,7 @@ ig.module('enchanced-ui.fixes.item-lists.equipment-menu')
             sc.MenuHelper.drawLevel(this.level, width, height, this.numberGfx);
           }
         });
-        newTextChild.tickerHook.maxSize = {
-          x: this.button.hook.size.x - 5 * 2,
-        };
+        newTextChild.tickerHook.maxWidth = this.button.hook.size.x - 5 * 2;
         newTextChild.tickerHook.focusTarget = this.button;
         newTextChild.tickerHook.focusTargetKeepPressed = true;
 
@@ -343,7 +337,7 @@ ig.module('enchanced-ui.fixes.item-lists.quest-dialog')
                 sc.MenuHelper.drawLevel(level, width, height, numberGfx),
               );
             }
-            newGui.tickerHook.maxSize = { x: this.itemsGui.hook.size.x };
+            newGui.tickerHook.maxWidth = this.itemsGui.hook.size.x;
 
             return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
           },

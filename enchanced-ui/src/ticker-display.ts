@@ -23,11 +23,16 @@ ig.module('enchanced-ui.ticker-display')
       hook: null,
       renderText: null,
       timer: 0, // seconds
-      speed: { x: 50, y: 50 }, // pixels per second
-      delayAtBorders: { x: 1, y: 1 }, // seconds
+      speed: 50, // pixels per second
+      delayAtBorders: 1, // seconds
       constantTextOffset: { x: 0, y: 0 }, // pixels
       shadowGfx: new ig.Image('media/gui/ticker-display-shadow.png'),
-      maxSize: null,
+      // This implementation used to support two-dimensional ticker display, in
+      // other words this field was called `maxSize` and had a type of `Vec2`.
+      // Fortunately, the vertical tickers weren't used at all, so I simply got
+      // rid of them to simplify the overall implementation. You can use
+      // `git blame` to find the commit where I removed vertical tickers.
+      maxWidth: null, // pixels
       focusTarget: null,
       focusTargetKeepPressed: false,
 
@@ -83,80 +88,55 @@ ig.module('enchanced-ui.ticker-display')
       },
 
       _tryRenderTicker(renderer) {
-        let maxSize = this._computeMaxSize();
-        if (maxSize == null) return false;
+        if (this.maxWidth == null) return false;
 
         let { size, align } = this.hook;
 
-        let prtPos = { x: 0, y: 0 };
+        let prtPosX = 0;
         if (align.x === ig.GUI_ALIGN.X_CENTER) {
           // dunno why, but Math.ceil does centering better than Math.floor here
-          prtPos.x = Math.ceil((size.x - maxSize.x) / 2);
+          prtPosX = Math.ceil((size.x - this.maxWidth) / 2);
         } else if (align.x === ig.GUI_ALIGN.X_RIGHT) {
-          prtPos.x = size.x - maxSize.x;
-        }
-        if (align.y === ig.GUI_ALIGN.Y_CENTER) {
-          prtPos.y = Math.ceil((size.y - maxSize.y) / 2);
-        } else if (align.y === ig.GUI_ALIGN.Y_BOTTOM) {
-          prtPos.y = size.y - maxSize.y;
+          prtPosX = size.x - this.maxWidth;
         }
 
         if (sc.ui2.debug.showTickerBoundaryBoxes) {
           renderer.addColor('red', 0, 0, size.x, size.y).setAlpha(0.25);
           renderer
-            .addColor('green', prtPos.x, prtPos.y, maxSize.x, maxSize.y)
+            .addColor('green', prtPosX, 0, this.maxWidth, size.y)
             .setAlpha(0.25);
         }
 
-        let overflow = {
-          x: size.x > maxSize.x,
-          y: size.y > maxSize.y,
-        };
-        if (!overflow.x && !overflow.y) return false;
+        if (size.x <= this.maxWidth) return false;
 
-        let clippedSizeX = maxSize.x - this.constantTextOffset.x;
-        let clippedSizeY = maxSize.y - this.constantTextOffset.y;
-
+        let clipPosX = prtPosX + this.constantTextOffset.x;
+        let clipPosY = this.constantTextOffset.y;
+        let clippedSizeX = this.maxWidth - this.constantTextOffset.x;
+        let clippedSizeY = size.y - this.constantTextOffset.y;
         renderer
           .addTransform()
-          .setTranslate(
-            prtPos.x + this.constantTextOffset.x,
-            prtPos.y + this.constantTextOffset.y,
-          )
+          .setTranslate(clipPosX, clipPosY)
           .setClip(clippedSizeX, clippedSizeY);
 
-        let maxOffset = {
-          x: size.x - maxSize.x,
-          y: size.y - maxSize.y,
-        };
+        let maxOffsetX = size.x - this.maxWidth;
+        // multiply the delay by speed so that delay isn't affected by speed
+        // and always means the same time in seconds
+        let scaledDelay = this.delayAtBorders * this.speed;
+        let offsetX = (
+          triangleWave(
+            this.timer * this.speed - scaledDelay / 2,
+            maxOffsetX + scaledDelay,
+          ) -
+          scaledDelay / 2
+        ).limit(0, maxOffsetX);
 
-        // TODO: display shadows at the overflowing side
-        const calculateOffset = (axis: 'x' | 'y'): number => {
-          if (!overflow[axis]) return 0;
-          let length = maxOffset[axis];
-          let spd = this.speed[axis];
-          // multiply the delay by speed so that delay isn't affected by speed
-          // and always means the same time in seconds
-          let scaledDelay = this.delayAtBorders[axis] * spd;
-          return (
-            triangleWave(
-              this.timer * spd - scaledDelay / 2,
-              length + scaledDelay,
-            ) -
-            scaledDelay / 2
-          ).limit(0, length);
-        };
-
-        let offsetX = calculateOffset('x');
-        let offsetY = calculateOffset('y');
-
-        this.renderText(renderer, -offsetX, -offsetY);
+        this.renderText(renderer, -offsetX, 0);
 
         // Ticker shadows definitely need more refinement if they were to be
         // added, officially but we agreed that they are unnecessary, so I
         // disabled them in production. Although I'm keeping the code if it
         // comes in handy in the future.
-        if (overflow.x && !sc.ui2.debug.noTickerShadows) {
+        if (!sc.ui2.debug.hideTickerShadows) {
           const {
             PATTERN_SHADOW_LEFT,
             PATTERN_SHADOW_RIGHT,
@@ -179,7 +159,7 @@ ig.module('enchanced-ui.ticker-display')
               )
               .setCompositionMode(COMPOSITION_MODE);
           }
-          if (offsetX < maxOffset.x) {
+          if (offsetX < maxOffsetX) {
             renderer
               .addPattern(
                 PATTERN_SHADOW_RIGHT,
@@ -197,14 +177,6 @@ ig.module('enchanced-ui.ticker-display')
         renderer.undoTransform();
 
         return true;
-      },
-
-      _computeMaxSize() {
-        if (this.maxSize == null) return null;
-        return {
-          x: this.maxSize.x != null ? this.maxSize.x : this.hook.size.x,
-          y: this.maxSize.y != null ? this.maxSize.y : this.hook.size.y,
-        };
       },
     });
 
@@ -597,27 +569,21 @@ ig.module('enchanced-ui.ticker-display')
         // in the way
 
         let iconX = 0;
-        let iconY = 0;
 
-        let maxSize = this.tickerHook._computeMaxSize();
-        if (maxSize != null) {
+        let { maxWidth } = this.tickerHook;
+        if (maxWidth != null) {
           // TODO: merge these calculations with the ones in
           // sc.ui2.TickerDisplayHook#_tryRenderTicker
           let { size, align } = this.hook;
 
           if (align.x === ig.GUI_ALIGN.X_CENTER) {
-            iconX = Math.max(0, Math.ceil((size.x - maxSize.x) / 2));
+            iconX = Math.max(0, Math.ceil((size.x - maxWidth) / 2));
           } else if (align.x === ig.GUI_ALIGN.X_RIGHT) {
-            iconX = Math.max(0, size.x - maxSize.x);
-          }
-          if (align.y === ig.GUI_ALIGN.X_CENTER) {
-            iconY = Math.max(0, Math.ceil((size.y - maxSize.y) / 2));
-          } else if (align.y === ig.GUI_ALIGN.X_RIGHT) {
-            iconY = Math.max(0, size.y - maxSize.y);
+            iconX = Math.max(0, size.x - maxWidth);
           }
         }
 
-        renderer.addText(this.iconTextBlock, iconX, iconY);
+        renderer.addText(this.iconTextBlock, iconX, 0);
       },
     });
   });

@@ -39,11 +39,10 @@ ig.module('enchanced-ui.fixes.options-menu')
           slopeHook.pos.x += additionalWidth;
         }
 
-        this.nameGui.tickerHook.maxSize = {
-          x: lineHook.size.x - this.nameGui.hook.pos.x + 2,
-        };
-        this.nameGui.tickerHook.speed.x *= 1.25;
-        this.nameGui.tickerHook.delayAtBorders.x /= 1.25;
+        this.nameGui.tickerHook.maxWidth =
+          lineHook.size.x - this.nameGui.hook.pos.x + 2;
+        this.nameGui.tickerHook.speed *= 1.25;
+        this.nameGui.tickerHook.delayAtBorders /= 1.25;
       },
 
       update() {

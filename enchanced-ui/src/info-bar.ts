@@ -21,7 +21,7 @@ ig.module('enchanced-ui.fixes.info-bar')
         this.text = (newText as unknown) as sc.TextGui;
 
         // TODO: does this really speed up?
-        this.text.tickerHook.speed.x *= 2;
+        this.text.tickerHook.speed *= 2;
         this._updateTickerMaxSize();
       },
 
@@ -57,7 +57,7 @@ ig.module('enchanced-ui.fixes.info-bar')
         if (buffInfo != null && buffInfo._width > 0) {
           maxWidth -= buffInfo._width + buffInfo.hook.pos.x;
         }
-        this.text.tickerHook.maxSize = { x: maxWidth };
+        this.text.tickerHook.maxWidth = maxWidth;
       },
     });
   });
