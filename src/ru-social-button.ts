@@ -1,5 +1,3 @@
-/// <reference types="nw.js" />
-
 ig.module('crosscode-ru.social-button')
   .requires(
     'game.feature.gui.screen.title-screen',

@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "dependencies": {
+    "@types/jquery": "~1.10",
+    "@types/node": "*",
+    "@types/nw.js": "~0.13"
+  }
+}

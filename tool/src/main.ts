@@ -1,5 +1,3 @@
-/// <reference types="nw.js" />
-
 import {
   ChapterStatus,
   ChapterStatuses,

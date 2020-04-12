@@ -2,6 +2,11 @@
 
 /* eslint-disable no-shadow */
 
+// TODO: rewrite nw.js typedefs, then change version of `@types/node` to `~11.9`
+/// <reference types="nw.js" />
+/// <reference types="node" />
+/// <reference types="jquery" />
+
 // TODO: define all constructors
 
 declare interface Vec2 {
