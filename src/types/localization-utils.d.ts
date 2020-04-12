@@ -10,4 +10,6 @@ declare namespace sc.ru {
     prop: K,
     fragment: sc.ru.LocalizableFragment,
   ): void;
+
+  function shouldPatchSpriteLabels(notOptional?: boolean): boolean;
 }

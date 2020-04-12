@@ -6,8 +6,8 @@ type ImagePatchFunction = (
 
 const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   'media/entity/objects/history-of-bergen.png': async ctx => {
-    // this label is practically a part of dialog, so I'm not making it optional
-    if (ig.currentLang !== 'ru_RU') return;
+    // this label is practically a part of a dialog, so I'm not making it optional
+    if (!sc.ru.shouldPatchSpriteLabels(true)) return;
     let ruImage = await sc.ru.waitForLoadable(
       new ig.Image('media/entity/objects/history-of-bergen.ru_RU.png'),
     );
@@ -16,13 +16,29 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     ctx.drawImage(ruImage.data, 0, 0, 21, 7, 187, 15, 21, 7);
   },
 
-  'media/map/jungle-props.png': async ctx => {
-    if (
-      ig.currentLang !== 'ru_RU' ||
-      !sc.options.get('crosscode-ru.localized-labels-in-maps')
-    ) {
-      return;
+  'media/map/jungle.png': async ctx => {
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
+    let ruImage = await sc.ru.waitForLoadable(
+      new ig.Image('media/map/open-closed-signs.ru_RU.png'),
+    );
+    ctx.drawImage(ruImage.data, 0, 0, 28, 11, 66, 929, 28, 11);
+    ctx.drawImage(ruImage.data, 0, 0, 28, 11, 34, 977, 28, 11);
+    ctx.drawImage(ruImage.data, 0, 11, 28, 11, 66, 977, 28, 11);
+  },
+
+  'media/entity/style/jungle-city-map.png': async ctx => {
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
+    let ruImage = await sc.ru.waitForLoadable(
+      new ig.Image('media/map/open-closed-signs.ru_RU.png'),
+    );
+    ctx.drawImage(ruImage.data, 0, 11, 28, 11, 2, 1, 28, 11);
+    for (let i = 0; i < 4; i++) {
+      ctx.drawImage(ruImage.data, 0, 0, 28, 11, 34 + i * 32, 1, 28, 11);
     }
+  },
+
+  'media/map/jungle-props.png': async ctx => {
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
     let ruImage = await sc.ru.waitForLoadable(
       new ig.Image('media/map/jungle-props.ru_RU.png'),
     );
@@ -31,12 +47,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   },
 
   'media/map/bergen-trail.png': async ctx => {
-    if (
-      ig.currentLang !== 'ru_RU' ||
-      !sc.options.get('crosscode-ru.localized-labels-in-maps')
-    ) {
-      return;
-    }
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
     let innSign = await sc.ru.waitForLoadable(
       new ig.Image('media/map/inn-sign.ru_RU.png'),
     );
@@ -45,12 +56,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   },
 
   'media/map/bergen-village-inner.png': async ctx => {
-    if (
-      ig.currentLang !== 'ru_RU' ||
-      !sc.options.get('crosscode-ru.localized-labels-in-maps')
-    ) {
-      return;
-    }
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
     let innSign = await sc.ru.waitForLoadable(
       new ig.Image('media/map/inn-sign.ru_RU.png'),
     );
@@ -59,12 +65,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   },
 
   'media/map/rookie-harbor.png': async ctx => {
-    if (
-      ig.currentLang !== 'ru_RU' ||
-      !sc.options.get('crosscode-ru.localized-labels-in-maps')
-    ) {
-      return;
-    }
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
     let [innSign, ruImage] = await Promise.all([
       sc.ru.waitForLoadable(new ig.Image('media/map/inn-sign.ru_RU.png')),
       sc.ru.waitForLoadable(new ig.Image('media/map/rookie-harbor.ru_RU.png')),

@@ -78,12 +78,7 @@ const JSON_PATCHES = {
   },
 
   'data/scale-props/dungeon-ar.json': data => {
-    if (
-      ig.currentLang !== 'ru_RU' ||
-      !sc.options.get('crosscode-ru.localized-labels-in-maps')
-    ) {
-      return data;
-    }
+    if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/entity/objects/dungeon-ar.ru_RU.png',
@@ -108,12 +103,7 @@ const JSON_PATCHES = {
   },
 
   'data/scale-props/dungeon-ar-special.json': data => {
-    if (
-      ig.currentLang !== 'ru_RU' ||
-      !sc.options.get('crosscode-ru.localized-labels-in-maps')
-    ) {
-      return data;
-    }
+    if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/entity/objects/dungeon-ar-special.ru_RU.png',
@@ -137,12 +127,7 @@ const JSON_PATCHES = {
   },
 
   'data/scale-props/trading-ar.json': data => {
-    if (
-      ig.currentLang !== 'ru_RU' ||
-      !sc.options.get('crosscode-ru.localized-labels-in-maps')
-    ) {
-      return data;
-    }
+    if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/map/trading-autumn.ru_RU.png',
@@ -167,12 +152,7 @@ const JSON_PATCHES = {
   },
 
   'data/scale-props/rhombus-sqr.json': data => {
-    if (
-      ig.currentLang !== 'ru_RU' ||
-      !sc.options.get('crosscode-ru.localized-labels-in-maps')
-    ) {
-      return data;
-    }
+    if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
     function patchProp(prop, { srcX, srcY, width }) {
       Object.assign(prop, {
@@ -223,12 +203,7 @@ const JSON_PATCHES = {
   },
 
   'data/props/rhombus-area-text.json': data => {
-    if (
-      ig.currentLang !== 'ru_RU' ||
-      !sc.options.get('crosscode-ru.localized-labels-in-maps')
-    ) {
-      return data;
-    }
+    if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
     for (let prop of data.props) {
       switch (prop.name) {
