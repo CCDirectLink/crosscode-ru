@@ -23,7 +23,7 @@ ig.module('crosscode-ru.fixes.social-menu')
 
       init(name, model) {
         this.parent(name, model);
-        this.status.offsetX = 49;
+        this.status.offsetX = 0;
         this.status.offsetY = 162;
         this.status.setSize(45, 7);
         this.status.hook.pos.x -= 6;
