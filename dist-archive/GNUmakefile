@@ -90,6 +90,8 @@ $(LOCALIZE_ME_MOD_DIR):
 $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
 > $(call download_crosscode_mod,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.0/cc-world-map-overhaul_v1.0.0.tar.gz)
 
+$(MOD_DIR)/$(TRANSLATIONS_DIR): $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
+
 # Unfortuntately, the following file copying rules can't be merged together
 $(MOD_DIR)/$(TRANSLATIONS_DIR)/%.json: $(TOOL_DATA_DIR)/%.json
 > mkdir -pv $(@D)

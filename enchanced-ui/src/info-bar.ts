@@ -20,7 +20,6 @@ ig.module('enchanced-ui.fixes.info-bar')
         // doesn't break anything
         this.text = (newText as unknown) as sc.TextGui;
 
-        // TODO: does this really speed up?
         this.text.tickerHook.speed *= 2;
         this._updateTickerMaxSize();
       },

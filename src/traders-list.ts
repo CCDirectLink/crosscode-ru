@@ -1,6 +1,3 @@
-// TODO: make item names and the detailed menu that comes up when clicking an
-// offer in the traders list bigger.
-
 ig.module('crosscode-ru.fixes.traders-list')
   .requires(
     'game.feature.menu.gui.trade.trade-misc',

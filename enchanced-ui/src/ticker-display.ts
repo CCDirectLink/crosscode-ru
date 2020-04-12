@@ -1,5 +1,3 @@
-// TODO: replace default parameter syntax with `== null` checks
-
 ig.module('enchanced-ui.ticker-display')
   .requires(
     'impact.base.system',
@@ -473,22 +471,26 @@ ig.module('enchanced-ui.ticker-display')
         if (settings == null) settings = {};
         this.font = settings.font != null ? settings.font : sc.fontsystem.font;
 
+        let textBlockSettings = {
+          linePadding: settings.linePadding,
+          font: this.font,
+        };
+
         this.text = textLikeToString(text);
         let { firstIcon, iconCommands, parsedText, commands } = parseIconText(
           this.text,
           this.font,
         );
 
-        // TODO: limit `settings` here
         this.iconTextBlock = new ig.TextBlock(
           this.font,
           new sc.ui2.ParsedTextData(firstIcon, iconCommands),
-          settings,
+          textBlockSettings,
         );
         this.textBlock = new ig.TextBlock(
           this.font,
           new sc.ui2.ParsedTextData(parsedText, commands),
-          settings,
+          textBlockSettings,
         );
 
         this.tickerHook = new sc.ui2.TickerDisplayHook(

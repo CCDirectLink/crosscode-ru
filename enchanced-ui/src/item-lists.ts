@@ -49,27 +49,44 @@ ig.module('enchanced-ui.fixes.item-lists')
         );
       },
     });
-
-    // here's a full list of classes which are descendants of sc.ListBoxButton:
-    // sc.ItemBoxButton
-    // sc.DebugSkillLearner.ItemBoxButton
-    // sc.ShopItemButton
-    // sc.SocialEntryButton
-    // sc.EnemyEntryButton
-    // sc.LoreEntryButton
-    // sc.TradeItem
-    // - TradeEntryButton
-    // sc.BotanicsEntryButton
-    // sc.ArenaEntryButton
-    // - sc.ArenaRoundEntryButton
-    // sc.NewGameOptionButton
-    // TODO: put these in separate modules
-    sc.ItemBoxButton.inject({ enableTickerDisplay: true });
-    sc.ShopItemButton.inject({ enableTickerDisplay: true });
-    sc.TradeItem.inject({ enableTickerDisplay: true });
-    sc.BotanicsEntryButton.inject({ enableTickerDisplay: true });
-    sc.NewGameOptionButton.inject({ enableTickerDisplay: true });
   });
+
+function createListButtonPatch<T extends sc.ListBoxButton>(
+  gameFeatureModule: string,
+  getConstructor: () => ImpactClass<T>,
+): void {
+  ig.module(`enchanced-ui.fixes.item-lists.${gameFeatureModule}`)
+    .requires(`game.feature.${gameFeatureModule}`)
+    .defines(() => {
+      // `prototype`s of `ImpactClass<T>` and `sc.ListBoxButtonConstructor` are
+      // incompatible because of different constructors, so I have to perform an
+      // "unsafe" cast here
+      ((getConstructor() as unknown) as sc.ListBoxButtonConstructor).inject({
+        enableTickerDisplay: true,
+      });
+    });
+}
+
+// here's a full list of classes which are descendants of sc.ListBoxButton:
+// sc.ItemBoxButton
+// sc.DebugSkillLearner.ItemBoxButton
+// sc.ShopItemButton
+// sc.SocialEntryButton
+// sc.EnemyEntryButton
+// sc.LoreEntryButton
+// sc.TradeItem
+// - TradeEntryButton
+// sc.BotanicsEntryButton
+// sc.ArenaEntryButton
+// - sc.ArenaRoundEntryButton
+// sc.NewGameOptionButton
+createListButtonPatch('menu.gui.menu-misc', () => sc.ItemBoxButton);
+createListButtonPatch('menu.gui.shop.shop-list', () => sc.ShopItemButton);
+createListButtonPatch('trade.gui.trade-dialog', () => sc.TradeItem);
+// prettier-ignore
+createListButtonPatch('menu.gui.botanics.botanics-misc', () => sc.BotanicsEntryButton);
+// prettier-ignore
+createListButtonPatch('menu.gui.new-game.new-game-misc', () => sc.NewGameOptionButton);
 
 ig.module('enchanced-ui.fixes.new-game-menu')
   .requires('game.feature.menu.gui.new-game.new-game-misc')

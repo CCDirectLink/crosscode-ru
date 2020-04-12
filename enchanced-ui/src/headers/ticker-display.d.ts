@@ -72,6 +72,12 @@ declare namespace sc.ui2 {
   }
   let ParsedTextData: ParsedTextDataConstructor;
 
+  namespace LongHorizontalTextGui {
+    interface Settings {
+      font?: ig.MultiFont;
+      linePadding?: number;
+    }
+  }
   interface LongHorizontalTextGui extends ig.GuiElementBase {
     text: string;
     parsedText: string;
@@ -87,12 +93,21 @@ declare namespace sc.ui2 {
   }
   interface LongHorizontalTextGuiConstructor
     extends ImpactClass<LongHorizontalTextGui> {
-    new (text: sc.TextLike, settings?: sc.TextGui.Settings): this['__instance'];
+    new (
+      text: sc.TextLike,
+      settings?: sc.ui2.LongHorizontalTextGui.Settings,
+    ): this['__instance'];
 
     SPLIT_WIDTH: number;
   }
   let LongHorizontalTextGui: LongHorizontalTextGuiConstructor;
 
+  namespace IconTextGui {
+    interface Settings {
+      font?: ig.MultiFont;
+      linePadding?: number;
+    }
+  }
   interface IconTextGui extends ig.GuiElementBase {
     font: ig.MultiFont;
     text: string;
@@ -107,7 +122,10 @@ declare namespace sc.ui2 {
     clear(this: this): void;
   }
   interface IconTextGuiConstructor extends ImpactClass<IconTextGui> {
-    new (text: sc.TextLike, settings?: sc.TextGui.Settings): this['__instance'];
+    new (
+      text: sc.TextLike,
+      settings?: sc.ui2.IconTextGui.Settings,
+    ): this['__instance'];
   }
   let IconTextGui: IconTextGuiConstructor;
 }
