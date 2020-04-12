@@ -1,4 +1,3 @@
-type MaybePromise<T> = T | Promise<T>;
 type ImagePatchFunction = (
   context: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement,

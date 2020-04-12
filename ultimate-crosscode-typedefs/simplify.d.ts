@@ -13,8 +13,21 @@ interface SimplifyOptions {
   addEntry(this: this, name: string, type:          sc.OptionDefinition.INFO['type'], init:          sc.OptionDefinition.INFO['init'], cat: sc.OPTION_CATEGORY, data?:          sc.OptionDefinition.INFO['data'], restart?: boolean, header?: string): void;
 }
 
+interface SimplifyResources {
+  registerHandler(
+    this: this,
+    handler: (settings: JQueryAjaxSettings, url: string) => void,
+    filter?: string | RegExp,
+    beforeCall?: boolean,
+  ): void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  loadJSONPatched(this: this, path: string): Promise<any>;
+}
+declare let simplifyResources: SimplifyResources;
+
 interface Simplify {
   options: SimplifyOptions;
+  resources: SimplifyResources;
 }
 declare let simplify: Simplify;
 

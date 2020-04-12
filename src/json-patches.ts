@@ -1,6 +1,6 @@
-/* global simplify, simplifyResources */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-function addEnglishLabelsToLangFile(data) {
+function addEnglishLabelsToLangFile(data: any): any {
   return ig.merge(data, {
     labels: {
       'combat-hud': {
@@ -27,7 +27,9 @@ function addEnglishLabelsToLangFile(data) {
   });
 }
 
-const JSON_PATCHES = {
+type JsonPatchFunction = (data: any) => MaybePromise<any>;
+
+const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
   'data/lang/sc/gui.de_DE.json': addEnglishLabelsToLangFile,
   'data/lang/sc/gui.en_US.json': addEnglishLabelsToLangFile,
   'data/lang/sc/gui.ja_JP.json': addEnglishLabelsToLangFile,
@@ -53,7 +55,7 @@ const JSON_PATCHES = {
   'data/credits/radicalfish-core.json': async data => {
     if (ig.currentLang !== 'ru_RU') return data;
 
-    let entries = Object.entries(data.entries);
+    let entries = Object.entries<any>(data.entries);
 
     // TODO: get mod instance through the Plugin constructor and use
     // simplify.resources.loadJSON
@@ -69,7 +71,7 @@ const JSON_PATCHES = {
     entries[felixIndex][1].bottomPad = 80;
     entries.splice(felixIndex + 1, 0, ...russianEntries);
 
-    data.entries = entries.reduce((obj, [key, value]) => {
+    data.entries = entries.reduce<any>((obj, [key, value]) => {
       obj[key] = value;
       return obj;
     }, {});
@@ -154,7 +156,10 @@ const JSON_PATCHES = {
   'data/scale-props/rhombus-sqr.json': data => {
     if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
-    function patchProp(prop, { srcX, srcY, width }) {
+    function patchProp(
+      prop: any,
+      { srcX, srcY, width }: { srcX: number; srcY: number; width: number },
+    ): void {
       Object.assign(prop, {
         gfx: 'media/map/rhombus-sign.ru_RU.png',
         gfxBaseX: 0,
@@ -233,9 +238,13 @@ simplifyResources.registerHandler(
     let patchFunction = JSON_PATCHES[url];
     if (patchFunction == null) return;
 
-    let oldSuccess = settings.success;
-    let oldError = settings.error;
-    settings.success = function(json, state, xhr) {
+    let oldSuccess = settings.success!;
+    let oldError = settings.error!;
+    settings.success = function(
+      json: any,
+      state: string,
+      xhr: JQueryXHR,
+    ): void {
       new Promise(resolve =>
         resolve(
           // if `patchFunction` returns a promise here `resolve` will wait for
