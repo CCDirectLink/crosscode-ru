@@ -42,6 +42,8 @@ declare namespace sc.ui2 {
     speed: Vec2;
     delayAtBorders: Vec2;
     constantTextOffset: Vec2;
+    shadowSize: Vec2;
+    shadowGfx: ig.Image;
     maxSize: Partial<Vec2> | null;
     focusTarget: ig.FocusGui | null;
     focusTargetKeepPressed: boolean;
@@ -57,6 +59,9 @@ declare namespace sc.ui2 {
       hook: ig.GuiHook,
       renderText: sc.ui2.TickerDisplayHook.RenderTextCallback,
     ): this['__instance'];
+
+    PATTERN_SHADOW_LEFT: ig.ImagePattern;
+    PATTERN_SHADOW_RIGHT: ig.ImagePattern;
   }
   let TickerDisplayHook: TickerDisplayHookConstructor;
 

@@ -1,6 +1,7 @@
 if (sc.ui2.debug == null) sc.ui2.debug = {} as typeof sc.ui2.debug;
 
 sc.ui2.debug.showTickerBoundaryBoxes = false;
+sc.ui2.debug.noTickerShadows = true;
 
 // this function is meant to be injected in place of updateDrawables
 sc.ui2.debug.highlightUpdateDrawables = function(renderer): void {

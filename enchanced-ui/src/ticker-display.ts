@@ -26,6 +26,7 @@ ig.module('enchanced-ui.ticker-display')
       speed: { x: 50, y: 50 }, // pixels per second
       delayAtBorders: { x: 1, y: 1 }, // seconds
       constantTextOffset: { x: 0, y: 0 }, // pixels
+      shadowGfx: new ig.Image('media/gui/ticker-display-shadow.png'),
       maxSize: null,
       focusTarget: null,
       focusTargetKeepPressed: false,
@@ -33,6 +34,25 @@ ig.module('enchanced-ui.ticker-display')
       init(hook, renderText) {
         this.hook = hook;
         this.renderText = renderText;
+
+        if (this.constructor.PATTERN_SHADOW_LEFT == null) {
+          this.constructor.PATTERN_SHADOW_LEFT = this.shadowGfx.createPattern(
+            0,
+            0,
+            8,
+            1,
+            ig.ImagePattern.OPT.REPEAT_Y,
+          );
+        }
+        if (this.constructor.PATTERN_SHADOW_RIGHT == null) {
+          this.constructor.PATTERN_SHADOW_RIGHT = this.shadowGfx.createPattern(
+            0,
+            1,
+            8,
+            1,
+            ig.ImagePattern.OPT.REPEAT_Y,
+          );
+        }
       },
 
       update() {
@@ -94,23 +114,26 @@ ig.module('enchanced-ui.ticker-display')
         };
         if (!overflow.x && !overflow.y) return false;
 
+        let clippedSizeX = maxSize.x - this.constantTextOffset.x;
+        let clippedSizeY = maxSize.y - this.constantTextOffset.y;
+
         renderer
           .addTransform()
           .setTranslate(
             prtPos.x + this.constantTextOffset.x,
             prtPos.y + this.constantTextOffset.y,
           )
-          .setClip(
-            maxSize.x - this.constantTextOffset.x,
-            maxSize.y - this.constantTextOffset.y,
-          );
+          .setClip(clippedSizeX, clippedSizeY);
+
+        let maxOffset = {
+          x: size.x - maxSize.x,
+          y: size.y - maxSize.y,
+        };
 
         // TODO: display shadows at the overflowing side
         const calculateOffset = (axis: 'x' | 'y'): number => {
           if (!overflow[axis]) return 0;
-          // well, control flow based type analysis is limited only to local
-          // function scopes, so I have to make a non-null assertion here
-          let length = size[axis] - maxSize![axis];
+          let length = maxOffset[axis];
           let spd = this.speed[axis];
           // multiply the delay by speed so that delay isn't affected by speed
           // and always means the same time in seconds
@@ -128,6 +151,48 @@ ig.module('enchanced-ui.ticker-display')
         let offsetY = calculateOffset('y');
 
         this.renderText(renderer, -offsetX, -offsetY);
+
+        // Ticker shadows definitely need more refinement if they were to be
+        // added, officially but we agreed that they are unnecessary, so I
+        // disabled them in production. Although I'm keeping the code if it
+        // comes in handy in the future.
+        if (overflow.x && !sc.ui2.debug.noTickerShadows) {
+          const {
+            PATTERN_SHADOW_LEFT,
+            PATTERN_SHADOW_RIGHT,
+          } = this.constructor;
+
+          const COMPOSITION_MODE = 'overlay';
+          // const COMPOSITION_MODE = 'soft-light';
+          // const COMPOSITION_MODE = 'destination-out';
+          // const COMPOSITION_MODE = 'xor';
+          if (offsetX > 0) {
+            renderer
+              .addPattern(
+                PATTERN_SHADOW_LEFT,
+                0,
+                0,
+                0,
+                0,
+                PATTERN_SHADOW_LEFT.width,
+                clippedSizeY,
+              )
+              .setCompositionMode(COMPOSITION_MODE);
+          }
+          if (offsetX < maxOffset.x) {
+            renderer
+              .addPattern(
+                PATTERN_SHADOW_RIGHT,
+                clippedSizeX - PATTERN_SHADOW_RIGHT.width,
+                0,
+                0,
+                0,
+                PATTERN_SHADOW_RIGHT.width,
+                clippedSizeY,
+              )
+              .setCompositionMode(COMPOSITION_MODE);
+          }
+        }
 
         renderer.undoTransform();
 

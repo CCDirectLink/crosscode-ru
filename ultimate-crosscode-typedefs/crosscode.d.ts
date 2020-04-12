@@ -20,14 +20,18 @@ declare type ReplaceThisParameter<T, This2> = T extends (
 
 declare type ImpactClassMember<
   K extends keyof Proto,
+  Ctor,
   Proto,
   ParentProto
-> = K extends keyof ParentProto
-  ? ReplaceThisParameter<Proto[K], Proto & { parent: ParentProto[K] }>
-  : Proto[K];
+> = ReplaceThisParameter<
+  Proto[K],
+  Proto & { constructor: Ctor } & (K extends keyof ParentProto
+      ? { parent: ParentProto[K] }
+      : {})
+>;
 
-declare type ImpactClassDefinition<Proto, ParentProto> = {
-  [K in keyof Proto]?: ImpactClassMember<K, Proto, ParentProto> | null;
+declare type ImpactClassDefinition<Ctor, Proto, ParentProto> = {
+  [K in keyof Proto]?: ImpactClassMember<K, Ctor, Proto, ParentProto> | null;
 };
 
 declare type ImpactClassPrototype<
@@ -41,6 +45,7 @@ declare interface ImpactClass<Instance> {
   extend<ChildConstructor extends { prototype: unknown }>(
     this: this,
     classDefinition: ImpactClassDefinition<
+      ChildConstructor,
       ChildConstructor['prototype'],
       this['prototype']
     >,
@@ -48,6 +53,7 @@ declare interface ImpactClass<Instance> {
   inject(
     this: this,
     classDefinition: ImpactClassDefinition<
+      this,
       this['prototype'],
       this['prototype']
     >,
@@ -171,11 +177,37 @@ declare namespace ig {
     loadInternal(this: this, path: string): void;
     onload(this: this, event: Event): void;
     reload(this: this): void;
+    createPattern(
+      this: this,
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+      optimization: ig.ImagePattern.OPT,
+    ): ig.ImagePattern;
   }
   interface ImageConstructor extends ImpactClass<Image> {
     new (pathOrData: string): this['__instance'];
   }
   let Image: ImageConstructor;
+
+  enum ImagePattern$OPT {
+    NONE,
+    REPEAT_X,
+    REPEAT_Y,
+    REPEAT_X_OR_Y,
+    REPEAT_X_AND_Y,
+  }
+  namespace ImagePattern {
+    type OPT = ImagePattern$OPT;
+  }
+  interface ImagePattern extends ig.Class {
+    width: number;
+  }
+  interface ImagePatternConstructor extends ImpactClass<ImagePattern> {
+    OPT: typeof ImagePattern$OPT;
+  }
+  let ImagePattern: ImagePatternConstructor;
 
   interface ImageAtlasFragment extends ig.Class {}
   interface ImageAtlasFragmentConstructor
@@ -289,6 +321,7 @@ declare namespace ig {
     reset(this: this): void;
     isFinished(this: this): boolean;
     update(this: this): void;
+    draw(this: this, x: number, y: number): void;
   }
   interface TextBlockConstructor extends ImpactClass<TextBlock> {
     new (
@@ -342,6 +375,7 @@ declare namespace ig {
     height: number;
     tick: number;
     actualTick: number;
+    context: CanvasRenderingContext2D;
 
     setFocusLost(this: this): void;
     regainFocus(this: this): void;
@@ -350,6 +384,10 @@ declare namespace ig {
       this: this,
       listener: (focusLost: boolean) => void,
     ): void;
+    getBufferContext(
+      this: this,
+      buffer: HTMLCanvasElement,
+    ): CanvasRenderingContext2D;
   }
   interface SystemConstructor extends ImpactClass<System> {}
   let System: SystemConstructor;
@@ -638,6 +676,16 @@ declare namespace ig {
       sizeX: number,
       sizeY: number,
     ): ig.GuiDrawable;
+    addPattern(
+      this: this,
+      pattern: ig.ImagePattern,
+      posX: number,
+      posY: number,
+      srcX: number,
+      srcY: number,
+      sizeX: number,
+      sizeY: number,
+    ): ig.GuiDrawable;
     addText(
       this: this,
       textBlock: ig.TextBlock,
@@ -699,6 +747,7 @@ declare namespace ig {
 
   interface GuiDrawable extends ig.Class {
     setAlpha(this: this, alpha: number): this;
+    setCompositionMode(this: this, mode: string): this;
   }
   interface GuiDrawableConstructor extends ImpactClass<GuiDrawable> {}
   let GuiDrawable: GuiDrawableConstructor;

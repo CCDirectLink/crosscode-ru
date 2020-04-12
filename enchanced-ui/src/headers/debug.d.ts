@@ -1,5 +1,6 @@
 declare namespace sc.ui2.debug {
   let showTickerBoundaryBoxes: boolean;
+  let noTickerShadows: boolean;
 
   function highlightUpdateDrawables(
     this: ig.GuiElementBase & {
