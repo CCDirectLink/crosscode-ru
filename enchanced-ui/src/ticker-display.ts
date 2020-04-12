@@ -293,15 +293,14 @@ ig.module('enchanced-ui.ticker-display')
         this.tickerHook = new sc.ui2.TickerDisplayHook(
           this.hook,
           (renderer, x, y) => {
-            let offset = 0;
-            this.textBlocks.forEach(tb => {
-              // TODO: enable this via a debug flag
-              // let color = ['red', 'green', 'blue'][blockIndex % 3];
-              // renderer
-              //   .addColor(color, x + offset, y, tb.size.x, tb.size.y)
-              //   .setAlpha(0.3);
-              renderer.addText(tb, x + offset, y);
-              offset += tb.size.x;
+            this.textBlocks.forEach((textBlock, index) => {
+              let { size } = textBlock;
+              if (sc.ui2.debug.showLongHorizontalTextBlocks) {
+                let color = ['red', 'green', 'blue'][index % 3];
+                renderer.addColor(color, x, y, size.x, size.y).setAlpha(0.25);
+              }
+              renderer.addText(textBlock, x, y);
+              x += size.x;
             });
           },
         );
@@ -418,7 +417,8 @@ ig.module('enchanced-ui.ticker-display')
         this.tickerHook.updateDrawables(renderer);
       },
     });
-    // the splitting width is a smaller than ig.system.width, just to be safe
+    // the splitting width is a little smaller than `ig.system.width`, just to
+    // be safe
     sc.ui2.LongHorizontalTextGui.SPLIT_WIDTH = 500;
 
     function parseIconText(
