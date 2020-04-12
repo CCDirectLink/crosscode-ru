@@ -27,7 +27,7 @@ ig.module('crosscode-ru.fixes.credits-section')
         let addedChildren = this.content.hook.children.slice(
           -(namesEmpty ? 1 : 2),
         );
-        addedChildren.forEach(({ gui }) => {
+        for (let { gui } of addedChildren) {
           gui.onVisibilityChange = (visible): void => {
             if (visible) {
               gui.doStateTransition(
@@ -41,7 +41,7 @@ ig.module('crosscode-ru.fixes.credits-section')
               gui.doStateTransition('HIDDEN', true);
             }
           };
-        });
+        }
       },
 
       createNames(names, columns, columnGuis, pos) {
@@ -54,9 +54,9 @@ ig.module('crosscode-ru.fixes.credits-section')
           // unfortunately the '?' marker on fields in TS allows only undefined
           // and not null, so I have to make an obviously wrong assertion here
           columnGui.onVisibilityChange = null!;
-          columnGui.hook.children.forEach(nameHook => {
+          for (let nameHook of columnGui.hook.children) {
             nameHook.doStateTransition('HIDDEN', true);
-          });
+          }
 
           // Unfortunately, 'onVisibilityChange' works incorrectly on children
           // of 'columnGui'. Well, I have one more trick up my sleeve:

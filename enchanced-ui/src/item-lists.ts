@@ -4,10 +4,10 @@ function guiMapChildren<T extends ig.GuiElementBase = ig.GuiElementBase>(
 ): void {
   let oldChildHooks = [...gui.hook.children];
   gui.removeAllChildren();
-  oldChildHooks.forEach(oldChildHook => {
+  for (let oldChildHook of oldChildHooks) {
     let newChild = callback(oldChildHook.gui as T);
     gui.addChildGui(newChild as ig.GuiElementBase);
-  });
+  }
 }
 
 ig.module('enchanced-ui.fixes.item-lists')
@@ -143,7 +143,7 @@ ig.module('enchanced-ui.fixes.item-lists.trade-gui')
     sc.TradeIconGui.inject({
       _createContent() {
         this.parent();
-        this.entries.forEach(entry => {
+        for (let entry of this.entries) {
           let { gui } = entry;
           let newGui = new sc.ui2.IconTextGui(
             gui.text,
@@ -155,6 +155,7 @@ ig.module('enchanced-ui.fixes.item-lists.trade-gui')
           newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
           let { level, numberGfx } = gui;
           if (level > 0) {
+            // eslint-disable-next-line no-loop-func
             newGui.setDrawCallback((width, height) =>
               sc.MenuHelper.drawLevel(level, width, height, numberGfx),
             );
@@ -166,7 +167,7 @@ ig.module('enchanced-ui.fixes.item-lists.trade-gui')
           entry.gui = (newGui as unknown) as sc.TextGui & {
             tradeName: string;
           } & sc.TextGui.LevelDrawData;
-        });
+        }
       },
     });
 
@@ -174,15 +175,16 @@ ig.module('enchanced-ui.fixes.item-lists.trade-gui')
       setTraderData(...args) {
         this.parent(...args);
 
-        this.requireGui.hook.children
-          .concat(this.getGui.hook.children)
-          .forEach(({ gui }) => {
-            if (gui instanceof sc.TradeItem) {
-              // make ticker displays permanent here because there is no way to
-              // move the mouse over those "buttons"
-              gui.button.textChild.tickerHook.focusTarget = null;
-            }
-          });
+        for (let { gui } of [
+          ...this.requireGui.hook.children,
+          ...this.getGui.hook.children,
+        ]) {
+          if (gui instanceof sc.TradeItem) {
+            // make ticker displays permanent here because there is no way to
+            // move the mouse over those "buttons"
+            gui.button.textChild.tickerHook.focusTarget = null;
+          }
+        }
       },
     });
   });
@@ -276,9 +278,9 @@ ig.module('enchanced-ui.fixes.item-lists.quests')
     sc.TaskEntry.inject({
       setTask(...args) {
         this.parent(...args);
-        this._subtasks.forEach(subTaskEntry => {
+        for (let subTaskEntry of this._subtasks) {
           subTaskEntry._updateTickerMaxSize();
-        });
+        }
       },
     });
   });

@@ -18,7 +18,7 @@ ig.module('crosscode-ru.fixes.pause-screen')
       },
 
       _fixButtonWidths() {
-        [
+        for (let btn of [
           this.resumeButton,
           this.skipButton,
           this.cancelButton,
@@ -27,9 +27,9 @@ ig.module('crosscode-ru.fixes.pause-screen')
           this.optionsButton,
           this.arenaRestart,
           this.arenaLobby,
-        ].forEach(btn => {
+        ]) {
           btn.setWidth(sc.BUTTON_DEFAULT_WIDTH + 10);
-        });
+        }
       },
     });
   });

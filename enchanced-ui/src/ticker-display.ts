@@ -293,15 +293,16 @@ ig.module('enchanced-ui.ticker-display')
         this.tickerHook = new sc.ui2.TickerDisplayHook(
           this.hook,
           (renderer, x, y) => {
-            this.textBlocks.forEach((textBlock, index) => {
+            for (let i = 0, len = this.textBlocks.length; i < len; i++) {
+              let textBlock = this.textBlocks[i];
               let { size } = textBlock;
               if (sc.ui2.debug.showLongHorizontalTextBlocks) {
-                let color = ['red', 'green', 'blue'][index % 3];
+                let color = ['red', 'green', 'blue'][i % 3];
                 renderer.addColor(color, x, y, size.x, size.y).setAlpha(0.25);
               }
               renderer.addText(textBlock, x, y);
               x += size.x;
-            });
+            }
           },
         );
         this.setText(text);
@@ -332,16 +333,22 @@ ig.module('enchanced-ui.ticker-display')
 
         const flushBlock = (blockEnd: number): void => {
           let blockParsedText = this.parsedText.slice(blockStart, blockEnd + 1);
-          let blockCommands = this.commands
-            .filter(
-              ({ index, command }) =>
-                'color' in command && index >= blockStart && index <= blockEnd,
-            )
-            .map(({ index, command }) => ({
-              index: index - blockStart,
-              command,
-            }));
-          blockCommands.unshift({ index: 0, command: { color: lastColor } });
+          let blockCommands = [{ index: 0, command: { color: lastColor } }];
+          let maxColorCmdIndex = 0;
+          for (let { index, command } of this.commands) {
+            if (
+              'color' in command &&
+              index >= blockStart &&
+              index <= blockEnd
+            ) {
+              index -= blockStart;
+              if (index >= maxColorCmdIndex) {
+                lastColor = command.color;
+                maxColorCmdIndex = index;
+              }
+              blockCommands.push({ index, command });
+            }
+          }
 
           let textBlock = new ig.TextBlock(
             this.font,
@@ -353,16 +360,6 @@ ig.module('enchanced-ui.ticker-display')
             this.hook.size.x + textBlock.size.x,
             Math.max(this.hook.size.y, textBlock.size.y),
           );
-
-          if (blockCommands.length > 0) {
-            let maxCmdIndex = 0;
-            blockCommands.forEach(({ index: cmdIndex, command }) => {
-              if ('color' in command && cmdIndex >= maxCmdIndex) {
-                lastColor = command.color;
-                maxCmdIndex = cmdIndex;
-              }
-            });
-          }
 
           blockStart = blockEnd + 1;
           textWidth = 0;
@@ -387,11 +384,15 @@ ig.module('enchanced-ui.ticker-display')
       },
 
       prerender() {
-        this.textBlocks.forEach(tb => tb.prerender());
+        for (let i = 0, len = this.textBlocks.length; i < len; i++) {
+          this.textBlocks[i].prerender();
+        }
       },
 
       clear() {
-        this.textBlocks.forEach(tb => tb.clearPrerendered());
+        for (let i = 0, len = this.textBlocks.length; i < len; i++) {
+          this.textBlocks[i].clearPrerendered();
+        }
       },
 
       onVisibilityChange(visible) {
@@ -409,7 +410,9 @@ ig.module('enchanced-ui.ticker-display')
       },
 
       update() {
-        this.textBlocks.forEach(tb => tb.update());
+        for (let i = 0, len = this.textBlocks.length; i < len; i++) {
+          this.textBlocks[i].update();
+        }
         this.tickerHook.update();
       },
 
@@ -447,10 +450,10 @@ ig.module('enchanced-ui.ticker-display')
           firstIcon = String.fromCharCode(firstChar);
           parsedText = parsedText.slice(1);
           iconCommands = [];
-          commands.forEach(cmd => {
+          for (let cmd of commands) {
             cmd.index = Math.max(cmd.index - 1, 0);
             if (cmd.index === 0) iconCommands.push(cmd);
-          });
+          }
         }
       }
 

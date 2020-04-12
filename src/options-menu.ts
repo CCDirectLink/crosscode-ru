@@ -33,7 +33,7 @@ ig.module('crosscode-ru.fixes.options-menu')
     };
 
     let allMods = window.activeMods.concat(window.inactiveMods);
-    allMods.forEach(mod => {
+    for (let mod of allMods) {
       let descriptionFragment = TRANSLATED_MOD_DESCRIPTIONS[mod.name];
       if (descriptionFragment != null && mod.manifest.description != null) {
         sc.ru.localizeProp(
@@ -42,7 +42,7 @@ ig.module('crosscode-ru.fixes.options-menu')
           descriptionFragment,
         );
       }
-    });
+    }
 
     // TODO: I hope I'll remove the event listener once I rewrite simplify.
     document.body.addEventListener('simplifyInitialized', () => {

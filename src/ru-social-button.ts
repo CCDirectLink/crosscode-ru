@@ -36,7 +36,7 @@ ig.module('crosscode-ru.social-button')
       container.appendChild(header);
 
       let list = document.createElement('ul');
-      LINKS.forEach(({ url, description }) => {
+      for (let { url, description } of LINKS) {
         let a = document.createElement('a');
         a.href = url;
         a.target = '_blank';
@@ -54,7 +54,7 @@ ig.module('crosscode-ru.social-button')
         li.append(a, ` - ${description}`);
 
         list.append(li);
-      });
+      }
       container.append(list);
 
       let closeBtn = document.createElement('input');

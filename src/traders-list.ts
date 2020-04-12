@@ -61,14 +61,14 @@ ig.module('crosscode-ru.fixes.traders-list')
 
         list.setSize = listSetSizeOld;
 
-        list.contentPane.hook.children.forEach(hook => {
+        for (let hook of list.contentPane.hook.children) {
           hook.pos.x += TRADERS_LIST_ADDITIONAL_WIDTH;
-        });
-        (list as sc.ButtonListBox & {
+        }
+        for (let hook of (list as sc.ButtonListBox & {
           traderInfoGui: ig.GuiElementBase;
-        }).traderInfoGui.hook.children.forEach(hook => {
+        }).traderInfoGui.hook.children) {
           hook.size.x += TRADERS_LIST_ADDITIONAL_WIDTH;
-        });
+        }
       },
     });
 

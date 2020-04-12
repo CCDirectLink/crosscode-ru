@@ -92,11 +92,12 @@ export class NotaClient {
   async fetchAllChapterStatuses(): Promise<ChapterStatuses> {
     let doc = await this.makeRequest(`/book/${BOOK_ID}`);
     let result: ChapterStatuses = {};
-    doc.querySelectorAll<HTMLElement>('#Chapters > tbody > tr').forEach(tr => {
+    for (let tr of doc.querySelectorAll<HTMLElement>(
+      '#Chapters > tbody > tr',
+    )) {
       let chapterStatus = parseChapterStatus(tr);
-      if (chapterStatus == null) return;
-      result[chapterStatus.name] = chapterStatus;
-    });
+      if (chapterStatus != null) result[chapterStatus.name] = chapterStatus;
+    }
     return result;
   }
 
@@ -115,10 +116,10 @@ export class NotaClient {
             .makeRequest(`/book/${BOOK_ID}/${status.id}?Orig_page=${i + 1}`)
             .then(doc => {
               let fragments: Fragment[] = [];
-              doc.querySelectorAll('#Tr > tbody > tr').forEach(tr => {
+              for (let tr of doc.querySelectorAll('#Tr > tbody > tr')) {
                 let f = parseFragment(tr);
                 if (f != null) fragments.push(f);
-              });
+              }
               return fragments;
             });
         }
@@ -190,10 +191,10 @@ function parseFragment(element: Element): Fragment | null {
   let escapeSequences = original.text.match(/\\[civs](\[[^\]]+\])?/g);
   let translations: Translation[] = [];
   f.translations = translations;
-  element.querySelectorAll('.t > div').forEach(translationElement => {
+  for (let translationElement of element.querySelectorAll('.t > div')) {
     let t = parseTranslation(translationElement, escapeSequences);
     if (t != null) translations.push(t);
-  });
+  }
   f.translations.sort((a, b) => b.score - a.score);
 
   return f as Fragment;

@@ -230,16 +230,15 @@ const JSON_PATCHES = {
       return data;
     }
 
-    data.props.forEach(prop => {
-      if (
-        prop.name === 'titleItem' ||
-        prop.name === 'titleScore' ||
-        prop.name === 'contentItem' ||
-        prop.name === 'contentScore'
-      ) {
-        prop.fix.gfx = 'media/entity/objects/rhombus-arena-text.ru_RU.png';
+    for (let prop of data.props) {
+      switch (prop.name) {
+        case 'titleItem':
+        case 'titleScore':
+        case 'contentItem':
+        case 'contentScore':
+          prop.fix.gfx = 'media/entity/objects/rhombus-arena-text.ru_RU.png';
       }
-    });
+    }
     return data;
   },
 };

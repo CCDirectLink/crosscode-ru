@@ -37,11 +37,14 @@ ig.module('crosscode-ru.fixes.main-menu.time-and-money-gui')
     sc.TimeAndMoneyGUI.inject({
       init() {
         this.parent();
-        [this.credit, this.timeSec, this.timeMin, this.timeHour].forEach(
-          ({ hook }) => {
-            hook.pos.x -= 4;
-          },
-        );
+        for (let { hook } of [
+          this.credit,
+          this.timeSec,
+          this.timeMin,
+          this.timeHour,
+        ]) {
+          hook.pos.x -= 4;
+        }
       },
 
       updateDrawables(renderer) {
