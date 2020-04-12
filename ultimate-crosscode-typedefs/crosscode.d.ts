@@ -1892,6 +1892,17 @@ declare namespace sc {
 }
 
 /* module game.feature.menu.gui.synop.synop-misc */
+
+declare namespace sc {
+  interface LogGuiTypeBase extends ig.GuiElementBase {
+    textGui: sc.TextGui;
+  }
+  interface LogGuiTypeBaseConstructor extends ImpactClass<LogGuiTypeBase> {
+    new (settings: any): this['__instance'];
+  }
+  let LogGuiTypeBase: LogGuiTypeBaseConstructor;
+}
+
 /* module game.feature.menu.gui.synop.synop-menu */
 
 /* module game.feature.menu.gui.quests.quest-misc */
