@@ -6,8 +6,21 @@ ig.module('enchanced-ui.fixes.options-menu')
   )
   .defines(() => {
     sc.OptionRow.inject({
-      init(option, ...args) {
-        this.parent(option, ...args);
+      childFocusTargets: [],
+
+      init(option, row, rowGroup, ...args) {
+        let rowGroupAddFocusGui = rowGroup.addFocusGui;
+        let focusTargets: ig.FocusGui[] = [];
+        rowGroup.addFocusGui = function(gui, ...args2): void {
+          focusTargets.push(gui);
+          return rowGroupAddFocusGui.call(this, gui, ...args2);
+        };
+
+        this.parent(option, row, rowGroup, ...args);
+
+        rowGroup.addFocusGui = rowGroupAddFocusGui;
+        this.childFocusTargets = focusTargets;
+
         let lineHook = this.hook.children[1];
         let slopeHook = this.hook.children[2];
 
@@ -18,7 +31,7 @@ ig.module('enchanced-ui.fixes.options-menu')
           // does, but apply it to every checkbox.
           this.option.checkboxRightAlign = false;
 
-          let checkbox = (this.typeGui as sc.OPTION_GUIS_defs.CHECKBOX).button;
+          let checkbox = (this.typeGui as sc.OPTION_GUIS_DEFS.CHECKBOX).button;
           checkbox.hook.align.x = ig.GUI_ALIGN.X_RIGHT;
           const additionalWidth =
             this.typeGui.hook.size.x - checkbox.hook.size.x;
@@ -36,8 +49,12 @@ ig.module('enchanced-ui.fixes.options-menu')
       update() {
         this.parent();
         // this._hasEntered is set in onMouseInteract of this class
-        // TODO: check whether this.typeGui is focused
-        if (!this._hasEntered) this.nameGui.tickerHook.timer = 0;
+        if (
+          !this._hasEntered &&
+          !this.childFocusTargets.some(target => target.focus)
+        ) {
+          this.nameGui.tickerHook.timer = 0;
+        }
       },
     });
 

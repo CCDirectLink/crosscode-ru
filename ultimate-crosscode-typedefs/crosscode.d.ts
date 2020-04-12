@@ -945,7 +945,9 @@ declare namespace sc {
   interface ButtonGroupConstructor extends ImpactClass<ButtonGroup> {}
   let ButtonGroup: ButtonGroupConstructor;
 
-  interface RowButtonGroup extends sc.ButtonGroup {}
+  interface RowButtonGroup extends sc.ButtonGroup {
+    addFocusGui(this: this, gui: ig.FocusGui, x: number, y: number): void;
+  }
   interface RowButtonGroupConstructor extends ImpactClass<RowButtonGroup> {}
   let RowButtonGroup: RowButtonGroupConstructor;
 }
@@ -1699,7 +1701,7 @@ declare namespace sc {
 
 declare namespace sc {
   /* eslint-disable @typescript-eslint/class-name-casing, @typescript-eslint/camelcase */
-  namespace OPTION_GUIS_defs {
+  namespace OPTION_GUIS_DEFS {
     interface BUTTON_GROUP extends ig.GuiElementBase {}
     interface BUTTON_GROUP_Constructor extends ImpactClass<BUTTON_GROUP> {}
 
@@ -1726,25 +1728,25 @@ declare namespace sc {
     /* eslint-enable @typescript-eslint/interface-name-prefix */
   }
   let OPTION_GUIS: [
-    sc.OPTION_GUIS_defs.BUTTON_GROUP_Constructor,
-    sc.OPTION_GUIS_defs.ARRAY_SLIDER_Constructor,
-    sc.OPTION_GUIS_defs.OBJECT_SLIDER_Constructor,
-    sc.OPTION_GUIS_defs.CHECKBOX_Constructor,
-    sc.OPTION_GUIS_defs.CONTROLS_Constructor,
-    sc.OPTION_GUIS_defs.LANGUAGE_Constructor,
-    sc.OPTION_GUIS_defs.INFO_Constructor,
+    sc.OPTION_GUIS_DEFS.BUTTON_GROUP_Constructor,
+    sc.OPTION_GUIS_DEFS.ARRAY_SLIDER_Constructor,
+    sc.OPTION_GUIS_DEFS.OBJECT_SLIDER_Constructor,
+    sc.OPTION_GUIS_DEFS.CHECKBOX_Constructor,
+    sc.OPTION_GUIS_DEFS.CONTROLS_Constructor,
+    sc.OPTION_GUIS_DEFS.LANGUAGE_Constructor,
+    sc.OPTION_GUIS_DEFS.INFO_Constructor,
   ];
 
   interface OptionRow extends ig.GuiElementBase {
     option: sc.OptionDefinition;
     nameGui: sc.TextGui;
     typeGui:
-      | sc.OPTION_GUIS_defs.BUTTON_GROUP
-      | sc.OPTION_GUIS_defs.ARRAY_SLIDER
-      | sc.OPTION_GUIS_defs.OBJECT_SLIDER
-      | sc.OPTION_GUIS_defs.CHECKBOX
-      | sc.OPTION_GUIS_defs.CONTROLS
-      | sc.OPTION_GUIS_defs.LANGUAGE;
+      | sc.OPTION_GUIS_DEFS.BUTTON_GROUP
+      | sc.OPTION_GUIS_DEFS.ARRAY_SLIDER
+      | sc.OPTION_GUIS_DEFS.OBJECT_SLIDER
+      | sc.OPTION_GUIS_DEFS.CHECKBOX
+      | sc.OPTION_GUIS_DEFS.CONTROLS
+      | sc.OPTION_GUIS_DEFS.LANGUAGE;
     _hasEntered: boolean;
   }
   interface OptionRowConstructor extends ImpactClass<OptionRow> {

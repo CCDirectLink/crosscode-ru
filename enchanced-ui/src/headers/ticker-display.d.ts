@@ -35,7 +35,6 @@ declare namespace sc.ui2 {
       y: number,
     ) => void;
   }
-
   interface TickerDisplayHook {
     hook: ig.GuiHook;
     renderText: sc.ui2.TickerDisplayHook.RenderTextCallback;
@@ -45,6 +44,7 @@ declare namespace sc.ui2 {
     constantTextOffset: Vec2;
     maxSize: Partial<Vec2> | null;
     focusTarget: ig.FocusGui | null;
+    focusTargetKeepPressed: boolean;
 
     update(this: this): void;
     updateDrawables(this: this, renderer: ig.GuiRenderer): void;

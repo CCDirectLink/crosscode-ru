@@ -28,6 +28,7 @@ ig.module('enchanced-ui.ticker-display')
       constantTextOffset: { x: 0, y: 0 }, // pixels
       maxSize: null,
       focusTarget: null,
+      focusTargetKeepPressed: false,
 
       init(hook, renderText) {
         this.hook = hook;
@@ -39,7 +40,9 @@ ig.module('enchanced-ui.ticker-display')
           this.focusTarget != null &&
           !(
             this.focusTarget.focus ||
-            (this.focusTarget.keepPressed && this.focusTarget.pressed)
+            (this.focusTargetKeepPressed &&
+              this.focusTarget.keepPressed &&
+              this.focusTarget.pressed)
           )
         ) {
           this.timer = 0;

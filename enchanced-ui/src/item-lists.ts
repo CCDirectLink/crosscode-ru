@@ -313,6 +313,7 @@ ig.module('enchanced-ui.fixes.item-lists.equipment-menu')
           x: this.button.hook.size.x - 5 * 2,
         };
         newTextChild.tickerHook.focusTarget = this.button;
+        newTextChild.tickerHook.focusTargetKeepPressed = true;
 
         this.button.removeChildGui(oldTextChild);
         this.button.addChildGui(newTextChild);
