@@ -23,6 +23,15 @@ declare namespace sc {
     mods = 8,
   }
 
+  namespace OPTIONS_DEFINITION {
+    interface KnownTypesMap {
+      'logLevel-log': sc.OptionDefinition.CHECKBOX;
+      'logLevel-warn': sc.OptionDefinition.CHECKBOX;
+      'logLevel-error': sc.OptionDefinition.CHECKBOX;
+      'mods-description': sc.OptionDefinition.INFO;
+    }
+  }
+
   namespace OptionDefinition {
     interface CHECKBOX {
       checkboxRightAlign: boolean;

@@ -1408,8 +1408,103 @@ declare namespace sc {
   let OPTIONS_DEFINITION: { [name: string]: OptionDefinition };
   /* eslint-enable @typescript-eslint/class-name-casing */
 
+  namespace OPTIONS_DEFINITION {
+    interface KnownTypesMap {
+      language: sc.OptionDefinition.LANGUAGE;
+      'pause-unfocused': sc.OptionDefinition.CHECKBOX;
+      'volume-music': sc.OptionDefinition.ARRAY_SLIDER;
+      'volume-sound': sc.OptionDefinition.ARRAY_SLIDER;
+      'skip-tutorials': sc.OptionDefinition.CHECKBOX;
+      'skip-confirm': sc.OptionDefinition.CHECKBOX;
+      'text-speed': sc.OptionDefinition.OBJECT_SLIDER;
+      'message-padding': sc.OptionDefinition.BUTTON_GROUP;
+      'game-sense': sc.OptionDefinition.CHECKBOX;
+      'circuit-text-size': sc.OptionDefinition.BUTTON_GROUP;
+      'circuit-display-time': sc.OptionDefinition.BUTTON_GROUP;
+      'equip-level-display': sc.OptionDefinition.CHECKBOX;
+      'level-letter-display': sc.OptionDefinition.CHECKBOX;
+      'buff-help': sc.OptionDefinition.CHECKBOX;
+      'update-trophy-style': sc.OptionDefinition.BUTTON_GROUP;
+      'update-quest-style': sc.OptionDefinition.BUTTON_GROUP;
+      'update-landmark-style': sc.OptionDefinition.BUTTON_GROUP;
+      'update-lore-style': sc.OptionDefinition.BUTTON_GROUP;
+      'update-drop-style': sc.OptionDefinition.BUTTON_GROUP;
+      'min-sidebar': sc.OptionDefinition.CHECKBOX;
+      'item-hud-size': sc.OptionDefinition.BUTTON_GROUP;
+      'show-items': sc.OptionDefinition.CHECKBOX;
+      'show-money': sc.OptionDefinition.CHECKBOX;
+      'min-quest': sc.OptionDefinition.CHECKBOX;
+      'quest-show-current': sc.OptionDefinition.CHECKBOX;
+      'xeno-pointer': sc.OptionDefinition.CHECKBOX;
+      'hud-display': sc.OptionDefinition.CHECKBOX;
+      'close-combat-input': sc.OptionDefinition.CHECKBOX;
+      'close-circle': sc.OptionDefinition.CHECKBOX;
+      'sp-bar': sc.OptionDefinition.CHECKBOX;
+      'element-overload': sc.OptionDefinition.CHECKBOX;
+      'low-health-warning': sc.OptionDefinition.CHECKBOX;
+      'combat-art-name': sc.OptionDefinition.CHECKBOX;
+      'damage-numbers': sc.OptionDefinition.CHECKBOX;
+      'damage-numbers-crit': sc.OptionDefinition.CHECKBOX;
+      's-rank-effects': sc.OptionDefinition.CHECKBOX;
+      'enemy-status-bars': sc.OptionDefinition.CHECKBOX;
+      'hp-bars': sc.OptionDefinition.BUTTON_GROUP;
+      'party-combat-arts': sc.OptionDefinition.BUTTON_GROUP;
+      'quick-menu-access': sc.OptionDefinition.BUTTON_GROUP;
+      'quick-location': sc.OptionDefinition.BUTTON_GROUP;
+      'quick-element': sc.OptionDefinition.CHECKBOX;
+      'quick-cursor': sc.OptionDefinition.CHECKBOX;
+      'display-type': sc.OptionDefinition.BUTTON_GROUP;
+      fullscreen: sc.OptionDefinition.CHECKBOX;
+      'pixel-size': sc.OptionDefinition.BUTTON_GROUP;
+      'rumble-strength': sc.OptionDefinition.BUTTON_GROUP;
+      speedlines: sc.OptionDefinition.CHECKBOX;
+      'env-particles': sc.OptionDefinition.CHECKBOX;
+      weather: sc.OptionDefinition.CHECKBOX;
+      lighting: sc.OptionDefinition.CHECKBOX;
+      'gamepad-attack': sc.OptionDefinition.BUTTON_GROUP;
+      'gamepad-dash': sc.OptionDefinition.BUTTON_GROUP;
+      'gamepad-icons': sc.OptionDefinition.BUTTON_GROUP;
+      'arena-cam-focus': sc.OptionDefinition.CHECKBOX;
+      'arena-confirm': sc.OptionDefinition.CHECKBOX;
+      'element-wheel': sc.OptionDefinition.CHECKBOX;
+      'keys-confirm': sc.OptionDefinition.CONTROLS;
+      'keys-back': sc.OptionDefinition.CONTROLS;
+      'keys-menu': sc.OptionDefinition.CONTROLS;
+      'keys-pause': sc.OptionDefinition.CONTROLS;
+      'keys-help': sc.OptionDefinition.CONTROLS;
+      'keys-help2': sc.OptionDefinition.CONTROLS;
+      'keys-help3': sc.OptionDefinition.CONTROLS;
+      'keys-skip-cutscene': sc.OptionDefinition.CONTROLS;
+      'keys-help4': sc.OptionDefinition.CONTROLS;
+      'keys-circle-left': sc.OptionDefinition.CONTROLS;
+      'keys-circle-right': sc.OptionDefinition.CONTROLS;
+      'keys-up': sc.OptionDefinition.CONTROLS;
+      'keys-right': sc.OptionDefinition.CONTROLS;
+      'keys-down': sc.OptionDefinition.CONTROLS;
+      'keys-left': sc.OptionDefinition.CONTROLS;
+      'keys-melee': sc.OptionDefinition.CONTROLS;
+      'keys-guard': sc.OptionDefinition.CONTROLS;
+      'keys-quick': sc.OptionDefinition.CONTROLS;
+      'keys-special': sc.OptionDefinition.CONTROLS;
+      'keys-dash2': sc.OptionDefinition.CONTROLS;
+      'keys-cold': sc.OptionDefinition.CONTROLS;
+      'keys-shock': sc.OptionDefinition.CONTROLS;
+      'keys-heat': sc.OptionDefinition.CONTROLS;
+      'keys-wave': sc.OptionDefinition.CONTROLS;
+      'keys-neutral': sc.OptionDefinition.CONTROLS;
+      'assists-description': sc.OptionDefinition.INFO;
+      'assist-damage': sc.OptionDefinition.OBJECT_SLIDER;
+      'assist-attack-frequency': sc.OptionDefinition.OBJECT_SLIDER;
+      'assist-puzzle-speed': sc.OptionDefinition.OBJECT_SLIDER;
+    }
+  }
+
   interface OptionModel extends ig.GameAddon {
-    // TODO: define this the same way as document.createElement for known options
+    get<K extends keyof sc.OPTIONS_DEFINITION.KnownTypesMap>(
+      this: this,
+      key: K,
+      local?: boolean,
+    ): sc.OPTIONS_DEFINITION.KnownTypesMap[K]['init'];
     get(this: this, key: string, local?: boolean): unknown;
   }
   interface OptionModelConstructor extends ImpactClass<OptionModel> {}

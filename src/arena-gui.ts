@@ -1,6 +1,11 @@
 ig.module('crosscode-ru.fixes.arena-gui')
-  .requires('game.feature.arena.gui.arena-round-gui')
+  .requires(
+    'game.feature.arena.gui.arena-round-gui',
+    'localize-me.final-locale.ready',
+  )
   .defines(() => {
+    if (ig.currentLang !== 'ru_RU') return;
+
     sc.ArenaRoundEndButtons.inject({
       init(...args) {
         this.parent(...args);
