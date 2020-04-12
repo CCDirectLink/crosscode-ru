@@ -1,5 +1,5 @@
-const LOCALIZE_ME_PACKS_DIR = `ru-translation-tool-ng/localize-me-packs/`;
-const LOCALIZE_ME_MAPPING_FILE = `ru-translation-tool-ng/localize-me-mapping.json`;
+const LOCALIZE_ME_PACKS_DIR = 'ru-translation-tool/localize-me-packs/';
+const LOCALIZE_ME_MAPPING_FILE = 'ru-translation-tool/localize-me-mapping.json';
 
 const RUSSIAN_FONT_CHARACTERS =
   'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя';

@@ -12,7 +12,7 @@ function addEnglishLabelsToLangFile(data) {
       options: {
         headers: {
           'crosscode-ru': {
-            options: 'crosscode-ru-ng options',
+            options: 'crosscode-ru options',
           },
         },
         'crosscode-ru': {

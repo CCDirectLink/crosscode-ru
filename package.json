@@ -1,10 +1,10 @@
 {
   "private": true,
-  "name": "crosscode-ru-ng",
+  "name": "crosscode-ru",
   "version": "0.0.0",
   "license": "(MIT AND CC-BY-4.0)",
   "description": "Russian translation for CrossCode",
-  "homepage": "https://github.com/dmitmel/crosscode-ru-ng",
+  "homepage": "https://github.com/dmitmel/crosscode-ru",
   "engines": {
     "node": ">=11.0.0"
   },

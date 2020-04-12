@@ -15,7 +15,7 @@ ig.module('crosscode-ru.social-button')
       { url: 'https://vk.com/crusscode', description: 'Наша группа в VK' },
       { url: 'https://discord.gg/QANXNbR', description: 'Наш Discord-сервер' },
       {
-        url: 'https://github.com/dmitmel/crosscode-ru-ng',
+        url: 'https://github.com/dmitmel/crosscode-ru',
         description: 'Исходный код основного мода',
       },
       {

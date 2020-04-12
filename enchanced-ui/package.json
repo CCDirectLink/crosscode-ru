@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "description": "Various GUI enchancments and fixes",
-  "homepage": "https://github.com/dmitmel/crosscode-ru-ng/tree/master/enchanced-ui",
+  "homepage": "https://github.com/dmitmel/crosscode-ru/tree/master/enchanced-ui",
   "engines": {
     "node": ">=11.0.0"
   },

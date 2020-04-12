@@ -20,7 +20,7 @@ endif
 .RECIPEPREFIX = >
 
 ifeq ($(origin TOOL_DATA_DIR), undefined)
-  $(error TOOL_DATA_DIR is undefined. Please set to $$GAME_DIR/assets/ru-translation-tool-ng or something like that)
+  $(error TOOL_DATA_DIR is undefined. Please set to $$GAME_DIR/assets/ru-translation-tool or something like that)
 endif
 
 .PHONY: all clean
@@ -42,7 +42,7 @@ ENCHANCED_UI_MOD_VERSION := $(shell jq -r '.version' ../enchanced-ui/package.jso
 ENCHANCED_UI_MOD_DIR := $(ENCHANCED_UI_MOD_ID)
 LOCALIZE_ME_MOD_DIR := Localize-me
 CC_WORLD_MAP_OVERHAUL_MOD_DIR := cc-world-map-overhaul
-TRANSLATIONS_DIR := assets/ru-translation-tool-ng
+TRANSLATIONS_DIR := assets/ru-translation-tool
 
 TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map LICENSE main.html package.json prestart.js postload.js
 TOOL_FILES := $(call find_by_patterns,../tool,$(TOOL_FILES))

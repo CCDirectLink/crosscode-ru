@@ -1,10 +1,10 @@
 {
   "private": true,
-  "name": "crosscode-ru-ng-translation-tool",
+  "name": "crosscode-ru-translation-tool",
   "version": "0.0.0",
   "license": "MIT",
   "description": "Russian translation tool for CrossCode",
-  "homepage": "https://github.com/dmitmel/crosscode-ru-ng",
+  "homepage": "https://github.com/dmitmel/crosscode-ru/tree/master/tool",
   "engines": {
     "node": ">=11.0.0"
   },
@@ -18,7 +18,7 @@
   "module": true,
   "prestart": "dist/mod/prestart.js",
   "ccmodDependencies": {
-    "crosscode-ru-ng": "*"
+    "crosscode-ru": "*"
   },
   "devDependencies": {
     "node-sass": "^4.13.1"

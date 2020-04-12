@@ -7,12 +7,12 @@ ig.module('crosscode-ru.fixes.options-menu')
       string,
       sc.ru.LocalizableFragment
     > = {
-      'crosscode-ru-ng': {
+      'crosscode-ru': {
         orig: 'Russian translation for CrossCode',
         text:
           'Русский перевод CrossCode и соответствующие исправления интерфейса',
       },
-      'crosscode-ru-ng-translation-tool': {
+      'crosscode-ru-translation-tool': {
         orig: 'Russian translation tool for CrossCode',
         text: 'Русский инструмент переводчика CrossCode',
       },
