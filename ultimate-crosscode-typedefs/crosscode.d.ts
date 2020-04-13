@@ -1641,6 +1641,7 @@ declare namespace sc {
     buttonGroup: sc.ButtonGroup;
     buttons: sc.ButtonGui[];
     changelogButton: sc.ButtonGui;
+    gameCodeButton: sc.ButtonGui;
 
     followButton: sc.ButtonGui;
 
