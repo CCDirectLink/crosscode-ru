@@ -11,12 +11,4 @@ ig.module('crosscode-ru.utils.localization')
     sc.ru.localizeProp = (obj, prop, fragment) => {
       obj[prop] = sc.ru.localize(obj[prop], fragment);
     };
-
-    sc.ru.shouldPatchSpriteLabels = notOptional => {
-      return (
-        ig.currentLang === 'ru_RU' &&
-        (notOptional ||
-          sc.options.get('crosscode-ru.localized-labels-on-sprites'))
-      );
-    };
   });

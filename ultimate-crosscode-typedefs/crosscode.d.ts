@@ -116,6 +116,8 @@ declare namespace ig {
   function requires(this: typeof ig, ...names: string[]): typeof ig;
   function defines(this: typeof ig, body: () => void): void;
 
+  function addGameAddon<T extends ig.GameAddon>(callback: () => T): void;
+
   function _execModules(this: typeof ig): void;
 
   interface Class {
@@ -599,8 +601,11 @@ declare namespace ig {
 
 declare namespace ig {
   interface Game extends ig.Class {}
-  interface GameConstructor extends ImpactClass<Game> {}
+  interface GameConstructor extends ImpactClass<Game> {
+    new (): this['__instance'];
+  }
   let Game: GameConstructor;
+  let game: Game;
 
   interface GameAddon extends ig.Class {}
   interface GameAddonConstructor extends ImpactClass<GameAddon> {}
@@ -1512,7 +1517,9 @@ declare namespace sc {
     ): sc.OPTIONS_DEFINITION.KnownTypesMap[K]['init'];
     get(this: this, key: string, local?: boolean): unknown;
   }
-  interface OptionModelConstructor extends ImpactClass<OptionModel> {}
+  interface OptionModelConstructor extends ImpactClass<OptionModel> {
+    new (): this['__instance'];
+  }
   let OptionModel: OptionModelConstructor;
   let options: OptionModel;
 }

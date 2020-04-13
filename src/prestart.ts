@@ -1,4 +1,5 @@
 import './localization-utils.js';
+import './localization-utils-sprites.js';
 
 import './arena-gui.js';
 import './circuit-menu.js';
