@@ -5,7 +5,7 @@ declare namespace sc.ru {
   }
 
   function localize(value: string, fragment: sc.ru.LocalizableFragment): string;
-  function localizeProp<K extends keyof any>(
+  function localizeProp<K extends PropertyKey>(
     obj: { [key in K]: string },
     prop: K,
     fragment: sc.ru.LocalizableFragment,

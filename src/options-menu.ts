@@ -4,14 +4,21 @@ ig.module('crosscode-ru.fixes.options-menu')
     'crosscode-ru.utils.localization',
   )
   .defines(() => {
-    sc.OPTIONS_DEFINITION['crosscode-ru.localized-labels-on-sprites'] = {
-      type: 'CHECKBOX',
-      init: true,
-      cat: sc.OPTION_CATEGORY.GENERAL,
-      restart: true,
-      hasDivider: true,
-      header: 'crosscode-ru.options',
-    };
+    // dammit, why are people relying on the order of keys in objects?
+    let optionsDefinitionEntries = Object.entries(sc.OPTIONS_DEFINITION);
+    let languageOptionIndex = optionsDefinitionEntries.findIndex(
+      ([key, _value]) => key === 'language',
+    );
+    sc.ru.insertAfterOrAppend(optionsDefinitionEntries, languageOptionIndex, [
+      'crosscode-ru.localized-labels-on-sprites',
+      {
+        type: 'CHECKBOX',
+        init: true,
+        cat: sc.OPTION_CATEGORY.GENERAL,
+        restart: true,
+      },
+    ]);
+    sc.OPTIONS_DEFINITION = sc.ru.objectFromEntries(optionsDefinitionEntries);
 
     if (ig.currentLang !== 'ru_RU') return;
 

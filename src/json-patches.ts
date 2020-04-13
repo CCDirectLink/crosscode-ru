@@ -10,11 +10,6 @@ function addEnglishLabelsToLangFile(data: any): any {
         changelog: 'Changelog',
       },
       options: {
-        headers: {
-          'crosscode-ru': {
-            options: 'crosscode-ru options',
-          },
-        },
         'crosscode-ru': {
           'localized-labels-on-sprites': {
             name: 'Localized labels on sprites',
@@ -53,14 +48,13 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
     let felixIndex = entries.findIndex(
       ([key, _value]) => key === 'creativeDirector',
     );
-    // don't forget that entries here has type `Array<[K, V]>`
-    entries[felixIndex][1].bottomPad = 80;
-    entries.splice(felixIndex + 1, 0, ...russianEntries);
+    if (felixIndex >= 0) {
+      // don't forget that `entries` here has type `Array<[K, V]>`
+      entries[felixIndex][1].bottomPad = 80;
+    }
+    sc.ru.insertAfterOrAppend(entries, felixIndex, ...russianEntries);
 
-    data.entries = entries.reduce<any>((obj, [key, value]) => {
-      obj[key] = value;
-      return obj;
-    }, {});
+    data.entries = sc.ru.objectFromEntries(entries);
 
     return data;
   },
