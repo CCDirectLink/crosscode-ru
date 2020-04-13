@@ -109,9 +109,9 @@ overrides:
       '@typescript-eslint/no-empty-interface': off
 
   - files:
-      - 'enchanced-ui/src/**/*.ts'
+      - 'enhanced-ui/src/**/*.ts'
     parserOptions:
-      project: 'enchanced-ui/tsconfig.json'
+      project: 'enhanced-ui/tsconfig.json'
 
   - files:
       - 'tool/src/**/*.ts'

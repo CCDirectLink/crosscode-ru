@@ -1,5 +1,5 @@
-ig.module('enchanced-ui.fixes.info-bar')
-  .requires('game.feature.menu.gui.menu-misc', 'enchanced-ui.ticker-display')
+ig.module('enhanced-ui.fixes.info-bar')
+  .requires('game.feature.menu.gui.menu-misc', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.InfoBar.inject({
       _associatedBuffInfo: null,

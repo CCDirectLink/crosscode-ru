@@ -37,7 +37,7 @@ ig.module('crosscode-ru.fixes.options-menu')
         orig: 'A better world map',
         text: 'Улучшенная карта мира',
       },
-      'enchanced-ui': {
+      'enhanced-ui': {
         orig: 'Various GUI enchancments and fixes',
         text:
           'Различные улучшения и общие исправления графического интерфейса пользователя',

@@ -1,10 +1,10 @@
 {
   "private": true,
-  "name": "enchanced-ui",
-  "version": "0.0.0",
+  "name": "enhanced-ui",
+  "version": "0.1.0",
   "license": "MIT",
   "description": "Various GUI enchancments and fixes",
-  "homepage": "https://github.com/dmitmel/crosscode-ru/tree/master/enchanced-ui",
+  "homepage": "https://github.com/dmitmel/crosscode-ru/tree/master/enhanced-ui",
   "engines": {
     "node": ">=11.0.0"
   },

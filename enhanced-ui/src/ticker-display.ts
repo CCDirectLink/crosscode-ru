@@ -1,4 +1,4 @@
-ig.module('enchanced-ui.ticker-display')
+ig.module('enhanced-ui.ticker-display')
   .requires(
     'impact.base.system',
     'impact.feature.gui.gui',

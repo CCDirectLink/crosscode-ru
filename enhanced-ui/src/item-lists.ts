@@ -10,8 +10,8 @@ function guiMapChildren<T extends ig.GuiElementBase = ig.GuiElementBase>(
   }
 }
 
-ig.module('enchanced-ui.fixes.item-lists')
-  .requires('game.feature.menu.gui.menu-misc', 'enchanced-ui.ticker-display')
+ig.module('enhanced-ui.fixes.item-lists')
+  .requires('game.feature.menu.gui.menu-misc', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.ListBoxButton.inject({
       init(...args) {
@@ -45,7 +45,7 @@ ig.module('enchanced-ui.fixes.item-lists')
         // well... [insert shrug face here]
         // setButtonText isn't used at all in the entire codebase
         throw new Error(
-          'enchanced-ui: sc.ListBoxButton.setButtonText: unimplemented',
+          'enhanced-ui: sc.ListBoxButton.setButtonText: unimplemented',
         );
       },
     });
@@ -55,7 +55,7 @@ function createListButtonPatch<T extends sc.ListBoxButton>(
   gameFeatureModule: string,
   getConstructor: () => ImpactClass<T>,
 ): void {
-  ig.module(`enchanced-ui.fixes.item-lists.${gameFeatureModule}`)
+  ig.module(`enhanced-ui.fixes.item-lists.${gameFeatureModule}`)
     .requires(`game.feature.${gameFeatureModule}`)
     .defines(() => {
       // `prototype`s of `ImpactClass<T>` and `sc.ListBoxButtonConstructor` are
@@ -88,7 +88,7 @@ createListButtonPatch('menu.gui.botanics.botanics-misc', () => sc.BotanicsEntryB
 // prettier-ignore
 createListButtonPatch('menu.gui.new-game.new-game-misc', () => sc.NewGameOptionButton);
 
-ig.module('enchanced-ui.fixes.new-game-menu')
+ig.module('enhanced-ui.fixes.new-game-menu')
   .requires('game.feature.menu.gui.new-game.new-game-misc')
   .defines(() => {
     sc.NewGameOptionButton.inject({
@@ -113,13 +113,13 @@ ig.module('enchanced-ui.fixes.new-game-menu')
     });
   });
 
-ig.module('enchanced-ui.fixes.item-lists.trade-gui')
+ig.module('enhanced-ui.fixes.item-lists.trade-gui')
   .requires(
     'game.feature.trade.gui.trade-icon',
     'game.feature.trade.gui.equip-toggle-stats',
     'game.feature.menu.gui.shop.shop-stats',
     'game.feature.menu.gui.trade.trade-misc',
-    'enchanced-ui.ticker-display',
+    'enhanced-ui.ticker-display',
   )
   .defines(() => {
     sc.TradeToggleStats.inject({
@@ -206,10 +206,10 @@ ig.module('enchanced-ui.fixes.item-lists.trade-gui')
     });
   });
 
-ig.module('enchanced-ui.fixes.item-lists.status-main-equipment')
+ig.module('enhanced-ui.fixes.item-lists.status-main-equipment')
   .requires(
     'game.feature.menu.gui.status.status-view-main',
-    'enchanced-ui.ticker-display',
+    'enhanced-ui.ticker-display',
   )
   .defines(() => {
     sc.StatusViewMainEquipment.Entry.inject({
@@ -228,10 +228,10 @@ ig.module('enchanced-ui.fixes.item-lists.status-main-equipment')
     });
   });
 
-ig.module('enchanced-ui.fixes.item-lists.social-menu')
+ig.module('enhanced-ui.fixes.item-lists.social-menu')
   .requires(
     'game.feature.menu.gui.social.social-misc',
-    'enchanced-ui.ticker-display',
+    'enhanced-ui.ticker-display',
   )
   .defines(() => {
     sc.SocialInfoBox.inject({
@@ -256,10 +256,10 @@ ig.module('enchanced-ui.fixes.item-lists.social-menu')
     });
   });
 
-ig.module('enchanced-ui.fixes.item-lists.quests')
+ig.module('enhanced-ui.fixes.item-lists.quests')
   .requires(
     'game.feature.menu.gui.quests.quest-entries',
-    'enchanced-ui.ticker-display',
+    'enhanced-ui.ticker-display',
   )
   .defines(() => {
     sc.SubTaskEntryBase.inject({
@@ -302,10 +302,10 @@ ig.module('enchanced-ui.fixes.item-lists.quests')
     });
   });
 
-ig.module('enchanced-ui.fixes.item-lists.equipment-menu')
+ig.module('enhanced-ui.fixes.item-lists.equipment-menu')
   .requires(
     'game.feature.menu.gui.equip.equip-bodypart',
-    'enchanced-ui.ticker-display',
+    'enhanced-ui.ticker-display',
   )
   .defines(() => {
     sc.EquipBodyPartContainer.Entry.inject({
@@ -335,10 +335,10 @@ ig.module('enchanced-ui.fixes.item-lists.equipment-menu')
     });
   });
 
-ig.module('enchanced-ui.fixes.item-lists.quest-dialog')
+ig.module('enhanced-ui.fixes.item-lists.quest-dialog')
   .requires(
     'game.feature.menu.gui.equip.equip-bodypart',
-    'enchanced-ui.ticker-display',
+    'enhanced-ui.ticker-display',
   )
   .defines(() => {
     sc.QuestDialog.inject({

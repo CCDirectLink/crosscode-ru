@@ -13,7 +13,7 @@
   "prestart": "dist/prestart.js",
   "ccmodDependencies": {
     "Localize Me": ">=0.4 <1",
-    "enchanced-ui": "*"
+    "enhanced-ui": "*"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.24.0",

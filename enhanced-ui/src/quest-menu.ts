@@ -1,7 +1,7 @@
-ig.module('enchanced-ui.fixes.quest-menu')
+ig.module('enhanced-ui.fixes.quest-menu')
   .requires(
     'game.feature.menu.gui.quests.quest-misc',
-    'enchanced-ui.ticker-display',
+    'enhanced-ui.ticker-display',
   )
   .defines(() => {
     sc.QuestInfoBox.inject({

@@ -1,7 +1,7 @@
 ig.module('crosscode-ru.fixes.circuit-menu')
   .requires(
     'game.feature.menu.gui.circuit.circuit-detail-elements',
-    'enchanced-ui.ticker-display',
+    'enhanced-ui.ticker-display',
     'localize-me.final-locale.ready',
   )
   .defines(() => {

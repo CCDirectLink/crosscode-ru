@@ -6,7 +6,7 @@ cache:
 
 install:
   - yarn install
-  - (cd enchanced-ui && yarn install)
+  - (cd enhanced-ui && yarn install)
   - (cd tool && yarn install)
   - (cd ultimate-crosscode-typedefs && yarn install)
   - yarn global add prettier

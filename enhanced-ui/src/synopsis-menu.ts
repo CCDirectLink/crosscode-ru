@@ -1,7 +1,7 @@
-ig.module('enchanced-ui.fixes.synopsis-menu')
+ig.module('enhanced-ui.fixes.synopsis-menu')
   .requires(
     'game.feature.menu.gui.synop.synop-misc',
-    'enchanced-ui.ticker-display',
+    'enhanced-ui.ticker-display',
   )
   .defines(() => {
     sc.LogGuiTypeBase.inject({

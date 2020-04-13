@@ -1,5 +1,5 @@
 {
-  "include": ["src", "ultimate-crosscode-typedefs", "enchanced-ui/src/headers"],
+  "include": ["src", "ultimate-crosscode-typedefs", "enhanced-ui/src/headers"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "dist",
@@ -10,5 +10,5 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true
   },
-  "references": [{ "path": "enchanced-ui" }, { "path": "tool" }]
+  "references": [{ "path": "enhanced-ui" }, { "path": "tool" }]
 }
