@@ -29,7 +29,7 @@ ig.module('crosscode-ru.fixes.options-menu')
       'crosscode-ru': {
         orig: 'Russian translation for CrossCode',
         text:
-          'Русский перевод CrossCode и соответствующие исправления интерфейса',
+          'Русский перевод CrossCode и сопутствующие исправления интерфейса',
       },
       'crosscode-ru-translation-tool': {
         orig: 'Russian translation tool for CrossCode',
@@ -49,15 +49,19 @@ ig.module('crosscode-ru.fixes.options-menu')
         text:
           'Различные улучшения и общие исправления графического интерфейса пользователя',
       },
+      'CCLoader display version': {
+        orig: '',
+        text:
+          'Отображает версию CCLoader (заметка от программиста мода: не отключать!)',
+      },
     };
 
     let allMods = window.activeMods.concat(window.inactiveMods);
     for (let mod of allMods) {
       let descriptionFragment = TRANSLATED_MOD_DESCRIPTIONS[mod.name];
-      if (descriptionFragment != null && mod.manifest.description != null) {
-        sc.ru.localizeProp(
-          mod.manifest as { description: string },
-          'description',
+      if (descriptionFragment != null) {
+        mod.manifest.description = sc.ru.localize(
+          mod.manifest.description || '',
           descriptionFragment,
         );
       }
