@@ -1,6 +1,18 @@
 ig.module('crosscode-ru.fixes.options-menu')
-  .requires('crosscode-ru.utils.localization')
+  .requires(
+    'game.feature.model.options-model',
+    'crosscode-ru.utils.localization',
+  )
   .defines(() => {
+    sc.OPTIONS_DEFINITION['crosscode-ru.localized-labels-on-sprites'] = {
+      type: 'CHECKBOX',
+      init: true,
+      cat: sc.OPTION_CATEGORY.GENERAL,
+      restart: true,
+      hasDivider: true,
+      header: 'crosscode-ru.options',
+    };
+
     if (ig.currentLang !== 'ru_RU') return;
 
     const TRANSLATED_MOD_DESCRIPTIONS: Record<
@@ -47,17 +59,6 @@ ig.module('crosscode-ru.fixes.options-menu')
     // TODO: I hope I'll remove the event listener once I rewrite simplify.
     document.body.addEventListener('simplifyInitialized', () => {
       let lang = ig.lang.labels.sc.gui;
-
-      simplify.options.addEntry(
-        'crosscode-ru.localized-labels-on-sprites',
-        'CHECKBOX',
-        true,
-        sc.OPTION_CATEGORY.INTERFACE,
-        null,
-        true,
-        'crosscode-ru.options',
-      );
-      simplify.options.reload();
 
       // TODO: add this to Nota
       sc.ru.localizeProp(lang.menu.option, 'mods', {

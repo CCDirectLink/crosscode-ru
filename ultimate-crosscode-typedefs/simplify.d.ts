@@ -47,7 +47,7 @@ declare namespace sc {
 
   namespace OptionDefinition {
     interface CHECKBOX {
-      checkboxRightAlign: boolean;
+      checkboxRightAlign?: boolean;
     }
 
     // eslint-disable-next-line @typescript-eslint/interface-name-prefix

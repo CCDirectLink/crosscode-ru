@@ -1356,28 +1356,28 @@ declare namespace sc {
       type: 'ARRAY_SLIDER';
       data: number[];
       init: number;
-      snap: boolean;
-      fill: boolean;
+      snap?: boolean;
+      fill?: boolean;
     }
 
     interface OBJECT_SLIDER {
       type: 'OBJECT_SLIDER';
       data: Record<string, number>;
       init: number;
-      snap: boolean;
-      fill: boolean;
-      showPercentage: boolean;
+      snap?: boolean;
+      fill?: boolean;
+      showPercentage?: boolean;
     }
 
     interface CHECKBOX {
       type: 'CHECKBOX';
-      data: null | undefined;
+      data?: null | undefined;
       init: boolean;
     }
 
     interface CONTROLS {
       type: 'CONTROLS';
-      data: null | undefined;
+      data?: null | undefined;
       init: { key: ig.KEY; key2?: ig.KEY };
     }
 
@@ -1391,15 +1391,15 @@ declare namespace sc {
     interface INFO {
       type: 'INFO';
       data: string;
-      init: null | undefined;
+      init?: null | undefined;
     }
   }
 
   type OptionDefinition = {
     cat: sc.OPTION_CATEGORY;
-    hasDivider: boolean;
-    header: string;
-    restart: boolean;
+    hasDivider?: boolean;
+    header?: string;
+    restart?: boolean;
   } & (
     | sc.OptionDefinition.BUTTON_GROUP
     | sc.OptionDefinition.ARRAY_SLIDER
