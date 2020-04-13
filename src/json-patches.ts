@@ -36,20 +36,6 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
   'data/lang/sc/gui.ko_KR.json': addEnglishLabelsToLangFile,
   'data/lang/sc/gui.zh_CN.json': addEnglishLabelsToLangFile,
 
-  'data/maps/jungle/grove/grove-path-02.json': data => {
-    if (ig.currentLang !== 'ru_RU') return data;
-
-    sc.ru.localizeProp(data.entities[892].settings.event[0], 'value', {
-      orig: '[Inspecting]',
-      text: '[Изучает]',
-    });
-    sc.ru.localizeProp(data.entities[892].settings.event[1], 'value', {
-      orig: '[Escort Linde here]',
-      text: '[Сопровождайте Линдэ]',
-    });
-    return data;
-  },
-
   // sorry, Felix... not many people watch credits until the end, so I'll have
   // to inject our names in the first data file. hope RFG doesn't mind :P
   'data/credits/radicalfish-core.json': async data => {
