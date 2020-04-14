@@ -35,11 +35,11 @@ ig.module('crosscode-ru.fixes.traders-list')
         let setSizeOld = this.setSize;
         let setPivotOld = this.setPivot;
         let setPanelSizeOld = this.setPanelSize;
-        this.setSize = (w, h): void =>
+        this.setSize = (w, h) =>
           setSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
-        this.setPivot = (x, y): void =>
+        this.setPivot = (x, y) =>
           setPivotOld.call(this, x + TRADERS_LIST_ADDITIONAL_WIDTH, y);
-        this.setPanelSize = (w, h): void =>
+        this.setPanelSize = (w, h) =>
           setPanelSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
 
         this.parent();
@@ -51,7 +51,7 @@ ig.module('crosscode-ru.fixes.traders-list')
 
       onCreateListEntries(list, ...args) {
         let listSetSizeOld = list.setSize;
-        list.setSize = (w, h): void =>
+        list.setSize = (w, h) =>
           listSetSizeOld.call(list, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
 
         this.parent(list, ...args);

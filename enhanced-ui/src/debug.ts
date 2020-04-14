@@ -5,7 +5,7 @@ sc.ui2.debug.hideTickerShadows = true;
 sc.ui2.debug.showLongHorizontalTextBlocks = false;
 
 // this function is meant to be injected in place of updateDrawables
-sc.ui2.debug.highlightUpdateDrawables = function(renderer): void {
+sc.ui2.debug.highlightUpdateDrawables = function(renderer) {
   this.parent(renderer);
   let { size } = this.hook;
   renderer.addColor('red', 0, 0, size.x, size.y).setAlpha(0.25);
@@ -14,9 +14,9 @@ sc.ui2.debug.highlightUpdateDrawables = function(renderer): void {
 ig.module('enhanced-ui.debug.gui')
   .requires('impact.feature.gui.gui')
   .defines(() => {
-    sc.ui2.debug.highlightGuiInstances = (clazz): void => {
+    sc.ui2.debug.highlightGuiInstances = clazz => {
       let { updateDrawables } = clazz.prototype;
-      clazz.prototype.updateDrawables = function(renderer): void {
+      clazz.prototype.updateDrawables = function(renderer) {
         updateDrawables.call(this, renderer);
         renderer
           .addColor('red', 0, 0, this.hook.size.x, this.hook.size.y)

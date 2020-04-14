@@ -11,7 +11,7 @@ ig.module('enhanced-ui.fixes.options-menu')
       init(option, row, rowGroup, ...args) {
         let rowGroupAddFocusGui = rowGroup.addFocusGui;
         let focusTargets: ig.FocusGui[] = [];
-        rowGroup.addFocusGui = function(gui, ...args2): void {
+        rowGroup.addFocusGui = function(gui, ...args2) {
           focusTargets.push(gui);
           return rowGroupAddFocusGui.call(this, gui, ...args2);
         };

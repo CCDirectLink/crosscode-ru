@@ -22,7 +22,7 @@ ig.module('crosscode-ru.translation-tool')
 
     function createTranslationToolButton(): sc.ButtonGui {
       let btn = new sc.ButtonGui('Переводилка', sc.BUTTON_DEFAULT_WIDTH);
-      btn.onButtonPress = (): void => sc.ru.translationTool.open();
+      btn.onButtonPress = () => sc.ru.translationTool.open();
       return btn;
     }
 

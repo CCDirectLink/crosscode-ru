@@ -42,7 +42,7 @@ ig.module('enhanced-ui.fixes.info-bar')
           let buffInfoSetText = this._associatedBuffInfo.setText;
           // eslint-disable-next-line @typescript-eslint/no-this-alias
           let infoBar = this;
-          this._associatedBuffInfo.setText = function(text, initDelay): void {
+          this._associatedBuffInfo.setText = function(text, initDelay) {
             buffInfoSetText.call(this, text, initDelay);
             if (initDelay == null || initDelay <= 0)
               infoBar._updateTickerMaxSize();
@@ -57,6 +57,7 @@ ig.module('enhanced-ui.fixes.info-bar')
           maxWidth -= buffInfo._width + buffInfo.hook.pos.x;
         }
         this.text.tickerHook.maxWidth = maxWidth;
+        this.text.tickerHook.timer = 0;
       },
     });
   });

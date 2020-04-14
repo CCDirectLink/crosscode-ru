@@ -28,7 +28,7 @@ ig.module('crosscode-ru.fixes.credits-section')
           -(namesEmpty ? 1 : 2),
         );
         for (let { gui } of addedChildren) {
-          gui.onVisibilityChange = (visible): void => {
+          gui.onVisibilityChange = visible => {
             if (visible) {
               gui.doStateTransition(
                 'DEFAULT',
@@ -63,7 +63,7 @@ ig.module('crosscode-ru.fixes.credits-section')
           let currentNameIndex = 0;
           let { update } = columnGui;
           // eslint-disable-next-line no-loop-func
-          columnGui.update = (): void => {
+          columnGui.update = () => {
             update.call(columnGui);
 
             // as you can see, I'm using a simple optimization instead of
