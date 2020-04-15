@@ -16,7 +16,7 @@
     "watch:styles": "node-sass --recursive --output dist/styles --source-map true src/styles --watch"
   },
   "module": true,
-  "prestart": "dist/mod/prestart.js",
+  "postload": "dist/mod/postload.js",
   "ccmodDependencies": {
     "crosscode-ru": "*"
   },

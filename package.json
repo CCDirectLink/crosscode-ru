@@ -10,7 +10,6 @@
   },
   "module": true,
   "postload": "dist/postload.js",
-  "prestart": "dist/prestart.js",
   "ccmodDependencies": {
     "Localize Me": ">=0.4 <1",
     "enhanced-ui": "*"
