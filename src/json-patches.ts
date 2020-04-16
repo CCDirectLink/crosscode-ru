@@ -16,6 +16,17 @@ function addEnglishLabelsToLangFile(data: any): any {
             description:
               'Enables translated labels on sprites such as signs in the game world. \\c[1]Needs a restart!',
           },
+          // this option is untranslated because it doesn't make sense in other
+          // locales, plus I can trick Localize Me into not running
+          // `text_filter` (which corrects spelling of "Lea" literally
+          // everywhere) on these string by patching them directly in the
+          // original files
+          'lea-spelling': {
+            name: 'Перевод имени "Lea"',
+            description:
+              '\\c[3]Лея\\c[0]: Более естественно звучащий вариант. \\c[3]Лиа\\c[0]: Сохраняет каноническое произношение. \\c[1]Требуется перезапуск!',
+            group: ['Лея', 'Лиа'],
+          },
         },
       },
     },

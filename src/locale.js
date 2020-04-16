@@ -10,6 +10,28 @@ const PATCHED_FONT_URLS = [
   'media/font/ru_RU/tiny.png',
 ];
 
+const LEA_SPELLING =
+  localStorage.getItem('options.crosscode-ru.lea-spelling') || '0';
+
+// relevant Wikipedia page: https://ru.wikipedia.org/wiki/Падеж#Падежная_система_русского_языка
+const LEA_SPELLING_CONVERSION_TABLES = {
+  '1': {
+    Лея: 'Лиа', // Именительный (1)
+    Леи: 'Лии', // Родительный (2)
+    Лее: 'Лие', // Дательный (3) + Предложный (6)
+    Лею: 'Лию', // Винительный (4)
+    Леей: 'Лией', // Творительный (5)
+  },
+};
+
+/** @type {((text: string) => string) | null} */
+let textFilter = null;
+let leaSpellingTable = LEA_SPELLING_CONVERSION_TABLES[LEA_SPELLING];
+if (leaSpellingTable != null) {
+  let regex = new RegExp(Object.keys(leaSpellingTable).join('|'), 'g');
+  textFilter = text => text.replace(regex, str => leaSpellingTable[str]);
+}
+
 localizeMe.add_locale('ru_RU', {
   /* eslint-disable camelcase */
   from_locale: 'en_US',
@@ -52,6 +74,9 @@ localizeMe.add_locale('ru_RU', {
 
     return `--${original}`;
   },
+
+  // eslint-disable-next-line camelcase
+  text_filter: textFilter,
 
   // eslint-disable-next-line camelcase
   pre_patch_font: async context => {

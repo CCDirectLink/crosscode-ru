@@ -1147,7 +1147,38 @@ declare namespace sc {
 /* module game.feature.version.gui.changelog-gui */
 /* module game.feature.version.gui.dlc-gui */
 /* module game.feature.version.plug-in */
+
 /* module game.feature.model.base-model */
+
+declare namespace sc {
+  interface Model {
+    observers: sc.Model.Observer<this>[];
+  }
+  namespace Model {
+    interface Observer<M extends sc.Model = sc.Model> {
+      modelChanged(model: M, message: number, data: unknown): void;
+    }
+
+    function addObserver<M extends sc.Model = sc.Model>(
+      model: M,
+      observer: Observer<M>,
+    ): void;
+    function removeObserver<M extends sc.Model = sc.Model>(
+      model: M,
+      observer: Observer<M>,
+    ): void;
+    function notifyObserver<M extends sc.Model = sc.Model>(
+      model: M,
+      message: number, // TODO: can the message enum be somehow inferred here?
+      data: unknown,
+    ): void;
+    function isObserver<M extends sc.Model = sc.Model>(
+      model: M,
+      observer: Observer<M>,
+    ): boolean;
+  }
+}
+
 /* module game.feature.gui.hud.right-hud */
 /* module game.feature.timers.gui.timers-hud */
 /* module game.feature.timers.timers-model */
@@ -1194,7 +1225,7 @@ declare namespace sc {
 /* module game.feature.msg.message-model */
 
 declare namespace sc {
-  interface MessageModel extends ig.GameAddon {
+  interface MessageModel extends ig.GameAddon, sc.Model {
     showMessage(
       this: this,
       personName: string,
@@ -1455,7 +1486,7 @@ declare namespace sc {
     }
   }
 
-  interface OptionModel extends ig.GameAddon {
+  interface OptionModel extends ig.GameAddon, sc.Model {
     get<K extends keyof sc.OPTIONS_DEFINITION.KnownTypesMap>(
       this: this,
       key: K,
@@ -1468,6 +1499,11 @@ declare namespace sc {
   }
   let OptionModel: OptionModelConstructor;
   let options: OptionModel;
+
+  enum OPTIONS_EVENT {
+    OPTION_CHANGED = 0,
+    OPTION_KEYS_SWAPPED = 1,
+  }
 }
 
 /* module game.feature.gui.hud.item-hud */
@@ -1898,7 +1934,7 @@ declare namespace sc {
     }
   }
 
-  interface TradeModel extends ig.GameAddon {
+  interface TradeModel extends ig.GameAddon, sc.Model {
     getFoundTrader(this: this, key: string): sc.TradeModel.FoundTrader;
   }
   interface TradeModelConstructor extends TradeModel {}
@@ -2358,7 +2394,7 @@ declare namespace sc {
     MULTI,
   }
 
-  interface MenuModel extends ig.GameAddon {
+  interface MenuModel extends ig.GameAddon, sc.Model {
     statusElement: sc.ELEMENT;
     statusDiff: boolean;
   }
@@ -2381,7 +2417,7 @@ declare namespace sc {
 /* module game.feature.model.game-model */
 
 declare namespace sc {
-  interface GameModel extends ig.GameAddon {
+  interface GameModel extends ig.GameAddon, sc.Model {
     message: sc.MessageModel;
   }
   interface GameModelConstructor extends ImpactClass<GameModel> {}
@@ -2445,7 +2481,7 @@ declare namespace sc {
 
   let NEW_GAME_SETS: { [id: string]: sc.NewGameToggleSet.SetOptions };
 
-  interface NewGamePlusModel extends ig.GameAddon {
+  interface NewGamePlusModel extends ig.GameAddon, sc.Model {
     options: { [id: string]: boolean };
   }
   interface NewGamePlusModelConstructor extends ImpactClass<NewGamePlusModel> {}
@@ -2555,7 +2591,7 @@ declare namespace sc {
       locked: boolean;
     }
   }
-  interface PartyModel extends ig.GameAddon {
+  interface PartyModel extends ig.GameAddon, sc.Model {
     contacts: { [name: string]: sc.PartyModel.Contact };
     isPartyMember(this: this, name: string): boolean;
   }

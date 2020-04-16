@@ -42,6 +42,18 @@ ig.module('crosscode-ru.utils.localization.sprites')
             (notOptional || localizeSpritesOptionValue)
           );
         };
+
+        sc.Model.addObserver(this, {
+          modelChanged: (_model, message, _data) => {
+            if (message !== sc.OPTIONS_EVENT.OPTION_CHANGED) return;
+            // save this option in localStorage because it is used in
+            // `locale.js` way before `sc.options` is even initialized
+            localStorage.setItem(
+              'options.crosscode-ru.lea-spelling',
+              String(this.get('crosscode-ru.lea-spelling')),
+            );
+          },
+        });
       },
     });
   });
