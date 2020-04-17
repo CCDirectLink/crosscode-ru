@@ -11,7 +11,7 @@ ig.module('enhanced-ui.fixes.quest-menu')
         this.locationText.tickerHook.maxWidth =
           this.locationGui.hook.size.x -
           this.locationText.hook.pos.x -
-          locationIconHook.pos.x;
+          locationIconHook.pos.x / 2;
       },
     });
   });

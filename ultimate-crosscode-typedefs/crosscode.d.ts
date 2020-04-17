@@ -42,12 +42,25 @@ interface KEY_SPLINES {
 declare namespace ig {
   let currentLang: string;
 
+  namespace Resource {
+    type LoadCallback = (type: string, path: string, success: boolean) => void;
+  }
+  interface Resource {
+    cacheType: string;
+    path: string;
+    load(this: this, loadCallback: ig.Resource.LoadCallback): void;
+  }
+  let resources: ig.Resource[];
+
+  let ready: boolean;
+  let loading: boolean;
+
   interface Module {
     requires: string[];
     loaded: boolean;
     body: (() => void) | null;
   }
-  let modules: Record<string, Module>;
+  let modules: Record<string, ig.Module>;
   let _waitForOnload: number;
 
   function $new<K extends keyof HTMLElementTagNameMap>(
@@ -61,6 +74,8 @@ declare namespace ig {
   function module(this: typeof ig, name: string): typeof ig;
   function requires(this: typeof ig, ...names: string[]): typeof ig;
   function defines(this: typeof ig, body: () => void): void;
+
+  function addResource(resource: ig.Resource): void;
 
   function addGameAddon<T extends ig.GameAddon>(callback: () => T): void;
 
@@ -96,11 +111,15 @@ declare interface Number {
 /* module impact.base.loader */
 
 declare namespace ig {
-  interface Cacheable extends ig.Class {}
+  interface Cacheable extends ig.Class {
+    cacheType: string;
+
+    decreaseRef(this: this): void;
+  }
   interface CacheableConstructor extends ImpactClass<Cacheable> {}
   let Cacheable: CacheableConstructor;
 
-  interface Loadable extends ig.Class {
+  interface Loadable extends ig.Cacheable, ig.Resource {
     loaded: boolean;
     path: string;
 
@@ -111,9 +130,20 @@ declare namespace ig {
   }
   let Loadable: LoadableConstructor;
 
-  interface SingleLoadable extends ig.Class {}
-  interface SingleLoadableConstructor extends ImpactClass<SingleLoadable> {}
+  interface SingleLoadable extends ig.Class, ig.Resource {
+    loaded: boolean;
+    path: string;
+
+    loadingFinished(this: this, success: boolean): void;
+  }
+  interface SingleLoadableConstructor extends ImpactClass<SingleLoadable> {
+    instance: this['__instance'];
+  }
   let SingleLoadable: SingleLoadableConstructor;
+
+  interface Loader extends ig.Class {}
+  interface LoaderConstructor extends ImpactClass<Loader> {}
+  let Loader: LoaderConstructor;
 }
 
 /* module impact.base.image */
@@ -341,6 +371,7 @@ declare namespace ig {
       this: this,
       buffer: HTMLCanvasElement,
     ): CanvasRenderingContext2D;
+    error(this: this, error: Error): void;
   }
   interface SystemConstructor extends ImpactClass<System> {}
   let System: SystemConstructor;
@@ -472,6 +503,7 @@ declare namespace ig {
   let lang: ig.Lang;
 
   namespace LangLabel {
+    // TODO: is a simple string valid `ig.LangLabel.Data`
     type Data = { [locale: string]: string } & { langUid?: number };
   }
   interface LangLabel extends ig.Class {
@@ -485,6 +517,21 @@ declare namespace ig {
 }
 
 /* module impact.base.impact */
+
+declare namespace ig {
+  let mainLoader: ig.Loader;
+  function main(
+    canvasId: string,
+    inputDomId: string,
+    gameClass: ig.Game,
+    fps: number,
+    width: number,
+    height: number,
+    scale: number,
+    loaderClass: ig.Loader,
+  ): void;
+}
+
 /* module impact.base.sprite-fx */
 /* module impact.base.animation */
 /* module impact.base.coll-entry */
@@ -560,7 +607,30 @@ declare namespace ig {
 
 /* module game.loader */
 /* module game.constants */
+
 /* module impact.feature.database.database */
+
+declare namespace ig {
+  namespace Database {
+    interface Data {
+      areas: { [name: string]: sc.MapModel.Area };
+    }
+  }
+  interface Database extends ig.SingleLoadable {
+    data: ig.Database.Data;
+
+    get<K extends keyof ig.Database['data']>(
+      this: this,
+      key: K,
+    ): ig.Database['data'][K];
+    get(this: this, key: string): unknown;
+    onload(this: this, data: ig.Database.Data): void;
+  }
+  interface DatabaseConstructor extends ImpactClass<Database> {}
+  let Database: DatabaseConstructor;
+  let database: Database;
+}
+
 /* module impact.feature.database.plug-in */
 /* module impact.feature.gamepad.gamepad */
 /* module impact.feature.gamepad.html5-gamepad */
@@ -575,7 +645,103 @@ declare namespace ig {
 /* module impact.feature.base.entities.touch-trigger */
 /* module impact.feature.base.entities.sound-entities */
 /* module impact.feature.base.plug-in */
+
 /* module impact.feature.storage.storage */
+
+declare namespace ig {
+  namespace SaveSlot {
+    // TODO see https://crosscode.gamepedia.com/Savegame
+    interface Data {
+      area: ig.LangLabel.Data;
+      floor: ig.LangLabel.Data | 'MISSING LABEL';
+      specialMap: ig.LangLabel.Data;
+      tradersFound: { [id: string]: Data.TraderFound };
+      quests: Data.Quests;
+    }
+
+    namespace Data {
+      interface TraderFound {
+        characterName: string;
+        map: ig.LangLabel.Data;
+        area: ig.LangLabel.Data;
+        time: number;
+      }
+
+      interface Quests {
+        locale: { [id: string]: Quests.Locale };
+      }
+
+      namespace Quests {
+        interface Locale {
+          time: number;
+          location: Locale.Location;
+          character: string;
+        }
+
+        namespace Locale {
+          interface Location {
+            area: ig.LangLabel.Data;
+            map: ig.LangLabel.Data;
+          }
+        }
+      }
+    }
+  }
+  interface SaveSlot extends ig.Class {
+    src: string;
+    data: ig.SaveSlot.Data;
+
+    getData(this: this): this['data'];
+    getSrc(this: this): this['src'];
+  }
+  interface SaveSlotConstructor extends ImpactClass<SaveSlot> {
+    new (source: string | ig.SaveSlot.Data): this['__instance'];
+  }
+  let SaveSlot: SaveSlotConstructor;
+
+  namespace StorageData {
+    interface SaveFileData {
+      slots: string[];
+      autoSlot: string;
+      globals: string;
+      lastSlot: number;
+    }
+  }
+  interface StorageData extends ig.Class {
+    data: ig.StorageData.SaveFileData;
+    getData(this: this): this['data'];
+  }
+  interface StorageDataConstructor extends ImpactClass<StorageData> {
+    new (): this['__instance'];
+  }
+  let StorageData: StorageDataConstructor;
+
+  namespace Storage {
+    interface GlobalsData {}
+
+    interface Listener {
+      onStorageGlobalSave(this: this, globals: ig.Storage.GlobalsData): void;
+      onStorageSave(this: this, savefile: ig.SaveSlot.Data): void;
+      onStoragePreLoad(this: this, savefile: ig.SaveSlot.Data): void;
+      onStoragePostLoad(this: this, savefile: ig.SaveSlot.Data): void;
+    }
+  }
+  interface Storage extends ig.GameAddon, sc.Model {
+    slots: ig.SaveSlot[];
+    autoSlot: ig.SaveSlot | null;
+    listeners: ig.Storage.Listener[];
+    globalData: ig.Storage.GlobalsData;
+    data: ig.StorageData;
+
+    register(this: this, listener: ig.Storage.Listener): void;
+  }
+  interface StorageConstructor extends ImpactClass<Storage> {
+    new (): this['__instance'];
+  }
+  let Storage: StorageConstructor;
+  let storage: Storage;
+}
+
 /* module impact.feature.bgm.bgm */
 /* module impact.feature.bgm.bgm-steps */
 /* module impact.feature.bgm.plug-in */
@@ -1156,7 +1322,7 @@ declare namespace sc {
   }
   namespace Model {
     interface Observer<M extends sc.Model = sc.Model> {
-      modelChanged(model: M, message: number, data: unknown): void;
+      modelChanged(this: this, model: M, message: number, data: unknown): void;
     }
 
     function addObserver<M extends sc.Model = sc.Model>(
@@ -1247,12 +1413,38 @@ declare namespace sc {
 
 declare namespace sc {
   namespace AreaLoadable {
+    interface Data {
+      DOCTYPE: 'AREAS_MAP';
+      name: ig.LangLabel.Data;
+      width: number;
+      height: number;
+      floors: Floor[];
+      defaultFloor: number;
+      chests: number;
+    }
+
+    // TODO
+    interface Floor {
+      level: number;
+      name: ig.LangLabel.Data;
+      tiles: number[][];
+      maps: Map[];
+    }
+
     interface Map {
       path: string;
       name: ig.LangLabel.Data;
       offset: Vec2;
+      dungeon: '' | 'DUNGEON' | 'NO_DUNGEON';
     }
   }
+  interface AreaLoadable extends ig.Loadable {
+    data: sc.AreaLoadable.Data;
+  }
+  interface AreaLoadableConstructor extends ImpactClass<AreaLoadable> {
+    new (path: string): this['__instance'];
+  }
+  let AreaLoadable: AreaLoadableConstructor;
 }
 
 /* module game.feature.menu.gui.base-menu */
@@ -1516,7 +1708,37 @@ declare namespace sc {
 /* module game.feature.gui.hud.buff-hud */
 /* module game.feature.gui.hud.item-timer-hud */
 /* module game.feature.quick-menu.quick-menu-model */
+
 /* module game.feature.menu.map-model */
+
+declare namespace sc {
+  namespace MapModel {
+    namespace Area {
+      interface Landmark {
+        name: ig.LangLabel.Data;
+        description: ig.LangLabel.Data;
+      }
+    }
+    interface Area {
+      name: ig.LangLabel.Data;
+      description: ig.LangLabel.Data;
+      areaType: 'PATH' | 'TOWN' | 'DUNGEON';
+      order: number;
+      track: boolean;
+      chests: number;
+      boosterItem: string;
+      position: Vec2;
+      landmarks: { [name: string]: Area.Landmark };
+    }
+  }
+  interface MapModel extends ig.GameAddon, sc.Model {
+    areas: sc.MapModel.Area[];
+  }
+  interface MapModelConstructor extends ImpactClass<TradeModel> {}
+  let MapModel: MapModelConstructor;
+  let map: sc.MapModel;
+}
+
 /* module game.feature.gui.hud.key-hud */
 /* module game.feature.gui.hud.status-hud */
 /* module game.feature.gui.hud.exp-hud */
@@ -1606,8 +1828,7 @@ declare namespace sc {
     content: ig.GuiElementBase;
   }
   interface SaveSlotButtonConstructor extends ImpactClass<SaveSlotButton> {
-    // TODO: write definitions for `save` (see https://crosscode.gamepedia.com/Savegame)
-    new (save: any, slot: number): this['__instance'];
+    new (save: ig.SaveSlot.Data, slot: number): this['__instance'];
   }
   let SaveSlotButton: SaveSlotButtonConstructor;
 }
@@ -1937,7 +2158,7 @@ declare namespace sc {
   interface TradeModel extends ig.GameAddon, sc.Model {
     getFoundTrader(this: this, key: string): sc.TradeModel.FoundTrader;
   }
-  interface TradeModelConstructor extends TradeModel {}
+  interface TradeModelConstructor extends ImpactClass<TradeModel> {}
   let TradeModel: TradeModelConstructor;
   let trade: sc.TradeModel;
 }
@@ -2595,7 +2816,7 @@ declare namespace sc {
     contacts: { [name: string]: sc.PartyModel.Contact };
     isPartyMember(this: this, name: string): boolean;
   }
-  interface PartyModelConstructor extends PartyModel {}
+  interface PartyModelConstructor extends ImpactClass<PartyModel> {}
   let PartyModel: PartyModelConstructor;
   let party: sc.PartyModel;
 }
@@ -2698,6 +2919,14 @@ declare namespace sc {
 }
 
 /* module game.feature.quest.quest-model */
+
+declare namespace sc {
+  interface QuestModel extends ig.GameAddon, sc.Model, ig.Storage.Listener {}
+  interface QuestModelConstructor extends ImpactClass<QuestModel> {}
+  let QuestModel: QuestModelConstructor;
+  let quests: QuestModel;
+}
+
 /* module game.feature.quest.quest-steps */
 /* module game.feature.quest.plug-in */
 /* module game.feature.party.party-steps */

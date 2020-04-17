@@ -9,5 +9,7 @@ declare namespace sc.ru {
     ...items: T[]
   ): void;
 
-  function waitForLoadable<T extends ig.Loadable>(loadable: T): Promise<T>;
+  function waitForLoadable<T extends ig.Loadable | ig.SingleLoadable>(
+    loadable: T,
+  ): Promise<T>;
 }

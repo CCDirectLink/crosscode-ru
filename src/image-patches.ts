@@ -13,6 +13,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     ctx.clearRect(183, 15, 28, 5);
     ctx.clearRect(187, 21, 24, 1);
     ctx.drawImage(ruImage.data, 0, 0, 21, 7, 187, 15, 21, 7);
+    ruImage.decreaseRef();
   },
 
   'media/map/jungle.png': async ctx => {
@@ -23,6 +24,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     ctx.drawImage(ruImage.data, 0, 0, 28, 11, 66, 929, 28, 11);
     ctx.drawImage(ruImage.data, 0, 0, 28, 11, 34, 977, 28, 11);
     ctx.drawImage(ruImage.data, 0, 11, 28, 11, 66, 977, 28, 11);
+    ruImage.decreaseRef();
   },
 
   'media/entity/style/jungle-city-map.png': async ctx => {
@@ -34,6 +36,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     for (let i = 0; i < 4; i++) {
       ctx.drawImage(ruImage.data, 0, 0, 28, 11, 34 + i * 32, 1, 28, 11);
     }
+    ruImage.decreaseRef();
   },
 
   'media/map/jungle-props.png': async ctx => {
@@ -43,6 +46,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     );
     ctx.clearRect(361, 118, 6, 19);
     ctx.drawImage(ruImage.data, 0, 0, 6, 19, 361, 118, 6, 19);
+    ruImage.decreaseRef();
   },
 
   'media/map/bergen-trail.png': async ctx => {
@@ -52,6 +56,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     );
     ctx.clearRect(128, 720, 32, 16);
     ctx.drawImage(innSign.data, 0, 0, 32, 16, 128, 720, 32, 16);
+    innSign.decreaseRef();
   },
 
   'media/map/bergen-village-inner.png': async ctx => {
@@ -61,6 +66,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     );
     ctx.clearRect(432, 144, 32, 16);
     ctx.drawImage(innSign.data, 0, 0, 32, 16, 432, 144, 32, 16);
+    innSign.decreaseRef();
   },
 
   'media/map/rookie-harbor.png': async ctx => {
@@ -73,6 +79,8 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     ctx.drawImage(innSign.data, 0, 0, 32, 16, 448, 432, 32, 16);
     ctx.clearRect(432, 448, 48, 32);
     ctx.drawImage(ruImage.data, 0, 0, 48, 32, 432, 448, 48, 32);
+    innSign.decreaseRef();
+    ruImage.decreaseRef();
   },
 };
 

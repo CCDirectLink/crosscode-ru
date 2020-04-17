@@ -253,7 +253,7 @@ function parseTranslation(
   let flags: Record<string, boolean | string> = {};
   t.text = t.rawText
     .replace(/\n?⟪(.*)⟫\s*/, (_match: string, group: string) => {
-      group.split('|').forEach(s => {
+      for (let s of group.split('|')) {
         s = s.trim();
         let i = s.indexOf(':');
         if (i >= 0) {
@@ -261,7 +261,7 @@ function parseTranslation(
         } else {
           flags[s] = true;
         }
-      });
+      }
       return '';
     })
     .replace(/^\^|^\$|\$$/g, '');

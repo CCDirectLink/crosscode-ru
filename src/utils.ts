@@ -12,15 +12,23 @@ sc.ru.insertAfterOrAppend = (array, beforeIndex, ...items) => {
   else array.push(...items);
 };
 
-sc.ru.waitForLoadable = loadable => {
+// again, I have to copy the whole type signature, because I can't use names of
+// the generics otherwise... well, at least I'll get an error if I update only
+// one of the signatures.
+sc.ru.waitForLoadable = <T extends ig.Loadable | ig.SingleLoadable>(
+  loadable: T,
+): Promise<T> => {
   return new Promise((resolve, reject) => {
     if (loadable.loaded) {
       resolve(loadable);
       return;
     }
 
-    let { loadingFinished } = loadable;
-    loadable.loadingFinished = function(success: boolean): void {
+    let loadingFinished = loadable.loadingFinished as (
+      this: T,
+      success: boolean,
+    ) => void;
+    loadable.loadingFinished = function(this: T, success: boolean): void {
       try {
         loadingFinished.call(this, success);
       } catch (err) {
