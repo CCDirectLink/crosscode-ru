@@ -1,4 +1,4 @@
-ig.module('crosscode-ru.fixes.storage-area-and-map-names')
+ig.module('enhanced-ui.fixes.storage-area-and-map-names')
   .requires(
     'impact.feature.database.database',
     'game.feature.menu.area-loadable',
@@ -8,7 +8,7 @@ ig.module('crosscode-ru.fixes.storage-area-and-map-names')
   .defines(() => {
     ig.Database.inject({
       onload(data) {
-        sc.ru.areaAndMapNamesLookupTable = new Map();
+        sc.ui2.areaAndMapNamesLookupTable = new Map();
 
         Promise.all(
           Object.entries(data.areas)
@@ -23,7 +23,7 @@ ig.module('crosscode-ru.fixes.storage-area-and-map-names')
               // `ig.resources` won't be empty even though `ig.database` is
               // usually finishes loading the last.
               let areaLoadable = new sc.AreaLoadable(id);
-              await sc.ru.waitForLoadable(areaLoadable);
+              await sc.ui2.waitForLoadable(areaLoadable);
               addAreaToLookupTable(areaName, areaLoadable.data);
               // I'm not decreasing the refcount of `areaLoadable` because this
               // data is downloaded unconditionally at the start of the game and
@@ -44,7 +44,7 @@ ig.module('crosscode-ru.fixes.storage-area-and-map-names')
       if (areaName.langUid == null) {
         throw new Error(`missing langUid of area ${areaName.en_US}`);
       }
-      if (sc.ru.areaAndMapNamesLookupTable.has(areaName.langUid)) {
+      if (sc.ui2.areaAndMapNamesLookupTable.has(areaName.langUid)) {
         throw new Error(`duplicate area langUid ${areaName.langUid}`);
       }
 
@@ -66,7 +66,7 @@ ig.module('crosscode-ru.fixes.storage-area-and-map-names')
         }
       }
 
-      sc.ru.areaAndMapNamesLookupTable.set(areaName.langUid, {
+      sc.ui2.areaAndMapNamesLookupTable.set(areaName.langUid, {
         name: areaName,
         maps: areaMaps,
       });
@@ -109,7 +109,7 @@ ig.module('crosscode-ru.fixes.storage-area-and-map-names')
     ): void {
       let areaLabel = obj[areaKey];
       if (areaLabel.langUid == null) return;
-      let areaLookupData = sc.ru.areaAndMapNamesLookupTable.get(
+      let areaLookupData = sc.ui2.areaAndMapNamesLookupTable.get(
         areaLabel.langUid,
       );
       if (areaLookupData == null) return;

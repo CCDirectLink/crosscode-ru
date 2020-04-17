@@ -1,5 +1,7 @@
 import './namespace.js';
 import './debug.js';
+import './utils.js';
+
 import './ticker-display.js';
 
 import './help.js';

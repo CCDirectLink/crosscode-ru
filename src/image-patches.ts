@@ -7,7 +7,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   'media/entity/objects/history-of-bergen.png': async ctx => {
     // this label is practically a part of a dialog, so I'm not making it optional
     if (!sc.ru.shouldPatchSpriteLabels(true)) return;
-    let ruImage = await sc.ru.waitForLoadable(
+    let ruImage = await sc.ui2.waitForLoadable(
       new ig.Image('media/entity/objects/history-of-bergen.ru_RU.png'),
     );
     ctx.clearRect(183, 15, 28, 5);
@@ -18,7 +18,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
 
   'media/map/jungle.png': async ctx => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
-    let ruImage = await sc.ru.waitForLoadable(
+    let ruImage = await sc.ui2.waitForLoadable(
       new ig.Image('media/map/open-closed-signs.ru_RU.png'),
     );
     ctx.drawImage(ruImage.data, 0, 0, 28, 11, 66, 929, 28, 11);
@@ -29,7 +29,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
 
   'media/entity/style/jungle-city-map.png': async ctx => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
-    let ruImage = await sc.ru.waitForLoadable(
+    let ruImage = await sc.ui2.waitForLoadable(
       new ig.Image('media/map/open-closed-signs.ru_RU.png'),
     );
     ctx.drawImage(ruImage.data, 0, 11, 28, 11, 2, 1, 28, 11);
@@ -41,7 +41,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
 
   'media/map/jungle-props.png': async ctx => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
-    let ruImage = await sc.ru.waitForLoadable(
+    let ruImage = await sc.ui2.waitForLoadable(
       new ig.Image('media/map/jungle-props.ru_RU.png'),
     );
     ctx.clearRect(361, 118, 6, 19);
@@ -51,7 +51,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
 
   'media/map/bergen-trail.png': async ctx => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
-    let innSign = await sc.ru.waitForLoadable(
+    let innSign = await sc.ui2.waitForLoadable(
       new ig.Image('media/map/inn-sign.ru_RU.png'),
     );
     ctx.clearRect(128, 720, 32, 16);
@@ -61,7 +61,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
 
   'media/map/bergen-village-inner.png': async ctx => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
-    let innSign = await sc.ru.waitForLoadable(
+    let innSign = await sc.ui2.waitForLoadable(
       new ig.Image('media/map/inn-sign.ru_RU.png'),
     );
     ctx.clearRect(432, 144, 32, 16);
@@ -72,8 +72,8 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
   'media/map/rookie-harbor.png': async ctx => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
     let [innSign, ruImage] = await Promise.all([
-      sc.ru.waitForLoadable(new ig.Image('media/map/inn-sign.ru_RU.png')),
-      sc.ru.waitForLoadable(new ig.Image('media/map/rookie-harbor.ru_RU.png')),
+      sc.ui2.waitForLoadable(new ig.Image('media/map/inn-sign.ru_RU.png')),
+      sc.ui2.waitForLoadable(new ig.Image('media/map/rookie-harbor.ru_RU.png')),
     ]);
     ctx.clearRect(448, 432, 32, 16);
     ctx.drawImage(innSign.data, 0, 0, 32, 16, 448, 432, 32, 16);

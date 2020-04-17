@@ -1,4 +1,4 @@
-declare namespace sc.ru {
+declare namespace sc.ui2 {
   let areaAndMapNamesLookupTable: Map<
     number,
     {

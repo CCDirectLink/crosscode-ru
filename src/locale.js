@@ -82,7 +82,7 @@ localizeMe.add_locale('ru_RU', {
   pre_patch_font: async context => {
     let url = PATCHED_FONT_URLS[context.size_index];
     if (url != null) {
-      context.russianFont = await sc.ru.waitForLoadable(
+      context.russianFont = await sc.ui2.waitForLoadable(
         new ig.Font(url, context.char_height),
       );
     }

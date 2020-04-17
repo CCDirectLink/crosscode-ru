@@ -8,8 +8,4 @@ declare namespace sc.ru {
     index: number,
     ...items: T[]
   ): void;
-
-  function waitForLoadable<T extends ig.Loadable | ig.SingleLoadable>(
-    loadable: T,
-  ): Promise<T>;
 }

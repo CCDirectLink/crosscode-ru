@@ -9,8 +9,6 @@ import './image-patches.js';
 
 import './localization-utils.js';
 
-import './storage-area-and-map-names.js';
-
 import './arena-gui.js';
 import './circuit-menu.js';
 import './credits-section.js';
