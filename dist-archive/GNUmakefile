@@ -46,7 +46,7 @@ TRANSLATIONS_DIR := assets/ru-translation-tool
 
 TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map LICENSE main.html package.json
 TOOL_FILES := $(call find_by_patterns,../tool,$(TOOL_FILES))
-MOD_FILES := assets/data/*.json assets/media/*.png dist/*.js dist/*.js.map src/locale.js LICENSE package.json README.md
+MOD_FILES := assets/data/*.json assets/media/*.png dist/*.js dist/*.js.map LICENSE package.json README.md
 MOD_FILES := $(call find_by_patterns,..,$(MOD_FILES))
 ENHANCED_UI_MOD_FILES := dist/*.js dist/*.js.map LICENSE package.json
 ENHANCED_UI_MOD_FILES := $(call find_by_patterns,../enhanced-ui,$(ENHANCED_UI_MOD_FILES))

@@ -14,7 +14,7 @@ const LEA_SPELLING =
   localStorage.getItem('options.crosscode-ru.lea-spelling') || '0';
 
 // relevant Wikipedia page: https://ru.wikipedia.org/wiki/Падеж#Падежная_система_русского_языка
-const LEA_SPELLING_CONVERSION_TABLES = {
+const LEA_SPELLING_CONVERSION_TABLES: Dictionary<Dictionary<string>> = {
   '1': {
     Лея: 'Лиа', // Именительный (1)
     Леи: 'Лии', // Родительный (2)
@@ -24,16 +24,22 @@ const LEA_SPELLING_CONVERSION_TABLES = {
   },
 };
 
-/** @type {((text: string) => string) | null} */
-let textFilter = null;
+let textFilter: ((text: string) => string) | null = null;
 let leaSpellingTable = LEA_SPELLING_CONVERSION_TABLES[LEA_SPELLING];
 if (leaSpellingTable != null) {
   let regex = new RegExp(Object.keys(leaSpellingTable).join('|'), 'g');
   textFilter = text => text.replace(regex, str => leaSpellingTable[str]);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
+declare namespace LocalizeMe {
+  interface FontPatchingContextCommon {
+    russianFont: ig.Font;
+  }
+}
+
 localizeMe.add_locale('ru_RU', {
-  /* eslint-disable camelcase */
+  /* eslint-disable @typescript-eslint/camelcase */
   from_locale: 'en_US',
   map_file: LOCALIZE_ME_MAPPING_FILE,
   url_prefix: LOCALIZE_ME_PACKS_DIR,
@@ -47,11 +53,15 @@ localizeMe.add_locale('ru_RU', {
     ko_KR: '러시아어',
   },
   flag: 'media/font/ru_RU/flag.png',
-  /* eslint-enable camelcase */
+  /* eslint-enable @typescript-eslint/camelcase */
 
-  // eslint-disable-next-line camelcase
+  // eslint-disable-next-line @typescript-eslint/camelcase
   missing_cb: (langLabelOrString, dictPath) => {
-    let original = langLabelOrString.en_US || langLabelOrString;
+    if (typeof langLabelOrString === 'string') {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      langLabelOrString = { en_US: langLabelOrString };
+    }
+    let original = langLabelOrString.en_US;
 
     // `missing_cb` is called even when the lang label actually contains a
     // corresponding language field. You see, a lot of lang labels were
@@ -72,14 +82,22 @@ localizeMe.add_locale('ru_RU', {
       return original;
     }
 
+    if (
+      dictPath.startsWith(
+        'lang/sc/gui.en_US.json/labels/options/crosscode-ru/lea-spelling/',
+      )
+    ) {
+      return original;
+    }
+
     return `--${original}`;
   },
 
-  // eslint-disable-next-line camelcase
+  // eslint-disable-next-line @typescript-eslint/camelcase
   text_filter: textFilter,
 
-  // eslint-disable-next-line camelcase
-  pre_patch_font: async context => {
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  pre_patch_font: async (context): Promise<void> => {
     let url = PATCHED_FONT_URLS[context.size_index];
     if (url != null) {
       context.russianFont = await sc.ui2.waitForLoadable(
@@ -88,11 +106,11 @@ localizeMe.add_locale('ru_RU', {
     }
   },
 
-  // eslint-disable-next-line camelcase
+  // eslint-disable-next-line @typescript-eslint/camelcase
   patch_base_font: (canvas, context) => {
     let { russianFont } = context;
     if (russianFont != null) {
-      let context2d = canvas.getContext('2d');
+      let ctx2d = canvas.getContext('2d')!;
       for (let i = 0; i < RUSSIAN_FONT_CHARACTERS.length; i++) {
         let width = russianFont.widthMap[i] + 1;
         let rect = context.reserve_char(canvas, width);
@@ -100,7 +118,7 @@ localizeMe.add_locale('ru_RU', {
         context.set_char_pos(char, rect);
         let srcX = russianFont.indicesX[i];
         let srcY = russianFont.indicesY[i];
-        context2d.drawImage(
+        ctx2d.drawImage(
           russianFont.data,
           srcX,
           srcY,
@@ -116,8 +134,8 @@ localizeMe.add_locale('ru_RU', {
     return canvas;
   },
 
-  // eslint-disable-next-line camelcase
-  misc_time_function: () => {
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  misc_time_function: (): string => {
     let date = new Date();
     // https://pikabu.ru/story/a_gdeto_seychas_rovno_polden_4223194
     // TODO: add this to Nota

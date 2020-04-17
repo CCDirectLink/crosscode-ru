@@ -13,7 +13,7 @@ ig.module('crosscode-ru.fixes.map-menu.teleport-to-prepositions')
     // I changed some of the map names here because "Teleport in Cargo Hold"
     // sounds way better than "Teleport to Teleporter"
     // TODO: add this to Nota
-    const CORRECT_MAP_NAMES_WITH_PREPOSITIONS: Record<string, string> = {
+    const CORRECT_MAP_NAMES_WITH_PREPOSITIONS: Dictionary<string> = {
       'arid.town-2': 'в Западный город',
       'autumn.path4': 'к Озеру у обелиска',
       'autumn.path-8': 'к Северному выходу',

@@ -137,6 +137,8 @@ declare namespace ig {
     loadingFinished(this: this, success: boolean): void;
   }
   interface SingleLoadableConstructor extends ImpactClass<SingleLoadable> {
+    new (): this['__instance'];
+
     instance: this['__instance'];
   }
   let SingleLoadable: SingleLoadableConstructor;
@@ -216,15 +218,18 @@ declare namespace ig {
     type ALIGN = Font$ALIGN;
   }
   interface Font extends ig.Image {
+    widthMap: number[];
+    indicesX: number[];
+    indicesY: number[];
     charHeight: number;
   }
   interface FontConstructor extends ImpactClass<Font> {
     new (
       path: string,
       charHeight: number,
-      firstChar: number,
-      sizeIndex: number,
-      color: string,
+      firstChar?: number,
+      sizeIndex?: number,
+      color?: string,
     ): this['__instance'];
 
     ALIGN: typeof Font$ALIGN;
