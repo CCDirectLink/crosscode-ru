@@ -14,13 +14,9 @@ SHELL := bash
 .DELETE_ON_ERROR:
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
-ifeq ($(origin .RECIPEPREFIX), undefined)
-  $(error This Make does not support .RECIPEPREFIX. Please use GNU Make 4.0 or later)
-endif
-.RECIPEPREFIX = >
 
 ifeq ($(origin TOOL_DATA_DIR), undefined)
-  $(error TOOL_DATA_DIR is undefined. Please set to $$GAME_DIR/assets/ru-translation-tool or something like that)
+	$(error TOOL_DATA_DIR is undefined. Please set to $$GAME_DIR/assets/ru-translation-tool or something like that)
 endif
 
 .PHONY: all clean
@@ -74,7 +70,7 @@ ALL_ARCHIVE_NAMES := $(ZIP_ARCHIVE_NAMES) $(TAR_ARCHIVE_NAMES)
 all: $(ALL_ARCHIVE_NAMES)
 
 clean:
-> rm -rvf $(ALL_ARCHIVE_NAMES) $(MOD_DIR) $(TOOL_DIR) $(LOCALIZE_ME_MOD_DIR) $(CC_WORLD_MAP_OVERHAUL_MOD_DIR) $(ENHANCED_UI_MOD_DIR)
+	rm -rvf $(ALL_ARCHIVE_NAMES) $(MOD_DIR) $(TOOL_DIR) $(LOCALIZE_ME_MOD_DIR) $(CC_WORLD_MAP_OVERHAUL_MOD_DIR) $(ENHANCED_UI_MOD_DIR)
 
 archive_names = $(addsuffix .zip,$1) $(addsuffix .tar.gz,$1)
 $(call archive_names,$(MOD_ARCHIVE_NAME)): $(MOD_ARCHIVE_FILES)
@@ -84,12 +80,12 @@ $(call archive_names,$(TOOL_MODPACK_ARCHIVE_NAME)): $(TOOL_MODPACK_ARCHIVE_FILES
 $(call archive_names,$(ENHANCED_UI_MOD_ARCHIVE_NAME)): $(ENHANCED_UI_MOD_ARCHIVE_FILES)
 
 $(ZIP_ARCHIVE_NAMES):
-> rm -rvf $@
-> zip --recurse-paths $@ -- $^
+	rm -rvf $@
+	zip --recurse-paths $@ -- $^
 
 $(TAR_ARCHIVE_NAMES):
-> rm -rvf $@
-> tar --verbose --create --file $@ --gzip -- $^
+	rm -rvf $@
+	tar --verbose --create --file $@ --gzip -- $^
 
 define download_crosscode_mod
 mkdir -pv $1 && \
@@ -97,19 +93,19 @@ curl --location --fail $2 | tar --verbose --directory $1 --gzip --strip-componen
 endef
 
 $(LOCALIZE_ME_MOD_DIR):
-> $(call download_crosscode_mod,$@,https://github.com/L-Sherry/Localize-me/archive/v0.5.2.tar.gz)
+	$(call download_crosscode_mod,$@,https://github.com/L-Sherry/Localize-me/archive/v0.5.2.tar.gz)
 $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
-> $(call download_crosscode_mod,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.0/cc-world-map-overhaul_v1.0.0.tar.gz)
+	$(call download_crosscode_mod,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.0/cc-world-map-overhaul_v1.0.0.tar.gz)
 
 $(MOD_DIR)/$(TRANSLATIONS_DIR): $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
 
 # Unfortuntately, the following file copying rules can't be merged together
 $(MOD_DIR)/$(TRANSLATIONS_DIR)/%.json: $(TOOL_DATA_DIR)/%.json
-> mkdir -pv $(@D)
-> jq --compact-output . $< > $@
+	mkdir -pv $(@D)
+	jq --compact-output . $< > $@
 $(MOD_DIR)/%: ../%
-> mkdir -pv $(@D) && cp -r $< $@
+	mkdir -pv $(@D) && cp -r $< $@
 $(TOOL_DIR)/%: ../tool/%
-> mkdir -pv $(@D) && cp -r $< $@
+	mkdir -pv $(@D) && cp -r $< $@
 $(ENHANCED_UI_MOD_DIR)/%: ../enhanced-ui/%
-> mkdir -pv $(@D) && cp -r $< $@
+	mkdir -pv $(@D) && cp -r $< $@
