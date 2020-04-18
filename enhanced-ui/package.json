@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "enhanced-ui",
+  "ccmodHumanName": "Enhanced UI",
   "version": "0.1.0",
   "license": "MIT",
   "description": "Various GUI enchancments and fixes",
