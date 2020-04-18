@@ -57,6 +57,7 @@ overrides:
       localizeMe: off
 
     # TODO: add TS preset to https://github.com/dmitmel/eslint-config-dmitmel
+    # also see https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/naming-convention.md
     rules:
       prefer-const: off
 
@@ -102,6 +103,8 @@ overrides:
           allowTypedFunctionExpressions: true
           allowHigherOrderFunctions: true
 
+      '@typescript-eslint/no-empty-interface': off
+
   - files:
       - 'src/**/*.ts'
     parserOptions:
@@ -112,7 +115,6 @@ overrides:
     parserOptions:
       project: 'ultimate-crosscode-typedefs/tsconfig.json'
     rules:
-      '@typescript-eslint/no-empty-interface': off
       '@typescript-eslint/triple-slash-reference': off
 
   - files:
