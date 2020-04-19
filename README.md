@@ -1,10 +1,53 @@
 # crosscode-ru
 
-Work in progress! Coming soon.
+Комьюнити-модпак русского перевода игры [CrossCode](https://cross-code.com/en/home), который мы все заслужили.
+
+![community translation official response 1](docs/media/community-translation-official-response1.png)
+
+![community translation official response 2](docs/media/community-translation-official-response2.png)
+
+**Наш Discord-сервер**: https://discord.gg/QANXNbR \
+**Наша группа в VK**: https://vk.com/crusscode
+
+[**Перейти к инструкции по установке!**](#инструкции-по-установке)
+
+## Фичи
+
+### 1. Собственно, русский перевод CrossCode
+
+![translated story 1](docs/media/screenshots/features/translated-story1.gif)
+
+![translated story 1](docs/media/screenshots/features/translated-story1.png)
+
+![translated story 2](docs/media/screenshots/features/translated-story2.png)
+
+![translated interface](docs/media/screenshots/features/translated-interface.png)
+
+### 2. Куча различных исправлений интерфейса
+
+**Например, бегущие строки:**
+
+![ticker display](docs/media/screenshots/features/ticker-display.gif)
+
+Или, вот ещё один пример. **Оригинал:**
+
+![ui fix example before](docs/media/screenshots/features/ui-fix-example-before.png)
+
+(простите, в этот раз без гифки) **С фиксом для бегущих строк:**
+
+![ui fix example after](docs/media/screenshots/features/ui-fix-example-after.png)
+
+### 3. Опциональная локализация текстур
+
+![localized sprites](docs/media/screenshots/features/optional-localized-sprites.png)
+
+### 4. Улучшенная карта мира
+
+![world map overhaul](docs/media/screenshots/features/cc-world-map-overhaul.png)
 
 ## Инструкции по установке
 
-Обновляетесь на новую версию? Сначала просмотрите [инструкции по обновлению](#инструкции-по-обновлению)
+Обновляетесь на новую версию? Сначала просмотрите [инструкции по обновлению](#инструкции-по-обновлению).
 
 ### Шаг 1. Определите путь к папке игры
 
@@ -47,7 +90,7 @@ Work in progress! Coming soon.
 
 #### Для пиратов
 
-Раз уж Вы решили пойти по благородному пути пиратства то, думаю, Вы знаете, чем занимаетесь, ну и где лежит папка игры тоже.
+Раз уж Вы решили пойти по благородному пути пиратства, то, думаю, Вы знаете, чем занимаетесь, ну и где лежит папка игры тоже.
 
 ### Шаг 2. Скачивание модпака
 
@@ -120,3 +163,64 @@ Work in progress! Coming soon.
 ```
 
 После чего можете спокойно выполнять установку [начиная с шага 2](#шаг-2-скачивание-модпака).
+
+## Авторы
+
+### Генеральный сборщик
+
+- Dimava
+
+### Программисты мода
+
+- dmitmel
+- L-Sherry
+
+### Главный редактор
+
+- Packy
+
+### Тостеры (тестировщики)
+
+- ElectroPlayer
+- Sage the Voity
+
+### Переводчики
+
+- Packy
+- Sandorik
+- dymeon
+- MegaGazon
+- Dimava
+- Dustex
+- Rik'Zun
+- Death_Gun
+- RarityDash
+- Sage the Voity
+- ArgonLain
+- DeSio
+- Cilez
+- aspadm
+- ArchonT3
+- MystAxe
+
+### Главный корректор
+
+- dymeon
+
+### Корректоры
+
+- Packy
+- Sandorik
+
+### Благодарности
+
+- MrSuperParadox
+- Yen
+- Настечка
+- MystAxe
+- WatDuhHekBro
+- Notabenoid
+
+## Разные вопросы о легальности
+
+Команда crosscode-ru никак не связана с [RadicalFishGames](http://www.radicalfishgames.com/?page_id=17). Разрешение на распространение модпака в таком виде, в котором он сейчас есть, было получено ([ссылка 1](https://discordapp.com/channels/143364538958348288/276459212807340034/676870708613087272), [ссылка 2](https://discordapp.com/channels/143364538958348288/276459212807340034/676891793417306132)). Переводы и изображения (ассеты) распространяются под лицензией [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). Код из [этого репозитория](https://github.com/dmitmel/crosscode-ru) распространяется под лицензией [MIT](https://choosealicense.com/licenses/mit/).

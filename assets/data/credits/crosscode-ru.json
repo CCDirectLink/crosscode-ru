@@ -14,7 +14,7 @@
     "ru_translated": {
       "header": {
         "en_US": "Translated by CRUSsCode team",
-        "ru_RU": "Переведено командой CRUSsCode "
+        "ru_RU": "Переведено командой CRUSsCode"
       },
       "key": "BASE",
       "columns": 1,
@@ -129,7 +129,8 @@
         { "en_US": "Yen" },
         { "en_US": "Nastechka", "ru_RU": "Настечка" },
         { "en_US": "MystAxe" },
-        { "en_US": "WatDuhHekBro" }
+        { "en_US": "WatDuhHekBro" },
+        { "en_US": "Notabenoid" }
       ]
     },
 
