@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "crosscode-ru",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "(MIT AND CC-BY-4.0)",
   "description": "Russian translation for CrossCode",
   "homepage": "https://github.com/dmitmel/crosscode-ru",
