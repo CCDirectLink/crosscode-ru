@@ -121,6 +121,7 @@ declare namespace ig {
 
   interface Loadable extends ig.Cacheable, ig.Resource {
     loaded: boolean;
+    failed: boolean;
     path: string;
 
     loadingFinished(this: this, success: boolean): void;
@@ -132,6 +133,7 @@ declare namespace ig {
 
   interface SingleLoadable extends ig.Class, ig.Resource {
     loaded: boolean;
+    failed: boolean;
     path: string;
 
     loadingFinished(this: this, success: boolean): void;
@@ -143,7 +145,9 @@ declare namespace ig {
   }
   let SingleLoadable: SingleLoadableConstructor;
 
-  interface Loader extends ig.Class {}
+  interface Loader extends ig.Class {
+    _loadCallback: ReplaceThisParameter<ig.Resource.LoadCallback, this>;
+  }
   interface LoaderConstructor extends ImpactClass<Loader> {}
   let Loader: LoaderConstructor;
 }

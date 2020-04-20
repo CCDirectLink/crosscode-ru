@@ -9,6 +9,10 @@ sc.ui2.waitForLoadable = <T extends ig.Loadable | ig.SingleLoadable>(
       resolve(loadable);
       return;
     }
+    if (loadable.failed) {
+      reject(new Error(`Failed to load resource: ${loadable.path}`));
+      return;
+    }
 
     let loadingFinished = loadable.loadingFinished as (
       this: T,
@@ -24,4 +28,14 @@ sc.ui2.waitForLoadable = <T extends ig.Loadable | ig.SingleLoadable>(
       else reject(new Error(`Failed to load resource: ${this.path}`));
     };
   });
+};
+
+// TODO: explain why this function is needed
+sc.ui2.forciblyTriggerResourceLoad = () => {
+  if (ig.ready) return;
+  ig.mainLoader._loadCallback(
+    'FakeResource',
+    `FakeResource/${Math.random()}`,
+    true,
+  );
 };

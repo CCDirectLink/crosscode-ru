@@ -126,7 +126,9 @@ ig.Image.inject({
         this.data = canvas;
       }
 
-      let newData = await patchFunction(context, this.data);
+      let maybePromise = patchFunction(context, this.data);
+      sc.ui2.forciblyTriggerResourceLoad();
+      let newData = await maybePromise;
       if (newData != null) {
         this.data = newData;
         this.width = newData.width;
