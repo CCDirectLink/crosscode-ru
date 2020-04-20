@@ -146,6 +146,8 @@ declare namespace ig {
   let SingleLoadable: SingleLoadableConstructor;
 
   interface Loader extends ig.Class {
+    _unloaded: string[];
+
     _loadCallback: ReplaceThisParameter<ig.Resource.LoadCallback, this>;
   }
   interface LoaderConstructor extends ImpactClass<Loader> {}
