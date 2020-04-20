@@ -2,7 +2,7 @@
   "private": true,
   "name": "enhanced-ui",
   "ccmodHumanName": "Enhanced UI",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "description": "Various GUI enchancments and fixes",
   "homepage": "https://github.com/dmitmel/crosscode-ru/tree/master/enhanced-ui",
