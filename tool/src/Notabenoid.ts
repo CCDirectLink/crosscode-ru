@@ -57,6 +57,7 @@ export interface Original {
 }
 
 export interface Translation {
+  id: string;
   rawText: string;
   text: string;
   authorUsername: string;
@@ -199,11 +200,10 @@ function parseFragment(element: Element): Fragment | null {
   if (original == null) return null;
   f.original = original;
 
-  let escapeSequences = original.text.match(/\\[civs](\[[^\]]+\])?/g);
   let translations: Translation[] = [];
   f.translations = translations;
   for (let translationElement of element.querySelectorAll('.t > div')) {
-    let t = parseTranslation(translationElement, escapeSequences);
+    let t = parseTranslation(translationElement);
     if (t != null) translations.push(t);
   }
   f.translations.sort((a, b) => b.score - a.score);
@@ -240,11 +240,9 @@ function parseOriginal(raw: string): Original | null {
   return o as Original;
 }
 
-function parseTranslation(
-  element: Element,
-  originalEscapeSequences: string[] | null,
-): Translation | null {
+function parseTranslation(element: Element): Translation | null {
   let t: Partial<Translation> = {};
+  t.id = element.id.slice(1);
   t.rawText = element.querySelector('.text')!.textContent!;
   t.authorUsername = element.querySelector('.user')!.textContent!;
   t.votes = parseInt(
@@ -280,71 +278,6 @@ function parseTranslation(
     })
     .replace(/^\^|^\$|\$$/g, '');
   t.flags = flags;
-
-  // if (
-  //   t.rawText.replace(/\n?⟪.*⟫/, '') !=
-  //   t.rawText.replace(/\n?⟪.*⟫/, '').trim()
-  // ) {
-  //   console.warn('invalid translation: has whitespace on ends', fragment);
-  //   t.err += ' err_not_trimmed ';
-  //   etc.err_not_trimmed = true;
-  // }
-
-  // ru.err = '';
-  // if (
-  //   ru.ru.startsWith(etc.en.split(' ')[0]) &&
-  //   !ru.ru.startsWith('---')
-  // ) {
-  //   if (ru.ru.match(/\n\n/)) ru.ru = ru.ru.split('\n\n')[1];
-  //   else if (ru.ru.match(/^[\x00-\xff\s]*\n([^]+?)\s*$/))
-  //     ru.ru = ru.ru.match(/^[\x00-\xff\s]*\n([^]+?)\s*$/)[1];
-  //   console.warn('invalid translation: has path', etc);
-  //   ru.err += ' err_has_path ';
-  //   etc.err_has_path = true;
-  // }
-  if (t.text.includes('№')) {
-    // if (enm.length != rum.length) {
-    //   console.warn('invalid translation: № dismatch', etc);
-    //   ru.err += ' err_dismatch ';
-    //   etc.err_dismatch = true;
-    // }
-    // if (NotaArea.getEscapeSequence(ru.ru).length) {
-    //   console.warn(
-    //     'invalid translation: mixed №/\\c escape sequences',
-    //     etc,
-    //   );
-    //   ru.err += ' err_mixed_escape ';
-    //   etc.err_mixed_escape = true;
-    // }
-    if (originalEscapeSequences != null) {
-      let i = 0;
-      t.text = t.text.replace(/№/g, s => {
-        s = originalEscapeSequences[i];
-        i++;
-        return s;
-      });
-    }
-  }
-  // if (NotaArea.getEscapeSequence(ru.raw_ru).length) {
-  //   if (
-  //     NotaArea.getEscapeSequence(ru.raw_ru) + '' ==
-  //     NotaArea.getEscapeSequence(etc.en) + ''
-  //   ) {
-  //     console.warn('invalid translation: same escape sequence', etc);
-  //     ru.err += ' err_same_escape ';
-  //     etc.err_same_escape = true;
-  //   }
-  // }
-  // if (!NotaArea.checkValidEscape(ru.ru)) {
-  //   console.warn('invalid translation: invalid escape sequence', etc);
-  //   ru.err += ' err_invalid_escape ';
-  //   etc.err_invalid_escape = true;
-  // }
-  // if (!NotaArea.checkValidCharset(ru.ru)) {
-  //   console.warn('invalid translation: non-existing character', etc);
-  //   ru.err += ' err_invalid_charset ';
-  //   etc.err_invalid_charset = true;
-  // }
 
   t.score = calculateTranslationScore(t as Translation);
   return t as Translation;
