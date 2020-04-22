@@ -126,6 +126,17 @@ export class NotaClient {
       })(),
     };
   }
+
+  async login(username: string, password: string): Promise<void> {
+    let body = new FormData();
+    body.append('login[login]', username);
+    body.append('login[pass]', password);
+    await fetch('http://notabenoid.org/', {
+      method: 'POST',
+      body,
+      credentials: 'include',
+    });
+  }
 }
 
 function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
@@ -213,12 +224,15 @@ function parseOriginal(raw: string): Original | null {
   if (locationLineLen < 0) locationLineLen = headers.length;
   let locationLine = headers.slice(0, locationLineLen);
 
-  let match = /^(\S+)\s+(\S+)(?:\s+#(\d+))?\s*$/.exec(locationLine);
-  if (match == null || match.length !== 4) return null;
-  let [file, jsonPath, langUid] = match.slice(1);
-  o.file = file;
-  o.jsonPath = jsonPath;
-  o.langUid = langUid != null ? parseInt(langUid, 10) : null;
+  let langUidMarkerIndex = locationLine.lastIndexOf(' #');
+  if (langUidMarkerIndex >= 0) {
+    o.langUid = parseInt(locationLine.slice(langUidMarkerIndex + 2), 10);
+    locationLine = locationLine.slice(0, langUidMarkerIndex);
+  }
+  let firstSpaceIndex = locationLine.indexOf(' ');
+  if (firstSpaceIndex < 0) return null;
+  o.file = locationLine.slice(0, firstSpaceIndex);
+  o.jsonPath = locationLine.slice(firstSpaceIndex + 1);
 
   o.descriptionText = raw.slice(locationLineLen + 1, headersLen);
   o.text = raw.slice(headersLen + 2);

@@ -16,7 +16,9 @@ import * as asyncUtils from './utils/async.js';
 import * as iteratorUtils from './utils/iterator.js';
 
 window.addEventListener('load', () => {
-  new Main().start();
+  let app = new Main();
+  (window as any).app = app;
+  app.start();
 });
 
 class Main {
@@ -160,7 +162,6 @@ class Main {
       let currentPackIndex = 0;
       for (let [originalFile, packContents] of packer.packs.entries()) {
         mappingTable[originalFile] = originalFile;
-        console.log(`writing pack for ${originalFile}`);
         this.progressBar.setTaskInfo(
           `Запись транслейт-пака '${originalFile}'...`,
         );

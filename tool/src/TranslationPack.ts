@@ -6,6 +6,7 @@ import * as fsUtils from './utils/fs.js';
 type LocalizeMePack = Record<string, { orig: string; text: string }>;
 
 const INJECTED_IN_MOD_TAG = 'INJECTED_IN_MOD';
+const IGNORE_IN_MOD_TAG = 'IGNORE_IN_MOD';
 
 export class LocalizeMePacker {
   packs: Map<string, LocalizeMePack> = new Map();
@@ -14,85 +15,69 @@ export class LocalizeMePacker {
   async addNotaFragments(fragments: Nota.Fragment[]): Promise<void> {
     for (let f of fragments) {
       if (f.translations.length === 0) continue;
-      let { file, jsonPath, text: originalText } = f.original;
+      if (f.original.descriptionText.includes(IGNORE_IN_MOD_TAG)) continue;
 
       // eslint-disable-next-line no-await-in-loop
-      let fixedOriginal = await this.fixNotaOriginal(f.original);
-      if (fixedOriginal == null) continue;
-      ({ file, jsonPath, text: originalText } = fixedOriginal);
+      if (!(await this.validateFragment(f))) continue;
 
       let pack: LocalizeMePack;
+      let { file } = f.original;
       if (this.packs.has(file)) {
         pack = this.packs.get(file)!;
       } else {
         pack = {};
         this.packs.set(file, pack);
       }
-      pack[`${file}/${jsonPath}`] = {
-        orig: originalText,
+      pack[`${file}/${f.original.jsonPath}`] = {
+        orig: f.original.text,
         text: f.translations[0].text,
       };
     }
   }
 
-  private async fixNotaOriginal(
-    nota: Nota.Original,
-  ): Promise<{ file: string; jsonPath: string; text: string } | null> {
-    let { file, jsonPath, text } = nota;
+  async validateFragment(f: Nota.Fragment): Promise<boolean> {
+    let { file, jsonPath } = f.original;
 
-    if (!file.startsWith('data/')) return null;
-    file = `${file.slice('data/'.length)}.json`;
+    let obj: unknown;
+    try {
+      obj = await this.getAsset(file);
+    } catch (_err) {
+      console.warn(`${file} ${jsonPath}: unknown file`);
+      return false;
+    }
 
-    if (file === 'LANG.json') {
-      for (let feature of ['gimmick', 'gui', 'map-content']) {
-        let prefix = `sc.${feature}.`;
-        if (jsonPath.startsWith(prefix)) {
-          file = `lang/sc/${feature}.en_US.json`;
-          jsonPath = jsonPath.slice(prefix.length);
-          break;
-        }
+    if (!f.original.descriptionText.includes(INJECTED_IN_MOD_TAG)) {
+      let jsonPathComponents = jsonPath.split('/');
+      for (let key of jsonPathComponents) {
+        obj = (obj as Record<string, unknown>)[key];
       }
-    }
 
-    let obj = await this.getAsset(file);
-
-    let jsonPathComponents = jsonPath.split('.');
-    jsonPath = '';
-    let currentKey = '';
-    for (let key of jsonPathComponents) {
-      if (currentKey.length > 0) currentKey += '.';
-      currentKey += key;
-      if (Object.prototype.hasOwnProperty.call(obj, currentKey)) {
-        if (jsonPath.length > 0) jsonPath += '/';
-        jsonPath += currentKey;
-        obj = (obj as Record<string, unknown>)[currentKey];
-        currentKey = '';
-      }
-    }
-    if (currentKey.length > 0) {
-      if (jsonPath.length > 0) jsonPath += '/';
-      jsonPath += currentKey;
-    }
-
-    if (!nota.descriptionText.includes(INJECTED_IN_MOD_TAG)) {
       let realOriginalText: string;
       if (file.endsWith('.en_US.json')) {
-        if (typeof obj !== 'string') return null;
+        if (typeof obj !== 'string') {
+          console.warn(`${file} ${jsonPath}: not a string`);
+          return false;
+        }
         realOriginalText = obj;
       } else {
-        if (typeof obj !== 'object' || obj == null) return null;
+        if (typeof obj !== 'object' || obj == null) {
+          console.warn(`${file} ${jsonPath}: not a string`);
+          return false;
+        }
         let obj2 = obj as { en_US?: unknown };
-        if (typeof obj2.en_US !== 'string') return null;
+        if (typeof obj2.en_US !== 'string') {
+          console.warn(`${file} ${jsonPath}: not a string`);
+          return false;
+        }
         realOriginalText = obj2.en_US;
       }
-      if (text === realOriginalText.trimRight()) text = realOriginalText;
 
-      if (text !== realOriginalText) {
+      if (f.original.text !== realOriginalText) {
         console.warn(`${file} ${jsonPath}: stale translation`);
       }
     }
 
-    return { file, jsonPath, text };
+    return true;
   }
 
   private async getAsset(file: string): Promise<unknown> {

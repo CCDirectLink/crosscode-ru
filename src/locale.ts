@@ -78,6 +78,8 @@ localizeMe.add_locale('ru_RU', {
 
     if (!sc.ru.debug.showUntranslatedStrings) return original;
 
+    if (original.trim() === '') return original;
+
     if (/^credits\/[^/]+\.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)) {
       return original;
     }
