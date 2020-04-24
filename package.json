@@ -11,7 +11,7 @@
   "module": true,
   "postload": "dist/postload.js",
   "ccmodDependencies": {
-    "crosscode": ">=1.2.0-5",
+    "crosscode": ">=1.2.0",
     "Localize Me": "^0.5.2",
     "enhanced-ui": "^0.1.0"
   },

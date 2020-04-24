@@ -18,6 +18,7 @@
   "module": true,
   "postload": "dist/mod/postload.js",
   "ccmodDependencies": {
+    "crosscode": ">=1.2.0",
     "crosscode-ru": "*"
   },
   "devDependencies": {
