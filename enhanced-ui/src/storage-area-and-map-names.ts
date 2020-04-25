@@ -7,33 +7,33 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
   )
   .defines(() => {
     ig.Database.inject({
-      onload(data) {
-        sc.ui2.areaAndMapNamesLookupTable = new Map();
+      async onload(data) {
+        let onload = this.parent;
 
-        Promise.all(
-          Object.entries(data.areas)
+        try {
+          sc.ui2.areaAndMapNamesLookupTable = new Map();
+
+          let promises = Object.entries(data.areas)
             .filter(([id, _area]) => id !== 'testing-grounds')
             .map(async ([id, { name: areaName }]) => {
-              // Note that even though this is an async function,
-              // `sc.AreaLoadable` is still created in the synchronous context
-              // (because there are no prior async operations), so the execution
-              // in this event loop tick hasn't reached the end of the overall
-              // `onload` method yet. By the time `this.parent` is reached all
-              // of these loadables will be registered with `ig.addResource` and
-              // `ig.resources` won't be empty even though `ig.database` is
-              // usually finishes loading the last.
               let areaLoadable = new sc.AreaLoadable(id);
               await sc.ui2.waitForLoadable(areaLoadable);
               addAreaToLookupTable(areaName, areaLoadable.data);
               // I'm not decreasing the refcount of `areaLoadable` because this
               // data is downloaded unconditionally at the start of the game and
               // I don't want to waste this time and bandwidth
-            }),
-        ).catch(err => {
-          ig.system.error(err);
-        });
+            });
 
-        this.parent(data);
+          // usually at this point there are no more resources to load, so I
+          // have to trigger loading forcibly
+          sc.ui2.forciblyTriggerResourceLoad();
+
+          await Promise.all(promises);
+        } catch (err) {
+          ig.system.error(err);
+        }
+
+        onload.call(this, data);
       },
     });
 
@@ -75,8 +75,8 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
     ig.Storage.inject({
       init(...args) {
         this.parent(...args);
-        for (let slot of this.slots) this._fixAreaAndMapNames(slot.data);
-        if (this.autoSlot != null) this._fixAreaAndMapNames(this.autoSlot.data);
+        for (let slot of this.slots) this._fixAreaAndMapNames(slot);
+        if (this.autoSlot != null) this._fixAreaAndMapNames(this.autoSlot);
       },
 
       _fixAreaAndMapNames(slot) {
@@ -86,8 +86,8 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
         // unused, so I'm not patching it. If someone finds where floor names
         // are shown in the GUI - please tell me.
 
-        let { tradersFound, quests } = slot;
-        fixAreaAndMapLangLabel(slot, 'area', 'specialMap');
+        let { tradersFound, quests } = slot.data;
+        fixAreaAndMapLangLabel(slot.data, 'area', 'specialMap');
 
         for (let traderFound of Object.values(tradersFound)) {
           fixAreaAndMapLangLabel(traderFound, 'area', 'map');
@@ -96,6 +96,9 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
         for (let quest of Object.values(quests.locale)) {
           fixAreaAndMapLangLabel(quest.location, 'area', 'map');
         }
+
+        // if a rebuild of the encrypted data is needed, uncomment this:
+        // slot.mergeData({});
       },
     });
 

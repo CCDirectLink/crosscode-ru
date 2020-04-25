@@ -10,6 +10,6 @@ declare namespace sc.ui2 {
 
 declare namespace ig {
   interface Storage {
-    _fixAreaAndMapNames(this: this, slot: ig.SaveSlot.Data): void;
+    _fixAreaAndMapNames(this: this, slot: ig.SaveSlot): void;
   }
 }

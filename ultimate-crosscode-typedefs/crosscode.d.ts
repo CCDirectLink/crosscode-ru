@@ -704,6 +704,7 @@ declare namespace ig {
 
     getData(this: this): this['data'];
     getSrc(this: this): this['src'];
+    mergeData(this: this, data: Partial<ig.SaveSlot.Data>): void;
   }
   interface SaveSlotConstructor extends ImpactClass<SaveSlot> {
     new (source: string | ig.SaveSlot.Data): this['__instance'];
