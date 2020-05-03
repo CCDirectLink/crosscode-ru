@@ -13,3 +13,9 @@ declare namespace ig {
     _fixAreaAndMapNames(this: this, slot: ig.SaveSlot): void;
   }
 }
+
+declare namespace sc {
+  interface MapModel {
+    skipCurrentPlayerFloorValidation: boolean;
+  }
+}

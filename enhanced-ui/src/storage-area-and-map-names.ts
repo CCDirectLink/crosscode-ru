@@ -134,3 +134,58 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
       }
     }
   });
+
+// HACK: This code is required to allow loading of some maps whose floors
+// contain `zMin` and `zMax` properties. Let me to explain why this is needed.
+// Note that this bug happens when said maps are loaded when the cache is cold,
+// that is, right after starting the game. You see, `sc.MapModel#onLevelLoadStart`
+// instantiates an `sc.AreaLoadable` and attaches itself as the load listener to
+// it via `ig.Loadable#addLoadListener`. The `sc.MapModel#onLoadableComplte`
+// method contains a call to `sc.MapModel#validateCurrentPlayerFloor` which
+// internally uses `ig.game.playerEntity`. This is the root of all evils in this
+// case. Due to the fact that I preload all areas at the game loading time, the
+// instantiated `sc.AreaLoadable` will be marked as loaded and its
+// `addLoadListener` will immediately/synchronously invoke
+// `sc.MapModel#validateCurrentPlayerFloor`. Unfortunately, `ig.Game#playerEntity`
+// is still `null` at this point: at the first map load it will be created a bit
+// later in the `ig.Game#loadLevel` function, which calls `ig.GameAddon#onLevelLoadStart`
+// and only after it `ig.Game#createPlayer`. Hence, since the relevant code was
+// written under assumption that the cache of `sc.AreaLoadable` is cold and the
+// `sc.AreaLoadable` will be loaded and `sc.MapModel#onLoadableComplte` will be
+// executed in another event loop tick, alignment of all of these stars causes
+// crash on some specific areas (e.g. Sapphire Ridge). I fixed this bug by
+// deferring current player floor validation after `ig.Game#createPlayer` in
+// case `ig.Game#playerEntity` is `null`. Theoretically validation could be
+// moved into `ig.GameAddon#onLevelLoaded`, but I wanted to make this process
+// as seamless as possible due to the fact that `ig.GameAddon#onLevelLoaded` is
+// executed after literally all of the map loading code.
+ig.module('enhanced-ui.fixes.storage-area-and-map-names.map-model-fix')
+  .requires('game.feature.menu.map-model')
+  .defines(() => {
+    sc.MapModel.inject({
+      skipCurrentPlayerFloorValidation: false,
+
+      onLevelLoadStart(...args) {
+        try {
+          this.skipCurrentPlayerFloorValidation = ig.game.playerEntity == null;
+          return this.parent(...args);
+        } finally {
+          this.skipCurrentPlayerFloorValidation = false;
+        }
+      },
+
+      validateCurrentPlayerFloor(...args) {
+        if (!this.skipCurrentPlayerFloorValidation) this.parent(...args);
+      },
+    });
+
+    sc.CrossCode.inject({
+      createPlayer(...args) {
+        let shouldValidateCurrentPlayerFloor = this.playerEntity == null;
+        this.parent(...args);
+        if (shouldValidateCurrentPlayerFloor) {
+          sc.map.validateCurrentPlayerFloor();
+        }
+      },
+    });
+  });

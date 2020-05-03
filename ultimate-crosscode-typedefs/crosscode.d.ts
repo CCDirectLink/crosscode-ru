@@ -48,7 +48,7 @@ declare namespace ig {
   interface Resource {
     cacheType: string;
     path: string;
-    load(this: this, loadCallback: ig.Resource.LoadCallback): void;
+    load(this: this, loadCallback?: ig.Resource.LoadCallback): void;
   }
   let resources: ig.Resource[];
 
@@ -546,7 +546,18 @@ declare namespace ig {
 /* module impact.base.sprite-fx */
 /* module impact.base.animation */
 /* module impact.base.coll-entry */
+
 /* module impact.base.entity */
+
+declare namespace ig {
+  interface Entity extends ig.Class {}
+  interface EntityConstructor extends ImpactClass<Entity> {}
+  let Entity: EntityConstructor;
+
+  interface AnimatedEntity extends ig.Entity {}
+  interface AnimatedEntityConstructor extends ImpactClass<AnimatedEntity> {}
+  let AnimatedEntity: AnimatedEntityConstructor;
+}
 
 /* module impact.base.steps */
 
@@ -604,14 +615,21 @@ declare namespace ig {
 /* module impact.base.game */
 
 declare namespace ig {
-  interface Game extends ig.Class {}
+  interface Game extends ig.Class {
+    playerEntity: ig.ENTITY.Player;
+
+    createPlayer(this: this): void;
+  }
   interface GameConstructor extends ImpactClass<Game> {
     new (): this['__instance'];
   }
   let Game: GameConstructor;
   let game: Game;
 
-  interface GameAddon extends ig.Class {}
+  interface GameAddon extends ig.Class {
+    onLevelLoadStart?(this: this, data: sc.MapModel.Map): void;
+    onLevelLoaded?(this: this, data: ig.Game): void;
+  }
   interface GameAddonConstructor extends ImpactClass<GameAddon> {}
   let GameAddon: GameAddonConstructor;
 }
@@ -648,7 +666,15 @@ declare namespace ig {
 /* module impact.feature.gamepad.nwf-gamepad */
 /* module impact.feature.gamepad.plug-in */
 /* module impact.base.action */
+
 /* module impact.base.actor-entity */
+
+declare namespace ig {
+  interface ActorEntity extends ig.AnimatedEntity {}
+  interface ActorEntityConstructor extends ImpactClass<ActorEntity> {}
+  let ActorEntity: ActorEntityConstructor;
+}
+
 /* module impact.feature.base.action-steps */
 /* module impact.feature.base.event-steps */
 /* module impact.feature.base.entities.marker */
@@ -1742,11 +1768,18 @@ declare namespace sc {
       position: Vec2;
       landmarks: { [name: string]: Area.Landmark };
     }
+
+    interface Map {
+      name: string;
+    }
   }
   interface MapModel extends ig.GameAddon, sc.Model {
     areas: sc.MapModel.Area[];
+
+    onLevelLoadStart(this: this, data: sc.MapModel.Map): void;
+    validateCurrentPlayerFloor(this: this): void;
   }
-  interface MapModelConstructor extends ImpactClass<TradeModel> {}
+  interface MapModelConstructor extends ImpactClass<MapModel> {}
   let MapModel: MapModelConstructor;
   let map: sc.MapModel;
 }
@@ -2663,7 +2696,15 @@ declare namespace sc {
 /* module game.feature.ar.gui.ar-box */
 /* module game.feature.ar.ar-steps */
 /* module game.feature.ar.plug-in */
+
 /* module game.feature.npc.entities.sc-actor */
+
+declare namespace sc {
+  interface ActorEntity extends ig.ActorEntity {}
+  interface ActorEntityConstructor extends ImpactClass<ActorEntity> {}
+  let ActorEntity: ActorEntityConstructor;
+}
+
 /* module game.feature.base.action-steps */
 /* module game.feature.base.event-steps */
 /* module game.feature.base.plug-in */
@@ -2694,7 +2735,21 @@ declare namespace sc {
 /* module game.feature.combat.combat-sweep */
 /* module game.feature.combat.entities.combatant-marble */
 /* module game.feature.combat.entities.hit-number */
+
 /* module game.feature.combat.entities.combatant */
+
+declare namespace sc {
+  interface BasicCombatant extends sc.ActorEntity {}
+  interface BasicCombatantConstructor extends ImpactClass<BasicCombatant> {}
+  let BasicCombatant: BasicCombatantConstructor;
+}
+
+declare namespace ig.ENTITY {
+  interface Combatant extends sc.BasicCombatant {}
+  interface CombatantConstructor extends ImpactClass<Combatant> {}
+  let Combatant: CombatantConstructor;
+}
+
 /* module game.feature.combat.entities.food-icon */
 /* module game.feature.combat.entities.drop */
 /* module game.feature.combat.entities.item-drop */
@@ -2804,9 +2859,24 @@ declare namespace ig {
 /* module game.feature.player.entities.crosshair */
 /* module game.feature.player.player-level-notifier */
 /* module game.feature.player.item-consumption */
+
 /* module game.feature.player.entities.player-base */
+
+declare namespace sc {
+  interface PlayerBaseEntity extends ig.ENTITY.Combatant {}
+  interface PlayerBaseEntityConstructor extends ImpactClass<PlayerBaseEntity> {}
+  let PlayerBaseEntity: PlayerBaseEntityConstructor;
+}
+
 /* module game.feature.player.entities.player-pet */
+
 /* module game.feature.player.entities.player */
+
+declare namespace ig.ENTITY {
+  interface Player extends sc.PlayerBaseEntity {}
+  interface PlayerConstructor extends ImpactClass<Player> {}
+  let Player: PlayerConstructor;
+}
 
 /* module game.feature.party.party */
 

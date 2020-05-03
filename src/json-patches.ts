@@ -231,29 +231,23 @@ simplifyResources.registerHandler(
 
     let oldSuccess = settings.success!;
     let oldError = settings.error!;
-    settings.success = function(
+    settings.success = async function(
       json: any,
       state: string,
       xhr: JQueryXHR,
-    ): void {
-      new Promise(resolve =>
-        resolve(
-          // if `patchFunction` returns a promise here `resolve` will wait for
-          // it to resolve and then continue execution of the overall promise
-          patchFunction(json),
-        ),
-      ).then(
+    ): Promise<void> {
+      try {
+        // if `patchFunction` returns a promise here `await` will wait for it to
+        // resolve and then continue execution of the overall promise
+        let patchedJson = await patchFunction(json);
         // not sure what to do with state if it is `notmodified` or `nocontent`...
-        patchedJson => {
-          oldSuccess.call(this, patchedJson, state, xhr);
-        },
-        error => {
-          // well, since CrossCode doesn't care about actual errors returned
-          // by $.ajax, I have to log this one myself.
-          console.error(`Could not load patch for ${url}: ${error}`);
-          oldError.call(this, xhr, 'error', error);
-        },
-      );
+        oldSuccess.call(this, patchedJson, state, xhr);
+      } catch (err) {
+        // well, since CrossCode doesn't care about actual errors returned
+        // by $.ajax, I have to log this one myself.
+        console.error(`Could not load patch for ${url}: ${err}`);
+        oldError.call(this, xhr, 'error', err);
+      }
     };
   },
   // filter
