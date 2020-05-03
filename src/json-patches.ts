@@ -212,6 +212,15 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
     }
     return data;
   },
+
+  'data/maps/rookie-harbor/teleporter.json': data => {
+    if (ig.currentLang !== 'ru_RU') return data;
+
+    let step = data.entities[425].settings.event[14].acceptStep[14];
+    step.pos.x = 131;
+    step.size.x = 122;
+    return data;
+  },
 };
 
 // ha ha... ha ha ha ha ha! I don't know who designed such "genius" system,
