@@ -1,4 +1,3 @@
-import './namespace.js';
 import './debug.js';
 import './utils.js';
 import './locale.js';
