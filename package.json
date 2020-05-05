@@ -21,7 +21,8 @@
     "eslint": "^6.8.0",
     "eslint-config-dmitmel": "dmitmel/eslint-config-dmitmel",
     "eslint-plugin-node": "^11.0.0",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "ultimate-crosscode-typedefs": "dmitmel/ultimate-crosscode-typedefs"
   },
   "scripts": {
     "build": "tsc --build",
