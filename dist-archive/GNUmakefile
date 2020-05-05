@@ -95,7 +95,7 @@ endef
 $(LOCALIZE_ME_MOD_DIR):
 	$(call download_crosscode_mod,$@,https://github.com/L-Sherry/Localize-me/archive/v0.5.2.tar.gz)
 $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
-	$(call download_crosscode_mod,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.0/cc-world-map-overhaul_v1.0.0.tar.gz)
+	$(call download_crosscode_mod,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.1/cc-world-map-overhaul_v1.0.1.tar.gz)
 
 $(MOD_DIR)/$(TRANSLATIONS_DIR): $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
 
