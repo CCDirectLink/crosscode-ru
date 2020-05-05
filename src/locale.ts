@@ -143,10 +143,7 @@ localizeMe.add_locale('ru_RU', {
     // TODO: add this to Nota
     if (date.getHours() >= 11 && date.getHours() <= 13) return 'час расплаты';
     let h = date.getHours().toString();
-    let m = date
-      .getMinutes()
-      .toString()
-      .padStart(2, '0');
+    let m = date.getMinutes().toString().padStart(2, '0');
     return `${h}:${m}`;
   },
 });

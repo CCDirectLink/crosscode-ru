@@ -240,7 +240,7 @@ simplifyResources.registerHandler(
 
     let oldSuccess = settings.success!;
     let oldError = settings.error!;
-    settings.success = async function(
+    settings.success = async function (
       json: any,
       state: string,
       xhr: JQueryXHR,

@@ -42,7 +42,7 @@ ig.module('enhanced-ui.fixes.info-bar')
           let buffInfoSetText = this._associatedBuffInfo.setText;
           // eslint-disable-next-line @typescript-eslint/no-this-alias
           let infoBar = this;
-          this._associatedBuffInfo.setText = function(text, initDelay) {
+          this._associatedBuffInfo.setText = function (text, initDelay) {
             buffInfoSetText.call(this, text, initDelay);
             if (initDelay == null || initDelay <= 0)
               infoBar._updateTickerMaxSize();

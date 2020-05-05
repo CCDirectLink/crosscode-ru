@@ -91,7 +91,7 @@ ig.module('crosscode-ru.social-button')
       let closeBtn = document.createElement('input');
       closeBtn.type = 'button';
       closeBtn.value = 'Закрыть';
-      closeBtn.addEventListener('click', function(event) {
+      closeBtn.addEventListener('click', function (event) {
         event.preventDefault();
         ig.system.regainFocus();
       });
@@ -112,7 +112,7 @@ ig.module('crosscode-ru.social-button')
 
     function setupLink(a: HTMLAnchorElement): void {
       if (ig.platform === ig.PLATFORM_TYPES.DESKTOP) {
-        a.addEventListener('click', function(event) {
+        a.addEventListener('click', function (event) {
           event.preventDefault();
           // eslint-disable-next-line no-invalid-this
           nw.Shell.openExternal(this.href);

@@ -8,12 +8,10 @@ install:
   - yarn install
   - (cd enhanced-ui && yarn install)
   - (cd tool && yarn install)
-  - (cd ultimate-crosscode-typedefs && yarn install)
-  - yarn global add prettier
 script:
   - yarn run build
   - yarn run lint
-  - prettier --check "**/*.{json,css,scss,html}"
+  - yarn run prettier --check "**/*.{json,css,scss,html}"
 
 notifications:
   webhooks: https://fathomless-fjord-24024.herokuapp.com/notify

@@ -110,7 +110,7 @@ export class NotaClient {
     let self = this;
     return {
       total: pages,
-      iterator: (function*(): Iterator<Promise<Fragment[]>> {
+      iterator: (function* (): Iterator<Promise<Fragment[]>> {
         for (let i = 0; i < pages; i++) {
           console.log(`${status.name}, page ${i + 1}/${pages}`);
           yield self

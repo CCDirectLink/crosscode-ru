@@ -219,7 +219,7 @@ ig.module('enhanced-ui.ticker-display')
     });
 
     let textParserParse = ig.TextParser.parse;
-    ig.TextParser.parse = function(
+    ig.TextParser.parse = function (
       text: string | sc.ui2.ParsedTextData,
       commands: ig.TextCommand[] | null,
       font: ig.MultiFont,
