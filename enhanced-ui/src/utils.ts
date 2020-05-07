@@ -19,7 +19,12 @@ sc.ui2.waitForLoadable = <T extends ig.Loadable | ig.SingleLoadable>(
       success: boolean,
     ) => void;
     loadable.loadingFinished = function (this: T, success: boolean): void {
-      loadingFinished.call(this, success);
+      try {
+        loadingFinished.call(this, success);
+      } catch (err) {
+        reject(err);
+        throw err;
+      }
       if (success) resolve(loadable);
       else reject(new Error(`Failed to load resource: ${this.path}`));
     };
