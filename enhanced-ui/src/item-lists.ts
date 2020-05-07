@@ -61,7 +61,7 @@ function createListButtonPatch<T extends sc.ListBoxButton>(
       // `prototype`s of `ImpactClass<T>` and `sc.ListBoxButtonConstructor` are
       // incompatible because of different constructors, so I have to perform an
       // "unsafe" cast here
-      ((getConstructor() as unknown) as sc.ListBoxButtonConstructor).inject({
+      ((getConstructor() as unknown) as typeof sc['ListBoxButton']).inject({
         enableTickerDisplay: true,
       });
     });

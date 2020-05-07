@@ -32,6 +32,7 @@ sc.ui2.waitForLoadable = <T extends ig.Loadable | ig.SingleLoadable>(
 };
 
 // TODO: explain why this function is needed
+// NOTE: I hope I won't need this anytime soon...
 sc.ui2.forciblyTriggerResourceLoad = () => {
   if (ig.ready) return;
   ig.mainLoader._loadCallback(
