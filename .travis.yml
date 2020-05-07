@@ -5,12 +5,19 @@ cache:
   yarn: true
 
 install:
+  - # according to 20kdc this is a better way of handling multi-repo setups
+    (cd - &&
+    git clone --depth=1 https://github.com/dmitmel/ultimate-crosscode-typedefs &&
+    cd ultimate-crosscode-typedefs &&
+    yarn link)
   - yarn install
   - (cd enhanced-ui && yarn install)
   - (cd tool && yarn install)
+
 script:
-  - yarn run build
-  - yarn run lint
+  - yarn link ultimate-crosscode-typedefs &&
+    yarn run build &&
+    yarn run lint
   - yarn run prettier --check "**/*.{json,css,scss,html}"
 
 notifications:
