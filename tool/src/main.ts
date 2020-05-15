@@ -104,7 +104,6 @@ class Main {
 
         chapterFragments[id] = await fsUtils.readJsonFile(
           path.join(paths.CHAPTER_FRAGMENTS_DIR, `${id}.json`),
-          'utf8',
         );
       }
 
@@ -198,7 +197,6 @@ class Main {
   async readChapterStatuses(): Promise<ChapterStatuses> {
     let data: ChapterStatuses | null = await fsUtils.readJsonFileOptional(
       paths.CHAPTER_STATUSES_FILE,
-      'utf8',
     );
     if (data == null) data = {};
     return data;

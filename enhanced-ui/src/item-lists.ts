@@ -80,13 +80,15 @@ function createListButtonPatch<T extends sc.ListBoxButton>(
 // sc.ArenaEntryButton
 // - sc.ArenaRoundEntryButton
 // sc.NewGameOptionButton
-createListButtonPatch('menu.gui.menu-misc', () => sc.ItemBoxButton);
-createListButtonPatch('menu.gui.shop.shop-list', () => sc.ShopItemButton);
-createListButtonPatch('trade.gui.trade-dialog', () => sc.TradeItem);
 // prettier-ignore
-createListButtonPatch('menu.gui.botanics.botanics-misc', () => sc.BotanicsEntryButton);
-// prettier-ignore
-createListButtonPatch('menu.gui.new-game.new-game-misc', () => sc.NewGameOptionButton);
+// eslint-disable-next-line no-lone-blocks
+{
+  createListButtonPatch('menu.gui.menu-misc', () => sc.ItemBoxButton);
+  createListButtonPatch('menu.gui.shop.shop-list', () => sc.ShopItemButton);
+  createListButtonPatch('trade.gui.trade-dialog', () => sc.TradeItem);
+  createListButtonPatch('menu.gui.botanics.botanics-misc', () => sc.BotanicsEntryButton);
+  createListButtonPatch('menu.gui.new-game.new-game-misc', () => sc.NewGameOptionButton);
+}
 
 ig.module('enhanced-ui.fixes.new-game-menu')
   .requires('game.feature.menu.gui.new-game.new-game-misc')

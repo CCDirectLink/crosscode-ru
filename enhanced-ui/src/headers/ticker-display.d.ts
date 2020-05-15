@@ -17,7 +17,7 @@ declare namespace ig {
       font: ig.MultiFont,
       text: sc.ui2.ParsedTextData,
       settings: ig.TextBlock.Settings,
-    ): this['__instance'];
+    ): TextBlock;
   }
 }
 
@@ -56,7 +56,7 @@ declare namespace sc.ui2 {
     new (
       hook: ig.GuiHook,
       renderText: sc.ui2.TickerDisplayHook.RenderTextCallback,
-    ): this['__instance'];
+    ): TickerDisplayHook;
 
     PATTERN_SHADOW_LEFT: ig.ImagePattern;
     PATTERN_SHADOW_RIGHT: ig.ImagePattern;
@@ -68,7 +68,7 @@ declare namespace sc.ui2 {
     commands: ig.TextCommand[];
   }
   interface ParsedTextDataConstructor extends ImpactClass<ParsedTextData> {
-    new (parsedText: string, commands: ig.TextCommand[]): this['__instance'];
+    new (parsedText: string, commands: ig.TextCommand[]): ParsedTextData;
   }
   let ParsedTextData: ParsedTextDataConstructor;
 
@@ -96,7 +96,7 @@ declare namespace sc.ui2 {
     new (
       text: sc.TextLike,
       settings?: sc.ui2.LongHorizontalTextGui.Settings,
-    ): this['__instance'];
+    ): LongHorizontalTextGui;
 
     SPLIT_WIDTH: number;
   }
@@ -125,7 +125,7 @@ declare namespace sc.ui2 {
     new (
       text: sc.TextLike,
       settings?: sc.ui2.IconTextGui.Settings,
-    ): this['__instance'];
+    ): IconTextGui;
   }
   let IconTextGui: IconTextGuiConstructor;
 }

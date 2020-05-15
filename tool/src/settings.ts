@@ -8,7 +8,6 @@ export interface Settings {
 export async function readSettings(): Promise<Settings> {
   let settings: Settings | null = await fsUtils.readJsonFileOptional(
     paths.SETTINGS_FILE,
-    'utf8',
   );
   if (settings == null) {
     settings = {
@@ -22,5 +21,5 @@ export async function readSettings(): Promise<Settings> {
 
 export function writeSettings(settings: Settings): Promise<void> {
   console.log('writing settings:', settings);
-  return fsUtils.writeJsonFile(paths.SETTINGS_FILE, settings, 'utf8');
+  return fsUtils.writeJsonFile(paths.SETTINGS_FILE, settings);
 }

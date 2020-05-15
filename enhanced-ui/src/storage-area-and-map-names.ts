@@ -103,8 +103,8 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
         this: ImpactClassMethodThis<
           '_fixAreaAndMapLangLabel',
           typeof ig['Storage'],
-          typeof ig['Storage']['__instance'],
-          typeof ig['Storage']['__instance']
+          typeof ig['Storage']['prototype'],
+          typeof ig['Storage']['prototype']
         >,
         obj: { [key in K1 | K2]: ig.LangLabel.Data },
         areaKey: K1,
