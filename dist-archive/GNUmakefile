@@ -77,7 +77,7 @@ ALL_ARCHIVE_NAMES := $(ZIP_ARCHIVE_NAMES) $(TAR_ARCHIVE_NAMES) $(QUICK_INSTALL_A
 
 define download_archive
 mkdir -pv $1 && \
-curl --location --fail $2 | tar --verbose --directory $1 --gzip --strip-components 1 --extract $3
+curl --max-time 10 --location --fail $2 | tar --verbose --directory $1 --gzip --strip-components 1 --extract $3
 endef
 
 all: $(ALL_ARCHIVE_NAMES)
