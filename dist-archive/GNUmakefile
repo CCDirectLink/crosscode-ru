@@ -49,63 +49,96 @@ ENHANCED_UI_MOD_FILES := $(call find_by_patterns,../enhanced-ui,$(ENHANCED_UI_MO
 TRANSLATIONS_FILES := localize-me-packs/*.json localize-me-mapping.json
 TRANSLATIONS_FILES := $(call find_by_patterns,$(TOOL_DATA_DIR),$(TRANSLATIONS_FILES))
 
-MOD_ARCHIVE_NAME := $(MOD_DIR)_v$(MOD_VERSION)
+MOD_ARCHIVE_NAME := $(MOD_ID)_v$(MOD_VERSION)
 MOD_ARCHIVE_FILES := $(addprefix $(MOD_DIR)/,$(MOD_FILES) $(addprefix $(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES)))
-TOOL_ARCHIVE_NAME := $(TOOL_DIR)_v$(TOOL_MOD_VERSION)
+TOOL_ARCHIVE_NAME := $(TOOL_MOD_ID)_v$(TOOL_MOD_VERSION)
 TOOL_ARCHIVE_FILES := $(addprefix $(TOOL_DIR)/,$(TOOL_FILES))
 ENHANCED_UI_MOD_ARCHIVE_NAME := $(ENHANCED_UI_MOD_ID)_v$(ENHANCED_UI_MOD_VERSION)
 ENHANCED_UI_MOD_ARCHIVE_FILES := $(addprefix $(ENHANCED_UI_MOD_DIR)/,$(ENHANCED_UI_MOD_FILES))
 
 MODPACKS_COMMON_FILES := $(ENHANCED_UI_MOD_ARCHIVE_FILES) $(LOCALIZE_ME_MOD_DIR) $(CC_WORLD_MAP_OVERHAUL_MOD_DIR)
-MODPACK_ARCHIVE_NAME := $(MOD_DIR)_modpack_v$(MOD_VERSION)
+MODPACK_ARCHIVE_NAME := $(MOD_ID)_modpack_v$(MOD_VERSION)
 MODPACK_ARCHIVE_FILES := $(MOD_ARCHIVE_FILES) $(MODPACKS_COMMON_FILES)
-TOOL_MODPACK_ARCHIVE_NAME := $(TOOL_DIR)_modpack_v$(TOOL_MOD_VERSION)
+TOOL_MODPACK_ARCHIVE_NAME := $(TOOL_MOD_ID)_modpack_v$(TOOL_MOD_VERSION)
 TOOL_MODPACK_ARCHIVE_FILES := $(addprefix $(MOD_DIR)/,$(MOD_FILES)) $(TOOL_ARCHIVE_FILES) $(MODPACKS_COMMON_FILES)
+
+QUICK_INSTALL_TMP_DIR := quick-install
+QUICK_INSTALL_ARCHIVE_NAME := $(MOD_ID)_quick-install_v$(MOD_VERSION)
+QUICK_INSTALL_FILES := ccloader package.json $(addprefix assets/mods/,$(MODPACK_ARCHIVE_FILES))
+QUICK_INSTALL_ARCHIVE_FILES := $(addprefix $(QUICK_INSTALL_TMP_DIR)/,$(QUICK_INSTALL_FILES))
+
+archive_names = $(addsuffix .zip,$1) $(addsuffix .tar.gz,$1)
 
 ALL_ARCHIVE_NAMES_WITHOUT_FILETYPES := $(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(ENHANCED_UI_MOD_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME) $(TOOL_MODPACK_ARCHIVE_NAME)
 ZIP_ARCHIVE_NAMES := $(addsuffix .zip,$(ALL_ARCHIVE_NAMES_WITHOUT_FILETYPES))
 TAR_ARCHIVE_NAMES := $(addsuffix .tar.gz,$(ALL_ARCHIVE_NAMES_WITHOUT_FILETYPES))
-ALL_ARCHIVE_NAMES := $(ZIP_ARCHIVE_NAMES) $(TAR_ARCHIVE_NAMES)
+QUICK_INSTALL_ARCHIVES := $(call archive_names,$(QUICK_INSTALL_ARCHIVE_NAME))
+ALL_ARCHIVE_NAMES := $(ZIP_ARCHIVE_NAMES) $(TAR_ARCHIVE_NAMES) $(QUICK_INSTALL_ARCHIVES)
+
+define download_archive
+mkdir -pv $1 && \
+curl --location --fail $2 | tar --verbose --directory $1 --gzip --strip-components 1 --extract $3
+endef
 
 all: $(ALL_ARCHIVE_NAMES)
 
 clean:
-	rm -rvf $(ALL_ARCHIVE_NAMES) $(MOD_DIR) $(TOOL_DIR) $(LOCALIZE_ME_MOD_DIR) $(CC_WORLD_MAP_OVERHAUL_MOD_DIR) $(ENHANCED_UI_MOD_DIR)
+	rm -rvf \
+		$(ALL_ARCHIVE_NAMES) $(MOD_DIR) $(TOOL_DIR) $(LOCALIZE_ME_MOD_DIR) \
+		$(CC_WORLD_MAP_OVERHAUL_MOD_DIR) $(ENHANCED_UI_MOD_DIR) \
+		$(QUICK_INSTALL_TMP_DIR)
 
-archive_names = $(addsuffix .zip,$1) $(addsuffix .tar.gz,$1)
 $(call archive_names,$(MOD_ARCHIVE_NAME)): $(MOD_ARCHIVE_FILES)
 $(call archive_names,$(TOOL_ARCHIVE_NAME)): $(TOOL_ARCHIVE_FILES)
 $(call archive_names,$(MODPACK_ARCHIVE_NAME)): $(MODPACK_ARCHIVE_FILES)
 $(call archive_names,$(TOOL_MODPACK_ARCHIVE_NAME)): $(TOOL_MODPACK_ARCHIVE_FILES)
 $(call archive_names,$(ENHANCED_UI_MOD_ARCHIVE_NAME)): $(ENHANCED_UI_MOD_ARCHIVE_FILES)
+$(QUICK_INSTALL_ARCHIVES): $(QUICK_INSTALL_ARCHIVE_FILES)
 
 $(ZIP_ARCHIVE_NAMES):
-	rm -rvf $@
-	zip --recurse-paths $@ -- $^
-
+	rm -rvf $@ && zip --quiet --recurse-paths $@ -- $^
 $(TAR_ARCHIVE_NAMES):
-	rm -rvf $@
-	tar --verbose --create --file $@ --gzip -- $^
+	rm -rvf $@ && tar --create --file $@ --gzip -- $^
 
-define download_crosscode_mod
-mkdir -pv $1 && \
-curl --location --fail $2 | tar --verbose --directory $1 --gzip --strip-components 1 --extract
-endef
+$(QUICK_INSTALL_ARCHIVE_NAME).zip:
+	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && zip --quiet --recurse-paths ../$@ -- $(QUICK_INSTALL_FILES)
+$(QUICK_INSTALL_ARCHIVE_NAME).tar.gz:
+	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip -- $(QUICK_INSTALL_FILES)
 
 $(LOCALIZE_ME_MOD_DIR):
-	$(call download_crosscode_mod,$@,https://github.com/L-Sherry/Localize-me/archive/v0.5.2.tar.gz)
+	$(call download_archive,$@,https://github.com/L-Sherry/Localize-me/archive/v0.5.2.tar.gz,)
 $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
-	$(call download_crosscode_mod,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.1/cc-world-map-overhaul_v1.0.1.tar.gz)
+	$(call download_archive,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.1/cc-world-map-overhaul_v1.0.1.tar.gz,)
+
+$(QUICK_INSTALL_TMP_DIR)/ccloader:
+	$(call download_archive,$(@D),https://github.com/CCDirectLink/CCLoader/tarball/6cbd9f88f487cb0476bb90975aaabc9804bc5607,$(addprefix CCDirectLink-CCLoader-6cbd9f8/,assets/mods ccloader))
+$(QUICK_INSTALL_TMP_DIR)/package.json:
+	mkdir -pv $(@D) && jq . > $@ <<EOF
+	{
+		"name": "CrossCode",
+		"version": "1.0.0",
+		"main": "ccloader/index.html",
+		"chromium-args": "--ignore-gpu-blacklist --disable-direct-composition --disable-background-networking --in-process-gpu --password-store=basic",
+		"window": {
+			"toolbar": false,
+			"icon": "favicon.png",
+			"width": 1136,
+			"height": 640,
+			"fullscreen": false
+		}
+	}
+	EOF
 
 $(MOD_DIR)/$(TRANSLATIONS_DIR): $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
 
-# Unfortuntately, the following file copying rules can't be merged together
 $(MOD_DIR)/$(TRANSLATIONS_DIR)/%.json: $(TOOL_DATA_DIR)/%.json
-	mkdir -pv $(@D)
-	jq --compact-output . $< > $@
+	mkdir -pv $(@D) && jq --compact-output . $< > $@
+# Unfortuntately, the following file copying rules can't be merged together
 $(MOD_DIR)/%: ../%
 	mkdir -pv $(@D) && cp -r $< $@
 $(TOOL_DIR)/%: ../tool/%
 	mkdir -pv $(@D) && cp -r $< $@
 $(ENHANCED_UI_MOD_DIR)/%: ../enhanced-ui/%
+	mkdir -pv $(@D) && cp -r $< $@
+$(QUICK_INSTALL_TMP_DIR)/assets/mods/%: %
 	mkdir -pv $(@D) && cp -r $< $@
