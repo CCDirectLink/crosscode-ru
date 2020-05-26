@@ -15,7 +15,8 @@
   "ccmodDependencies": {
     "crosscode": ">=1.2.0",
     "Localize Me": "^0.5.2",
-    "enhanced-ui": "^0.1.0"
+    "enhanced-ui": "^0.1.0",
+    "CCLoader display version": "^1.0.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.24.0",
