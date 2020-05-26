@@ -44,7 +44,7 @@ TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map LICENSE* main.ht
 TOOL_FILES := $(call find_by_patterns,../tool,$(TOOL_FILES))
 MOD_FILES := assets/data/*.json assets/media/*.png dist/*.js dist/*.js.map LICENSE* package.json README.md
 MOD_FILES := $(call find_by_patterns,..,$(MOD_FILES))
-ENHANCED_UI_MOD_FILES := dist/*.js dist/*.js.map LICENSE* package.json
+ENHANCED_UI_MOD_FILES := assets/media/*.png dist/*.js dist/*.js.map LICENSE* package.json
 ENHANCED_UI_MOD_FILES := $(call find_by_patterns,../enhanced-ui,$(ENHANCED_UI_MOD_FILES))
 TRANSLATIONS_FILES := localize-me-packs/*.json localize-me-mapping.json
 TRANSLATIONS_FILES := $(call find_by_patterns,$(TOOL_DATA_DIR),$(TRANSLATIONS_FILES))
@@ -101,9 +101,9 @@ $(TAR_ARCHIVE_NAMES):
 	rm -rvf $@ && tar --create --file $@ --gzip -- $^
 
 $(QUICK_INSTALL_ARCHIVE_NAME).zip:
-	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && zip --quiet --recurse-paths ../$@ -- $(QUICK_INSTALL_FILES)
+	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && zip --quiet --recurse-paths ../$@ .
 $(QUICK_INSTALL_ARCHIVE_NAME).tar.gz:
-	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip -- $(QUICK_INSTALL_FILES)
+	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip .
 
 $(LOCALIZE_ME_MOD_DIR):
 	$(call download_archive,$@,https://github.com/L-Sherry/Localize-me/archive/v0.5.2.tar.gz,)
