@@ -106,7 +106,6 @@ export class NotaClient {
     let pages = Math.ceil(status.totalFragments / CHAPTER_PAGE_SIZE);
     // seriously... JS has regular generator functions, yet it doesn't have
     // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern again.
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let self = this;
     return {
       total: pages,

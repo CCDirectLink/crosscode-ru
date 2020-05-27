@@ -83,6 +83,8 @@ ig.module('crosscode-ru.fixes.options-menu')
 
     // TODO: I hope I'll remove the event listener once I rewrite simplify.
     document.body.addEventListener('simplifyInitialized', () => {
+      /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       let lang = ig.lang.labels.sc.gui;
 
       // TODO: add this to Nota
@@ -130,5 +132,7 @@ ig.module('crosscode-ru.fixes.options-menu')
         orig: 'Enables error popups. \\c[1]Needs a restart!',
         text: 'Включает всплывающие окна ошибок. \\c[1]Требуется перезапуск!',
       });
+
+      /* eslint-enable @typescript-eslint/no-unsafe-member-access */
     });
   });

@@ -285,8 +285,9 @@ ig.module('enhanced-ui.fixes.item-lists.quests')
         maxWidth -= this.textGui.hook.pos.x; // left margin
         maxWidth -= this.textGui.hook.pos.x / 2; // right margin
         // check GUI elements created in subclasses
-        // eslint-disable-next-line prefer-destructuring
-        let numberGui: ig.GuiElementBase = (this as any).numberGui;
+        let { numberGui } = (this as unknown) as {
+          numberGui: ig.GuiElementBase;
+        };
         if (numberGui != null) {
           maxWidth -= numberGui.hook.pos.x + numberGui.hook.size.x;
         }

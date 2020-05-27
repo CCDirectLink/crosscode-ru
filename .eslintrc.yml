@@ -1,14 +1,10 @@
-extends: eslint-config-dmitmel/presets/node
+extends:
+  - eslint-config-dmitmel/presets/node
+  - eslint-config-dmitmel/presets/formatting
 env:
   browser: true
 parserOptions:
   sourceType: module
-
-globals:
-  ig: true
-  sc: true
-  nw: true
-  localizeMe: true
 
 rules:
   no-shadow:
@@ -42,81 +38,17 @@ overrides:
     rules:
       global-require: off
 
-  - files:
-      - '**/*.ts'
-    extends:
-      - 'plugin:@typescript-eslint/eslint-recommended'
-      - 'plugin:@typescript-eslint/recommended'
-      - 'plugin:@typescript-eslint/recommended-requiring-type-checking'
-    parser: '@typescript-eslint/parser'
-    plugins:
-      - '@typescript-eslint'
+  - files: '**/*.ts'
+    extends: eslint-config-dmitmel/presets/typescript-with-type-checking-addon
 
-    globals:
-      ig: off
-      sc: off
-      localizeMe: off
-
-    # TODO: add TS preset to https://github.com/dmitmel/eslint-config-dmitmel
-    # also see https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/naming-convention.md
     rules:
-      prefer-const: off
-
-      # copied from camelcase
-      '@typescript-eslint/camelcase':
-        - warn
-        - allow:
-            - '^NWJS_Helpers$'
-
-      # copied from no-unused-vars
-      '@typescript-eslint/no-unused-vars':
-        - warn
-        - vars: all
-          varsIgnorePattern: '^_'
-          args: all
-          argsIgnorePattern: '^_'
-          ignoreRestSiblings: true
-          caughtErrors: all
-          caughtErrorsIgnorePattern: '^_'
-
-      # copied from no-use-before-define
-      '@typescript-eslint/no-use-before-define':
-        - error
-        - functions: false
-          classes: false
-          enums: false
-          variables: true
-          typedefs: false # maybe?
-
-      # @typescript-eslint/no-useless-constructor is used instead
-      no-useless-constructor: off
-
       # because I have to use '.js' file extensions in imports
       node/no-missing-import: off
-
-      '@typescript-eslint/no-non-null-assertion': off
-
-      '@typescript-eslint/unbound-method': off
-
-      '@typescript-eslint/explicit-function-return-type':
-        - warn
-        - allowExpressions: true
-          allowTypedFunctionExpressions: true
-          allowHigherOrderFunctions: true
-
-      '@typescript-eslint/no-empty-interface': off
 
   - files:
       - 'src/**/*.ts'
     parserOptions:
       project: 'tsconfig.json'
-
-  - files:
-      - 'ultimate-crosscode-typedefs/**/*.ts'
-    parserOptions:
-      project: 'ultimate-crosscode-typedefs/tsconfig.json'
-    rules:
-      '@typescript-eslint/triple-slash-reference': off
 
   - files:
       - 'enhanced-ui/src/**/*.ts'

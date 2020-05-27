@@ -31,7 +31,6 @@ if (leaSpellingTable != null) {
   textFilter = text => text.replace(regex, str => leaSpellingTable[str]);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 declare namespace LocalizeMe {
   interface FontPatchingContextCommon {
     russianFont: ig.Font;
@@ -39,7 +38,7 @@ declare namespace LocalizeMe {
 }
 
 localizeMe.add_locale('ru_RU', {
-  /* eslint-disable @typescript-eslint/camelcase */
+  /* eslint-disable @typescript-eslint/naming-convention */
   from_locale: 'en_US',
   map_file: LOCALIZE_ME_MAPPING_FILE,
   url_prefix: LOCALIZE_ME_PACKS_DIR,
@@ -53,12 +52,12 @@ localizeMe.add_locale('ru_RU', {
     ko_KR: '러시아어',
   },
   flag: 'media/font/ru_RU/flag.png',
-  /* eslint-enable @typescript-eslint/camelcase */
+  /* eslint-enable @typescript-eslint/naming-convention */
 
-  // eslint-disable-next-line @typescript-eslint/camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   missing_cb: (langLabelOrString, dictPath) => {
     if (typeof langLabelOrString === 'string') {
-      // eslint-disable-next-line @typescript-eslint/camelcase
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       langLabelOrString = { en_US: langLabelOrString };
     }
     let original = langLabelOrString.en_US;
@@ -95,10 +94,10 @@ localizeMe.add_locale('ru_RU', {
     return `--${original}`;
   },
 
-  // eslint-disable-next-line @typescript-eslint/camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   text_filter: textFilter,
 
-  // eslint-disable-next-line @typescript-eslint/camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   pre_patch_font: async (context): Promise<void> => {
     let url = PATCHED_FONT_URLS[context.size_index];
     if (url != null) {
@@ -108,7 +107,7 @@ localizeMe.add_locale('ru_RU', {
     }
   },
 
-  // eslint-disable-next-line @typescript-eslint/camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   patch_base_font: (canvas, context) => {
     let { russianFont } = context;
     if (russianFont != null) {
@@ -136,7 +135,7 @@ localizeMe.add_locale('ru_RU', {
     return canvas;
   },
 
-  // eslint-disable-next-line @typescript-eslint/camelcase
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   misc_time_function: (): string => {
     let date = new Date();
     // https://pikabu.ru/story/a_gdeto_seychas_rovno_polden_4223194

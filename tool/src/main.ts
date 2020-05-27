@@ -15,10 +15,16 @@ import path from './node-builtin-modules/path.js';
 import * as asyncUtils from './utils/async.js';
 import * as iteratorUtils from './utils/iterator.js';
 
+declare global {
+  interface Window {
+    app: Main;
+  }
+}
+
 window.addEventListener('load', () => {
   let app = new Main();
-  (window as any).app = app;
-  app.start();
+  window.app = app;
+  void app.start();
 });
 
 class Main {
@@ -40,7 +46,7 @@ class Main {
       autoOpenCheckbox.checked = settings.autoOpen;
       autoOpenCheckbox.addEventListener('change', () => {
         settings.autoOpen = autoOpenCheckbox.checked;
-        writeSettings(settings);
+        void writeSettings(settings);
       });
 
       this.progressBar = new ProgressBar();
@@ -54,7 +60,7 @@ class Main {
       )! as HTMLButtonElement;
       updateButton.disabled = false;
       updateButton.addEventListener('click', () => {
-        this.downloadTranslations(false);
+        void this.downloadTranslations(false);
       });
 
       let redownloadButton = document.getElementById(
@@ -62,7 +68,7 @@ class Main {
       )! as HTMLButtonElement;
       redownloadButton.disabled = false;
       redownloadButton.addEventListener('click', () => {
-        this.downloadTranslations(true);
+        void this.downloadTranslations(true);
       });
     } catch (err) {
       console.error(err);

@@ -8,11 +8,11 @@ export class TranslationToolClient {
   toolWindow: NWJS_Helpers.win | null = null;
   toolWindowIsOpening = false;
 
-  constructor() {
-    // TODO: enable this when I find a workaround for listening to window
-    //       events in the game iframe
-    // this.gameWindow.on('close', this.onGameWindowClose.bind(this));
-  }
+  // TODO: enable this when I find a workaround for listening to window events
+  // in the game iframe
+  // constructor() {
+  //   this.gameWindow.on('close', this.onGameWindowClose.bind(this));
+  // }
 
   readSettings(): Promise<Settings> {
     return readSettings();
@@ -36,8 +36,7 @@ export class TranslationToolClient {
         this.toolWindow = toolWindow;
         this.toolWindowIsOpening = false;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.toolWindow.window as any).gameWindow = this.gameWindow;
+        // (this.toolWindow.window as any).gameWindow = this.gameWindow;
         this.toolWindow.on('closed', () => {
           this.toolWindow = null;
         });

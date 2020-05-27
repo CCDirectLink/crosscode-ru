@@ -14,7 +14,7 @@ ig.module('crosscode-ru.translation-tool')
     sc.CrossCode.inject({
       onGameLoopStart() {
         this.parent();
-        sc.ru.translationTool.readSettings().then(settings => {
+        void sc.ru.translationTool.readSettings().then(settings => {
           if (settings.autoOpen) sc.ru.translationTool.open();
         });
       },

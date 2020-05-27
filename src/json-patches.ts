@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+type JsonPatchFunction<T, U = T> = (data: T) => MaybePromise<U>;
+
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment */
+
 function addEnglishLabelsToLangFile(data: any): any {
   return ig.merge(data, {
     labels: {
@@ -33,9 +37,7 @@ function addEnglishLabelsToLangFile(data: any): any {
   });
 }
 
-type JsonPatchFunction = (data: any) => MaybePromise<any>;
-
-const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
+const JSON_PATCHES: { [path: string]: JsonPatchFunction<unknown> } = {
   'data/lang/sc/gui.de_DE.json': addEnglishLabelsToLangFile,
   'data/lang/sc/gui.en_US.json': addEnglishLabelsToLangFile,
   'data/lang/sc/gui.ja_JP.json': addEnglishLabelsToLangFile,
@@ -44,7 +46,7 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
 
   // sorry, Felix... not many people watch credits until the end, so I'll have
   // to inject our names in the first data file. hope RFG doesn't mind :P
-  'data/credits/radicalfish-core.json': async data => {
+  'data/credits/radicalfish-core.json': async (data: any) => {
     if (ig.currentLang !== 'ru_RU') return data;
 
     let entries = Object.entries<any>(data.entries);
@@ -70,7 +72,7 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
     return data;
   },
 
-  'data/scale-props/dungeon-ar.json': data => {
+  'data/scale-props/dungeon-ar.json': (data: any) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
@@ -95,7 +97,7 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
     return data;
   },
 
-  'data/scale-props/dungeon-ar-special.json': data => {
+  'data/scale-props/dungeon-ar-special.json': (data: any) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
@@ -119,7 +121,7 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
     return data;
   },
 
-  'data/scale-props/trading-ar.json': data => {
+  'data/scale-props/trading-ar.json': (data: any) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
@@ -144,7 +146,7 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
     return data;
   },
 
-  'data/scale-props/rhombus-sqr.json': data => {
+  'data/scale-props/rhombus-sqr.json': (data: any) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
     function patchProp(
@@ -198,7 +200,7 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
     return data;
   },
 
-  'data/props/rhombus-area-text.json': data => {
+  'data/props/rhombus-area-text.json': (data: any) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return data;
 
     for (let prop of data.props) {
@@ -213,7 +215,7 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
     return data;
   },
 
-  'data/maps/rookie-harbor/teleporter.json': data => {
+  'data/maps/rookie-harbor/teleporter.json': (data: any) => {
     if (ig.currentLang !== 'ru_RU') return data;
 
     let step = data.entities[425].settings.event[14].acceptStep[14];
@@ -222,6 +224,8 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction } = {
     return data;
   },
 };
+
+/* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment */
 
 // ha ha... ha ha ha ha ha! I don't know who designed such "genius" system,
 // but it looks like during the postload phase an instance of

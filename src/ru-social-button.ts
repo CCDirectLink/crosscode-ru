@@ -114,7 +114,7 @@ ig.module('crosscode-ru.social-button')
       if (ig.platform === ig.PLATFORM_TYPES.DESKTOP) {
         a.addEventListener('click', function (event) {
           event.preventDefault();
-          // eslint-disable-next-line no-invalid-this
+          // eslint-disable-next-line @typescript-eslint/no-invalid-this
           nw.Shell.openExternal(this.href);
         });
       }

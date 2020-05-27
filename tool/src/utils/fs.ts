@@ -2,27 +2,27 @@ import fs from '../node-builtin-modules/fs.js';
 
 const ENABLE_PRETTY_PRINT = true;
 
-export async function readJsonFile(
+export async function readJsonFile<T>(
   path: fs.PathLike | fs.promises.FileHandle,
-): Promise<any> {
+): Promise<T> {
   let data = await fs.promises.readFile(path, 'utf8');
-  return JSON.parse(data);
+  return JSON.parse(data) as T;
 }
 
-export async function readJsonFileOptional(
+export async function readJsonFileOptional<T>(
   path: fs.PathLike | fs.promises.FileHandle,
-): Promise<any | null> {
+): Promise<T | null> {
   try {
     return await readJsonFile(path);
   } catch (err) {
-    if (err.code === 'ENOENT') return null;
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
     else throw err;
   }
 }
 
-export function writeJsonFile(
+export function writeJsonFile<T>(
   path: fs.PathLike | fs.promises.FileHandle,
-  data: any,
+  data: T,
 ): Promise<void> {
   return fs.promises.writeFile(
     path,

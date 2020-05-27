@@ -10,6 +10,7 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
       areaLoadables: null,
 
       onload(data, ...args) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         this.areaLoadables = new Map();
         for (let id of Object.keys(data.areas)) {
           if (id === 'testing-grounds') continue;
@@ -27,6 +28,7 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
       init(...args) {
         this.parent(...args);
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         this._areaAndMapNamesLookupTable = new Map();
         let areas = ig.database.get('areas');
         for (let [id, loadable] of ig.database.areaLoadables) {

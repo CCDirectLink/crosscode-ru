@@ -17,12 +17,12 @@ export async function limitConcurrency(
 
   async function next(): Promise<null> {
     if (iteratorFinished) return null;
-    let { done, value } = promises.next();
-    if (done) {
+    let result = promises.next();
+    if (result.done) {
       iteratorFinished = true;
       return null;
     }
-    return (value as PromiseLike<void>).then(() => next());
+    return result.value.then(() => next());
   }
 
   let threadPromises = [];

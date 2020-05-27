@@ -4,11 +4,11 @@ export function map<T, U>(
 ): Iterator<U> {
   return {
     next(...args): IteratorResult<U> {
-      let { value, done } = iterator.next(...args);
+      let result = iterator.next(...args);
       return {
-        done,
+        done: result.done,
         // eslint-disable-next-line no-undefined
-        value: done ? undefined : callback(value),
+        value: result.done ? undefined : callback(result.value),
       } as IteratorResult<U>;
     },
   };

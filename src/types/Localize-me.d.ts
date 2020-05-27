@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable @typescript-eslint/naming-convention */
 
 interface GameLocaleConfiguration {
   added_locales: { [locale: string]: ig.LangOptions };

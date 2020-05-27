@@ -13,6 +13,7 @@ declare namespace ig {
     setText(this: this, text: sc.ui2.ParsedTextData): void;
   }
   interface TextBlockConstructor {
+    // eslint-disable-next-line @typescript-eslint/prefer-function-type
     new (
       font: ig.MultiFont,
       text: sc.ui2.ParsedTextData,
