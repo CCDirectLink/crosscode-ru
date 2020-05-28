@@ -43,17 +43,10 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.4.tgz#38fd73ddfd9b55abb1e1b2ed578cb55bd7b7d339"
   integrity sha512-8+KAKzEvSUdeo+kmqnKrqgeE+LcA0tjYWFY7RPProVYwnqDjukzO+3b6dLD56rYX5TdWejnEOLJYOIeh4CXKuA==
 
-"@types/node@*":
+"@types/node@>=11.9":
   version "14.0.5"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.5.tgz#3d03acd3b3414cf67faf999aed11682ed121f22b"
   integrity sha512-90hiq6/VqtQgX8Sp0EzeIsv3r+ellbGj4URKj5j30tLlZvRUpnAe9YbYnjl3pJM93GyXU0tghHhvXHq+5rnCKA==
-
-"@types/nw.js@~0.13":
-  version "0.13.9"
-  resolved "https://registry.yarnpkg.com/@types/nw.js/-/nw.js-0.13.9.tgz#897f335eea884750562691ddee4d209d9828f8c0"
-  integrity sha512-OxpYKOFJsn8ZGdCTfssbx01PKW5DGg0gPwHWAU2C32GFu8WeMU/qTplI6SwirNZh/4ypmo6N6w2FrUO8m6iDxA==
-  dependencies:
-    "@types/node" "*"
 
 "@typescript-eslint/eslint-plugin@^3.0.2":
   version "3.0.2"
@@ -297,7 +290,7 @@ escape-string-regexp@^1.0.5:
 
 eslint-config-dmitmel@dmitmel/eslint-config-dmitmel:
   version "5.0.0"
-  resolved "https://codeload.github.com/dmitmel/eslint-config-dmitmel/tar.gz/a8ad928b4ed81687c5cf89dd2061f7dc3f23ba3a"
+  resolved "https://codeload.github.com/dmitmel/eslint-config-dmitmel/tar.gz/aa06ecfed0f4796591368ba7d7d6c31cfdddc191"
 
 eslint-config-prettier@^6.11.0:
   version "6.11.0"
@@ -994,11 +987,10 @@ typescript@~3.8.3:
 
 ultimate-crosscode-typedefs@dmitmel/ultimate-crosscode-typedefs:
   version "0.0.1"
-  resolved "https://codeload.github.com/dmitmel/ultimate-crosscode-typedefs/tar.gz/eba99c68a96f57aeb97816c5974ca08166a2680a"
+  resolved "https://codeload.github.com/dmitmel/ultimate-crosscode-typedefs/tar.gz/fed3fed0e3755a248c69ddbd0472ea3ec1c43adf"
   dependencies:
     "@types/jquery" "~1.10"
-    "@types/node" "*"
-    "@types/nw.js" "~0.13"
+    "@types/node" ">=11.9"
 
 uri-js@^4.2.2:
   version "4.2.2"

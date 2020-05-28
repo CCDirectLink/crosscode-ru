@@ -4,8 +4,8 @@ let scriptUrl: string = import.meta.url;
 let scriptDir = scriptUrl.slice(0, scriptUrl.lastIndexOf('/'));
 
 export class TranslationToolClient {
-  gameWindow: NWJS_Helpers.win = nw.Window.get();
-  toolWindow: NWJS_Helpers.win | null = null;
+  gameWindow: nw.Window = nw.Window.get();
+  toolWindow: nw.Window | null = null;
   toolWindowIsOpening = false;
 
   // TODO: enable this when I find a workaround for listening to window events
