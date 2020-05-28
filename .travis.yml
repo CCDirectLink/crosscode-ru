@@ -10,15 +10,13 @@ install:
     git clone --depth=1 https://github.com/dmitmel/ultimate-crosscode-typedefs &&
     cd ultimate-crosscode-typedefs &&
     yarn link)
+  - yarn link ultimate-crosscode-typedefs
   - yarn install
   - (cd enhanced-ui && yarn install)
   - (cd tool && yarn install)
 
 script:
-  - yarn link ultimate-crosscode-typedefs &&
-    yarn run build &&
-    yarn run lint
-  - yarn run prettier --check "**/*.{js,ts,json,css,scss,html}"
+  - yarn run build && yarn run lint && yarn run check-fmt
 
 notifications:
   webhooks: https://fathomless-fjord-24024.herokuapp.com/notify

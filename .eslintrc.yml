@@ -27,8 +27,6 @@ rules:
     - ignores:
         - modules
 
-  node/no-unpublished-import: off
-
 overrides:
   - files: 'tool/scripts/**/*.js'
     rules:
