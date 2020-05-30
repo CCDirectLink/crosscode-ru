@@ -87,7 +87,10 @@ export class LocalizeMePacker {
     if (this.assetsCache.has(file)) {
       return this.assetsCache.get(file);
     } else {
-      let data = await fsUtils.readJsonFile(path.join('assets', 'data', file));
+      let pathComponents = ['assets'];
+      if (!file.startsWith('extension/')) pathComponents.push('data');
+      pathComponents.push(file);
+      let data = await fsUtils.readJsonFile(path.join(...pathComponents));
       this.assetsCache.set(file, data);
       return data;
     }
