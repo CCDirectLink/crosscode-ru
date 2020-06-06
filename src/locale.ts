@@ -17,18 +17,33 @@ const LEA_SPELLING =
 const LEA_SPELLING_CONVERSION_TABLES: Dictionary<Dictionary<string>> = {
   '1': {
     Лея: 'Лиа', // Именительный (1)
+    ЛЕЯ: 'ЛИА',
     Леи: 'Лии', // Родительный (2)
+    ЛЕИ: 'ЛИИ',
     Лее: 'Лие', // Дательный (3) + Предложный (6)
+    ЛЕЕ: 'ЛИЕ',
     Лею: 'Лию', // Винительный (4)
+    ЛЕЮ: 'ЛИЮ',
     Леей: 'Лией', // Творительный (5)
+    ЛЕЕЙ: 'ЛИЕЙ',
   },
 };
 
 let textFilter: ((text: string) => string) | null = null;
 let leaSpellingTable = LEA_SPELLING_CONVERSION_TABLES[LEA_SPELLING];
 if (leaSpellingTable != null) {
-  let regex = new RegExp(Object.keys(leaSpellingTable).join('|'), 'g');
-  textFilter = text => text.replace(regex, str => leaSpellingTable[str]);
+  let regex = new RegExp(
+    // prettier-ignore
+    `([^а-яА-ЯёЁ]|^)(${Object.keys(leaSpellingTable).join('|')})([^а-яА-ЯёЁ]|$)`,
+    'g',
+  );
+  textFilter = text =>
+    text.replace(
+      regex,
+      (_wholeStr, leftBoundary: string, str: string, rightBoundary: string) => {
+        return `${leftBoundary}${leaSpellingTable[str]}${rightBoundary}`;
+      },
+    );
 }
 
 declare namespace LocalizeMe {
