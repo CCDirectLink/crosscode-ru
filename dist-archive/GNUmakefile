@@ -111,7 +111,7 @@ $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
 	$(call download_archive,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.1/cc-world-map-overhaul_v1.0.1.tar.gz,)
 
 $(QUICK_INSTALL_TMP_DIR)/ccloader:
-	$(call download_archive,$(@D),https://github.com/CCDirectLink/CCLoader/tarball/6cbd9f88f487cb0476bb90975aaabc9804bc5607,$(addprefix CCDirectLink-CCLoader-6cbd9f8/,assets/mods ccloader))
+	$(call download_archive,$(@D),https://github.com/CCDirectLink/CCLoader/archive/v2.18.5/v2.8.5.tar.gz,$(addprefix CCLoader-2.18.5-v2.8.5/,assets/mods ccloader))
 $(QUICK_INSTALL_TMP_DIR)/package.json:
 	mkdir -pv $(@D) && jq . > $@ <<EOF
 	{
