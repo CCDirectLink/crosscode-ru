@@ -113,7 +113,14 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
         mapKey: K2,
       ): void {
         let areaLabel = obj[areaKey];
-        if (areaLabel.langUid == null) return;
+        if (
+          areaLabel == null ||
+          typeof areaLabel !== 'object' ||
+          areaLabel.langUid == null
+        ) {
+          return;
+        }
+
         let areaLookupData = this._areaAndMapNamesLookupTable.get(
           areaLabel.langUid,
         );
@@ -127,7 +134,14 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
         }
 
         let mapLabel = obj[mapKey];
-        if (mapLabel.langUid == null) return;
+        if (
+          mapLabel == null ||
+          typeof mapLabel !== 'object' ||
+          mapLabel.langUid == null
+        ) {
+          return;
+        }
+
         let mapLookupData = mapNamesLookupTable.get(mapLabel.langUid);
         if (mapLookupData == null) return;
         let { name: expectedMapName } = mapLookupData;
