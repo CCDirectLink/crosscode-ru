@@ -24,7 +24,9 @@ ig.module('enhanced-ui.ticker-display')
       speed: 50, // pixels per second
       delayAtBorders: 1, // seconds
       constantTextOffset: { x: 0, y: 0 }, // pixels
-      shadowGfx: new ig.Image('media/gui/ticker-display-shadow.png'),
+      shadowGfx: new ig.Image(
+        'mod://enhanced-ui/media/ticker-display-shadow.png',
+      ),
       // This implementation used to support two-dimensional ticker display, in
       // other words this field was called `maxSize` and had a type of `Vec2`.
       // Fortunately, the vertical tickers weren't used at all, so I simply got
