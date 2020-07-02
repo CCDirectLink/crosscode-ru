@@ -6,7 +6,10 @@ export {};
 declare global {
   namespace ccmod3.resources {
     namespace jsonPatches {
-      function add(path: string, patcher: (data: any) => any): void;
+      function add(
+        path: string,
+        patcher: (data: any) => Promise<void> | void,
+      ): void;
     }
 
     function loadJSON(path: string): any;
