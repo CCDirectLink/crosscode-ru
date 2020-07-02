@@ -1,11 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-type JsonPatchFunction<T, U = T> = (data: T) => MaybePromise<U>;
+export {};
+
+/* eslint-disable @typescript-eslint/no-namespace */
+declare global {
+  namespace ccmod3.resources {
+    namespace jsonPatches {
+      function add(path: string, patcher: (data: any) => any): void;
+    }
+
+    function loadJSON(path: string): any;
+  }
+}
+/* eslint-enable @typescript-eslint/no-namespace */
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment */
 
-function addEnglishLabelsToLangFile(data: any): any {
-  return ig.merge(data, {
+ccmod3.resources.jsonPatches.add('data/lang/sc/gui.en_US.json', (data: any) =>
+  ig.merge(data, {
     labels: {
       'combat-hud': {
         'pvp-round': 'Round',
@@ -34,26 +46,19 @@ function addEnglishLabelsToLangFile(data: any): any {
         },
       },
     },
-  });
-}
+  }),
+);
 
-const JSON_PATCHES: { [path: string]: JsonPatchFunction<unknown> } = {
-  'data/lang/sc/gui.de_DE.json': addEnglishLabelsToLangFile,
-  'data/lang/sc/gui.en_US.json': addEnglishLabelsToLangFile,
-  'data/lang/sc/gui.ja_JP.json': addEnglishLabelsToLangFile,
-  'data/lang/sc/gui.ko_KR.json': addEnglishLabelsToLangFile,
-  'data/lang/sc/gui.zh_CN.json': addEnglishLabelsToLangFile,
-
+ccmod3.resources.jsonPatches.add(
   // sorry, Felix... not many people watch credits until the end, so I'll have
   // to inject our names in the first data file. hope RFG doesn't mind :P
-  'data/credits/radicalfish-core.json': async (data: any) => {
-    if (ig.currentLang !== 'ru_RU') return data;
+  'data/credits/radicalfish-core.json',
+  async (data: any) => {
+    if (ig.currentLang !== 'ru_RU') return;
 
     let entries = Object.entries<any>(data.entries);
 
-    // TODO: get mod instance through the Plugin constructor and use
-    // simplify.resources.loadJSON
-    let russianCreditsData = await simplify.resources.loadJSONPatched(
+    let russianCreditsData = await ccmod3.resources.loadJSON(
       'data/credits/crosscode-ru.json',
     );
     let russianEntries = Object.entries(russianCreditsData.entries);
@@ -68,12 +73,13 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction<unknown> } = {
     sc.ru.insertAfterOrAppend(entries, felixIndex, ...russianEntries);
 
     data.entries = sc.ru.objectFromEntries(entries);
-
-    return data;
   },
+);
 
-  'data/scale-props/dungeon-ar.json': (data: any) => {
-    if (!sc.ru.shouldPatchSpriteLabels()) return data;
+ccmod3.resources.jsonPatches.add(
+  'data/scale-props/dungeon-ar.json',
+  (data: any) => {
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
 
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/entity/objects/dungeon-ar.ru_RU.png',
@@ -93,12 +99,13 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction<unknown> } = {
       srcY: 32,
       width: 128,
     });
-
-    return data;
   },
+);
 
-  'data/scale-props/dungeon-ar-special.json': (data: any) => {
-    if (!sc.ru.shouldPatchSpriteLabels()) return data;
+ccmod3.resources.jsonPatches.add(
+  'data/scale-props/dungeon-ar-special.json',
+  (data: any) => {
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
 
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/entity/objects/dungeon-ar-special.ru_RU.png',
@@ -118,11 +125,13 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction<unknown> } = {
       srcY: 32,
       width: 144,
     });
-    return data;
   },
+);
 
-  'data/scale-props/trading-ar.json': (data: any) => {
-    if (!sc.ru.shouldPatchSpriteLabels()) return data;
+ccmod3.resources.jsonPatches.add(
+  'data/scale-props/trading-ar.json',
+  (data: any) => {
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
 
     data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
       gfx: 'media/map/trading-autumn.ru_RU.png',
@@ -142,12 +151,13 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction<unknown> } = {
       srcY: 12,
       width: 39,
     });
-
-    return data;
   },
+);
 
-  'data/scale-props/rhombus-sqr.json': (data: any) => {
-    if (!sc.ru.shouldPatchSpriteLabels()) return data;
+ccmod3.resources.jsonPatches.add(
+  'data/scale-props/rhombus-sqr.json',
+  (data: any) => {
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
 
     function patchProp(
       prop: any,
@@ -196,12 +206,13 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction<unknown> } = {
       srcY: 0,
       width: 48,
     });
-
-    return data;
   },
+);
 
-  'data/props/rhombus-area-text.json': (data: any) => {
-    if (!sc.ru.shouldPatchSpriteLabels()) return data;
+ccmod3.resources.jsonPatches.add(
+  'data/props/rhombus-area-text.json',
+  (data: any) => {
+    if (!sc.ru.shouldPatchSpriteLabels()) return;
 
     for (let prop of data.props) {
       switch (prop.name) {
@@ -212,68 +223,17 @@ const JSON_PATCHES: { [path: string]: JsonPatchFunction<unknown> } = {
           prop.fix.gfx = 'media/entity/objects/rhombus-arena-text.ru_RU.png';
       }
     }
-    return data;
   },
+);
 
-  'data/maps/rookie-harbor/teleporter.json': (data: any) => {
-    if (ig.currentLang !== 'ru_RU') return data;
+ccmod3.resources.jsonPatches.add(
+  'data/maps/rookie-harbor/teleporter.json',
+  (data: any) => {
+    if (ig.currentLang !== 'ru_RU') return;
 
+    // TODO: refactor this to use .find()
     let step = data.entities[425].settings.event[14].acceptStep[14];
     step.pos.x = 131;
     step.size.x = 122;
-    return data;
   },
-};
-
-/* eslint-enable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment */
-
-// ha ha... ha ha ha ha ha! I don't know who designed such "genius" system,
-// but it looks like during the postload phase an instance of
-// SimplifyResources is available through the simplifyResources global, BUT
-// WHEN main PHASE IS EXECUTED, the `Simplify` instance assigns that instance
-// of SimplifyResources to itself and sets simplifyResources to `undefined`.
-// Ah, genius API design of simplify...
-simplifyResources.registerHandler(
-  // callback
-  // See https://api.jquery.com/jQuery.ajax/#jQuery-ajax-settings
-  // for explanation of what `settings` is. `url` is the requested URL without
-  // the `IG_ROOT` prefix.
-  (settings, url) => {
-    let patchFunction = JSON_PATCHES[url];
-    if (patchFunction == null) return;
-
-    let oldSuccess = settings.success!;
-    let oldError = settings.error!;
-    settings.success = async function (
-      json: any,
-      state: string,
-      xhr: JQueryXHR,
-    ): Promise<void> {
-      try {
-        // if `patchFunction` returns a promise here `await` will wait for it to
-        // resolve and then continue execution of the overall promise
-        let patchedJson = await patchFunction(json);
-        // not sure what to do with state if it is `notmodified` or `nocontent`...
-        oldSuccess.call(this, patchedJson, state, xhr);
-      } catch (err) {
-        // well, since CrossCode doesn't care about actual errors returned
-        // by $.ajax, I have to log this one myself.
-        console.error(`Could not load patch for ${url}: ${err}`);
-        oldError.call(this, xhr, 'error', err);
-      }
-    };
-  },
-  // filter
-  // I set it to an empty string here so that it is treated as a falsy value
-  // in simplify (see https://github.com/CCDirectLink/CCLoader/blob/6d3641bfa780bd477ec0512f019128b2f8206429/assets/mods/simplify/postloadModule.js#L269)
-  // and my handler gets to see all requests. This probably should've been
-  // a regex, but... whatever.
-  '',
-  // beforeCall
-  // I set it to false so that my patch runs after all others because it is
-  // the most important one >:) (see https://github.com/CCDirectLink/CCLoader/blob/6d3641bfa780bd477ec0512f019128b2f8206429/assets/mods/simplify/postloadModule.js#L237-L255)
-  // Seriously, I MUST set `beforeCall` to something, otherwise because of a
-  // weird comparison in `simplifyResources._callHandlers` my callback never
-  // gets called.
-  false,
 );
