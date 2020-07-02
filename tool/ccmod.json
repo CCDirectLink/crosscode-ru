@@ -1,0 +1,15 @@
+{
+  "id": "crosscode-ru-translation-tool",
+  "version": "0.0.0",
+  "license": "MIT",
+  "description": {
+    "en_US": "Russian translation tool for CrossCode",
+    "ru_RU": "Русский инструмент переводчика CrossCode"
+  },
+  "homepage": "https://github.com/dmitmel/crosscode-ru/tree/master/tool",
+  "postload": "dist/mod/postload.js",
+  "dependencies": {
+    "crosscode": ">=1.2.0",
+    "crosscode-ru": "*"
+  }
+}

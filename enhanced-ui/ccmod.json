@@ -1,0 +1,15 @@
+{
+  "id": "enhanced-ui",
+  "version": "0.1.4",
+  "title": "Enhanced UI",
+  "license": "MIT",
+  "description": {
+    "en_US": "Various GUI enhancments and fixes",
+    "ru_RU": "Различные улучшения и общие исправления графического интерфейса пользователя"
+  },
+  "homepage": "https://github.com/dmitmel/crosscode-ru/tree/master/enhanced-ui",
+  "postload": "dist/postload.js",
+  "dependencies": {
+    "crosscode": ">=1.2.0"
+  }
+}

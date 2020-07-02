@@ -1,22 +1,7 @@
 {
   "private": true,
-  "name": "crosscode-ru",
-  "version": "1.0.7",
-  "license": "(MIT AND CC-BY-4.0)",
-  "description": "Russian translation for CrossCode",
-  "homepage": "https://github.com/dmitmel/crosscode-ru",
   "engines": {
     "node": ">=11.0.0"
-  },
-  "module": true,
-  "plugin": "dist/plugin.js",
-  "postload": "dist/postload.js",
-  "prestart": "dist/prestart.js",
-  "ccmodDependencies": {
-    "crosscode": ">=1.2.0",
-    "Localize Me": "^0.5.2",
-    "enhanced-ui": "^0.1.0",
-    "CCLoader display version": "^1.0.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^3.0.2",

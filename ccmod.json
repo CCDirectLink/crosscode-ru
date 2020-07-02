@@ -1,0 +1,18 @@
+{
+  "id": "crosscode-ru",
+  "version": "1.0.7",
+  "license": "(MIT AND CC-BY-4.0)",
+  "description": {
+    "en_US": "Russian translation for CrossCode",
+    "ru_RU": "Русский перевод CrossCode и сопутствующие исправления интерфейса"
+  },
+  "homepage": "https://github.com/dmitmel/crosscode-ru",
+  "main": "dist/plugin.js",
+  "postload": "dist/postload.js",
+  "prestart": "dist/prestart.js",
+  "dependencies": {
+    "crosscode": ">=1.2.0",
+    "localize-me": "^0.5.2",
+    "enhanced-ui": "^0.1.0"
+  }
+}

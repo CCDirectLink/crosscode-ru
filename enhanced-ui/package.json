@@ -1,20 +1,8 @@
 {
   "private": true,
-  "name": "enhanced-ui",
-  "ccmodHumanName": "Enhanced UI",
-  "version": "0.1.4",
-  "license": "MIT",
-  "description": "Various GUI enhancments and fixes",
-  "homepage": "https://github.com/dmitmel/crosscode-ru/tree/master/enhanced-ui",
   "engines": {
     "node": ">=11.0.0"
   },
-  "module": true,
-  "postload": "dist/postload.js",
-  "ccmodDependencies": {
-    "crosscode": ">=1.2.0"
-  },
-  "devDependencies": {},
   "scripts": {
     "build": "../node_modules/.bin/tsc --build",
     "watch": "../node_modules/.bin/tsc --build --watch"
