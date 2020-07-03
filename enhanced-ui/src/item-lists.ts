@@ -88,6 +88,7 @@ function createListButtonPatch<T extends sc.ListBoxButton>(
   createListButtonPatch('trade.gui.trade-dialog', () => sc.TradeItem);
   createListButtonPatch('menu.gui.botanics.botanics-misc', () => sc.BotanicsEntryButton);
   createListButtonPatch('menu.gui.new-game.new-game-misc', () => sc.NewGameOptionButton);
+  createListButtonPatch('menu.gui.lore.lore-misc', () => sc.LoreEntryButton);
 }
 
 ig.module('enhanced-ui.fixes.new-game-menu')

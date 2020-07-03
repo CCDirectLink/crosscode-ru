@@ -14,6 +14,7 @@ import './credits-section.js';
 import './event-steps-patches.js';
 import './help.js';
 import './level-up.js';
+import './lore-menu.js';
 import './main-menu.js';
 import './map-menu.js';
 import './options-menu.js';
