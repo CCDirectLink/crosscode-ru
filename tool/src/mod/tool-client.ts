@@ -4,9 +4,9 @@ let scriptUrl: string = import.meta.url;
 let scriptDir = scriptUrl.slice(0, scriptUrl.lastIndexOf('/'));
 
 export class TranslationToolClient {
-  gameWindow: nw.Window = nw.Window.get();
-  toolWindow: nw.Window | null = null;
-  toolWindowIsOpening = false;
+  // private gameWindow: nw.Window = nw.Window.get();
+  private toolWindow: nw.Window | null = null;
+  private toolWindowIsOpening = false;
 
   // TODO: enable this when I find a workaround for listening to window events
   // in the game iframe
@@ -14,11 +14,11 @@ export class TranslationToolClient {
   //   this.gameWindow.on('close', this.onGameWindowClose.bind(this));
   // }
 
-  readSettings(): Promise<Settings> {
+  public readSettings(): Promise<Settings> {
     return readSettings();
   }
 
-  open(): void {
+  public open(): void {
     if (this.toolWindowIsOpening) return;
     if (this.toolWindow != null) {
       this.toolWindow.focus();
@@ -30,7 +30,7 @@ export class TranslationToolClient {
       `${scriptDir}/../../main.html`,
       // magic values from the game's package.json
       { width: 1136, height: 640 },
-      toolWindow => {
+      (toolWindow) => {
         if (toolWindow == null) return;
 
         this.toolWindow = toolWindow;
@@ -44,8 +44,8 @@ export class TranslationToolClient {
     );
   }
 
-  onGameWindowClose(): void {
-    if (this.toolWindow != null) this.toolWindow.close();
-    this.gameWindow.close(true);
-  }
+  // private onGameWindowClose(): void {
+  //   if (this.toolWindow != null) this.toolWindow.close();
+  //   this.gameWindow.close(true);
+  // }
 }

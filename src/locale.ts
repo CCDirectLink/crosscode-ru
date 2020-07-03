@@ -37,7 +37,7 @@ if (leaSpellingTable != null) {
     `([^а-яА-ЯёЁ]|^)(${Object.keys(leaSpellingTable).join('|')})([^а-яА-ЯёЁ]|$)`,
     'g',
   );
-  textFilter = text =>
+  textFilter = (text) =>
     text.replace(
       regex,
       (_wholeStr, leftBoundary: string, str: string, rightBoundary: string) => {

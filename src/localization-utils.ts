@@ -36,7 +36,7 @@ ig.module('crosscode-ru.utils.localization.sprites')
         let localizeSpritesOptionValue: boolean = this.get(
           'crosscode-ru.localized-labels-on-sprites',
         );
-        sc.ru.shouldPatchSpriteLabels = notOptional => {
+        sc.ru.shouldPatchSpriteLabels = (notOptional) => {
           return (
             ig.currentLang === 'ru_RU' &&
             (notOptional || localizeSpritesOptionValue)

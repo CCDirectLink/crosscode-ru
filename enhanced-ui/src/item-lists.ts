@@ -242,7 +242,7 @@ ig.module('enhanced-ui.fixes.item-lists.social-menu')
 
         guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
           this.equip,
-          gui => {
+          (gui) => {
             let newGui = new sc.ui2.IconTextGui(gui.text);
             newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
             let { level, numberGfx } = gui;
@@ -350,7 +350,7 @@ ig.module('enhanced-ui.fixes.item-lists.quest-dialog')
 
         guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
           this.itemsGui,
-          gui => {
+          (gui) => {
             let newGui = new sc.ui2.IconTextGui(gui.text);
             newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
             let { level, numberGfx } = gui;

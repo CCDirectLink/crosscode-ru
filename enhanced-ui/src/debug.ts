@@ -14,7 +14,7 @@ sc.ui2.debug.highlightUpdateDrawables = function (renderer) {
 ig.module('enhanced-ui.debug.gui')
   .requires('impact.feature.gui.gui')
   .defines(() => {
-    sc.ui2.debug.highlightGuiInstances = clazz => {
+    sc.ui2.debug.highlightGuiInstances = (clazz) => {
       let { updateDrawables } = clazz.prototype;
       clazz.prototype.updateDrawables = function (renderer) {
         updateDrawables.call(this, renderer);

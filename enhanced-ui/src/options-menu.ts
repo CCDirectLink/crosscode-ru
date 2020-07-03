@@ -50,7 +50,7 @@ ig.module('enhanced-ui.fixes.options-menu')
         // this._hasEntered is set in onMouseInteract of this class
         if (
           !this._hasEntered &&
-          !this.childFocusTargets.some(target => target.focus)
+          !this.childFocusTargets.some((target) => target.focus)
         ) {
           this.nameGui.tickerHook.timer = 0;
         }

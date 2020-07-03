@@ -28,7 +28,7 @@ ig.module('crosscode-ru.fixes.credits-section')
           -(namesEmpty ? 1 : 2),
         );
         for (let { gui } of addedChildren) {
-          gui.onVisibilityChange = visible => {
+          gui.onVisibilityChange = (visible) => {
             if (visible) {
               gui.doStateTransition(
                 'DEFAULT',

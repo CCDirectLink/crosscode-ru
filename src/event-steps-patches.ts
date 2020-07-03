@@ -14,7 +14,7 @@ ig.module('crosscode-ru.fixes.event-steps.shakeit')
 
         let start = ig.lang.get('sc.gui.shakeit.start');
 
-        let parts: string[] = ['first', 'second', 'third'].map(s =>
+        let parts: string[] = ['first', 'second', 'third'].map((s) =>
           randomElement(ig.lang.get(`sc.gui.shakeit.${s}`)),
         );
         let swapFirstAndSecond = Math.random() >= 0.5;

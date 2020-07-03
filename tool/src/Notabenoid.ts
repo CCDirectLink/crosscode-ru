@@ -68,7 +68,7 @@ export interface Translation {
 }
 
 export class NotaClient {
-  constructor(readonly options: { anonymous: boolean }) {}
+  public constructor(public readonly options: { anonymous: boolean }) {}
 
   private async makeRequest(path: string): Promise<Document> {
     let url = new URL(
@@ -90,7 +90,7 @@ export class NotaClient {
     return doc;
   }
 
-  async fetchAllChapterStatuses(): Promise<ChapterStatuses> {
+  public async fetchAllChapterStatuses(): Promise<ChapterStatuses> {
     let doc = await this.makeRequest(`/book/${BOOK_ID}`);
     let result: ChapterStatuses = {};
     for (let tr of doc.querySelectorAll<HTMLElement>(
@@ -102,7 +102,9 @@ export class NotaClient {
     return result;
   }
 
-  createChapterFragmentFetcher(status: ChapterStatus): Fetcher<Fragment[]> {
+  public createChapterFragmentFetcher(
+    status: ChapterStatus,
+  ): Fetcher<Fragment[]> {
     let pages = Math.ceil(status.totalFragments / CHAPTER_PAGE_SIZE);
     // seriously... JS has regular generator functions, yet it doesn't have
     // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern again.
@@ -114,7 +116,7 @@ export class NotaClient {
           console.log(`${status.name}, page ${i + 1}/${pages}`);
           yield self
             .makeRequest(`/book/${BOOK_ID}/${status.id}?Orig_page=${i + 1}`)
-            .then(doc => {
+            .then((doc) => {
               let fragments: Fragment[] = [];
               for (let tr of doc.querySelectorAll('#Tr > tbody > tr')) {
                 let f = parseFragment(tr);
@@ -127,7 +129,7 @@ export class NotaClient {
     };
   }
 
-  async login(username: string, password: string): Promise<void> {
+  public async login(username: string, password: string): Promise<void> {
     let body = new FormData();
     body.append('login[login]', username);
     body.append('login[pass]', password);
@@ -164,7 +166,7 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   let match = /(\d+) ([а-я.]+) (\d+) г., (\d+):(\d+)/.exec(activityElem.title);
   if (match == null || match.length !== 6) return null;
   let [day, month, year, hour, minute] = match.slice(1);
-  let [dayN, yearN, hourN, minuteN] = [day, year, hour, minute].map(s =>
+  let [dayN, yearN, hourN, minuteN] = [day, year, hour, minute].map((s) =>
     parseInt(s, 10),
   );
   let monthIndex = RU_ABBREVIATED_MONTH_NAMES.indexOf(month);
@@ -177,7 +179,7 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   if (match == null || match.length !== 3) return null;
   let [translatedFragments, totalFragments] = match
     .slice(1)
-    .map(s => parseInt(s, 10));
+    .map((s) => parseInt(s, 10));
   cs.translatedFragments = translatedFragments;
   cs.totalFragments = totalFragments;
 
@@ -256,7 +258,7 @@ function parseTranslation(element: Element): Translation | null {
   if (match == null || match.length !== 6) return null;
   let [day, month, year, hour, minute] = match
     .slice(1)
-    .map(s => parseInt(s, 10));
+    .map((s) => parseInt(s, 10));
   t.timestamp = new Date(
     Date.UTC(2000 + year, month - 1, day, hour - 3, minute),
   );

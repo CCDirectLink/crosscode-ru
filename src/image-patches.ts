@@ -11,12 +11,12 @@ function loadImageTemporary(path: string): Promise<HTMLImageElement> {
     let img = new Image();
     img.src = path;
     img.onload = () => resolve(img);
-    img.onerror = err => reject(err);
+    img.onerror = (err) => reject(err);
   });
 }
 
 const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
-  'media/entity/objects/history-of-bergen.png': async ctx => {
+  'media/entity/objects/history-of-bergen.png': async (ctx) => {
     // this label is practically a part of a dialog, so I'm not making it optional
     if (!sc.ru.shouldPatchSpriteLabels(true)) return;
     // let ruImage = await sc.ui2.waitForLoadable(
@@ -32,7 +32,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     // ruImage.decreaseRef();
   },
 
-  'media/map/jungle.png': async ctx => {
+  'media/map/jungle.png': async (ctx) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
     // let ruImage = await sc.ui2.waitForLoadable(
     //   new ig.Image('media/map/open-closed-signs.ru_RU.png'),
@@ -49,7 +49,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     // ruImage.decreaseRef();
   },
 
-  'media/entity/style/jungle-city-map.png': async ctx => {
+  'media/entity/style/jungle-city-map.png': async (ctx) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
     // let ruImage = await sc.ui2.waitForLoadable(
     //   new ig.Image('media/map/open-closed-signs.ru_RU.png'),
@@ -66,7 +66,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     // ruImage.decreaseRef();
   },
 
-  'media/map/jungle-props.png': async ctx => {
+  'media/map/jungle-props.png': async (ctx) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
     // let ruImage = await sc.ui2.waitForLoadable(
     //   new ig.Image('media/map/jungle-props.ru_RU.png'),
@@ -78,7 +78,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     // ruImage.decreaseRef();
   },
 
-  'media/map/bergen-trail.png': async ctx => {
+  'media/map/bergen-trail.png': async (ctx) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
     // let innSign = await sc.ui2.waitForLoadable(
     //   new ig.Image('media/map/inn-sign.ru_RU.png'),
@@ -90,7 +90,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     // innSign.decreaseRef();
   },
 
-  'media/map/bergen-village-inner.png': async ctx => {
+  'media/map/bergen-village-inner.png': async (ctx) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
     // let innSign = await sc.ui2.waitForLoadable(
     //   new ig.Image('media/map/inn-sign.ru_RU.png'),
@@ -102,7 +102,7 @@ const IMAGE_PATCHES: { [path: string]: ImagePatchFunction } = {
     // innSign.decreaseRef();
   },
 
-  'media/map/rookie-harbor.png': async ctx => {
+  'media/map/rookie-harbor.png': async (ctx) => {
     if (!sc.ru.shouldPatchSpriteLabels()) return;
     let [innSign, ruImage] = await Promise.all([
       // sc.ui2.waitForLoadable(new ig.Image('media/map/inn-sign.ru_RU.png')),

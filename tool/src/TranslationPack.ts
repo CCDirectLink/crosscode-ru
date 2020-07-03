@@ -9,10 +9,10 @@ const INJECTED_IN_MOD_TAG = 'INJECTED_IN_MOD';
 const IGNORE_IN_MOD_TAG = 'IGNORE_IN_MOD';
 
 export class LocalizeMePacker {
-  packs = new Map<string, LocalizeMePack>();
+  public packs = new Map<string, LocalizeMePack>();
   private assetsCache = new Map<string, unknown>();
 
-  async addNotaFragments(fragments: Nota.Fragment[]): Promise<void> {
+  public async addNotaFragments(fragments: Nota.Fragment[]): Promise<void> {
     for (let f of fragments) {
       if (f.translations.length === 0) continue;
       if (f.original.descriptionText.includes(IGNORE_IN_MOD_TAG)) continue;
@@ -35,7 +35,7 @@ export class LocalizeMePacker {
     }
   }
 
-  async validateFragment(f: Nota.Fragment): Promise<boolean> {
+  public async validateFragment(f: Nota.Fragment): Promise<boolean> {
     let { file, jsonPath } = f.original;
 
     let obj: unknown;

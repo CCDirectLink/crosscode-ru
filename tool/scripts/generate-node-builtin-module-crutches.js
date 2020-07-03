@@ -7,7 +7,7 @@ const OUTPUT_DIR = path.join(__dirname, '..', 'src', 'node-builtin-modules');
 const MODULES = ['fs', 'path'];
 
 fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-MODULES.forEach(name => {
+MODULES.forEach((name) => {
   console.log(name);
   fs.writeFileSync(
     path.join(OUTPUT_DIR, `${name}.js`),

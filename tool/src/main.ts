@@ -30,10 +30,10 @@ window.addEventListener('load', () => {
 class Main {
   // yeah, the following fields are one of the most weird things I've ever
   // written, but hold on, I want to test the "God class" pattern in JS
-  notaClient: NotaClient = null!;
-  progressBar: ProgressBar = null!;
+  public notaClient: NotaClient = null!;
+  public progressBar: ProgressBar = null!;
 
-  async start(): Promise<void> {
+  public async start(): Promise<void> {
     try {
       await fs.promises.mkdir(paths.MOD_DATA_DIR, { recursive: true });
 
@@ -75,7 +75,7 @@ class Main {
     }
   }
 
-  async downloadTranslations(force: boolean): Promise<void> {
+  public async downloadTranslations(force: boolean): Promise<void> {
     try {
       this.progressBar.setTaskInfo('Скачивание данных о главах на Ноте...');
       this.progressBar.setIndeterminate();
@@ -128,8 +128,8 @@ class Main {
         } = this.notaClient.createChapterFragmentFetcher(status);
         console.log('notaPageCount', notaPageCount);
         await asyncUtils.limitConcurrency(
-          iteratorUtils.map(iterator, promise =>
-            promise.then(pageFragments => {
+          iteratorUtils.map(iterator, (promise) =>
+            promise.then((pageFragments) => {
               fragments = fragments.concat(pageFragments);
             }),
           ),
@@ -200,7 +200,7 @@ class Main {
     }
   }
 
-  async readChapterStatuses(): Promise<ChapterStatuses> {
+  public async readChapterStatuses(): Promise<ChapterStatuses> {
     let data: ChapterStatuses | null = await fsUtils.readJsonFileOptional(
       paths.CHAPTER_STATUSES_FILE,
     );
@@ -210,48 +210,50 @@ class Main {
 }
 
 function showDevTools(): Promise<void> {
-  return new Promise(resolve =>
+  return new Promise((resolve) =>
     // eslint-disable-next-line no-undefined
     nw.Window.get().showDevTools(undefined, () => resolve()),
   );
 }
 
 class ProgressBar {
-  element = document.getElementById(
+  public element = document.getElementById(
     'settings_translations_progress',
   )! as HTMLProgressElement;
-  taskElement = document.getElementById('settings_translations_progressTask')!;
-  taskErrorElement = document.getElementById(
+  public taskElement = document.getElementById(
+    'settings_translations_progressTask',
+  )!;
+  public taskErrorElement = document.getElementById(
     'settings_translations_progressTask_error',
   )!;
-  countElement = document.getElementById(
+  public countElement = document.getElementById(
     'settings_translations_progressCount',
   )!;
 
-  setTaskInfo(info: { toString(): string }): void {
+  public setTaskInfo(info: { toString(): string }): void {
     this.taskErrorElement.style.display = 'none';
     this.taskElement.textContent = info.toString();
   }
 
-  setTaskError(err: { toString(): string }): void {
+  public setTaskError(err: { toString(): string }): void {
     this.taskErrorElement.style.display = 'inline';
     this.taskElement.textContent = err.toString();
     this.setDone();
   }
 
-  setIndeterminate(): void {
+  public setIndeterminate(): void {
     this.element.removeAttribute('value');
     this.countElement.textContent = '';
   }
 
-  setValue(value: number, total: number): void {
+  public setValue(value: number, total: number): void {
     this.element.value = value;
     this.element.max = total;
     let percentStr = ((value / total) * 100).toFixed();
     this.countElement.textContent = `${percentStr}% (${value} / ${total})`;
   }
 
-  setDone(): void {
+  public setDone(): void {
     this.element.value = 0;
     this.countElement.textContent = '';
   }
