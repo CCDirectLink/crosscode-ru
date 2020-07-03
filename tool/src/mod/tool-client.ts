@@ -3,7 +3,7 @@ import { Settings, readSettings } from '../settings.js';
 let scriptUrl: string = import.meta.url;
 let scriptDir = scriptUrl.slice(0, scriptUrl.lastIndexOf('/'));
 
-export class TranslationToolClient {
+export default class TranslationToolClient {
   // private gameWindow: nw.Window = nw.Window.get();
   private toolWindow: nw.Window | null = null;
   private toolWindowIsOpening = false;

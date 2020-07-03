@@ -9,16 +9,5 @@ declare namespace sc {
 }
 
 declare namespace sc.ru {
-  namespace TranslationToolClient {
-    interface Settings {
-      autoOpen?: boolean;
-    }
-  }
-
-  interface TranslationToolClient {
-    readSettings(this: this): Promise<sc.ru.TranslationToolClient.Settings>;
-    open(this: this): void;
-  }
-
-  let translationTool: TranslationToolClient;
+  let translationTool: import('./tool-client').default;
 }

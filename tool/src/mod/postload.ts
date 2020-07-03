@@ -1,4 +1,4 @@
-import { TranslationToolClient } from './tool-client.js';
+import TranslationToolClient from './tool-client.js';
 
 ig.module('crosscode-ru.translation-tool')
   .requires(
