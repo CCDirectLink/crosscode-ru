@@ -4,6 +4,15 @@ ig.module('crosscode-ru.fixes.lore-menu')
     const TITLE_HORIZONTAL_MARGIN_LEFT = 33;
 
     sc.LoreInfoBox.inject({
+      init(...args) {
+        this.parent(...args);
+        this.alternative.tickerHook.maxWidth =
+          this.scrollContainer.hook.pos.x +
+          this.scrollContainer.hook.size.x -
+          this.alternative.hook.pos.x;
+        this.alternative.tickerHook.focusTarget = this;
+      },
+
       setLore(...args) {
         let result: void = this.parent(...args);
 

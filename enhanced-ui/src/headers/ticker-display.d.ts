@@ -35,17 +35,23 @@ declare namespace sc.ui2 {
       x: number,
       y: number,
     ) => void;
+
+    interface FocusTarget {
+      focus?: boolean;
+      keepPressed?: boolean;
+      pressed?: boolean;
+    }
   }
   interface TickerDisplayHook {
     hook: ig.GuiHook;
-    renderText: sc.ui2.TickerDisplayHook.RenderTextCallback;
+    renderText: TickerDisplayHook.RenderTextCallback;
     timer: number;
     speed: number;
     delayAtBorders: number;
     constantTextOffset: Vec2;
     shadowGfx: ig.Image;
-    maxWidth: number | null;
-    focusTarget: ig.FocusGui | null;
+    maxWidth: number | null | undefined;
+    focusTarget: TickerDisplayHook.FocusTarget | null | undefined;
     focusTargetKeepPressed: boolean;
 
     update(this: this): void;
