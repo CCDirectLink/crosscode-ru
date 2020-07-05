@@ -1,7 +1,8 @@
 {
   "include": [
     "src",
-    "../node_modules/ultimate-crosscode-typedefs",
+    "../node_modules/ultimate-crosscode-typedefs/crosscode.d.ts",
+    "../node_modules/ultimate-crosscode-typedefs/modloader-stdlib.d.ts",
     "../src/types/utils.d.ts"
   ],
   "compilerOptions": {

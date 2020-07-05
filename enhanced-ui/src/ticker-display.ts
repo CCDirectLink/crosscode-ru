@@ -40,8 +40,9 @@ ig.module('enhanced-ui.ticker-display')
         this.hook = hook;
         this.renderText = renderText;
 
-        if (this.constructor.PATTERN_SHADOW_LEFT == null) {
-          this.constructor.PATTERN_SHADOW_LEFT = this.shadowGfx.createPattern(
+        const ctor = this.constructor as typeof sc.ui2.TickerDisplayHook;
+        if (ctor.PATTERN_SHADOW_LEFT == null) {
+          ctor.PATTERN_SHADOW_LEFT = this.shadowGfx.createPattern(
             0,
             0,
             8,
@@ -49,8 +50,8 @@ ig.module('enhanced-ui.ticker-display')
             ig.ImagePattern.OPT.REPEAT_Y,
           );
         }
-        if (this.constructor.PATTERN_SHADOW_RIGHT == null) {
-          this.constructor.PATTERN_SHADOW_RIGHT = this.shadowGfx.createPattern(
+        if (ctor.PATTERN_SHADOW_RIGHT == null) {
+          ctor.PATTERN_SHADOW_RIGHT = this.shadowGfx.createPattern(
             0,
             1,
             8,
@@ -137,10 +138,8 @@ ig.module('enhanced-ui.ticker-display')
         // disabled them in production. Although I'm keeping the code if it
         // comes in handy in the future.
         if (!sc.ui2.debug.hideTickerShadows) {
-          const {
-            PATTERN_SHADOW_LEFT,
-            PATTERN_SHADOW_RIGHT,
-          } = this.constructor;
+          const { PATTERN_SHADOW_LEFT, PATTERN_SHADOW_RIGHT } = this
+            .constructor as typeof sc.ui2.TickerDisplayHook;
 
           const COMPOSITION_MODE = 'overlay';
           // const COMPOSITION_MODE = 'soft-light';
@@ -365,10 +364,12 @@ ig.module('enhanced-ui.ticker-display')
           textWidth = 0;
         };
 
+        const { SPLIT_WIDTH } = this
+          .constructor as typeof sc.ui2.LongHorizontalTextGui;
+
         for (let i = 0; i < this.parsedText.length; i++) {
           let charWidth = this.font.getCharWidth(this.parsedText.charCodeAt(i));
-          let willOverflow =
-            textWidth + charWidth > sc.ui2.LongHorizontalTextGui.SPLIT_WIDTH;
+          let willOverflow = textWidth + charWidth > SPLIT_WIDTH;
           let isFirst = i <= 0;
           let isLast = i >= this.parsedText.length - 1;
 

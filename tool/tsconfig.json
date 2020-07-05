@@ -1,5 +1,8 @@
 {
-  "include": ["src", "../node_modules/ultimate-crosscode-typedefs"],
+  "include": [
+    "src",
+    "../node_modules/ultimate-crosscode-typedefs/crosscode-nw.d.ts"
+  ],
   "compilerOptions": {
     "composite": true,
     "rootDir": "src",

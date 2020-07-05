@@ -2,7 +2,7 @@ import { Settings, readSettings } from '../settings.js';
 
 const TOOL_HTML_PAGE_URL: URL = new URL('../../main.html', import.meta.url);
 
-export default class TranslationToolClient {
+export class TranslationToolClient {
   private gameWindow: nw.Window = nw.Window.get();
   private toolWindow: nw.Window | null = null;
   private toolWindowIsOpening = false;

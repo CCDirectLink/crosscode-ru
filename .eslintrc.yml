@@ -19,6 +19,7 @@ rules:
         - status
         - event
         - onload
+        - constructor
 
   func-names: off
 

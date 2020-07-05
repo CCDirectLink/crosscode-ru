@@ -53,17 +53,12 @@ ig.module('enhanced-ui.fixes.item-lists')
 
 function createListButtonPatch<T extends sc.ListBoxButton>(
   gameFeatureModule: string,
-  getConstructor: () => ImpactClass<T>,
+  getConstructor: () => { prototype: T & { enableTickerDisplay: boolean } },
 ): void {
   ig.module(`enhanced-ui.fixes.item-lists.${gameFeatureModule}`)
     .requires(`game.feature.${gameFeatureModule}`)
     .defines(() => {
-      // `prototype`s of `ImpactClass<T>` and `sc.ListBoxButtonConstructor` are
-      // incompatible because of different constructors, so I have to perform an
-      // "unsafe" cast here
-      ((getConstructor() as unknown) as typeof sc['ListBoxButton']).inject({
-        enableTickerDisplay: true,
-      });
+      getConstructor().prototype.enableTickerDisplay = true;
     });
 }
 

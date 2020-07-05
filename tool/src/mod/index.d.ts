@@ -1,13 +1,17 @@
-declare namespace sc {
-  interface TitleScreenButtonGui {
-    translationToolButton: sc.ButtonGui;
+import { TranslationToolClient } from './tool-client.js';
+
+declare global {
+  namespace sc {
+    interface TitleScreenButtonGui {
+      translationToolButton: sc.ButtonGui;
+    }
+
+    interface PauseScreenGui {
+      translationToolButton: sc.ButtonGui;
+    }
   }
 
-  interface PauseScreenGui {
-    translationToolButton: sc.ButtonGui;
+  namespace sc.ru {
+    let translationTool: TranslationToolClient;
   }
-}
-
-declare namespace sc.ru {
-  let translationTool: import('./tool-client').default;
 }

@@ -1,7 +1,7 @@
 {
   "include": [
     "src",
-    "node_modules/ultimate-crosscode-typedefs",
+    "node_modules/ultimate-crosscode-typedefs/crosscode-ccloader-all.d.ts",
     "enhanced-ui/src/headers"
   ],
   "compilerOptions": {

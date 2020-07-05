@@ -104,9 +104,9 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
       _fixAreaAndMapLangLabel<K1 extends PropertyKey, K2 extends PropertyKey>(
         this: ImpactClassMethodThis<
           '_fixAreaAndMapLangLabel',
-          typeof ig['Storage'],
-          typeof ig['Storage']['prototype'],
-          typeof ig['Storage']['prototype']
+          typeof ig.Storage,
+          typeof ig.Storage['prototype'],
+          typeof ig.Storage['prototype']
         >,
         obj: { [key in K1 | K2]: ig.LangLabel.Data },
         areaKey: K1,
