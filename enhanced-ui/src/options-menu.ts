@@ -8,7 +8,7 @@ ig.module('enhanced-ui.fixes.options-menu')
     sc.OptionRow.inject({
       childFocusTargets: [],
 
-      init(option, row, rowGroup, ...args) {
+      init(optionName, row, rowGroup, ...args) {
         let rowGroupAddFocusGui = rowGroup.addFocusGui;
         let focusTargets: ig.FocusGui[] = [];
         rowGroup.addFocusGui = function (gui, ...args2) {
@@ -16,29 +16,15 @@ ig.module('enhanced-ui.fixes.options-menu')
           return rowGroupAddFocusGui.call(this, gui, ...args2);
         };
 
-        this.parent(option, row, rowGroup, ...args);
+        let option = sc.OPTIONS_DEFINITION[optionName];
+        if (option.type === 'CHECKBOX') option.checkboxRightAlign = true;
+
+        this.parent(optionName, row, rowGroup, ...args);
 
         rowGroup.addFocusGui = rowGroupAddFocusGui;
         this.childFocusTargets = focusTargets;
 
         let lineHook = this.hook.children[1];
-        let slopeHook = this.hook.children[2];
-
-        if (this.option.type === 'CHECKBOX') {
-          // NOTE: injections in simplify's "main" stage is executed much later
-          // than this code, so I disable checkboxRightAlign here to avoid
-          // interference with simplify because I do the same checkboxRightAlign
-          // does, but apply it to every checkbox.
-          this.option.checkboxRightAlign = false;
-
-          let checkbox = (this.typeGui as sc.OPTION_GUIS_DEFS.CHECKBOX).button;
-          checkbox.hook.align.x = ig.GUI_ALIGN.X_RIGHT;
-          const additionalWidth =
-            this.typeGui.hook.size.x - checkbox.hook.size.x;
-          lineHook.size.x += additionalWidth;
-          slopeHook.pos.x += additionalWidth;
-        }
-
         this.nameGui.tickerHook.maxWidth =
           lineHook.size.x - this.nameGui.hook.pos.x + 2;
         this.nameGui.tickerHook.speed *= 1.25;
