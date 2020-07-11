@@ -14,7 +14,7 @@
   "prestart": "dist/prestart.js",
   "ccmodDependencies": {
     "crosscode": ">=1.2.0",
-    "Localize Me": "^0.5.2",
+    "Localize Me": "^0.6.0",
     "enhanced-ui": "^0.1.0",
     "CCLoader display version": "^1.0.0"
   },
