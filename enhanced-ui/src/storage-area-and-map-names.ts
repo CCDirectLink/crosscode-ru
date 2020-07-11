@@ -43,6 +43,8 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
         areaName: ig.LangLabel.Data,
         areaData: sc.AreaLoadable.Data,
       ): void {
+        if (areaName == null) return;
+
         if (areaName.langUid == null) {
           throw new Error(`missing langUid of area ${areaName.en_US}`);
         }
@@ -53,6 +55,8 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
         let areaMaps = new Map<number, { name: ig.LangLabel.Data }>();
         for (let floor of areaData.floors) {
           for (let map of floor.maps) {
+            if (map.name == null) continue;
+
             if (map.name.langUid == null) {
               throw new Error(
                 `missing langUid of map ${map.name.langUid} in area ${areaName.en_US}`,
