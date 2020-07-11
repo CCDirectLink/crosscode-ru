@@ -49,7 +49,12 @@ export class LocalizeMePacker {
     if (!f.original.descriptionText.includes(INJECTED_IN_MOD_TAG)) {
       let jsonPathComponents = jsonPath.split('/');
       for (let key of jsonPathComponents) {
-        obj = (obj as Record<string, unknown>)[key];
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
+          obj = (obj as Record<string, unknown>)[key];
+        } else {
+          obj = null;
+          break;
+        }
       }
 
       let realOriginalText: string;
