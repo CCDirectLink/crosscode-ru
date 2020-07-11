@@ -106,7 +106,7 @@ $(QUICK_INSTALL_ARCHIVE_NAME).tar.gz:
 	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip .
 
 $(LOCALIZE_ME_MOD_DIR):
-	$(call download_archive,$@,https://github.com/L-Sherry/Localize-me/archive/v0.5.3.tar.gz,)
+	$(call download_archive,$@,https://github.com/L-Sherry/Localize-me/archive/v0.6.0.tar.gz,)
 $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
 	$(call download_archive,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.1/cc-world-map-overhaul_v1.0.1.tar.gz,)
 

@@ -168,11 +168,17 @@ ig.module('enhanced-ui.fixes.item-lists.trade-gui')
           newGui.tradeName = gui.tradeName;
           newGui.setAlign(gui.hook.align.x, gui.hook.align.y);
           newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
-          let { level, numberGfx } = gui;
+          let { level, numberGfx, isScalable } = gui;
           if (level > 0) {
             // eslint-disable-next-line no-loop-func
             newGui.setDrawCallback((width, height) =>
-              sc.MenuHelper.drawLevel(level, width, height, numberGfx),
+              sc.MenuHelper.drawLevel(
+                level,
+                width,
+                height,
+                numberGfx,
+                isScalable,
+              ),
             );
           }
           newGui.tickerHook.maxWidth = this.hook.size.x - 3 * 2;
@@ -241,9 +247,15 @@ ig.module('enhanced-ui.fixes.item-lists.social-menu')
           (gui) => {
             let newGui = new sc.ui2.IconTextGui(gui.text);
             newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
-            let { level, numberGfx } = gui;
+            let { level, numberGfx, isScalable } = gui;
             newGui.setDrawCallback((width, height) =>
-              sc.MenuHelper.drawLevel(level, width, height, numberGfx),
+              sc.MenuHelper.drawLevel(
+                level,
+                width,
+                height,
+                numberGfx,
+                isScalable,
+              ),
             );
             newGui.tickerHook.maxWidth = this.equip.hook.size.x;
 
@@ -320,7 +332,13 @@ ig.module('enhanced-ui.fixes.item-lists.equipment-menu')
         newTextChild.setPos(oldTextChild.hook.pos.x, oldTextChild.hook.pos.y);
         newTextChild.setDrawCallback((width, height) => {
           if (this.level > 0) {
-            sc.MenuHelper.drawLevel(this.level, width, height, this.numberGfx);
+            sc.MenuHelper.drawLevel(
+              this.level,
+              width,
+              height,
+              this.numberGfx,
+              this.isScalable,
+            );
           }
         });
         newTextChild.tickerHook.maxWidth = this.button.hook.size.x - 5 * 2;
@@ -349,10 +367,16 @@ ig.module('enhanced-ui.fixes.item-lists.quest-dialog')
           (gui) => {
             let newGui = new sc.ui2.IconTextGui(gui.text);
             newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
-            let { level, numberGfx } = gui;
+            let { level, numberGfx, isScalable } = gui;
             if (level > 0 && !hideRewards) {
               newGui.setDrawCallback((width, height) =>
-                sc.MenuHelper.drawLevel(level, width, height, numberGfx),
+                sc.MenuHelper.drawLevel(
+                  level,
+                  width,
+                  height,
+                  numberGfx,
+                  isScalable,
+                ),
               );
             }
             newGui.tickerHook.maxWidth = this.itemsGui.hook.size.x;
