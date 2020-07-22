@@ -23,8 +23,7 @@ ig.module('crosscode-ru.version-display')
     }
 
     sc.TitleScreenGui.inject({
-      ccloaderVersionGui: null,
-
+      crosscodeRuVersionGui: null,
       init(...args) {
         this.parent(...args);
         this.crosscodeRuVersionGui = attachVersionText(this.ccloaderVersionGui);
@@ -32,8 +31,7 @@ ig.module('crosscode-ru.version-display')
     });
 
     sc.PauseScreenGui.inject({
-      ccloaderVersionGui: null,
-
+      crosscodeRuVersionGui: null,
       init(...args) {
         this.parent(...args);
         this.crosscodeRuVersionGui = attachVersionText(this.ccloaderVersionGui);
