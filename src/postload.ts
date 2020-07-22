@@ -8,6 +8,7 @@ import './image-patches.js';
 
 import './arena-gui.js';
 import './circuit-menu.js';
+import './combat-hud.js';
 import './credits-section.js';
 import './event-steps-patches.js';
 import './help.js';

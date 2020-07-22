@@ -9,6 +9,7 @@ jsonPatches.add('data/lang/sc/gui.en_US.json', (data: any) =>
     labels: {
       'combat-hud': {
         'pvp-round': 'Round',
+        boss: 'Boss',
       },
       'title-screen': {
         changelog: 'Changelog',
