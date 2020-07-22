@@ -6,8 +6,6 @@ import './localize-me-ready-module.js';
 import './json-patches.js';
 import './image-patches.js';
 
-import './localization-utils.js';
-
 import './arena-gui.js';
 import './circuit-menu.js';
 import './credits-section.js';
@@ -28,3 +26,4 @@ import './status-lines.js';
 import './tab-button.js';
 import './title-screen.js';
 import './traders-list.js';
+import './version-display.js';

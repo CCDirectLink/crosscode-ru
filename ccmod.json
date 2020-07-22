@@ -9,7 +9,7 @@
   "homepage": "https://github.com/dmitmel/crosscode-ru",
   "main": "dist/main.js",
   "postload": "dist/postload.js",
-  "prestart": "dist/prestart.js",
+  "poststart": "dist/poststart.js",
   "dependencies": {
     "crosscode": "~1.2.0 || ~1.3.0",
     "localize-me": "^0.6.0",

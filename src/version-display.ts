@@ -3,6 +3,7 @@ ig.module('crosscode-ru.version-display')
     'game.feature.gui.base.text',
     'game.feature.gui.screen.title-screen',
     'game.feature.gui.screen.pause-screen',
+    'ccloader-runtime.ui.version-display',
   )
   .defines(() => {
     // At this point I'm just copying code from `ccloader-version-display`. You
