@@ -1,3 +1,4 @@
+// TODO: explain idea behind this and how it relates to dom.ready
 (async (): Promise<void> => {
   const NAME = 'localize-me.final-locale.ready';
   if (ig.modules[NAME] != null) return;

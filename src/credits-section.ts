@@ -6,6 +6,7 @@ ig.module('crosscode-ru.fixes.credits-section')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 
+    // TODO: calculate total credits length and derive CREDITS_SPEED from it
     const CREDITS_SPPED_DEFAULT = 30;
     const CREDITS_SPEED = 36;
     const HEADER_TRANSITION_DELAY =
@@ -71,6 +72,7 @@ ig.module('crosscode-ru.fixes.credits-section')
             let { children } = columnGui.hook;
             while (currentNameIndex < children.length) {
               let nameHook = children[currentNameIndex];
+              // TODO: can this be calculated with `screenCoords`?
               let absoluteY =
                 content.hook.pos.y +
                 columnContainerGui.hook.pos.y +

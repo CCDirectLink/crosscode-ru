@@ -9,6 +9,7 @@ function addEnglishLabelsToLangFile(data: any): any {
     labels: {
       'combat-hud': {
         'pvp-round': 'Round',
+        boss: 'Boss',
       },
       'title-screen': {
         changelog: 'Changelog',
