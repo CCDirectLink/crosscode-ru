@@ -112,9 +112,8 @@ ig.module('crosscode-ru.social-button')
 
     function setupLink(a: HTMLAnchorElement): void {
       if (ig.platform === ig.PLATFORM_TYPES.DESKTOP) {
-        a.addEventListener('click', function (event) {
+        a.addEventListener('click', function (this: HTMLAnchorElement, event) {
           event.preventDefault();
-          // eslint-disable-next-line @typescript-eslint/no-invalid-this
           nw.Shell.openExternal(this.href);
         });
       }

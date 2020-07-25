@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-assignment */
-
 const { jsonPatches } = ccmod.resources;
 
 jsonPatches.add('data/lang/sc/gui.en_US.json', (data: any) =>

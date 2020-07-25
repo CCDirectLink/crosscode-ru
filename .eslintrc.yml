@@ -1,45 +1,25 @@
-extends:
-  - eslint-config-dmitmel/presets/node
-  - eslint-config-dmitmel/presets/formatting
+extends: eslint-config-dmitmel/presets/node
 env:
   browser: true
 parserOptions:
   sourceType: module
 
 rules:
-  no-shadow:
-    - error
-    - builtinGlobals: true
-      hoist: functions
-      allow:
-        - name
-        - length
-        - location
-        - self
-        - status
-        - event
-        - onload
-        - constructor
-
   func-names: off
 
   node/no-unsupported-features/es-syntax:
     - error
     - ignores:
         - modules
+        - dynamicImport
 
 overrides:
   - files: 'tool/scripts/**/*.js'
     rules:
       node/shebang: off
 
-  - files: 'tool/src/node-builtin-modules/**/*.js'
-    rules:
-      global-require: off
-
   - files: '**/*.ts'
     extends: eslint-config-dmitmel/presets/typescript-with-type-checking-addon
-
     rules:
       # because I have to use '.js' file extensions in imports
       node/no-missing-import: off
