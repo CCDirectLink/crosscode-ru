@@ -98,8 +98,15 @@ localizeMe.add_locale('ru_RU', {
 
     if (!sc.ru.debug.showUntranslatedStrings) return original;
 
-    let trimmedOriginal = original.trim();
-    if (trimmedOriginal === '' || trimmedOriginal === 'en_US') return original;
+    switch (original.trim()) {
+      case '':
+      case 'en_US':
+      case 'LOL, DO NOT TRANSLATE THIS!':
+      case 'LOL, DO NOT TRANSLATE THIS! (hologram)':
+      case '\\c[1][DO NOT TRANSLATE THE FOLLOWING]\\c[0]':
+      case '\\c[1][DO NOT TRANSLATE FOLLOWING TEXTS]\\c[0]':
+        return original;
+    }
 
     if (/^credits\/[^/]+\.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)) {
       return original;
