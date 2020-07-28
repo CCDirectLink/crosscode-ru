@@ -72,7 +72,7 @@ localizeMe.add_locale('ru_RU', {
     ja_JP: 'ロシア語',
     ko_KR: '러시아어',
   },
-  flag: 'media/font/ru_RU/flag.png',
+  flag: ccmod.resources.resolvePathToURL('media/font/ru_RU/flag.png'),
   /* eslint-enable @typescript-eslint/naming-convention */
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
