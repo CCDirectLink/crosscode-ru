@@ -35,28 +35,32 @@ ig.module('crosscode-ru.fixes.traders-list')
         let setSizeOld = this.setSize;
         let setPivotOld = this.setPivot;
         let setPanelSizeOld = this.setPanelSize;
-        this.setSize = (w, h) =>
-          setSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
-        this.setPivot = (x, y) =>
-          setPivotOld.call(this, x + TRADERS_LIST_ADDITIONAL_WIDTH, y);
-        this.setPanelSize = (w, h) =>
-          setPanelSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
+        try {
+          this.setSize = (w, h) =>
+            setSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
+          this.setPivot = (x, y) =>
+            setPivotOld.call(this, x + TRADERS_LIST_ADDITIONAL_WIDTH, y);
+          this.setPanelSize = (w, h) =>
+            setPanelSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
 
-        this.parent();
-
-        this.setSize = setSizeOld;
-        this.setPivot = setPivotOld;
-        this.setPanelSize = setPanelSizeOld;
+          this.parent();
+        } finally {
+          this.setSize = setSizeOld;
+          this.setPivot = setPivotOld;
+          this.setPanelSize = setPanelSizeOld;
+        }
       },
 
       onCreateListEntries(list, ...args) {
         let listSetSizeOld = list.setSize;
-        list.setSize = (w, h) =>
-          listSetSizeOld.call(list, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
+        try {
+          list.setSize = (w, h) =>
+            listSetSizeOld.call(list, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
 
-        this.parent(list, ...args);
-
-        list.setSize = listSetSizeOld;
+          this.parent(list, ...args);
+        } finally {
+          list.setSize = listSetSizeOld;
+        }
 
         for (let hook of list.contentPane.hook.children) {
           hook.pos.x += TRADERS_LIST_ADDITIONAL_WIDTH;

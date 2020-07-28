@@ -61,17 +61,20 @@ ig.module('crosscode-ru.fixes.map-menu.teleport-to-prepositions')
     sc.MapAreaContainer.inject({
       onLandmarkPressed(landmark) {
         let show = sc.Dialogs.showYesNoDialog;
-        sc.Dialogs.showYesNoDialog = function (text, ...args): void {
-          let mapName = CORRECT_MAP_NAMES_WITH_PREPOSITIONS[landmark.map.path];
-          if (mapName != null) text = `Телепортироваться ${mapName}?`;
-          let result = show.call(this, text, ...args);
+        try {
+          sc.Dialogs.showYesNoDialog = function (text, ...args): void {
+            sc.Dialogs.showYesNoDialog = show;
 
+            let mapName =
+              CORRECT_MAP_NAMES_WITH_PREPOSITIONS[landmark.map.path];
+            if (mapName != null) text = `Телепортироваться ${mapName}?`;
+            return show.call(this, text, ...args);
+          };
+
+          this.parent(landmark);
+        } finally {
           sc.Dialogs.showYesNoDialog = show;
-          return result;
-        };
-
-        this.parent(landmark);
-        sc.Dialogs.showYesNoDialog = show;
+        }
       },
     });
   });

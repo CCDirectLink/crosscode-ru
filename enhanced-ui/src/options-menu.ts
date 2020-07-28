@@ -11,14 +11,17 @@ ig.module('enhanced-ui.fixes.options-menu')
       init(option, row, rowGroup, ...args) {
         let rowGroupAddFocusGui = rowGroup.addFocusGui;
         let focusTargets: ig.FocusGui[] = [];
-        rowGroup.addFocusGui = function (gui, ...args2) {
-          focusTargets.push(gui);
-          return rowGroupAddFocusGui.call(this, gui, ...args2);
-        };
+        try {
+          rowGroup.addFocusGui = function (gui, ...args2) {
+            focusTargets.push(gui);
+            return rowGroupAddFocusGui.call(this, gui, ...args2);
+          };
 
-        this.parent(option, row, rowGroup, ...args);
+          this.parent(option, row, rowGroup, ...args);
+        } finally {
+          rowGroup.addFocusGui = rowGroupAddFocusGui;
+        }
 
-        rowGroup.addFocusGui = rowGroupAddFocusGui;
         this.childFocusTargets = focusTargets;
 
         let lineHook = this.hook.children[1];
