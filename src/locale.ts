@@ -92,7 +92,8 @@ localizeMe.add_locale('ru_RU', {
 
     if (!sc.ru.debug.showUntranslatedStrings) return original;
 
-    if (original.trim() === '') return original;
+    let trimmedOriginal = original.trim();
+    if (trimmedOriginal === '' || trimmedOriginal === 'en_US') return original;
 
     if (/^credits\/[^/]+\.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)) {
       return original;
