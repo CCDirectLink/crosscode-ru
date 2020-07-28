@@ -3,8 +3,12 @@
 
 import { fetchDocument } from './utils/http.js';
 import { Fetcher } from './utils/async.js';
+import paths from './node-builtin-modules/path.js';
+import { hasKey, isObject } from './utils/misc.js';
 
 const BOOK_ID = '74823';
+const NOTABENOID_URL = 'http://notabenoid.org';
+const NOTABENOID_BOOK_URL = `${NOTABENOID_URL}/book/${BOOK_ID}`;
 
 const RU_ABBREVIATED_MONTH_NAMES = [
   'янв.',
@@ -25,7 +29,8 @@ const RU_ABBREVIATED_MONTH_NAMES = [
 // repo is from 2016, so such changes are very unlikely.
 const CHAPTER_PAGE_SIZE = 50;
 
-export type ChapterStatuses = Record<string, ChapterStatus>;
+export type ChapterStatusesObj = Record<string, ChapterStatus>;
+export type ChapterStatuses = Map<string, ChapterStatus>;
 
 export interface ChapterStatus {
   id: string;
@@ -63,20 +68,13 @@ export interface Translation {
   authorUsername: string;
   votes: number;
   score: number;
-  timestamp: Date;
+  timestamp: number;
   flags: Record<string, boolean | string>;
 }
 
 export class NotaClient {
-  public constructor(public readonly options: { anonymous: boolean }) {}
-
   private async makeRequest(path: string): Promise<Document> {
-    let url = new URL(
-      path,
-      this.options.anonymous
-        ? 'https://opennota2.duckdns.org'
-        : 'http://notabenoid.org',
-    );
+    let url = new URL(path, NOTABENOID_URL);
     let doc = await fetchDocument(url);
 
     if (
@@ -92,12 +90,12 @@ export class NotaClient {
 
   public async fetchAllChapterStatuses(): Promise<ChapterStatuses> {
     let doc = await this.makeRequest(`/book/${BOOK_ID}`);
-    let result: ChapterStatuses = {};
+    let result = new Map<string, ChapterStatus>();
     for (let tr of doc.querySelectorAll<HTMLElement>(
       '#Chapters > tbody > tr',
     )) {
       let chapterStatus = parseChapterStatus(tr);
-      if (chapterStatus != null) result[chapterStatus.name] = chapterStatus;
+      if (chapterStatus != null) result.set(chapterStatus.name, chapterStatus);
     }
     return result;
   }
@@ -106,26 +104,25 @@ export class NotaClient {
     status: ChapterStatus,
   ): Fetcher<Fragment[]> {
     let pages = Math.ceil(status.totalFragments / CHAPTER_PAGE_SIZE);
-    // seriously... JS has regular generator functions, yet it doesn't have
-    // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern again.
-    let self = this;
     return {
       total: pages,
-      iterator: (function* (): Iterator<Promise<Fragment[]>> {
+      // seriously... JS has regular generator functions, yet it doesn't have
+      // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern again.
+      iterator: function* (this: NotaClient): Generator<Promise<Fragment[]>> {
         for (let i = 0; i < pages; i++) {
           console.log(`${status.name}, page ${i + 1}/${pages}`);
-          yield self
-            .makeRequest(`/book/${BOOK_ID}/${status.id}?Orig_page=${i + 1}`)
-            .then((doc) => {
-              let fragments: Fragment[] = [];
-              for (let tr of doc.querySelectorAll('#Tr > tbody > tr')) {
-                let f = parseFragment(tr);
-                if (f != null) fragments.push(f);
-              }
-              return fragments;
-            });
+          yield this.makeRequest(
+            `/book/${BOOK_ID}/${status.id}?Orig_page=${i + 1}`,
+          ).then((doc) => {
+            let fragments: Fragment[] = [];
+            for (let tr of doc.querySelectorAll('#Tr > tbody > tr')) {
+              let f = parseFragment(tr);
+              if (f != null) fragments.push(f);
+            }
+            return fragments;
+          });
         }
-      })(),
+      }.call(this),
     };
   }
 
@@ -133,7 +130,103 @@ export class NotaClient {
     let body = new FormData();
     body.append('login[login]', username);
     body.append('login[pass]', password);
-    await fetch('http://notabenoid.org/', {
+    await fetch(NOTABENOID_URL, {
+      method: 'POST',
+      body,
+      credentials: 'include',
+    });
+  }
+
+  public async addFragmentOriginal(
+    chapterId: string,
+    orderNumber: number,
+    text: string,
+  ): Promise<string> {
+    let body = new FormData();
+    body.append('Orig[ord]', String(orderNumber));
+    body.append('Orig[body]', text);
+    body.append('ajax', '1');
+    let response = await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/0/edit`, {
+      method: 'POST',
+      body,
+      credentials: 'include',
+    });
+    let responseJson = (await response.json()) as { id: unknown };
+    return String(responseJson.id);
+  }
+
+  public async editFragmentOriginal(
+    chapterId: string,
+    fragmentId: string,
+    orderNumber: number,
+    newText: string,
+  ): Promise<void> {
+    let body = new FormData();
+    body.append('Orig[ord]', String(orderNumber));
+    body.append('Orig[body]', newText);
+    body.append('ajax', '1');
+    await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/edit`, {
+      method: 'POST',
+      body,
+      credentials: 'include',
+    });
+  }
+
+  public async deleteFragmentOriginal(
+    chapterId: string,
+    fragmentId: string,
+  ): Promise<void> {
+    await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/remove`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+  }
+
+  public async addFragmentTranslation(
+    chapterId: string,
+    fragmentId: string,
+    // NOTE: don't forget to add flags when uploading text to notabenoid!
+    text: string,
+  ): Promise<void> {
+    let body = new FormData();
+    body.append('Translation[body]', text);
+    body.append('ajax', '1');
+    await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/translate`, {
+      method: 'POST',
+      body,
+      credentials: 'include',
+    });
+  }
+
+  public async editFragmentTranslation(
+    chapterId: string,
+    fragmentId: string,
+    translationId: string,
+    // NOTE: don't forget to add flags when uploading text to notabenoid!
+    newText: string,
+  ): Promise<void> {
+    let body = new FormData();
+    body.append('Translation[body]', newText);
+    body.append('ajax', '1');
+    await fetch(
+      `${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/translate?tr_id=${translationId}`,
+      {
+        method: 'POST',
+        body,
+        credentials: 'include',
+      },
+    );
+  }
+
+  public async deleteFragmentTranslation(
+    chapterId: string,
+    fragmentId: string,
+    translationId: string,
+  ): Promise<void> {
+    let body = new FormData();
+    body.append('tr_id', translationId);
+    body.append('ajax', '1');
+    await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/tr_rm`, {
       method: 'POST',
       body,
       credentials: 'include',
@@ -213,8 +306,6 @@ function parseFragment(element: Element): Fragment | null {
 }
 
 function parseOriginal(raw: string): Original | null {
-  if (raw.startsWith('----')) return null;
-
   let o: Partial<Original> = {};
   o.rawContent = raw;
 
@@ -234,7 +325,6 @@ function parseOriginal(raw: string): Original | null {
   if (firstSpaceIndex < 0) return null;
   o.file = locationLine.slice(0, firstSpaceIndex);
   o.jsonPath = locationLine.slice(firstSpaceIndex + 1);
-
   o.descriptionText = raw.slice(locationLineLen + 1, headersLen);
   o.text = raw.slice(headersLen + 2);
 
@@ -259,13 +349,12 @@ function parseTranslation(element: Element): Translation | null {
   let [day, month, year, hour, minute] = match
     .slice(1)
     .map((s) => parseInt(s, 10));
-  t.timestamp = new Date(
-    Date.UTC(2000 + year, month - 1, day, hour - 3, minute),
-  );
+  t.timestamp = Date.UTC(2000 + year, month - 1, day, hour - 3, minute);
 
   let flags: Record<string, boolean | string> = {};
-  t.text = t.rawText
-    .replace(/\n?⟪(.*)⟫\s*/, (_match: string, group: string) => {
+  t.text = t.rawText.replace(
+    /\n?⟪(.*)⟫\s*/,
+    (_match: string, group: string) => {
       for (let s of group.split('|')) {
         s = s.trim();
         let i = s.indexOf(':');
@@ -276,8 +365,8 @@ function parseTranslation(element: Element): Translation | null {
         }
       }
       return '';
-    })
-    .replace(/^\^|^\$|\$$/g, '');
+    },
+  );
   t.flags = flags;
 
   t.score = calculateTranslationScore(t as Translation);
@@ -285,11 +374,193 @@ function parseTranslation(element: Element): Translation | null {
 }
 
 function calculateTranslationScore(t: Translation): number {
-  let score = 1e10 + 1e10 * t.votes + t.timestamp.getTime() / 1000 - 19e8;
+  let score = 1e10 + 1e10 * t.votes + t.timestamp / 1000 - 19e8;
   if (t.authorUsername === 'p_zombie') score -= 1e9;
   if (t.authorUsername === 'DimavasBot') {
     score -= 3e9;
     if (t.flags.fromGTable && !t.flags.notChecked) score += 1e9;
   }
+  if (t.text.startsWith('tr_ru:ERR')) score -= 1e12;
   return score;
+}
+
+export function stringifyFragmentOriginal(o: Original): string {
+  let result = `${o.file} ${o.jsonPath}`;
+  if (o.langUid != null) result += ` #${o.langUid}`;
+  result += '\n';
+  if (o.descriptionText.length > 0) result += `${o.descriptionText}\n`;
+  result += `\n${o.text}`;
+  return result;
+}
+
+export function stringifyFragmentTranslation(t: Translation): string {
+  let result = t.text;
+
+  let flagsEntries = Object.entries(t.flags);
+  if (flagsEntries.length > 0) {
+    let stringifiedFlagPairs: string[] = [];
+    for (let [k, v] of flagsEntries) {
+      if (k && v) {
+        stringifiedFlagPairs.push(typeof v === 'string' ? `${k}:${v}` : k);
+      }
+    }
+
+    result += `\n⟪${stringifiedFlagPairs.join('|')}⟫`;
+  }
+
+  return result;
+}
+
+const AREA_CHAPTER_NAMES = new Set([
+  'arena',
+  'arid-dng',
+  'arid',
+  'autumn-fall',
+  'autumn',
+  'bergen-trail',
+  'bergen',
+  'cargo-ship',
+  'cold-dng',
+  'dreams',
+  'flashback',
+  'forest',
+  'heat-dng',
+  'heat-village',
+  'heat',
+  'hideout',
+  'jungle-city',
+  'jungle',
+  'rhombus-dng',
+  'rhombus-sqr',
+  'rookie-harbor',
+  'shock-dng',
+  'tree-dng',
+  'wave-dng',
+]);
+
+export function getChapterNameOfFile(path: string): string {
+  let parsedPath = paths.parse(path);
+  let dirs = parsedPath.dir.split(paths.sep);
+
+  if (parsedPath.dir !== '' && dirs.length > 0) {
+    switch (dirs[0]) {
+      case 'extension':
+        return dirs[0];
+
+      case 'data':
+        if (dirs.length >= 2) {
+          switch (dirs[1]) {
+            case 'lang':
+              return 'LANG';
+
+            case 'arena':
+            case 'enemies':
+            case 'characters':
+              return dirs[1];
+
+            case 'areas':
+              if (
+                dirs.length === 2 &&
+                AREA_CHAPTER_NAMES.has(parsedPath.name)
+              ) {
+                return parsedPath.name;
+              }
+              break;
+
+            case 'maps':
+              if (dirs.length >= 3 && AREA_CHAPTER_NAMES.has(dirs[2])) {
+                return dirs[2];
+              }
+              break;
+          }
+        } else {
+          switch (parsedPath.name) {
+            case 'item-database':
+            case 'database':
+              return parsedPath.name;
+          }
+        }
+    }
+  }
+
+  return 'etc';
+}
+
+// based on https://gitlab.com/Dimava/crosscode-translation-ru/-/blob/master/assets/editor/CrossFile.js#L247-300
+export function generateFragmentDescriptionText(
+  jsonPath: string[],
+  fileData: unknown,
+): string {
+  let lines: string[] = [];
+  let obj = fileData;
+
+  for (let key of jsonPath) {
+    if (!(isObject(obj) && hasKey(obj, key))) {
+      throw new Error(`Invalid JSON path '${jsonPath.join('/')}'`);
+    }
+    getJsonObjectDescription(obj, key, lines);
+    obj = obj[key];
+  }
+
+  return lines.filter((line) => line.trim().length > 0).join('\n');
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+function getJsonObjectDescription(obj: {}, key: string, lines: string[]): void {
+  if (hasKey(obj, 'type') && typeof obj.type === 'string') {
+    switch (obj.type) {
+      case 'IF': {
+        let words: string[] = [obj.type];
+        if (key === 'elseStep') {
+          words.push('NOT');
+        } else if (key !== 'thenStep') {
+          words.push(key);
+        }
+        if (hasKey(obj, 'condition') && typeof obj.condition === 'string') {
+          words.push(obj.condition);
+        }
+        lines.push(words.join(' '));
+        break;
+      }
+
+      case 'EventTrigger':
+      case 'LocationEvent': {
+        let words: string[] = [obj.type];
+        if (hasKey(obj, 'settings') && isObject(obj.settings)) {
+          let { settings } = obj;
+          if (hasKey(settings, 'name') && typeof settings.name === 'string') {
+            words.push(settings.name);
+          }
+          if (
+            hasKey(settings, 'startCondition') &&
+            typeof settings.startCondition === 'string'
+          ) {
+            words.push(settings.startCondition);
+          }
+        }
+        lines.push(words.join(' '));
+        break;
+      }
+
+      default: {
+        if (hasKey(obj, 'person')) {
+          if (typeof obj.person === 'string') {
+            lines.push(`${obj.person} @DEFAULT`);
+          } else if (
+            isObject(obj.person) &&
+            hasKey(obj.person, 'person') &&
+            typeof obj.person.person === 'string' &&
+            hasKey(obj.person, 'expression') &&
+            typeof obj.person.expression === 'string'
+          ) {
+            lines.push(`${obj.person.person} @${obj.person.expression}`);
+          }
+        } else {
+          lines.push(obj.type);
+        }
+      }
+    }
+  } else if (hasKey(obj, 'condition') && typeof obj.condition === 'string') {
+    lines.push(obj.condition);
+  }
 }
