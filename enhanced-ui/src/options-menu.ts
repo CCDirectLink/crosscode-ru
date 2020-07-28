@@ -9,19 +9,22 @@ ig.module('enhanced-ui.fixes.options-menu')
       childFocusTargets: [],
 
       init(optionName, row, rowGroup, ...args) {
-        let rowGroupAddFocusGui = rowGroup.addFocusGui;
-        let focusTargets: ig.FocusGui[] = [];
-        rowGroup.addFocusGui = function (gui, ...args2) {
-          focusTargets.push(gui);
-          return rowGroupAddFocusGui.call(this, gui, ...args2);
-        };
-
         let option = sc.OPTIONS_DEFINITION[optionName];
         if (option.type === 'CHECKBOX') option.checkboxRightAlign = true;
 
-        this.parent(optionName, row, rowGroup, ...args);
+        let rowGroupAddFocusGui = rowGroup.addFocusGui;
+        let focusTargets: ig.FocusGui[] = [];
+        try {
+          rowGroup.addFocusGui = function (gui, ...args2) {
+            focusTargets.push(gui);
+            return rowGroupAddFocusGui.call(this, gui, ...args2);
+          };
 
-        rowGroup.addFocusGui = rowGroupAddFocusGui;
+          this.parent(optionName, row, rowGroup, ...args);
+        } finally {
+          rowGroup.addFocusGui = rowGroupAddFocusGui;
+        }
+
         this.childFocusTargets = focusTargets;
 
         let lineHook = this.hook.children[1];

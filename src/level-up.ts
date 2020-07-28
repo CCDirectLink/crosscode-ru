@@ -12,21 +12,25 @@ ig.module('crosscode-ru.fixes.level-up')
       updateDrawables(renderer) {
         renderer.addGfx(this.patchedGfx, 0, 0, 0, 0, 114, 20);
 
-        let oldAddGfx = renderer.addGfx;
-        let addGfxCalls = 0;
-        renderer.addGfx = (...args) => {
-          addGfxCalls++;
-          // skip the first call of addGfx
-          if (addGfxCalls < 2) return;
-          renderer.addGfx = oldAddGfx;
-          renderer.addGfx(...args);
-        };
-
         renderer.addTransform().setTranslate(3, 0);
-        this.parent(renderer);
-        renderer.undoTransform();
 
-        renderer.addGfx = oldAddGfx;
+        let oldAddGfx = renderer.addGfx;
+        try {
+          let addGfxCalls = 0;
+          renderer.addGfx = (...args) => {
+            addGfxCalls++;
+            // skip the first call of addGfx
+            if (addGfxCalls < 2) return;
+            renderer.addGfx = oldAddGfx;
+            renderer.addGfx(...args);
+          };
+
+          this.parent(renderer);
+        } finally {
+          renderer.addGfx = oldAddGfx;
+        }
+
+        renderer.undoTransform();
       },
     });
   });
