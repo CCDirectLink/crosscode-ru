@@ -11,7 +11,7 @@
     "sourceMap": true,
     "strict": true,
     "module": "esnext",
-    "target": "es2017",
+    "target": "es2018",
     "allowJs": true,
     "forceConsistentCasingInFileNames": true
   }

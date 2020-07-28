@@ -1,6 +1,6 @@
 export interface Fetcher<T> {
   total: number;
-  iterator: Iterator<PromiseLike<T>>;
+  iterator: Iterable<PromiseLike<T>>;
 }
 
 export function wait(ms: number): Promise<void> {

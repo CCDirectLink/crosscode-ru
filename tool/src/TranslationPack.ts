@@ -1,61 +1,53 @@
-import * as Nota from './Notabenoid';
+import { Fragment } from './Notabenoid';
 
-import path from './node-builtin-modules/path.js';
+import paths from './node-builtin-modules/path.js';
 import * as fsUtils from './utils/fs.js';
+import * as miscUtils from './utils/misc.js';
 
 type LocalizeMePack = Record<string, { orig: string; text: string }>;
 
-const INJECTED_IN_MOD_TAG = 'INJECTED_IN_MOD';
-const IGNORE_IN_MOD_TAG = 'IGNORE_IN_MOD';
+export const INJECTED_IN_MOD_TAG = 'INJECTED_IN_MOD';
+export const IGNORE_IN_MOD_TAG = 'IGNORE_IN_MOD';
 
 export class LocalizeMePacker {
   public packs = new Map<string, LocalizeMePack>();
   private assetsCache = new Map<string, unknown>();
 
-  public async addNotaFragments(fragments: Nota.Fragment[]): Promise<void> {
-    for (let f of fragments) {
-      if (f.translations.length === 0) continue;
-      if (f.original.descriptionText.includes(IGNORE_IN_MOD_TAG)) continue;
+  public async addNotaFragment(f: Fragment): Promise<void> {
+    if (f.translations.length === 0) return;
+    if (f.original.descriptionText.includes(IGNORE_IN_MOD_TAG)) return;
 
-      // eslint-disable-next-line no-await-in-loop
-      if (!(await this.validateFragment(f))) continue;
+    if (!(await this.validateFragment(f))) return;
 
-      let pack: LocalizeMePack;
-      let { file } = f.original;
-      if (this.packs.has(file)) {
-        pack = this.packs.get(file)!;
-      } else {
-        pack = {};
-        this.packs.set(file, pack);
-      }
-      pack[`${file}/${f.original.jsonPath}`] = {
-        orig: f.original.text,
-        text: f.translations[0].text,
-      };
+    let localizeMeFilePath = f.original.file;
+    if (localizeMeFilePath.startsWith('data/')) {
+      localizeMeFilePath = localizeMeFilePath.slice('data/'.length);
     }
+    let pack: LocalizeMePack = miscUtils.mapGetOrInsert(
+      this.packs,
+      localizeMeFilePath,
+      {},
+    );
+    pack[`${localizeMeFilePath}/${f.original.jsonPath}`] = {
+      orig: f.original.text,
+      text: f.translations[0].text,
+    };
   }
 
-  public async validateFragment(f: Nota.Fragment): Promise<boolean> {
+  public async validateFragment(f: Fragment): Promise<boolean> {
     let { file, jsonPath } = f.original;
 
+    let realFilePath = paths.join('assets', file);
     let obj: unknown;
     try {
-      obj = await this.getAsset(file);
+      obj = await this.getAsset(realFilePath);
     } catch (_err) {
       console.warn(`${file} ${jsonPath}: unknown file`);
       return false;
     }
 
     if (!f.original.descriptionText.includes(INJECTED_IN_MOD_TAG)) {
-      let jsonPathComponents = jsonPath.split('/');
-      for (let key of jsonPathComponents) {
-        if (Object.prototype.hasOwnProperty.call(obj, key)) {
-          obj = (obj as Record<string, unknown>)[key];
-        } else {
-          obj = null;
-          break;
-        }
-      }
+      obj = miscUtils.getValueByPath(obj, jsonPath.split('/'));
 
       let realOriginalText: string;
       if (file.endsWith('.en_US.json')) {
@@ -92,10 +84,7 @@ export class LocalizeMePacker {
     if (this.assetsCache.has(file)) {
       return this.assetsCache.get(file);
     } else {
-      let pathComponents = ['assets'];
-      if (!file.startsWith('extension/')) pathComponents.push('data');
-      pathComponents.push(file);
-      let data = await fsUtils.readJsonFile(path.join(...pathComponents));
+      let data = await fsUtils.readJsonFile(file);
       this.assetsCache.set(file, data);
       return data;
     }
