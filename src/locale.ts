@@ -14,34 +14,40 @@ const LEA_SPELLING =
   localStorage.getItem('options.crosscode-ru.lea-spelling') || '0';
 
 // relevant Wikipedia page: https://ru.wikipedia.org/wiki/Падеж#Падежная_система_русского_языка
-const LEA_SPELLING_CONVERSION_TABLES: Dictionary<Dictionary<string>> = {
-  '1': {
-    Лея: 'Лиа', // Именительный (1)
-    ЛЕЯ: 'ЛИА',
-    Леи: 'Лии', // Родительный (2)
-    ЛЕИ: 'ЛИИ',
-    Лее: 'Лие', // Дательный (3) + Предложный (6)
-    ЛЕЕ: 'ЛИЕ',
-    Лею: 'Лию', // Винительный (4)
-    ЛЕЮ: 'ЛИЮ',
-    Леей: 'Лией', // Творительный (5)
-    ЛЕЕЙ: 'ЛИЕЙ',
-  },
-};
+const LEA_SPELLING_CONVERSION_TABLES: Map<
+  string,
+  Map<string, string>
+> = new Map([
+  [
+    '1',
+    new Map([
+      ['Лея', 'Лиа'], // Именительный (1)
+      ['ЛЕЯ', 'ЛИА'],
+      ['Леи', 'Лии'], // Родительный (2)
+      ['ЛЕИ', 'ЛИИ'],
+      ['Лее', 'Лие'], // Дательный (3) + Предложный (6)
+      ['ЛЕЕ', 'ЛИЕ'],
+      ['Лею', 'Лию'], // Винительный (4)
+      ['ЛЕЮ', 'ЛИЮ'],
+      ['Леей', 'Лией'], // Творительный (5)
+      ['ЛЕЕЙ', 'ЛИЕЙ'],
+    ]),
+  ],
+]);
 
 let textFilter: ((text: string) => string) | null = null;
-let leaSpellingTable = LEA_SPELLING_CONVERSION_TABLES[LEA_SPELLING];
+const leaSpellingTable = LEA_SPELLING_CONVERSION_TABLES.get(LEA_SPELLING);
 if (leaSpellingTable != null) {
   let regex = new RegExp(
     // prettier-ignore
-    `([^а-яА-ЯёЁ]|^)(${Object.keys(leaSpellingTable).join('|')})([^а-яА-ЯёЁ]|$)`,
+    `([^а-яА-ЯёЁ]|^)(${Array.from(leaSpellingTable.keys()).join('|')})([^а-яА-ЯёЁ]|$)`,
     'g',
   );
   textFilter = (text) =>
     text.replace(
       regex,
       (_wholeStr, leftBoundary: string, str: string, rightBoundary: string) => {
-        return `${leftBoundary}${leaSpellingTable[str]}${rightBoundary}`;
+        return `${leftBoundary}${leaSpellingTable.get(str)}${rightBoundary}`;
       },
     );
 }
