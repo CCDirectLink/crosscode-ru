@@ -8,6 +8,7 @@ type LocalizeMePack = Record<string, { orig: string; text: string }>;
 
 export const INJECTED_IN_MOD_TAG = 'INJECTED_IN_MOD';
 export const IGNORE_IN_MOD_TAG = 'IGNORE_IN_MOD';
+export const EMPTY_STRING_TAG = 'tr_ru:EMPTY_STRING';
 
 export class LocalizeMePacker {
   public packs = new Map<string, LocalizeMePack>();
@@ -19,7 +20,8 @@ export class LocalizeMePacker {
 
     if (!(await this.validateFragment(f))) return;
 
-    let localizeMeFilePath = f.original.file;
+    let { file, jsonPath } = f.original;
+    let localizeMeFilePath = file;
     if (localizeMeFilePath.startsWith('data/')) {
       localizeMeFilePath = localizeMeFilePath.slice('data/'.length);
     }
@@ -28,9 +30,13 @@ export class LocalizeMePacker {
       localizeMeFilePath,
       {},
     );
-    pack[`${localizeMeFilePath}/${f.original.jsonPath}`] = {
+
+    let translation = f.translations[0].text;
+    if (translation === EMPTY_STRING_TAG) translation = '';
+
+    pack[`${localizeMeFilePath}/${jsonPath}`] = {
       orig: f.original.text,
-      text: f.translations[0].text,
+      text: translation,
     };
   }
 
