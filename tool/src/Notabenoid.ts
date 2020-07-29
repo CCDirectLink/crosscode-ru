@@ -524,7 +524,8 @@ function getJsonObjectDescription(obj: {}, key: string, lines: string[]): void {
       }
 
       case 'EventTrigger':
-      case 'LocationEvent': {
+      case 'LocationEvent':
+      case 'Prop': {
         let words: string[] = [obj.type];
         if (hasKey(obj, 'settings') && isObject(obj.settings)) {
           let { settings } = obj;
@@ -536,6 +537,11 @@ function getJsonObjectDescription(obj: {}, key: string, lines: string[]): void {
             typeof settings.startCondition === 'string'
           ) {
             words.push(settings.startCondition);
+          } else if (
+            hasKey(settings, 'spawnCondition') &&
+            typeof settings.spawnCondition === 'string'
+          ) {
+            words.push(settings.spawnCondition);
           }
         }
         lines.push(words.join(' '));
