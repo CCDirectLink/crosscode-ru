@@ -61,8 +61,20 @@ declare namespace LocalizeMe {
 localizeMe.add_locale('ru_RU', {
   /* eslint-disable @typescript-eslint/naming-convention */
   from_locale: 'en_US',
-  map_file: LOCALIZE_ME_MAPPING_FILE,
-  url_prefix: LOCALIZE_ME_PACKS_DIR,
+  // TODO: this is a temporary solution until I integrate Localize Me with
+  // `ccmod.resources` better
+  map_file: async () => {
+    let mapping: Record<string, string> = await ccmod.resources.loadJSON(
+      LOCALIZE_ME_MAPPING_FILE,
+    );
+    return (urlToPatch) => {
+      if (!ccmod.utils.hasKey(mapping, urlToPatch)) return null;
+      let packPath = mapping[urlToPatch];
+      return ccmod.resources.resolvePathToURL(
+        `${LOCALIZE_ME_PACKS_DIR}${packPath}`,
+      );
+    };
+  },
   language: {
     en_US: 'Russian',
     de_DE: 'Russisch',

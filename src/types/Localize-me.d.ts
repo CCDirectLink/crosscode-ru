@@ -8,10 +8,19 @@ interface GameLocaleConfiguration {
 
 declare namespace LocalizeMe {
   type Resource<T> = T | (() => MaybePromise<T>);
-  type TranslationResult =
+  interface TranslationResult {
+    orig: string;
+    text: string;
+  }
+  type TranslationPack = Record<string, TranslationResult>;
+
+  type MapFileFunction = (
+    url_to_patch: string,
+  ) =>
     | string
-    | { orig: string; text: string }
-    | { ciphertext: string; hmac?: string };
+    | (() => MaybePromise<TranslationPack | TranslationPackFunction>)
+    | null;
+  type TranslationPackFunction = (dict_path: string) => TranslationResult;
 
   interface Rectangle {
     x: number;
@@ -56,7 +65,7 @@ declare namespace ig {
     localizeme_global_index?: number;
 
     from_locale?: string;
-    map_file?: string; // TODO: define this correctly
+    map_file?: string | (() => MaybePromise<LocalizeMe.MapFileFunction>);
     url_prefix?: string;
     missing_cb?: (
       lang_label_or_string: ig.LangLabel.Data | string,
