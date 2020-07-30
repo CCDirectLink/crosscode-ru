@@ -63,18 +63,8 @@ localizeMe.add_locale('ru_RU', {
   from_locale: 'en_US',
   // TODO: this is a temporary solution until I integrate Localize Me with
   // `ccmod.resources` better
-  map_file: async () => {
-    let mapping: Record<string, string> = await ccmod.resources.loadJSON(
-      LOCALIZE_ME_MAPPING_FILE,
-    );
-    return (urlToPatch) => {
-      if (!ccmod.utils.hasKey(mapping, urlToPatch)) return null;
-      let packPath = mapping[urlToPatch];
-      return ccmod.resources.resolvePathToURL(
-        `${LOCALIZE_ME_PACKS_DIR}${packPath}`,
-      );
-    };
-  },
+  map_file: LOCALIZE_ME_MAPPING_FILE,
+  url_prefix: LOCALIZE_ME_PACKS_DIR,
   language: {
     en_US: 'Russian',
     de_DE: 'Russisch',
@@ -84,7 +74,7 @@ localizeMe.add_locale('ru_RU', {
     ja_JP: 'ロシア語',
     ko_KR: '러시아어',
   },
-  flag: ccmod.resources.resolvePathToURL('media/font/ru_RU/flag.png'),
+  flag: 'media/font/ru_RU/flag.png',
   /* eslint-enable @typescript-eslint/naming-convention */
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
