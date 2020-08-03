@@ -46,6 +46,7 @@ export interface Chapter extends ChapterStatus {
 }
 
 export interface Fragment {
+  chapterId: string;
   id: string;
   orderNumber: number;
   original: Original;
@@ -100,23 +101,25 @@ export class NotaClient {
     return result;
   }
 
-  public createChapterFragmentFetcher(
-    status: ChapterStatus,
-  ): Fetcher<Fragment[]> {
-    let pages = Math.ceil(status.totalFragments / CHAPTER_PAGE_SIZE);
+  public createChapterFragmentFetcher({
+    totalFragments,
+    id,
+    name,
+  }: ChapterStatus): Fetcher<Fragment[]> {
+    let pages = Math.ceil(totalFragments / CHAPTER_PAGE_SIZE);
     return {
       total: pages,
       // seriously... JS has regular generator functions, yet it doesn't have
       // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern again.
       iterator: function* (this: NotaClient): Generator<Promise<Fragment[]>> {
         for (let i = 0; i < pages; i++) {
-          console.log(`${status.name}, page ${i + 1}/${pages}`);
+          console.log(`${name}, page ${i + 1}/${pages}`);
           yield this.makeRequest(
-            `/book/${BOOK_ID}/${status.id}?Orig_page=${i + 1}`,
+            `/book/${BOOK_ID}/${id}?Orig_page=${i + 1}`,
           ).then((doc) => {
             let fragments: Fragment[] = [];
             for (let tr of doc.querySelectorAll('#Tr > tbody > tr')) {
-              let f = parseFragment(tr);
+              let f = parseFragment(id, tr);
               if (f != null) fragments.push(f);
             }
             return fragments;
@@ -279,7 +282,7 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   return cs as ChapterStatus;
 }
 
-function parseFragment(element: Element): Fragment | null {
+function parseFragment(chapterId: string, element: Element): Fragment | null {
   if (element.id.length <= 1) return null;
   let text = element.querySelector('.o .text');
   if (text == null) return null;
@@ -287,6 +290,7 @@ function parseFragment(element: Element): Fragment | null {
   if (anchor == null || anchor.textContent!.length <= 1) return null;
 
   let f: Partial<Fragment> = {};
+  f.chapterId = chapterId;
   f.id = element.id.slice(1);
   f.orderNumber = parseInt(anchor.textContent!.slice(1), 10);
 
