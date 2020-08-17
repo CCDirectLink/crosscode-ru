@@ -2,9 +2,5 @@
   "private": true,
   "engines": {
     "node": ">=11.0.0"
-  },
-  "scripts": {
-    "build": "../node_modules/.bin/tsc --build",
-    "watch": "../node_modules/.bin/tsc --build --watch"
   }
 }
