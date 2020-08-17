@@ -14,9 +14,5 @@
   "ccmodDependencies": {
     "crosscode": "~1.2.0 || ~1.3.0"
   },
-  "devDependencies": {},
-  "scripts": {
-    "build": "../node_modules/.bin/tsc --build",
-    "watch": "../node_modules/.bin/tsc --build --watch"
-  }
+  "devDependencies": {}
 }

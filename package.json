@@ -31,6 +31,7 @@
     "ultimate-crosscode-typedefs": "dmitmel/ultimate-crosscode-typedefs"
   },
   "scripts": {
+    "clean": "rm -rv dist/ enhanced-ui/dist/ tool/dist/",
     "build": "tsc --build",
     "watch": "tsc --build --watch",
     "lint": "eslint . --ext .js,.ts --ignore-path .gitignore",
