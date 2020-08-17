@@ -44,9 +44,9 @@
   integrity sha512-7+2BITlgjgDhH0vvwZU/HZJVyk+2XUlvxXe8dFMedNX/aMkaOq++rMAFXc0tM7ij15QaWlbdQASBR9dihi+bDQ==
 
 "@types/node@>=11.9":
-  version "14.0.26"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.0.26.tgz#22a3b8a46510da8944b67bfc27df02c34a35331c"
-  integrity sha512-W+fpe5s91FBGE0pEa0lnqGLL4USgpLgs4nokw16SrBBco/gQxuua7KnArSEOd5iaMqbbSHV10vUDkJYJJqpXKA==
+  version "14.6.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.6.0.tgz#7d4411bf5157339337d7cff864d9ff45f177b499"
+  integrity sha512-mikldZQitV94akrc4sCcSjtJfsTKt4p+e/s0AGscVA6XArQ9kFclP+ZiYUMnq987rc6QlYxXv/EivqlfSLxpKA==
 
 "@types/semver@^6.2.0":
   version "6.2.1"
@@ -858,7 +858,7 @@ typescript@^3.9.0:
 
 ultimate-crosscode-typedefs@dmitmel/ultimate-crosscode-typedefs:
   version "0.0.1"
-  resolved "https://codeload.github.com/dmitmel/ultimate-crosscode-typedefs/tar.gz/cdac9685dcc98b57bd21a23e7eced6e3da331921"
+  resolved "https://codeload.github.com/dmitmel/ultimate-crosscode-typedefs/tar.gz/11b827d3545a5c5c1a66724dadcf0ff7c10a4d36"
   dependencies:
     "@types/jquery" "~1.10"
     "@types/node" ">=11.9"
