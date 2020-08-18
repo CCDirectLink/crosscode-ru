@@ -27,24 +27,24 @@ endif
 # including slashes (`/`), unlike in shells.
 find_by_patterns = $(shell find $1 -type f \( $(foreach w,$2,-path '$1/$(w)' -or) -false \) -printf '%P\n')
 
-MOD_ID := $(shell jq -r '.name' ../package.json)
-MOD_VERSION := $(shell jq -r '.version' ../package.json)
+MOD_ID := $(shell jq -r '.id' ../ccmod.json)
+MOD_VERSION := $(shell jq -r '.version' ../ccmod.json)
 MOD_DIR := $(MOD_ID)
-TOOL_MOD_ID := $(shell jq -r '.name' ../tool/package.json)
-TOOL_MOD_VERSION := $(shell jq -r '.version' ../tool/package.json)
+TOOL_MOD_ID := $(shell jq -r '.id' ../tool/ccmod.json)
+TOOL_MOD_VERSION := $(shell jq -r '.version' ../tool/ccmod.json)
 TOOL_DIR := $(TOOL_MOD_ID)
-ENHANCED_UI_MOD_ID := $(shell jq -r '.name' ../enhanced-ui/package.json)
-ENHANCED_UI_MOD_VERSION := $(shell jq -r '.version' ../enhanced-ui/package.json)
+ENHANCED_UI_MOD_ID := $(shell jq -r '.id' ../enhanced-ui/ccmod.json)
+ENHANCED_UI_MOD_VERSION := $(shell jq -r '.version' ../enhanced-ui/ccmod.json)
 ENHANCED_UI_MOD_DIR := $(ENHANCED_UI_MOD_ID)
 LOCALIZE_ME_MOD_DIR := Localize-me
 CC_WORLD_MAP_OVERHAUL_MOD_DIR := cc-world-map-overhaul
 TRANSLATIONS_DIR := assets/ru-translation-tool
 
-TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map LICENSE* main.html package.json
+TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map LICENSE* main.html ccmod.json
 TOOL_FILES := $(call find_by_patterns,../tool,$(TOOL_FILES))
-MOD_FILES := assets/data/*.json assets/media/*.png dist/*.js dist/*.js.map LICENSE* package.json README.md
+MOD_FILES := assets/data/*.json assets/media/*.png dist/*.js dist/*.js.map LICENSE* ccmod.json README.md
 MOD_FILES := $(call find_by_patterns,..,$(MOD_FILES))
-ENHANCED_UI_MOD_FILES := assets/media/*.png dist/*.js dist/*.js.map LICENSE* package.json
+ENHANCED_UI_MOD_FILES := media/*.png dist/*.js dist/*.js.map LICENSE* ccmod.json
 ENHANCED_UI_MOD_FILES := $(call find_by_patterns,../enhanced-ui,$(ENHANCED_UI_MOD_FILES))
 TRANSLATIONS_FILES := localize-me-packs/*.json localize-me-mapping.json
 TRANSLATIONS_FILES := $(call find_by_patterns,$(TOOL_DATA_DIR),$(TRANSLATIONS_FILES))
@@ -64,7 +64,7 @@ TOOL_MODPACK_ARCHIVE_FILES := $(addprefix $(MOD_DIR)/,$(MOD_FILES)) $(TOOL_ARCHI
 
 QUICK_INSTALL_TMP_DIR := quick-install
 QUICK_INSTALL_ARCHIVE_NAME := $(MOD_ID)_quick-install_v$(MOD_VERSION)
-QUICK_INSTALL_FILES := ccloader package.json $(addprefix assets/mods/,$(MODPACK_ARCHIVE_FILES))
+QUICK_INSTALL_FILES := ccloader $(addprefix assets/mods/,$(MODPACK_ARCHIVE_FILES))
 QUICK_INSTALL_ARCHIVE_FILES := $(addprefix $(QUICK_INSTALL_TMP_DIR)/,$(QUICK_INSTALL_FILES))
 
 archive_names = $(addsuffix .zip,$1) $(addsuffix .tar.gz,$1)
@@ -77,7 +77,7 @@ ALL_ARCHIVE_NAMES := $(ZIP_ARCHIVE_NAMES) $(TAR_ARCHIVE_NAMES) $(QUICK_INSTALL_A
 
 define download_archive
 mkdir -pv $1 && \
-curl --max-time 10 --location --fail $2 | tar --verbose --directory $1 --gzip --strip-components 1 --extract $3
+curl --max-time 10 --location --fail $2 | tar --verbose --directory $1 --gzip $4 --extract $3
 endef
 
 all: $(ALL_ARCHIVE_NAMES)
@@ -106,28 +106,12 @@ $(QUICK_INSTALL_ARCHIVE_NAME).tar.gz:
 	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip .
 
 $(LOCALIZE_ME_MOD_DIR):
-	$(call download_archive,$@,https://github.com/dmitmel/Localize-me/tarball/b60df5e3ba969cae94a2fc5498a6c6017fc7950c,)
+	$(call download_archive,$@,https://github.com/dmitmel/Localize-me/tarball/c76ee80708efb2c974166cef569f36057ac79c8c,,--strip-components=1)
 $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
-	$(call download_archive,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.0.1/cc-world-map-overhaul_v1.0.1.tar.gz,)
+	$(call download_archive,$@,https://github.com/dmitmel/cc-world-map-overhaul/tarball/7ffe7e0dfc32fcf8e01245dcf674898c59a1170a,,--strip-components=1)
 
 $(QUICK_INSTALL_TMP_DIR)/ccloader:
-	$(call download_archive,$(@D),https://github.com/CCDirectLink/CCLoader/archive/v2.18.5/v2.8.5.tar.gz,$(addprefix CCLoader-2.18.5-v2.8.5/,assets/mods ccloader))
-$(QUICK_INSTALL_TMP_DIR)/package.json:
-	mkdir -pv $(@D) && jq . > $@ <<EOF
-	{
-		"name": "CrossCode",
-		"version": "1.0.0",
-		"main": "ccloader/index.html",
-		"chromium-args": "--ignore-gpu-blacklist --disable-direct-composition --disable-background-networking --in-process-gpu --password-store=basic",
-		"window": {
-			"toolbar": false,
-			"icon": "favicon.png",
-			"width": 1136,
-			"height": 640,
-			"fullscreen": false
-		}
-	}
-	EOF
+	$(call download_archive,$(@D),http://stronghold.crosscode.ru/~dmitmel/ccloader3/20200818112332/ccloader_3.0.0-alpha_quick-install.tar.gz,)
 
 $(MOD_DIR)/$(TRANSLATIONS_DIR): $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
 
