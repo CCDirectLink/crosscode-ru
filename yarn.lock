@@ -858,7 +858,7 @@ typescript@^3.9.0:
 
 ultimate-crosscode-typedefs@dmitmel/ultimate-crosscode-typedefs:
   version "0.0.1"
-  resolved "https://codeload.github.com/dmitmel/ultimate-crosscode-typedefs/tar.gz/11b827d3545a5c5c1a66724dadcf0ff7c10a4d36"
+  resolved "https://codeload.github.com/dmitmel/ultimate-crosscode-typedefs/tar.gz/399c5c0ee0c378483f43f0869dcdb433154b647e"
   dependencies:
     "@types/jquery" "~1.10"
     "@types/node" ">=11.9"

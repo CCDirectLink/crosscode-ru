@@ -133,8 +133,7 @@
 
 Краткие описания функционала каждого мода:
 
-- [cc-world-map-overhaul](https://github.com/dmitmel/cc-world-map-overhaul#readme) _(опционально)_ - Улучшенная карта мира
-- CCLoader display version _(не выключать!)_ - Отображает версию CCLoader (не спрашивайте, почему это отдельный мод)
+- [World map overhaul](https://github.com/dmitmel/cc-world-map-overhaul#readme) _(опционально)_ - Улучшенная карта мира
 - crosscode-ru _(не выключать!)_ - Собственно, русский перевод CrossCode и сопутствующие исправления интерфейса
 - Enhanced UI _(не выключать!)_ - Различные улучшения и общие исправления графического интерфейса пользователя (требуется для работы crosscode-ru)
 - [Localize Me](https://github.com/L-Sherry/Localize-me#readme) _(не выключать!)_ - Мод для создания дополнительных региональных настроек, языков и переводов (требуется для работы crosscode-ru)
@@ -154,11 +153,9 @@
 ├─ assets/
 │  └─ mods/
 │     ├─ cc-world-map-overhaul/
-│     ├─ ccloader-version-display/
 │     ├─ crosscode-ru/
 │     ├─ enhanced-ui/
-│     ├─ Localize-me/
-│     └─ simplify/
+│     └─ Localize-me/
 └─ ccloader/
 ```
 
@@ -211,6 +208,8 @@
 
 - Packy
 - Sandorik
+- Varenik1226
+- Щепыч
 
 ### Благодарности
 
