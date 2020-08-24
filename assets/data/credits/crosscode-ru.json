@@ -110,10 +110,15 @@
         "en_US": "Correctors",
         "ru_RU": "Корректоры"
       },
-      "columns": 1,
+      "columns": 2,
       "order": 0,
       "key": "BASE",
-      "names": [{ "en_US": "Packy" }, { "en_US": "Sandorik" }]
+      "names": [
+        { "en_US": "Packy" },
+        { "en_US": "Sandorik" },
+        { "en_US": "Varenik1226" },
+        { "en_US": "Schepitsch", "ru_RU": "Щепыч" }
+      ]
     },
 
     "ru_specialThanks": {
