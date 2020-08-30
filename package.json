@@ -21,5 +21,9 @@
     "watch": "tsc --build --watch",
     "lint": "eslint . --ext .js,.ts --ignore-path .gitignore",
     "check-fmt": "yarn run prettier --check '**/*.{js,ts,json,css,scss,html}'"
-  }
+  },
+  "__comment__": "The following fields are for an nw.js app which will open if the user downloaded and unpacked the source code and point them to use the distribution archives instead.",
+  "name": "CrossCode",
+  "version": "1.0.0",
+  "main": "you-downloaded-source-code.html"
 }

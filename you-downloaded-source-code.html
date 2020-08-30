@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>crosscode-ru установлен неправильно</title>
+
+    <style>
+      body {
+        font: 1.125em sans-serif;
+      }
+    </style>
+  </head>
+
+  <body>
+    Вы скачали только исходный код crosscode-ru. Исходники не заработают сами по
+    себе: во-первых их нужно компилировать, во-вторых они не содержат пакеты
+    перевода. Пожалуйста, следуйте
+    <a
+      href="https://github.com/dmitmel/crosscode-ru#шаг-2-скачивание-модпака"
+      target="_blank"
+      >инструкции по установке</a
+    >. Скачивать надо архивы со
+    <a
+      href="https://github.com/dmitmel/crosscode-ru/releases/latest"
+      target="_blank"
+      >странички последнего релиза</a
+    >.
+
+    <script>
+      document.addEventListener('click', (event) => {
+        let { target } = event;
+        if (target.matches('a[href][target="_blank"]')) {
+          event.preventDefault();
+          nw.Shell.openExternal(target.href);
+        }
+      });
+    </script>
+  </body>
+</html>
