@@ -106,12 +106,12 @@ $(QUICK_INSTALL_ARCHIVE_NAME).tar.gz:
 	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip .
 
 $(LOCALIZE_ME_MOD_DIR):
-	$(call download_archive,$@,https://github.com/dmitmel/Localize-me/tarball/c76ee80708efb2c974166cef569f36057ac79c8c,,--strip-components=1)
+	$(call download_archive,$@,https://github.com/L-Sherry/Localize-me/tarball/3b60496aad93f8209ee22d76bd8c3e6303e9c3c1,,--strip-components=1)
 $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
 	$(call download_archive,$@,https://github.com/ccdirectlink3/cc-world-map-overhaul/tarball/5e6dc32f2c0d9d0106b3f209f920a99ea3b52b54,,--strip-components=1)
 
 $(QUICK_INSTALL_TMP_DIR)/ccloader:
-	$(call download_archive,$(@D),http://stronghold.crosscode.ru/~dmitmel/ccloader3/20200824124100/ccloader_3.0.0-alpha_quick-install.tar.gz,)
+	$(call download_archive,$(@D),http://stronghold.crosscode.ru/~dmitmel/ccloader3/20200831153643/ccloader_3.0.0-alpha_quick-install.tar.gz,)
 
 $(MOD_DIR)/$(TRANSLATIONS_DIR): $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
 
