@@ -204,8 +204,23 @@ jsonPatches.add('data/props/rhombus-area-text.json', (data: any) => {
 jsonPatches.add('data/maps/rookie-harbor/teleporter.json', (data: any) => {
   if (ig.currentLang !== 'ru_RU') return;
 
-  // TODO: refactor this to use .find()
-  let step = data.entities[425].settings.event[14].acceptStep[14];
+  let entity = data.entities.find(
+    (ent: any) =>
+      ent.type === 'EventTrigger' && ent.settings.name === 'Entrance Sequence',
+  );
+  let tutorialStep = entity.settings.event.find(
+    (stp: any) => stp.type === 'SHOW_TUTORIAL_START',
+  );
+  let step = tutorialStep.acceptStep.find(
+    (stp: any) =>
+      stp.type === 'SHOW_TUTORIAL_MSG' &&
+      stp.pos.x === 205 &&
+      stp.pos.y === 0 &&
+      stp.size.x === 118 &&
+      stp.size.y === 25,
+  );
+  if (step == null) return;
+
   step.pos.x = 131;
   step.size.x = 122;
 });
