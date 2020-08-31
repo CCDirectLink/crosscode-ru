@@ -66,11 +66,12 @@ jsonPatches.add(
 jsonPatches.add('data/scale-props/dungeon-ar.json', (data: any) => {
   if (!sc.ru.shouldPatchSpriteLabels()) return;
 
-  data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
+  data.jsonTEMPLATES.ArTextRu = {
+    ...ig.copy(data.jsonTEMPLATES.ArText),
     gfx: 'media/entity/objects/dungeon-ar.ru_RU.png',
     gfxBaseX: 0,
     gfxBaseY: 0,
-  });
+  };
 
   Object.assign(data.entries.textWelcome, {
     jsonINSTANCE: 'ArTextRu',
@@ -89,11 +90,12 @@ jsonPatches.add('data/scale-props/dungeon-ar.json', (data: any) => {
 jsonPatches.add('data/scale-props/dungeon-ar-special.json', (data: any) => {
   if (!sc.ru.shouldPatchSpriteLabels()) return;
 
-  data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
+  data.jsonTEMPLATES.ArTextRu = {
+    ...ig.copy(data.jsonTEMPLATES.ArText),
     gfx: 'media/entity/objects/dungeon-ar-special.ru_RU.png',
     gfxBaseX: 0,
     gfxBaseY: 0,
-  });
+  };
 
   Object.assign(data.entries.textWait, {
     jsonINSTANCE: 'ArTextRu',
@@ -112,11 +114,12 @@ jsonPatches.add('data/scale-props/dungeon-ar-special.json', (data: any) => {
 jsonPatches.add('data/scale-props/trading-ar.json', (data: any) => {
   if (!sc.ru.shouldPatchSpriteLabels()) return;
 
-  data.jsonTEMPLATES.ArTextRu = Object.assign(data.jsonTEMPLATES.ArText, {
+  data.jsonTEMPLATES.ArTextRu = {
+    ...ig.copy(data.jsonTEMPLATES.ArText),
     gfx: 'media/map/trading-autumn.ru_RU.png',
     gfxBaseX: 0,
     gfxBaseY: 0,
-  });
+  };
 
   Object.assign(data.entries.textCups, {
     jsonINSTANCE: 'ArTextRu',
