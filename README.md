@@ -6,7 +6,7 @@
 
 ![community translation official response 2](docs/media/community-translation-official-response2.png)
 
-**Наш Discord-сервер**: https://discord.gg/QANXNbR \
+**Наш Discord-сервер**: https://crosscode.ru/discord \
 **Наша группа в VK**: https://vk.com/crusscode
 
 [**Перейти к инструкции по установке!**](#инструкции-по-установке)
