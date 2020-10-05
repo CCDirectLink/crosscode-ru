@@ -6,6 +6,7 @@
 
 ![community translation official response 2](docs/media/community-translation-official-response2.png)
 
+**Наш веб-сайт**: https://crosscode.ru/ \
 **Наш Discord-сервер**: https://crosscode.ru/discord \
 **Наша группа в VK**: https://vk.com/crusscode
 
