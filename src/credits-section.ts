@@ -8,7 +8,7 @@ ig.module('crosscode-ru.fixes.credits-section')
 
     // TODO: calculate total credits length and derive CREDITS_SPEED from it
     const CREDITS_SPPED_DEFAULT = 30;
-    const CREDITS_SPEED = 36;
+    const CREDITS_SPEED = 36.45;
     const HEADER_TRANSITION_DELAY =
       1.2 * (CREDITS_SPPED_DEFAULT / CREDITS_SPEED);
     const NAME_TRANSITION_DELAY = 2 * (CREDITS_SPPED_DEFAULT / CREDITS_SPEED);

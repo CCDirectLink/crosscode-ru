@@ -19,7 +19,7 @@
       "key": "BASE",
       "columns": 1,
       "bottomPad": 45,
-      "names": [{ "en_US": "vk.com/crusscode" }]
+      "names": [{ "en_US": "crosscode.ru" }, { "en_US": "vk.com/crusscode" }]
     },
 
     "ru_generalAssembler": {
@@ -53,6 +53,17 @@
       "order": 0,
       "key": "BASE",
       "names": [{ "en_US": "Packy" }]
+    },
+
+    "ru_editors": {
+      "header": {
+        "en_US": "Editors",
+        "ru_RU": "Редакторы"
+      },
+      "columns": 1,
+      "order": 0,
+      "key": "BASE",
+      "names": [{ "en_US": "Sandorik" }, { "en_US": "Mystical Kitsune" }]
     },
 
     "ru_tester": {
@@ -110,12 +121,10 @@
         "en_US": "Correctors",
         "ru_RU": "Корректоры"
       },
-      "columns": 2,
+      "columns": 1,
       "order": 0,
       "key": "BASE",
       "names": [
-        { "en_US": "Packy" },
-        { "en_US": "Sandorik" },
         { "en_US": "Varenik1226" },
         { "en_US": "Schepitsch", "ru_RU": "Щепыч" }
       ]

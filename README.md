@@ -176,6 +176,11 @@
 
 - Packy
 
+### Редакторы
+
+- Sandorik
+- MysKa
+
 ### Тостеры (тестировщики)
 
 - ElectroPlayer
@@ -206,8 +211,6 @@
 
 ### Корректоры
 
-- Packy
-- Sandorik
 - Varenik1226
 - Щепыч
 
