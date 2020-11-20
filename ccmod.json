@@ -14,5 +14,25 @@
     "crosscode": "~1.3.0",
     "localize-me": "^1.0.0",
     "enhanced-ui": "^0.2.0"
-  }
+  },
+  "assets": [
+    "data/credits/crosscode-ru.json",
+    "media/entity/objects/dungeon-ar-special.ru_RU.png",
+    "media/entity/objects/dungeon-ar.ru_RU.png",
+    "media/entity/objects/history-of-bergen.ru_RU.png",
+    "media/entity/objects/rhombus-arena-text.ru_RU.png",
+    "media/font/ru_RU/flag.png",
+    "media/font/ru_RU/hall-fetica-bold.png",
+    "media/font/ru_RU/hall-fetica-small.png",
+    "media/font/ru_RU/tiny.png",
+    "media/gui/menu.ru_RU.png",
+    "media/gui/status-gui.ru_RU.png",
+    "media/map/inn-sign.ru_RU.png",
+    "media/map/jungle-props.ru_RU.png",
+    "media/map/open-closed-signs.ru_RU.png",
+    "media/map/rhombus-sign.ru_RU.png",
+    "media/map/rookie-harbor.ru_RU.png",
+    "media/map/trading-autumn.ru_RU.png",
+    "media/tutorials/quests.png"
+  ]
 }
