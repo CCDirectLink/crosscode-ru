@@ -210,6 +210,29 @@ ig.module('enhanced-ui.fixes.item-lists.trade-gui')
     });
   });
 
+ig.module('enhanced-ui.fixes.item-lists.shop-confirm')
+  .requires(
+    'game.feature.menu.gui.shop.shop-confirm',
+    'enhanced-ui.ticker-display',
+  )
+  .defines(() => {
+    sc.ShopConfirmEntry.inject({
+      init(...args) {
+        this.parent(...args);
+        let newItem = new sc.ui2.IconTextGui(this.item.text);
+        newItem.setPos(this.item.hook.pos.x, this.item.hook.pos.y);
+        // Dammit, not this again... The "times" and "equals" signs are rendered
+        // in `updateDrawables` (instead of something like `sc.ImageGui`s or
+        // even text blocks), as such I need to hardcode some constants for the
+        // max width calculation.
+        newItem.tickerHook.maxWidth = this.amount.hook.pos.x - 17;
+
+        this.removeChildGui(this.item);
+        this.addChildGui(newItem);
+      },
+    });
+  });
+
 ig.module('enhanced-ui.fixes.item-lists.status-main-equipment')
   .requires(
     'game.feature.menu.gui.status.status-view-main',
