@@ -123,9 +123,7 @@ ig.module('crosscode-ru.social-button')
       init() {
         this.parent();
 
-        let languageIndex =
-          localizeMe.game_locale_config.added_locales.ru_RU
-            .localizeme_global_index;
+        let languageIndex = ig.LANG_DETAILS.ru_RU.localizeme_global_index;
         let btn = this.followButton;
         btn.textChild.setText(`\\i[language-${languageIndex}]`);
         btn.textChild.setPos(

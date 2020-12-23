@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-interface GameLocaleConfiguration {
-  added_locales: { [locale: string]: ig.LangOptions };
-
-  get_final_locale(this: this): Promise<string> | string;
-}
-
 declare namespace LocalizeMe {
   type Resource<T> = T | (() => MaybePromise<T>);
   interface TranslationResult {
@@ -58,9 +52,6 @@ declare namespace LocalizeMe {
 }
 
 declare namespace ig {
-  // Yes. right now every property passed via `add_locale` is visible in
-  // `ig.LANG_DETAILS`. Don't know if this is a good thing or not, I'll write
-  // type declarations regardless.
   interface LangOptions {
     localizeme_global_index?: number;
 
@@ -96,13 +87,13 @@ declare namespace ig {
 }
 
 interface LocalizeMe {
-  game_locale_config: GameLocaleConfiguration;
-
   add_locale(
     this: this,
     name: string,
     options: NullablePartial<ig.LangOptions>,
   ): void;
+
+  register_locale_chosen(this: this, func: () => void): void;
 }
 
 declare let localizeMe: LocalizeMe;
