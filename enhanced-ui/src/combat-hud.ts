@@ -1,5 +1,4 @@
-// TODO: move to enhanced-ui
-ig.module('crosscode-ru.fixes.combat-hud')
+ig.module('enhanced-ui.fixes.combat-hud')
   .requires(
     'game.feature.combat.gui.hp-bar-boss',
     'game.feature.combat.model.enemy-type',
@@ -18,6 +17,18 @@ ig.module('crosscode-ru.fixes.combat-hud')
         if (this.bossLabel === 'Boss') {
           this.bossLabel = ig.lang.get('sc.gui.combat-hud.boss');
         }
+      },
+    });
+  });
+
+ig.module('enhanced-ui.fixes.pvp')
+  .requires('game.feature.combat.gui.pvp-gui')
+  .defines(() => {
+    sc.PvpRoundGui.inject({
+      init(...args) {
+        this.parent(...args);
+        let textGui = this.hook.children[0].gui as sc.TextGui;
+        textGui.setText(ig.lang.get('sc.gui.combat-hud.pvp-round'));
       },
     });
   });

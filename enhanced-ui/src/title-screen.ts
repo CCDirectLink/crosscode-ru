@@ -1,5 +1,4 @@
-// TODO: move to enhanced-ui
-ig.module('crosscode-ru.fixes.title-screen')
+ig.module('enhanced-ui.fixes.title-screen')
   .requires('game.feature.gui.screen.title-screen')
   .defines(() => {
     sc.TitleScreenButtonGui.inject({

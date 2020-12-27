@@ -5,13 +5,6 @@ const { jsonPatches } = ccmod.resources;
 jsonPatches.add('data/lang/sc/gui.en_US.json', (data: any) =>
   ig.merge(data, {
     labels: {
-      'combat-hud': {
-        'pvp-round': 'Round',
-        boss: 'Boss',
-      },
-      'title-screen': {
-        changelog: 'Changelog',
-      },
       options: {
         'crosscode-ru': {
           'localized-labels-on-sprites': {
