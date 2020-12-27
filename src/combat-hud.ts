@@ -1,3 +1,4 @@
+// TODO: move to enhanced-ui
 ig.module('crosscode-ru.fixes.combat-hud')
   .requires(
     'game.feature.combat.gui.hp-bar-boss',

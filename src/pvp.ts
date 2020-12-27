@@ -1,3 +1,4 @@
+// TODO: move to enhanced-ui
 ig.module('crosscode-ru.fixes.pvp')
   .requires('game.feature.combat.gui.pvp-gui')
   .defines(() => {

@@ -8,6 +8,7 @@ import './storage-area-and-map-names.js';
 
 import './help.js';
 import './info-bar.js';
+import './inventory-menu.js';
 import './item-lists.js';
 import './options-menu.js';
 import './quest-hub.js';
