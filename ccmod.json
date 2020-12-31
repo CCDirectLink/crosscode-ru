@@ -1,6 +1,6 @@
 {
   "id": "crosscode-ru",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "license": "(MIT AND CC-BY-4.0)",
   "description": {
     "en_US": "Russian translation for CrossCode",
@@ -13,7 +13,7 @@
   "dependencies": {
     "crosscode": "~1.3.0",
     "localize-me": "^1.0.0",
-    "enhanced-ui": "^0.2.0"
+    "enhanced-ui": "^0.2.1"
   },
   "assets": [
     "data/credits/crosscode-ru.json",
