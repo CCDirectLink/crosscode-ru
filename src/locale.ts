@@ -1,5 +1,6 @@
-const LOCALIZE_ME_PACKS_DIR = 'ru-translation-tool/localize-me-packs/';
-const LOCALIZE_ME_MAPPING_FILE = 'ru-translation-tool/localize-me-mapping.json';
+const TRANSLATION_DATA_DIR = 'mod://crosscode-ru/assets/ru-translation-tool/';
+const LOCALIZE_ME_PACKS_DIR = `${TRANSLATION_DATA_DIR}localize-me-packs/`;
+const LOCALIZE_ME_MAPPING_FILE = `${TRANSLATION_DATA_DIR}localize-me-mapping.json`;
 
 const RUSSIAN_FONT_CHARACTERS =
   'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя';
