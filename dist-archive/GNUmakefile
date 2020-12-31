@@ -15,10 +15,6 @@ SHELL := bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-ifeq ($(origin TOOL_DATA_DIR), undefined)
-	$(error TOOL_DATA_DIR is undefined. Please set to $$GAME_DIR/assets/ru-translation-tool or something like that)
-endif
-
 .PHONY: all clean
 
 # Function that returns relative paths (i.e. excluding the path to the base
@@ -42,12 +38,14 @@ TRANSLATIONS_DIR := assets/ru-translation-tool
 
 TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map LICENSE* main.html ccmod.json
 TOOL_FILES := $(call find_by_patterns,../tool,$(TOOL_FILES))
-MOD_FILES := assets/data/*.json assets/media/*.png dist/*.js dist/*.js.map LICENSE* ccmod.json README.md
-MOD_FILES := $(call find_by_patterns,..,$(MOD_FILES))
+MOD_FILES := dist/*.js dist/*.js.map LICENSE* ccmod.json README.md
+MOD_FILES := $(shell jq -r '"assets/\(.assets[])"' ../ccmod.json) $(call find_by_patterns,..,$(MOD_FILES))
 ENHANCED_UI_MOD_FILES := media/*.png dist/*.js dist/*.js.map LICENSE* ccmod.json
-ENHANCED_UI_MOD_FILES := $(call find_by_patterns,../enhanced-ui,$(ENHANCED_UI_MOD_FILES))
+ENHANCED_UI_MOD_FILES := $(shell jq -r '"assets/\(.assets[])"' ../enhanced-ui/ccmod.json) $(call find_by_patterns,../enhanced-ui,$(ENHANCED_UI_MOD_FILES))
+
+TRANSLATION_TOOL_DATA_DIR = assets/ru-translation-tool
 TRANSLATIONS_FILES := localize-me-packs/*.json localize-me-mapping.json
-TRANSLATIONS_FILES := $(call find_by_patterns,$(TOOL_DATA_DIR),$(TRANSLATIONS_FILES))
+TRANSLATIONS_FILES := $(call find_by_patterns,../$(TRANSLATION_TOOL_DATA_DIR),$(TRANSLATIONS_FILES))
 
 MOD_ARCHIVE_NAME := $(MOD_ID)_v$(MOD_VERSION)
 MOD_ARCHIVE_FILES := $(addprefix $(MOD_DIR)/,$(MOD_FILES) $(addprefix $(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES)))
@@ -115,7 +113,7 @@ $(QUICK_INSTALL_TMP_DIR)/ccloader:
 
 $(MOD_DIR)/$(TRANSLATIONS_DIR): $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
 
-$(MOD_DIR)/$(TRANSLATIONS_DIR)/%.json: $(TOOL_DATA_DIR)/%.json
+$(MOD_DIR)/$(TRANSLATIONS_DIR)/%.json: ../$(TRANSLATION_TOOL_DATA_DIR)/%.json
 	mkdir -pv $(@D) && jq --compact-output . $< > $@
 # Unfortuntately, the following file copying rules can't be merged together
 $(MOD_DIR)/%: ../%
