@@ -4,7 +4,7 @@
 import { fetchDocument } from './utils/http.js';
 import { Fetcher } from './utils/async.js';
 import paths from './node-builtin-modules/path.js';
-import { hasKey, isObject, isArray } from './utils/misc.js';
+import { hasKey, isArray, isObject } from './utils/misc.js';
 
 const BOOK_ID = '74823';
 const NOTABENOID_URL = 'http://notabenoid.org';
@@ -519,8 +519,8 @@ export function generateFragmentDescriptionText(
   return ctx.descriptionLines.join('\n');
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 function getJsonObjectDescription(
+  // eslint-disable-next-line @typescript-eslint/ban-types
   obj: {},
   key: string,
   ctx: FragmentDescriptionGeneratorContext,

@@ -558,7 +558,7 @@ class Main {
           poFileHandle = await fs.promises.open(poFilePath, 'w');
           chapterFileHandles.set(chapterName, poFileHandle);
 
-          poFileHandle.writeFile(
+          await poFileHandle.writeFile(
             [
               `msgid ""\n`,
               `msgstr ""\n`,
