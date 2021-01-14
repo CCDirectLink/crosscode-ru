@@ -455,8 +455,6 @@ export function getChapterNameOfFile(path: string): string {
         if (dirs.length >= 2) {
           switch (dirs[1]) {
             case 'lang':
-              return 'LANG';
-
             case 'arena':
             case 'enemies':
             case 'characters':
