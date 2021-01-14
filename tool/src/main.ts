@@ -336,18 +336,12 @@ class Main {
 
       let data = await fsUtils.readJsonFile(paths.join('assets', filePath));
 
-      let iterator = isLangFile
-        ? findStringsInLangFileObject((data as { labels: unknown }).labels, [
-            'labels',
-          ])
-        : findLangLabelsInObject(data);
-
       let chapterName = getChapterNameOfFile(filePath);
       let chapterId = chapterStatuses.get(chapterName)!.id;
       let thisChapterFragments = chapterFragments.get(chapterName)!;
       let chapterMaxOrderNumber = chapterMaxOrderNumbers.get(chapterName)!;
 
-      for (let langLabel of iterator) {
+      for (let langLabel of findLangLabelsInFile(isLangFile, data)) {
         if (isLangLabelIgnored(langLabel, filePath)) continue;
 
         let jsonPathStr = langLabel.jsonPath.join('/');
@@ -432,17 +426,11 @@ class Main {
 
       let data = await fsUtils.readJsonFile(paths.join('assets', filePath));
 
-      let iterator = isLangFile
-        ? findStringsInLangFileObject((data as { labels: unknown }).labels, [
-            'labels',
-          ])
-        : findLangLabelsInObject(data);
-
       let chapterName = getChapterNameOfFile(filePath);
       let thisChapterFragments = chapterFragments.get(chapterName)!;
       let chapterMaxOrderNumber = chapterMaxOrderNumbers.get(chapterName)!;
 
-      for (let langLabel of iterator) {
+      for (let langLabel of findLangLabelsInFile(isLangFile, data)) {
         if (isLangLabelIgnored(langLabel, filePath)) continue;
 
         let jsonPathStr = langLabel.jsonPath.join('/');
@@ -489,6 +477,169 @@ class Main {
     this.progressBar.setDone();
 
     this.progressBar.setTaskInfo('');
+  }
+
+  public async generatePO(
+    translationLanguages: string[] = ['ru'],
+  ): Promise<void> {
+    let filePaths: string[] = [];
+    console.log('Scanning JSON directories...');
+    for (let jsonDir of ['data', 'extension']) {
+      console.log(jsonDir);
+      for await (let path of fsUtils.findFilesRecursively(
+        paths.join('assets', jsonDir),
+      )) {
+        if (path.endsWith('.json')) {
+          filePaths.push(paths.join(jsonDir, path));
+        }
+      }
+    }
+    filePaths.sort();
+    console.log('Found JSON files:', filePaths.length);
+
+    console.log('Running preliminary scan...');
+    let filePathsWithLangLabels: string[] = [];
+    let totalLangLabelCount = 0;
+    for (let [i, filePath] of filePaths.entries()) {
+      console.log(`${i + 1}/${filePaths.length}`, filePath);
+
+      let isLangFile = filePath.startsWith(paths.normalize('data/lang/'));
+      if (isLangFile && !filePath.endsWith('.en_US.json')) continue;
+
+      let data = await fsUtils.readJsonFile(paths.join('assets', filePath));
+      let pushedThisFile = false;
+      for (let _langLabel of findLangLabelsInFile(isLangFile, data)) {
+        if (!pushedThisFile) {
+          filePathsWithLangLabels.push(filePath);
+          pushedThisFile = true;
+        }
+        totalLangLabelCount += 1;
+      }
+    }
+
+    console.log('Files with lang labels:', filePathsWithLangLabels.length);
+    console.log('Total lang label count:', totalLangLabelCount);
+
+    let globalLangLabelIndexDigits = String(totalLangLabelCount).length;
+
+    for (let translationLanguage of translationLanguages) {
+      // translationLanguage = 'es';
+      // console.log('Loading the monolithic translation pack...');
+      // let trPack = new Map<string, { orig: string; text: string }>(
+      //   Object.entries(
+      //     await fsUtils.readJsonFile(
+      //       paths.join('CrossCode-Esp', 'translations.pack.json'),
+      //     ),
+      //   ),
+      // );
+
+      let globalLangLabelIndex = 1;
+
+      let chapterFileHandles = new Map<string, fs.promises.FileHandle>();
+
+      console.log(`Generating PO files for language ${translationLanguage}...`);
+      for (let [i, filePath] of filePathsWithLangLabels.entries()) {
+        console.log(`${i + 1}/${filePathsWithLangLabels.length}`, filePath);
+
+        let chapterName = getChapterNameOfFile(filePath);
+        let poFileHandle = chapterFileHandles.get(chapterName);
+
+        if (poFileHandle == null) {
+          let poFilePath = paths.join(
+            'crosscode-localization-data',
+            'po',
+            translationLanguage,
+            'components',
+            `${chapterName}.po`,
+          );
+          await fs.promises.mkdir(paths.dirname(poFilePath), {
+            recursive: true,
+          });
+          poFileHandle = await fs.promises.open(poFilePath, 'w');
+          chapterFileHandles.set(chapterName, poFileHandle);
+
+          poFileHandle.writeFile(
+            [
+              `msgid ""\n`,
+              `msgstr ""\n`,
+              `"Project-Id-Version: crosscode 0.0.0\\n"\n`,
+              `"Language: ${translationLanguage}\\n"\n`,
+              `"MIME-Version: 1.0\\n"\n`,
+              `"Content-Type: text/plain; charset=UTF-8\\n"\n`,
+              `"Content-Transfer-Encoding: 8bit\\n"\n`,
+            ].join(''),
+          );
+        }
+
+        let isLangFile = filePath.startsWith(paths.normalize('data/lang/'));
+        if (isLangFile && !filePath.endsWith('.en_US.json')) continue;
+
+        let data = await fsUtils.readJsonFile(paths.join('assets', filePath));
+
+        for (let langLabel of findLangLabelsInFile(isLangFile, data)) {
+          if (isLangLabelIgnored(langLabel, filePath)) continue;
+
+          let jsonPathStr = langLabel.jsonPath.join('/');
+
+          let orig: Original = {
+            rawContent: '',
+            file: filePath,
+            jsonPath: jsonPathStr,
+            langUid: langLabel.langUid,
+            descriptionText: !isLangFile
+              ? generateFragmentDescriptionText(langLabel.jsonPath, data)
+              : '',
+            text: langLabel.text,
+          };
+          orig.rawContent = stringifyFragmentOriginal(orig);
+
+          // let localizeMeFilePath = filePath;
+          // if (localizeMeFilePath.startsWith('data/')) {
+          //   localizeMeFilePath = localizeMeFilePath.slice('data/'.length);
+          // }
+          // let translation = trPack.get(`${localizeMeFilePath}/${jsonPathStr}`);
+          // if (translation != null && translation.orig !== langLabel.text) {
+          //   throw new Error(
+          //     `${filePath} ${jsonPathStr}: Outdated translation in the translation pack!`,
+          //   );
+          // }
+          // let translationStr = translation != null ? translation.text : '';
+          let translationStr = translationLanguage === 'en_US' ? orig.text : '';
+
+          let globalIdxStr = String(globalLangLabelIndex).padStart(
+            globalLangLabelIndexDigits,
+            '0',
+          );
+
+          let lines = [];
+          lines.push(
+            `\n`,
+            `#: ${orig.file} ${orig.jsonPath} #${orig.langUid}\n`,
+            `#, max-length:${orig.text.length * 10}\n`,
+            `#. [${globalIdxStr}] ${orig.file} ${orig.jsonPath} #${orig.langUid}\n`,
+          );
+          for (let line of orig.descriptionText.length > 0
+            ? orig.descriptionText.split('\n')
+            : []) {
+            lines.push(`#. ${line}\n`);
+          }
+          lines.push(
+            `msgctxt ${JSON.stringify(`${orig.file}/${orig.jsonPath}`)}\n`,
+            `msgid ${JSON.stringify(orig.text)}\n`,
+            `msgstr ${JSON.stringify(translationStr)}\n`,
+          );
+          await poFileHandle.writeFile(lines.join(''));
+
+          globalLangLabelIndex++;
+        }
+      }
+
+      for (let poFileHandle of chapterFileHandles.values()) {
+        await poFileHandle.close();
+      }
+    }
+
+    console.log('Done!');
   }
 
   public async downloadTranslations(force: boolean): Promise<void> {
@@ -692,6 +843,17 @@ interface LocalizableStringData {
   jsonPath: string[];
   langUid: number | null;
   text: string;
+}
+
+function findLangLabelsInFile(
+  isLangFile: boolean,
+  data: unknown,
+): Generator<LocalizableStringData> {
+  return isLangFile
+    ? findStringsInLangFileObject((data as { labels: unknown }).labels, [
+        'labels',
+      ])
+    : findLangLabelsInObject(data);
 }
 
 function* findStringsInLangFileObject(
