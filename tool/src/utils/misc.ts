@@ -30,6 +30,11 @@ export function isObject(value: unknown): value is {} {
   return typeof value === 'object' && value !== null;
 }
 
+// A small wrapper to avoid `any` contamination.
+export function isArray(value: unknown): value is unknown[] {
+  return Array.isArray(value);
+}
+
 export function mapGetOrInsert<K, V>(
   map: Map<K, V>,
   key: K,

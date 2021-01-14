@@ -4,7 +4,7 @@
 import { fetchDocument } from './utils/http.js';
 import { Fetcher } from './utils/async.js';
 import paths from './node-builtin-modules/path.js';
-import { hasKey, isObject } from './utils/misc.js';
+import { hasKey, isObject, isArray } from './utils/misc.js';
 
 const BOOK_ID = '74823';
 const NOTABENOID_URL = 'http://notabenoid.org';
@@ -490,87 +490,180 @@ export function getChapterNameOfFile(path: string): string {
   return 'etc';
 }
 
+// Context which is shared across invocations of getJsonObjectDescription
+// during a JSON path iteration in generateFragmentDescriptionText.
+interface FragmentDescriptionGeneratorContext {
+  fileData: unknown;
+  descriptionLines: string[];
+  entityType: string | null;
+}
+
 // based on https://gitlab.com/Dimava/crosscode-translation-ru/-/blob/master/assets/editor/CrossFile.js#L247-300
 export function generateFragmentDescriptionText(
   jsonPath: string[],
   fileData: unknown,
 ): string {
-  let lines: string[] = [];
+  let ctx: FragmentDescriptionGeneratorContext = {
+    fileData,
+    descriptionLines: [],
+    entityType: null,
+  };
   let obj = fileData;
 
   for (let key of jsonPath) {
     if (!(isObject(obj) && hasKey(obj, key))) {
       throw new Error(`Invalid JSON path '${jsonPath.join('/')}'`);
     }
-    getJsonObjectDescription(obj, key, lines);
+    getJsonObjectDescription(obj, key, ctx);
     obj = obj[key];
   }
 
-  return lines.filter((line) => line.trim().length > 0).join('\n');
+  return ctx.descriptionLines.join('\n');
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-function getJsonObjectDescription(obj: {}, key: string, lines: string[]): void {
-  if (hasKey(obj, 'type') && typeof obj.type === 'string') {
-    switch (obj.type) {
-      case 'IF': {
-        let words: string[] = [obj.type];
-        if (key === 'elseStep') {
-          words.push('NOT');
-        } else if (key !== 'thenStep') {
-          words.push(key);
-        }
-        if (hasKey(obj, 'condition') && typeof obj.condition === 'string') {
-          words.push(obj.condition);
-        }
-        lines.push(words.join(' '));
-        break;
-      }
+function getJsonObjectDescription(
+  obj: {},
+  key: string,
+  ctx: FragmentDescriptionGeneratorContext,
+): void {
+  let words: string[] = [];
 
-      case 'EventTrigger':
-      case 'LocationEvent':
-      case 'Prop': {
-        let words: string[] = [obj.type];
-        if (hasKey(obj, 'settings') && isObject(obj.settings)) {
-          let { settings } = obj;
-          if (hasKey(settings, 'name') && typeof settings.name === 'string') {
-            words.push(settings.name);
-          }
-          if (
-            hasKey(settings, 'startCondition') &&
-            typeof settings.startCondition === 'string'
-          ) {
-            words.push(settings.startCondition);
-          } else if (
-            hasKey(settings, 'spawnCondition') &&
-            typeof settings.spawnCondition === 'string'
-          ) {
-            words.push(settings.spawnCondition);
-          }
-        }
-        lines.push(words.join(' '));
-        break;
-      }
+  if (ctx.entityType === 'XenoDialog' && key === 'text') {
+    // inspired by <https://github.com/L-Sherry/Localize-Me-Tools/blob/07f0b1a4abb9cd553a73dcbdeb3c68eec5f7dcb9/tags.py#L27-L52>
+    if (
+      hasKey(obj, 'entity') &&
+      isObject(obj.entity) &&
+      hasKey(obj.entity, 'global') &&
+      obj.entity.global === true &&
+      hasKey(obj.entity, 'name') &&
+      typeof obj.entity.name === 'string'
+    ) {
+      let entityName = obj.entity.name;
 
-      default: {
-        if (hasKey(obj, 'person')) {
-          if (typeof obj.person === 'string') {
-            lines.push(`${obj.person} @DEFAULT`);
-          } else if (
-            isObject(obj.person) &&
-            hasKey(obj.person, 'person') &&
-            typeof obj.person.person === 'string' &&
-            hasKey(obj.person, 'expression') &&
-            typeof obj.person.expression === 'string'
-          ) {
-            lines.push(`${obj.person.person} @${obj.person.expression}`);
-          }
-        } else {
-          lines.push(obj.type);
+      if (
+        isObject(ctx.fileData) &&
+        hasKey(ctx.fileData, 'entities') &&
+        isArray(ctx.fileData.entities)
+      ) {
+        let entity = ctx.fileData.entities.find(
+          (ent) =>
+            isObject(ent) &&
+            hasKey(ent, 'type') &&
+            ent.type === 'NPC' &&
+            hasKey(ent, 'settings') &&
+            isObject(ent.settings) &&
+            hasKey(ent.settings, 'name') &&
+            typeof ent.settings.name === 'string' &&
+            ent.settings.name === entityName,
+        ) as { type: 'NPC'; settings: { name: string } } | undefined;
+
+        if (
+          entity != null &&
+          hasKey(entity.settings, 'characterName') &&
+          typeof entity.settings.characterName === 'string'
+        ) {
+          words.push(entity.settings.characterName);
         }
       }
     }
+
+    //
+  } else if (hasKey(obj, 'type') && typeof obj.type === 'string') {
+    // the two common object types to have a string "type" field are event (and
+    // action) steps and entities, we are mostly interested in these
+
+    if (
+      hasKey(obj, 'settings') &&
+      isObject(obj.settings) &&
+      hasKey(obj, 'x') &&
+      typeof obj.x === 'number' &&
+      hasKey(obj, 'y') &&
+      typeof obj.y === 'number'
+    ) {
+      // looks like this is an entity
+      words.push(obj.type);
+      ctx.entityType = obj.type;
+
+      let { settings } = obj;
+      if (
+        hasKey(settings, 'name') &&
+        typeof settings.name === 'string' &&
+        settings.name.length > 0
+      ) {
+        // not all entities have a name, actually, the most frequent entity
+        // types to do so are Prop and ItemDestruct
+        words.push(settings.name);
+      }
+
+      if (
+        hasKey(settings, 'startCondition') &&
+        typeof settings.startCondition === 'string' &&
+        settings.startCondition.length > 0
+      ) {
+        words.push('START IF', settings.startCondition);
+      }
+
+      if (
+        hasKey(settings, 'spawnCondition') &&
+        typeof settings.spawnCondition === 'string' &&
+        settings.spawnCondition.length > 0
+      ) {
+        words.push('SPAWN IF', settings.spawnCondition);
+      }
+
+      //
+    } else {
+      // most likely an event step
+
+      switch (obj.type) {
+        case 'IF': {
+          words.push(obj.type);
+          if (key === 'elseStep') {
+            words.push('NOT');
+          } else if (key !== 'thenStep') {
+            words.push(key);
+          }
+          if (hasKey(obj, 'condition') && typeof obj.condition === 'string') {
+            words.push(obj.condition);
+          }
+          break;
+        }
+
+        default: {
+          if (hasKey(obj, 'person')) {
+            // handle the most common dialogue events, which are: SHOW_MSG,
+            // SHOW_SIDE_MSG, ADD_MSG_PERSON and such
+            if (typeof obj.person === 'string') {
+              // legacy
+              words.push(`${obj.person} @DEFAULT`);
+            } else if (
+              isObject(obj.person) &&
+              hasKey(obj.person, 'person') &&
+              typeof obj.person.person === 'string' &&
+              hasKey(obj.person, 'expression') &&
+              typeof obj.person.expression === 'string'
+            ) {
+              words.push(`${obj.person.person} @${obj.person.expression}`);
+            }
+          } else {
+            words.push(obj.type);
+          }
+        }
+      }
+
+      //
+    }
+
+    //
   } else if (hasKey(obj, 'condition') && typeof obj.condition === 'string') {
-    lines.push(obj.condition);
+    // there is a broad category of objects with just the `condition` field, so
+    // let's include their conditions as well to not lose something important
+    words.push('IF', obj.condition);
   }
+
+  if (words.length === 0) return;
+  let line = words.join(' ').trim();
+  if (line.length === 0) return;
+  ctx.descriptionLines.push(line);
 }
