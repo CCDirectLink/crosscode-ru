@@ -15,10 +15,7 @@ const LEA_SPELLING =
   localStorage.getItem('options.crosscode-ru.lea-spelling') || '0';
 
 // relevant Wikipedia page: https://ru.wikipedia.org/wiki/Падеж#Падежная_система_русского_языка
-const LEA_SPELLING_CONVERSION_TABLES: Map<
-  string,
-  Map<string, string>
-> = new Map([
+const LEA_SPELLING_CONVERSION_TABLES = new Map<string, Map<string, string>>([
   [
     '1',
     new Map([
@@ -34,6 +31,15 @@ const LEA_SPELLING_CONVERSION_TABLES: Map<
       ['ЛЕЕЙ', 'ЛИЕЙ'],
     ]),
   ],
+]);
+
+const IGNORED_LABELS = new Set<string>([
+  '',
+  'en_US',
+  'LOL, DO NOT TRANSLATE THIS!',
+  'LOL, DO NOT TRANSLATE THIS! (hologram)',
+  '\\c[1][DO NOT TRANSLATE THE FOLLOWING]\\c[0]',
+  '\\c[1][DO NOT TRANSLATE FOLLOWING TEXTS]\\c[0]',
 ]);
 
 let textFilter: ((text: string) => string) | null = null;
@@ -99,16 +105,12 @@ localizeMe.add_locale('ru_RU', {
     let translated = langLabelOrString.ru_RU;
     if (translated) return translated;
 
+    if (original === 'en_US') return 'ru_RU';
+
     if (!sc.ru.debug.showUntranslatedStrings) return original;
 
-    switch (original.trim()) {
-      case '':
-      case 'en_US':
-      case 'LOL, DO NOT TRANSLATE THIS!':
-      case 'LOL, DO NOT TRANSLATE THIS! (hologram)':
-      case '\\c[1][DO NOT TRANSLATE THE FOLLOWING]\\c[0]':
-      case '\\c[1][DO NOT TRANSLATE FOLLOWING TEXTS]\\c[0]':
-        return original;
+    if (IGNORED_LABELS.has(original.trim())) {
+      return original;
     }
 
     if (/^credits\/[^/]+\.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)) {

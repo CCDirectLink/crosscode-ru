@@ -68,6 +68,15 @@ const LEA_PHRASES = new Map([
   ['[no]', '[нет]'],
 ]);
 
+const IGNORED_LABELS = new Set<string>([
+  '',
+  'en_US',
+  'LOL, DO NOT TRANSLATE THIS!',
+  'LOL, DO NOT TRANSLATE THIS! (hologram)',
+  '\\c[1][DO NOT TRANSLATE THE FOLLOWING]\\c[0]',
+  '\\c[1][DO NOT TRANSLATE FOLLOWING TEXTS]\\c[0]',
+]);
+
 class Main {
   public notaClient = new NotaClient();
   public progressBar = new ProgressBar();
@@ -908,15 +917,7 @@ function isLangLabelIgnored(
   langLabel: LocalizableStringData,
   filePath: string,
 ): boolean {
-  switch (langLabel.text.trim()) {
-    case '':
-    case 'en_US':
-    case 'LOL, DO NOT TRANSLATE THIS!':
-    case 'LOL, DO NOT TRANSLATE THIS! (hologram)':
-    case '\\c[1][DO NOT TRANSLATE THE FOLLOWING]\\c[0]':
-    case '\\c[1][DO NOT TRANSLATE FOLLOWING TEXTS]\\c[0]':
-      return true;
-  }
+  if (IGNORED_LABELS.has(langLabel.text.trim())) return true;
 
   let jsonPathStr = langLabel.jsonPath.join('/');
 
