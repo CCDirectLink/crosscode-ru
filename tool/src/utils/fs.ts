@@ -3,9 +3,7 @@ import paths from '../node-builtin-modules/path.js';
 
 const ENABLE_PRETTY_PRINT = true;
 
-export async function readJsonFile<T>(
-  path: fs.PathLike | fs.promises.FileHandle,
-): Promise<T> {
+export async function readJsonFile<T>(path: fs.PathLike | fs.promises.FileHandle): Promise<T> {
   let data = await fs.promises.readFile(path, 'utf8');
   return JSON.parse(data) as T;
 }

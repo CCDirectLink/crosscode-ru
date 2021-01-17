@@ -12,10 +12,7 @@ const STATUS_LINE_START_SIMPLE_X = 0;
 const STATUS_LINE_START_SIMPLE_Y = 84;
 
 ig.module('crosscode-ru.fixes.status-line-graphics.enemy-list')
-  .requires(
-    'game.feature.menu.gui.enemies.enemy-pages',
-    'localize-me.final-locale.ready',
-  )
+  .requires('game.feature.menu.gui.enemies.enemy-pages', 'localize-me.final-locale.ready')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 
@@ -59,9 +56,7 @@ ig.module('crosscode-ru.fixes.status-line-graphics.simple-status-display')
       },
 
       updateDrawables(renderer) {
-        let x = this.simpleMode
-          ? STATUS_LINE_START_SIMPLE_X
-          : STATUS_LINE_START_X;
+        let x = this.simpleMode ? STATUS_LINE_START_SIMPLE_X : STATUS_LINE_START_X;
         let y =
           (this.simpleMode ? STATUS_LINE_START_SIMPLE_Y : STATUS_LINE_START_Y) +
           this.lineID * (STATUS_LINE_HEIGHT + 1);
@@ -100,10 +95,8 @@ ig.module('crosscode-ru.fixes.status-line-graphics.simple-status-display')
           this.gfx,
           0,
           0,
-          sc.MODIFIER_ICON_DRAW.X +
-            this.iconIndex.x * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
-          sc.MODIFIER_ICON_DRAW.Y +
-            this.iconIndex.y * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
+          sc.MODIFIER_ICON_DRAW.X + this.iconIndex.x * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
+          sc.MODIFIER_ICON_DRAW.Y + this.iconIndex.y * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
           sc.MODIFIER_ICON_DRAW.SIZE,
           sc.MODIFIER_ICON_DRAW.SIZE,
         );
@@ -112,21 +105,11 @@ ig.module('crosscode-ru.fixes.status-line-graphics.simple-status-display')
   });
 
 ig.module('crosscode-ru.fixes.status-line-graphics.status-menu')
-  .requires(
-    'game.feature.menu.gui.status.status-misc',
-    'localize-me.final-locale.ready',
-  )
+  .requires('game.feature.menu.gui.status.status-misc', 'localize-me.final-locale.ready')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 
-    const LINE_COLORS = [
-      '#8bb5ff',
-      '#ba0000',
-      '#0036d0',
-      '#a121bc',
-      '#00994c',
-      '#c7c7c7',
-    ];
+    const LINE_COLORS = ['#8bb5ff', '#ba0000', '#0036d0', '#a121bc', '#00994c', '#c7c7c7'];
 
     sc.StatusParamBar.inject({
       patchedGfx: new ig.Image('media/gui/menu.ru_RU.png'),
@@ -185,15 +168,7 @@ ig.module('crosscode-ru.fixes.status-line-graphics.status-menu')
           renderer.addGfx(this.gfx, 107, 3, this._baseRed ? 9 : 0, 407, 8, 8);
           renderer.addGfx(this.gfx, 151, 3, this._equipRed ? 9 : 0, 407, 8, 8);
           if (!this._skillHidden) {
-            renderer.addGfx(
-              this.gfx,
-              195,
-              3,
-              this._skillsRed ? 9 : 0,
-              407,
-              8,
-              8,
-            );
+            renderer.addGfx(this.gfx, 195, 3, this._skillsRed ? 9 : 0, 407, 8, 8);
           }
           if (sc.menu.statusDiff) {
             renderer.addGfx(this.gfx, 151, 13, 0, 416, 8, 8);
@@ -207,10 +182,8 @@ ig.module('crosscode-ru.fixes.status-line-graphics.status-menu')
           this.gfx,
           0,
           0,
-          sc.MODIFIER_ICON_DRAW.X +
-            this.iconIndex.x * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
-          sc.MODIFIER_ICON_DRAW.Y +
-            this.iconIndex.y * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
+          sc.MODIFIER_ICON_DRAW.X + this.iconIndex.x * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
+          sc.MODIFIER_ICON_DRAW.Y + this.iconIndex.y * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
           sc.MODIFIER_ICON_DRAW.SIZE,
           sc.MODIFIER_ICON_DRAW.SIZE,
         );

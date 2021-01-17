@@ -11,14 +11,9 @@ ig.module('crosscode-ru.fixes.traders-list')
       location.textBlock.linePadding = -3;
     }
 
-    function setTraderLocationText(
-      location: sc.TextGui,
-      traderId: string,
-    ): void {
+    function setTraderLocationText(location: sc.TextGui, traderId: string): void {
       let foundTrader = sc.trade.getFoundTrader(traderId);
-      location.setText(
-        `${foundTrader.area || '???'}\n> ${foundTrader.map || '???'}`,
-      );
+      location.setText(`${foundTrader.area || '???'}\n> ${foundTrader.map || '???'}`);
     }
 
     sc.TradeButtonBox.inject({
@@ -36,10 +31,8 @@ ig.module('crosscode-ru.fixes.traders-list')
         let setPivotOld = this.setPivot;
         let setPanelSizeOld = this.setPanelSize;
         try {
-          this.setSize = (w, h) =>
-            setSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
-          this.setPivot = (x, y) =>
-            setPivotOld.call(this, x + TRADERS_LIST_ADDITIONAL_WIDTH, y);
+          this.setSize = (w, h) => setSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
+          this.setPivot = (x, y) => setPivotOld.call(this, x + TRADERS_LIST_ADDITIONAL_WIDTH, y);
           this.setPanelSize = (w, h) =>
             setPanelSizeOld.call(this, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
 
@@ -54,8 +47,7 @@ ig.module('crosscode-ru.fixes.traders-list')
       onCreateListEntries(list, ...args) {
         let listSetSizeOld = list.setSize;
         try {
-          list.setSize = (w, h) =>
-            listSetSizeOld.call(list, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
+          list.setSize = (w, h) => listSetSizeOld.call(list, w + TRADERS_LIST_ADDITIONAL_WIDTH, h);
 
           this.parent(list, ...args);
         } finally {

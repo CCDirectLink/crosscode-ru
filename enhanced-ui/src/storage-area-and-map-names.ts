@@ -37,10 +37,7 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
         if (this.autoSlot != null) this._fixAreaAndMapNames(this.autoSlot);
       },
 
-      _addAreaToLookupTable(
-        areaName: ig.LangLabel.Data,
-        areaData: sc.AreaLoadable.Data,
-      ): void {
+      _addAreaToLookupTable(areaName: ig.LangLabel.Data, areaData: sc.AreaLoadable.Data): void {
         if (areaName == null) return;
 
         if (areaName.langUid == null) {
@@ -115,32 +112,19 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
         mapKey: K2,
       ): void {
         let areaLabel = obj[areaKey];
-        if (
-          areaLabel == null ||
-          typeof areaLabel !== 'object' ||
-          areaLabel.langUid == null
-        ) {
+        if (areaLabel == null || typeof areaLabel !== 'object' || areaLabel.langUid == null) {
           return;
         }
 
-        let areaLookupData = this._areaAndMapNamesLookupTable.get(
-          areaLabel.langUid,
-        );
+        let areaLookupData = this._areaAndMapNamesLookupTable.get(areaLabel.langUid);
         if (areaLookupData == null) return;
-        let {
-          name: expectedAreaName,
-          maps: mapNamesLookupTable,
-        } = areaLookupData;
+        let { name: expectedAreaName, maps: mapNamesLookupTable } = areaLookupData;
         if (expectedAreaName.en_US === areaLabel.en_US) {
           obj[areaKey] = expectedAreaName;
         }
 
         let mapLabel = obj[mapKey];
-        if (
-          mapLabel == null ||
-          typeof mapLabel !== 'object' ||
-          mapLabel.langUid == null
-        ) {
+        if (mapLabel == null || typeof mapLabel !== 'object' || mapLabel.langUid == null) {
           return;
         }
 

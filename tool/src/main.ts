@@ -11,11 +11,7 @@ import {
   getChapterNameOfFile,
   stringifyFragmentOriginal,
 } from './Notabenoid.js';
-import {
-  IGNORE_IN_MOD_TAG,
-  INJECTED_IN_MOD_TAG,
-  LocalizeMePacker,
-} from './TranslationPack.js';
+import { IGNORE_IN_MOD_TAG, INJECTED_IN_MOD_TAG, LocalizeMePacker } from './TranslationPack.js';
 import { readSettings, writeSettings } from './settings.js';
 import {
   CHAPTER_FRAGMENTS_DIR,
@@ -135,20 +131,13 @@ class Main {
     }
     this.progressBar.setDone();
 
-    const autoTranslate = async (
-      chapterId: string,
-      f: Fragment,
-    ): Promise<void> => {
+    const autoTranslate = async (chapterId: string, f: Fragment): Promise<void> => {
       if (f.translations.length > 0) return;
 
       let translation = LEA_PHRASES.get(f.original.text);
       if (translation == null) return;
 
-      await this.notaClient.addFragmentTranslation(
-        chapterId,
-        f.id,
-        translation,
-      );
+      await this.notaClient.addFragmentTranslation(chapterId, f.id, translation);
     };
 
     let fixedFragmentsCount = 0;
@@ -158,10 +147,7 @@ class Main {
       let chapterId = chapterStatus.id;
 
       for (let fragment of fragments) {
-        this.progressBar.setValue(
-          fixedFragmentsCount,
-          allChapterFragmentsCount,
-        );
+        this.progressBar.setValue(fixedFragmentsCount, allChapterFragmentsCount);
         await autoTranslate(chapterId, fragment);
         fixedFragmentsCount++;
       }
@@ -187,10 +173,7 @@ class Main {
     this.progressBar.setDone();
 
     let assetsCache = new Map<string, Promise<unknown>>();
-    const fixOriginal = async (
-      chapterId: string,
-      f: Fragment,
-    ): Promise<void> => {
+    const fixOriginal = async (chapterId: string, f: Fragment): Promise<void> => {
       if (
         f.original.descriptionText.includes(IGNORE_IN_MOD_TAG) ||
         f.original.descriptionText.includes(INJECTED_IN_MOD_TAG)
@@ -219,8 +202,7 @@ class Main {
         return;
       }
       let isLangFile =
-        filePath.startsWith(paths.normalize('data/lang/')) &&
-        filePath.endsWith('.en_US.json');
+        filePath.startsWith(paths.normalize('data/lang/')) && filePath.endsWith('.en_US.json');
 
       let jsonPath = jsonPathStr.split('/');
       let obj = miscUtils.getValueByPath(fileData, jsonPath);
@@ -263,12 +245,7 @@ class Main {
 
       let newRawText = stringifyFragmentOriginal(f.original);
       if (newRawText !== f.original.rawContent) {
-        await this.notaClient.editFragmentOriginal(
-          chapterId,
-          f.id,
-          f.orderNumber,
-          newRawText,
-        );
+        await this.notaClient.editFragmentOriginal(chapterId, f.id, f.orderNumber, newRawText);
       }
     };
 
@@ -281,10 +258,7 @@ class Main {
 
       let iterator = function* (this: Main) {
         for (let fragment of fragments) {
-          this.progressBar.setValue(
-            fixedFragmentsCount,
-            allChapterFragmentsCount,
-          );
+          this.progressBar.setValue(fixedFragmentsCount, allChapterFragmentsCount);
           yield fixOriginal(chapterId, fragment);
           fixedFragmentsCount++;
         }
@@ -324,9 +298,7 @@ class Main {
     this.progressBar.setTaskInfo(`Поиск файлов...`);
     let filePaths: string[] = [];
     for (let jsonDir of ['data', 'extension']) {
-      for await (let path of fsUtils.findFilesRecursively(
-        paths.join('assets', jsonDir),
-      )) {
+      for await (let path of fsUtils.findFilesRecursively(paths.join('assets', jsonDir))) {
         if (path.endsWith('.json')) {
           filePaths.push(paths.join(jsonDir, path));
           this.progressBar.setTaskInfo(`Найдено файлов: ${filePaths.length}`);
@@ -356,8 +328,7 @@ class Main {
         let jsonPathStr = langLabel.jsonPath.join('/');
         if (
           thisChapterFragments.some(
-            ({ original: o }) =>
-              o.file === filePath && o.jsonPath === jsonPathStr,
+            ({ original: o }) => o.file === filePath && o.jsonPath === jsonPathStr,
           )
         ) {
           continue;
@@ -414,9 +385,7 @@ class Main {
     this.progressBar.setTaskInfo(`Поиск файлов...`);
     let filePaths: string[] = [];
     for (let jsonDir of ['data', 'extension']) {
-      for await (let path of fsUtils.findFilesRecursively(
-        paths.join('assets', jsonDir),
-      )) {
+      for await (let path of fsUtils.findFilesRecursively(paths.join('assets', jsonDir))) {
         if (path.endsWith('.json')) {
           filePaths.push(paths.join(jsonDir, path));
           this.progressBar.setTaskInfo(`Найдено файлов: ${filePaths.length}`);
@@ -444,8 +413,7 @@ class Main {
 
         let jsonPathStr = langLabel.jsonPath.join('/');
         let fragment = thisChapterFragments.find(
-          ({ original: o }) =>
-            o.file === filePath && o.jsonPath === jsonPathStr,
+          ({ original: o }) => o.file === filePath && o.jsonPath === jsonPathStr,
         );
         if (fragment == null) {
           throw new Error(`${filePath} ${jsonPathStr}: unknown fragment`);
@@ -467,13 +435,8 @@ class Main {
       fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
 
       for (let f of fragments) {
-        this.progressBar.setValue(
-          fixedFragmentsCount,
-          allChapterFragmentsCount,
-        );
-        console.log(
-          `${chapterName}: ${f.original.file} ${f.original.jsonPath} ${f.orderNumber}`,
-        );
+        this.progressBar.setValue(fixedFragmentsCount, allChapterFragmentsCount);
+        console.log(`${chapterName}: ${f.original.file} ${f.original.jsonPath} ${f.orderNumber}`);
         await this.notaClient.editFragmentOriginal(
           chapterId,
           f.id,
@@ -488,16 +451,12 @@ class Main {
     this.progressBar.setTaskInfo('');
   }
 
-  public async generatePO(
-    translationLanguages: string[] = ['ru'],
-  ): Promise<void> {
+  public async generatePO(translationLanguages: string[] = ['ru']): Promise<void> {
     let filePaths: string[] = [];
     console.log('Scanning JSON directories...');
     for (let jsonDir of ['data', 'extension']) {
       console.log(jsonDir);
-      for await (let path of fsUtils.findFilesRecursively(
-        paths.join('assets', jsonDir),
-      )) {
+      for await (let path of fsUtils.findFilesRecursively(paths.join('assets', jsonDir))) {
         if (path.endsWith('.json')) {
           filePaths.push(paths.join(jsonDir, path));
         }
@@ -615,10 +574,7 @@ class Main {
           // let translationStr = translation != null ? translation.text : '';
           let translationStr = translationLanguage === 'en_US' ? orig.text : '';
 
-          let globalIdxStr = String(globalLangLabelIndex).padStart(
-            globalLangLabelIndexDigits,
-            '0',
-          );
+          let globalIdxStr = String(globalLangLabelIndex).padStart(globalLangLabelIndexDigits, '0');
 
           let lines = [];
           lines.push(
@@ -666,12 +622,8 @@ class Main {
       for (let status of statuses.values()) {
         let prevStatus = prevStatuses.get(status.name);
         let needsUpdate =
-          prevStatus == null ||
-          status.modificationTimestamp !== prevStatus.modificationTimestamp;
-        (force || needsUpdate
-          ? chaptersWithUpdates
-          : chaptersWithoutUpdates
-        ).push(status);
+          prevStatus == null || status.modificationTimestamp !== prevStatus.modificationTimestamp;
+        (force || needsUpdate ? chaptersWithUpdates : chaptersWithoutUpdates).push(status);
       }
 
       let chapterFragments = new Map<string, Fragment[]>();
@@ -695,10 +647,9 @@ class Main {
 
         let fragments: Fragment[] = [];
 
-        let {
-          total: notaPageCount,
-          iterator,
-        } = this.notaClient.createChapterFragmentFetcher(status);
+        let { total: notaPageCount, iterator } = this.notaClient.createChapterFragmentFetcher(
+          status,
+        );
         console.log('notaPageCount', notaPageCount);
         await asyncUtils.limitConcurrency(
           (function* () {
@@ -714,10 +665,7 @@ class Main {
         fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
         chapterFragments.set(name, fragments);
 
-        await fsUtils.writeJsonFile(
-          paths.join(CHAPTER_FRAGMENTS_DIR, `${name}.json`),
-          fragments,
-        );
+        await fsUtils.writeJsonFile(paths.join(CHAPTER_FRAGMENTS_DIR, `${name}.json`), fragments);
       }
 
       let packer = new LocalizeMePacker();
@@ -733,10 +681,7 @@ class Main {
         );
 
         for (let fragment of fragments) {
-          this.progressBar.setValue(
-            packedFragmentsCount,
-            allChapterFragmentsCount,
-          );
+          this.progressBar.setValue(packedFragmentsCount, allChapterFragmentsCount);
           await packer.addNotaFragment(fragment);
           packedFragmentsCount++;
         }
@@ -750,24 +695,16 @@ class Main {
       let currentPackIndex = 0;
       for (let [originalFile, packContents] of packer.packs.entries()) {
         mappingTable[originalFile] = originalFile;
-        this.progressBar.setTaskInfo(
-          `Запись транслейт-пака '${originalFile}'...`,
-        );
+        this.progressBar.setTaskInfo(`Запись транслейт-пака '${originalFile}'...`);
         this.progressBar.setValue(currentPackIndex, totalPackCount + 1);
         currentPackIndex++;
-        await fs.promises.mkdir(
-          paths.join(LOCALIZE_ME_PACKS_DIR, paths.dirname(originalFile)),
-          { recursive: true },
-        );
-        await fsUtils.writeJsonFile(
-          paths.join(LOCALIZE_ME_PACKS_DIR, originalFile),
-          packContents,
-        );
+        await fs.promises.mkdir(paths.join(LOCALIZE_ME_PACKS_DIR, paths.dirname(originalFile)), {
+          recursive: true,
+        });
+        await fsUtils.writeJsonFile(paths.join(LOCALIZE_ME_PACKS_DIR, originalFile), packContents);
       }
 
-      this.progressBar.setTaskInfo(
-        `Запись таблицы маппингов транслейт-паков...`,
-      );
+      this.progressBar.setTaskInfo(`Запись таблицы маппингов транслейт-паков...`);
       this.progressBar.setValue(totalPackCount, totalPackCount + 1);
       await fsUtils.writeJsonFile(LOCALIZE_ME_MAPPING_FILE, mappingTable);
 
@@ -783,12 +720,8 @@ class Main {
   }
 
   public async readChapterStatuses(): Promise<ChapterStatuses> {
-    let data: ChapterStatusesObj | null = await fsUtils.readJsonFileOptional(
-      CHAPTER_STATUSES_FILE,
-    );
-    return new Map<string, ChapterStatus>(
-      data != null ? Object.entries(data) : [],
-    );
+    let data: ChapterStatusesObj | null = await fsUtils.readJsonFileOptional(CHAPTER_STATUSES_FILE);
+    return new Map<string, ChapterStatus>(data != null ? Object.entries(data) : []);
   }
 
   public async writeChapterStatuses(statuses: ChapterStatuses): Promise<void> {
@@ -809,15 +742,9 @@ class ProgressBar {
   public element = document.getElementById(
     'settings_translations_progress',
   )! as HTMLProgressElement;
-  public taskElement = document.getElementById(
-    'settings_translations_progressTask',
-  )!;
-  public taskErrorElement = document.getElementById(
-    'settings_translations_progressTask_error',
-  )!;
-  public countElement = document.getElementById(
-    'settings_translations_progressCount',
-  )!;
+  public taskElement = document.getElementById('settings_translations_progressTask')!;
+  public taskErrorElement = document.getElementById('settings_translations_progressTask_error')!;
+  public countElement = document.getElementById('settings_translations_progressCount')!;
 
   public setTaskInfo(info: { toString(): string }): void {
     this.taskErrorElement.style.display = 'none';
@@ -859,9 +786,7 @@ function findLangLabelsInFile(
   data: unknown,
 ): Generator<LocalizableStringData> {
   return isLangFile
-    ? findStringsInLangFileObject((data as { labels: unknown }).labels, [
-        'labels',
-      ])
+    ? findStringsInLangFileObject((data as { labels: unknown }).labels, ['labels'])
     : findLangLabelsInObject(data);
 }
 
@@ -913,10 +838,7 @@ function* findLangLabelsInObject(
   }
 }
 
-function isLangLabelIgnored(
-  langLabel: LocalizableStringData,
-  filePath: string,
-): boolean {
+function isLangLabelIgnored(langLabel: LocalizableStringData, filePath: string): boolean {
   if (IGNORED_LABELS.has(langLabel.text.trim())) return true;
 
   let jsonPathStr = langLabel.jsonPath.join('/');

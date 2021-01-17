@@ -7,8 +7,7 @@ ig.module('enhanced-ui.fixes.quest-hub')
 
         let locationHook = this.questLocation.hook;
         let rewardsHook = this.rewards.hook;
-        let calculatedHeight =
-          locationHook.pos.y + locationHook.size.y + rewardsHook.pos.y;
+        let calculatedHeight = locationHook.pos.y + locationHook.size.y + rewardsHook.pos.y;
         let oldHeight = this.hook.size.y;
         if (calculatedHeight > oldHeight) {
           this.hook.size.y = calculatedHeight;

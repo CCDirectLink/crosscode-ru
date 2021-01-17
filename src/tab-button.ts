@@ -5,10 +5,7 @@ function createPatch<T extends ImpactClass<unknown>>(
   methodName = 'onTabButtonCreation',
 ): void {
   ig.module(`crosscode-ru.fixes.tab-button.${gameMenuModule}`)
-    .requires(
-      `game.feature.menu.gui.${gameMenuModule}`,
-      'localize-me.final-locale.ready',
-    )
+    .requires(`game.feature.menu.gui.${gameMenuModule}`, 'localize-me.final-locale.ready')
     .defines(() => {
       if (ig.currentLang !== 'ru_RU') return;
 

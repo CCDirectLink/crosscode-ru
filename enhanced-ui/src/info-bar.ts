@@ -44,8 +44,7 @@ ig.module('enhanced-ui.fixes.info-bar')
           let infoBar = this;
           this._associatedBuffInfo.setText = function (text, initDelay) {
             buffInfoSetText.call(this, text, initDelay);
-            if (initDelay == null || initDelay <= 0)
-              infoBar._updateTickerMaxSize();
+            if (initDelay == null || initDelay <= 0) infoBar._updateTickerMaxSize();
           };
         }
       },

@@ -1,8 +1,5 @@
 ig.module('crosscode-ru.fixes.help.level-entry')
-  .requires(
-    'game.feature.menu.gui.help.help-misc',
-    'localize-me.final-locale.ready',
-  )
+  .requires('game.feature.menu.gui.help.help-misc', 'localize-me.final-locale.ready')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 

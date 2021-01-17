@@ -24,9 +24,7 @@ ig.module('enhanced-ui.ticker-display')
       speed: 50, // pixels per second
       delayAtBorders: 1, // seconds
       constantTextOffset: { x: 0, y: 0 }, // pixels
-      shadowGfx: new ig.Image(
-        'mod://enhanced-ui/media/ticker-display-shadow.png',
-      ),
+      shadowGfx: new ig.Image('mod://enhanced-ui/media/ticker-display-shadow.png'),
       // This implementation used to support two-dimensional ticker display, in
       // other words this field was called `maxSize` and had a type of `Vec2`.
       // Fortunately, the vertical tickers weren't used at all, so I simply got
@@ -81,11 +79,7 @@ ig.module('enhanced-ui.ticker-display')
       updateDrawables(renderer) {
         let tickerDrawn = this._tryRenderTicker(renderer);
         if (tickerDrawn) return;
-        this.renderText(
-          renderer,
-          this.constantTextOffset.x,
-          this.constantTextOffset.y,
-        );
+        this.renderText(renderer, this.constantTextOffset.x, this.constantTextOffset.y);
       },
 
       _tryRenderTicker(renderer) {
@@ -103,9 +97,7 @@ ig.module('enhanced-ui.ticker-display')
 
         if (sc.ui2.debug.showTickerBoundaryBoxes) {
           renderer.addColor('red', 0, 0, size.x, size.y).setAlpha(0.25);
-          renderer
-            .addColor('green', prtPosX, 0, this.maxWidth, size.y)
-            .setAlpha(0.25);
+          renderer.addColor('green', prtPosX, 0, this.maxWidth, size.y).setAlpha(0.25);
         }
 
         if (size.x <= this.maxWidth) return false;
@@ -124,10 +116,7 @@ ig.module('enhanced-ui.ticker-display')
         // and always means the same time in seconds
         let scaledDelay = this.delayAtBorders * this.speed;
         let offsetX = (
-          triangleWave(
-            this.timer * this.speed - scaledDelay / 2,
-            maxOffsetX + scaledDelay,
-          ) -
+          triangleWave(this.timer * this.speed - scaledDelay / 2, maxOffsetX + scaledDelay) -
           scaledDelay / 2
         ).limit(0, maxOffsetX);
 
@@ -147,15 +136,7 @@ ig.module('enhanced-ui.ticker-display')
           // const COMPOSITION_MODE = 'xor';
           if (offsetX > 0) {
             renderer
-              .addPattern(
-                PATTERN_SHADOW_LEFT,
-                0,
-                0,
-                0,
-                0,
-                PATTERN_SHADOW_LEFT.width,
-                clippedSizeY,
-              )
+              .addPattern(PATTERN_SHADOW_LEFT, 0, 0, 0, 0, PATTERN_SHADOW_LEFT.width, clippedSizeY)
               .setCompositionMode(COMPOSITION_MODE);
           }
           if (offsetX < maxOffsetX) {
@@ -184,12 +165,9 @@ ig.module('enhanced-ui.ticker-display')
 
       init(...args) {
         this.parent(...args);
-        this.tickerHook = new sc.ui2.TickerDisplayHook(
-          this.hook,
-          (renderer, x, y) => {
-            renderer.addText(this.textBlock, x, y);
-          },
-        );
+        this.tickerHook = new sc.ui2.TickerDisplayHook(this.hook, (renderer, x, y) => {
+          renderer.addText(this.textBlock, x, y);
+        });
       },
 
       setText(text) {
@@ -264,10 +242,7 @@ ig.module('enhanced-ui.ticker-display')
             this.commands,
           );
         }
-        this.size = this.font.getTextDimensions(
-          this.parsedText,
-          this.linePadding,
-        );
+        this.size = this.font.getTextDimensions(this.parsedText, this.linePadding);
         this.reset();
       },
     });
@@ -286,24 +261,20 @@ ig.module('enhanced-ui.ticker-display')
 
         if (settings == null) settings = {};
         this.font = settings.font != null ? settings.font : sc.fontsystem.font;
-        this.linePadding =
-          settings.linePadding != null ? settings.linePadding : 1;
+        this.linePadding = settings.linePadding != null ? settings.linePadding : 1;
 
-        this.tickerHook = new sc.ui2.TickerDisplayHook(
-          this.hook,
-          (renderer, x, y) => {
-            for (let i = 0, len = this.textBlocks.length; i < len; i++) {
-              let textBlock = this.textBlocks[i];
-              let { size } = textBlock;
-              if (sc.ui2.debug.showLongHorizontalTextBlocks) {
-                let color = ['red', 'green', 'blue'][i % 3];
-                renderer.addColor(color, x, y, size.x, size.y).setAlpha(0.25);
-              }
-              renderer.addText(textBlock, x, y);
-              x += size.x;
+        this.tickerHook = new sc.ui2.TickerDisplayHook(this.hook, (renderer, x, y) => {
+          for (let i = 0, len = this.textBlocks.length; i < len; i++) {
+            let textBlock = this.textBlocks[i];
+            let { size } = textBlock;
+            if (sc.ui2.debug.showLongHorizontalTextBlocks) {
+              let color = ['red', 'green', 'blue'][i % 3];
+              renderer.addColor(color, x, y, size.x, size.y).setAlpha(0.25);
             }
-          },
-        );
+            renderer.addText(textBlock, x, y);
+            x += size.x;
+          }
+        });
         this.setText(text);
       },
 
@@ -319,11 +290,7 @@ ig.module('enhanced-ui.ticker-display')
 
         this.text = textLikeToString(text);
         this.commands = [];
-        this.parsedText = ig.TextParser.parse(
-          this.text,
-          this.commands,
-          this.font,
-        );
+        this.parsedText = ig.TextParser.parse(this.text, this.commands, this.font);
 
         this.setSize(0, 0);
         let textWidth = 0;
@@ -335,11 +302,7 @@ ig.module('enhanced-ui.ticker-display')
           let blockCommands = [{ index: 0, command: { color: lastColor } }];
           let maxColorCmdIndex = 0;
           for (let { index, command } of this.commands) {
-            if (
-              'color' in command &&
-              index >= blockStart &&
-              index <= blockEnd
-            ) {
+            if ('color' in command && index >= blockStart && index <= blockEnd) {
               index -= blockStart;
               if (index >= maxColorCmdIndex) {
                 lastColor = command.color;
@@ -364,8 +327,7 @@ ig.module('enhanced-ui.ticker-display')
           textWidth = 0;
         };
 
-        const { SPLIT_WIDTH } = this
-          .constructor as typeof sc.ui2.LongHorizontalTextGui;
+        const { SPLIT_WIDTH } = this.constructor as typeof sc.ui2.LongHorizontalTextGui;
 
         for (let i = 0; i < this.parsedText.length; i++) {
           let charWidth = this.font.getCharWidth(this.parsedText.charCodeAt(i));
@@ -378,10 +340,7 @@ ig.module('enhanced-ui.ticker-display')
           if (isLast) flushBlock(i);
         }
 
-        this.setPivot(
-          Math.floor(this.hook.size.x / 2),
-          Math.floor(this.hook.size.y / 2),
-        );
+        this.setPivot(Math.floor(this.hook.size.x / 2), Math.floor(this.hook.size.y / 2));
       },
 
       prerender() {
@@ -444,10 +403,7 @@ ig.module('enhanced-ui.ticker-display')
 
       if (parsedText.length > 0 && font.iconSets.length > 0) {
         let firstChar = parsedText.charCodeAt(0);
-        if (
-          firstChar >= ig.MultiFont.ICON_START &&
-          firstChar < ig.MultiFont.ICON_END
-        ) {
+        if (firstChar >= ig.MultiFont.ICON_START && firstChar < ig.MultiFont.ICON_END) {
           firstIcon = String.fromCharCode(firstChar);
           parsedText = parsedText.slice(1);
           iconCommands = [];
@@ -480,10 +436,7 @@ ig.module('enhanced-ui.ticker-display')
         };
 
         this.text = textLikeToString(text);
-        let { firstIcon, iconCommands, parsedText, commands } = parseIconText(
-          this.text,
-          this.font,
-        );
+        let { firstIcon, iconCommands, parsedText, commands } = parseIconText(this.text, this.font);
 
         this.iconTextBlock = new ig.TextBlock(
           this.font,
@@ -496,12 +449,9 @@ ig.module('enhanced-ui.ticker-display')
           textBlockSettings,
         );
 
-        this.tickerHook = new sc.ui2.TickerDisplayHook(
-          this.hook,
-          (renderer, x, y) => {
-            renderer.addText(this.textBlock, x, y);
-          },
-        );
+        this.tickerHook = new sc.ui2.TickerDisplayHook(this.hook, (renderer, x, y) => {
+          renderer.addText(this.textBlock, x, y);
+        });
 
         this._updateDimensions();
       },
@@ -510,14 +460,9 @@ ig.module('enhanced-ui.ticker-display')
         if (this.text !== text) this.tickerHook.timer = 0;
         this.text = textLikeToString(text);
 
-        let { firstIcon, iconCommands, parsedText, commands } = parseIconText(
-          this.text,
-          this.font,
-        );
+        let { firstIcon, iconCommands, parsedText, commands } = parseIconText(this.text, this.font);
 
-        this.iconTextBlock.setText(
-          new sc.ui2.ParsedTextData(firstIcon, iconCommands),
-        );
+        this.iconTextBlock.setText(new sc.ui2.ParsedTextData(firstIcon, iconCommands));
         this.textBlock.setText(new sc.ui2.ParsedTextData(parsedText, commands));
         if (this.isVisible()) this.prerender();
 
@@ -529,10 +474,7 @@ ig.module('enhanced-ui.ticker-display')
           this.textBlock.size.x + this.iconTextBlock.size.x,
           Math.max(this.textBlock.size.y, this.iconTextBlock.size.y),
         );
-        this.setPivot(
-          Math.floor(this.hook.size.x / 2),
-          Math.floor(this.hook.size.y / 2),
-        );
+        this.setPivot(Math.floor(this.hook.size.x / 2), Math.floor(this.hook.size.y / 2));
         this.tickerHook.constantTextOffset.x = this.iconTextBlock.size.x;
       },
 

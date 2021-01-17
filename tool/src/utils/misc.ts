@@ -7,10 +7,7 @@ export function hasKey<
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-export function getValueByPath(
-  obj: unknown,
-  path: Array<string | number>,
-): unknown {
+export function getValueByPath(obj: unknown, path: Array<string | number>): unknown {
   for (let key of path) {
     if (isObject(obj) && hasKey(obj, key)) {
       obj = obj[key];
@@ -35,11 +32,7 @@ export function isArray(value: unknown): value is unknown[] {
   return Array.isArray(value);
 }
 
-export function mapGetOrInsert<K, V>(
-  map: Map<K, V>,
-  key: K,
-  defaultValue: V,
-): V {
+export function mapGetOrInsert<K, V>(map: Map<K, V>, key: K, defaultValue: V): V {
   if (map.has(key)) {
     return map.get(key)!;
   } else {

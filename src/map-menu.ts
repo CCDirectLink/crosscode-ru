@@ -1,8 +1,5 @@
 ig.module('crosscode-ru.fixes.map-menu.teleport-to-prepositions')
-  .requires(
-    'game.feature.menu.gui.map.map-area',
-    'localize-me.final-locale.ready',
-  )
+  .requires('game.feature.menu.gui.map.map-area', 'localize-me.final-locale.ready')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 
@@ -65,9 +62,7 @@ ig.module('crosscode-ru.fixes.map-menu.teleport-to-prepositions')
           sc.Dialogs.showYesNoDialog = function (text, ...args): void {
             sc.Dialogs.showYesNoDialog = show;
 
-            let mapName = CORRECT_MAP_NAMES_WITH_PREPOSITIONS.get(
-              landmark.map.path,
-            );
+            let mapName = CORRECT_MAP_NAMES_WITH_PREPOSITIONS.get(landmark.map.path);
             if (mapName != null) text = `Телепортироваться ${mapName}?`;
             return show.call(this, text, ...args);
           };

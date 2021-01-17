@@ -9,9 +9,7 @@ ig.module('crosscode-ru.fixes.status-combat-arts')
     sc.StatusViewCombatArtsEntry.inject({
       getConditionType() {
         let conditions = ig.lang.get<string[]>('sc.gui.menu.status.conditions');
-        return `\\i[status-cond-${sc.menu.statusElement}]${
-          conditions[sc.menu.statusElement]
-        }`;
+        return `\\i[status-cond-${sc.menu.statusElement}]${conditions[sc.menu.statusElement]}`;
       },
     });
   });

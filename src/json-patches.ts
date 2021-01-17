@@ -43,9 +43,7 @@ jsonPatches.add(
     } = await ccmod.resources.loadJSON('data/credits/crosscode-ru.json');
     let russianEntries = Object.entries(russianCreditsData.entries);
 
-    let felixIndex = entries.findIndex(
-      ([key, _value]) => key === 'creativeDirector',
-    );
+    let felixIndex = entries.findIndex(([key, _value]) => key === 'creativeDirector');
     if (felixIndex >= 0) {
       // don't forget that `entries` here has type `Array<[K, V]>`
       entries[felixIndex][1].bottomPad = 80;
@@ -198,12 +196,9 @@ jsonPatches.add('data/maps/rookie-harbor/teleporter.json', (data: any) => {
   if (ig.currentLang !== 'ru_RU') return;
 
   let entity = data.entities.find(
-    (ent: any) =>
-      ent.type === 'EventTrigger' && ent.settings.name === 'Entrance Sequence',
+    (ent: any) => ent.type === 'EventTrigger' && ent.settings.name === 'Entrance Sequence',
   );
-  let tutorialStep = entity.settings.event.find(
-    (stp: any) => stp.type === 'SHOW_TUTORIAL_START',
-  );
+  let tutorialStep = entity.settings.event.find((stp: any) => stp.type === 'SHOW_TUTORIAL_START');
   let step = tutorialStep.acceptStep.find(
     (stp: any) =>
       stp.type === 'SHOW_TUTORIAL_MSG' &&

@@ -1,16 +1,12 @@
 ig.module('crosscode-ru.fixes.credits-section')
-  .requires(
-    'game.feature.credits.gui.credits-gui',
-    'localize-me.final-locale.ready',
-  )
+  .requires('game.feature.credits.gui.credits-gui', 'localize-me.final-locale.ready')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 
     // TODO: calculate total credits length and derive CREDITS_SPEED from it
     const CREDITS_SPPED_DEFAULT = 30;
     const CREDITS_SPEED = 36.45;
-    const HEADER_TRANSITION_DELAY =
-      1.2 * (CREDITS_SPPED_DEFAULT / CREDITS_SPEED);
+    const HEADER_TRANSITION_DELAY = 1.2 * (CREDITS_SPPED_DEFAULT / CREDITS_SPEED);
     const NAME_TRANSITION_DELAY = 2 * (CREDITS_SPPED_DEFAULT / CREDITS_SPEED);
 
     ig.GUI.CreditSection.inject({
@@ -25,19 +21,11 @@ ig.module('crosscode-ru.fixes.credits-section')
       createHeader(text, pos, namesEmpty) {
         this.parent(text, pos, namesEmpty);
 
-        let addedChildren = this.content.hook.children.slice(
-          -(namesEmpty ? 1 : 2),
-        );
+        let addedChildren = this.content.hook.children.slice(-(namesEmpty ? 1 : 2));
         for (let { gui } of addedChildren) {
           gui.onVisibilityChange = (visible) => {
             if (visible) {
-              gui.doStateTransition(
-                'DEFAULT',
-                false,
-                false,
-                null,
-                HEADER_TRANSITION_DELAY,
-              );
+              gui.doStateTransition('DEFAULT', false, false, null, HEADER_TRANSITION_DELAY);
             } else {
               gui.doStateTransition('HIDDEN', true);
             }
@@ -73,19 +61,10 @@ ig.module('crosscode-ru.fixes.credits-section')
             while (currentNameIndex < children.length) {
               let nameHook = children[currentNameIndex];
               // TODO: can this be calculated with `screenCoords`?
-              let absoluteY =
-                content.hook.pos.y +
-                columnContainerGui.hook.pos.y +
-                nameHook.pos.y;
+              let absoluteY = content.hook.pos.y + columnContainerGui.hook.pos.y + nameHook.pos.y;
               if (absoluteY >= ig.system.height) break;
 
-              nameHook.doStateTransition(
-                'DEFAULT',
-                false,
-                false,
-                null,
-                NAME_TRANSITION_DELAY,
-              );
+              nameHook.doStateTransition('DEFAULT', false, false, null, NAME_TRANSITION_DELAY);
               currentNameIndex++;
             }
           };

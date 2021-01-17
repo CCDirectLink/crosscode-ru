@@ -28,8 +28,7 @@ ig.module('enhanced-ui.fixes.options-menu')
         this.childFocusTargets = focusTargets;
 
         let lineHook = this.hook.children[1];
-        this.nameGui.tickerHook.maxWidth =
-          lineHook.size.x - this.nameGui.hook.pos.x + 2;
+        this.nameGui.tickerHook.maxWidth = lineHook.size.x - this.nameGui.hook.pos.x + 2;
         this.nameGui.tickerHook.speed *= 1.25;
         this.nameGui.tickerHook.delayAtBorders /= 1.25;
       },
@@ -37,10 +36,7 @@ ig.module('enhanced-ui.fixes.options-menu')
       update() {
         this.parent();
         // this._hasEntered is set in onMouseInteract of this class
-        if (
-          !this._hasEntered &&
-          !this.childFocusTargets.some((target) => target.focus)
-        ) {
+        if (!this._hasEntered && !this.childFocusTargets.some((target) => target.focus)) {
           this.nameGui.tickerHook.timer = 0;
         }
       },
@@ -55,10 +51,7 @@ ig.module('enhanced-ui.fixes.options-menu')
       show(...args) {
         this.parent(...args);
 
-        let maxButtonWidth = Math.max(
-          this.button.hook.size.x,
-          this.back.hook.size.x,
-        );
+        let maxButtonWidth = Math.max(this.button.hook.size.x, this.back.hook.size.x);
         this.button.setWidth(maxButtonWidth);
         this.back.setWidth(maxButtonWidth);
 
@@ -66,11 +59,7 @@ ig.module('enhanced-ui.fixes.options-menu')
           Math.max(
             150,
             this.anykeyText.hook.size.x + this.anykeyText.hook.pos.y * 2,
-            this.button.hook.pos.x +
-              maxButtonWidth +
-              4 +
-              maxButtonWidth +
-              this.back.hook.pos.x,
+            this.button.hook.pos.x + maxButtonWidth + 4 + maxButtonWidth + this.back.hook.pos.x,
           ),
           this.box.hook.size.y,
         );

@@ -6,9 +6,7 @@ ig.module('enhanced-ui.fixes.title-screen')
         this.parent();
 
         let oldChangelogButtonWidth = this.changelogButton.hook.size.x;
-        this.changelogButton.setText(
-          `\\i[menu]${ig.lang.get('sc.gui.title-screen.changelog')}`,
-        );
+        this.changelogButton.setText(`\\i[menu]${ig.lang.get('sc.gui.title-screen.changelog')}`);
 
         this.changelogButton.hook.transitions.HIDDEN.state.offsetX! -=
           this.changelogButton.hook.size.x - oldChangelogButtonWidth;

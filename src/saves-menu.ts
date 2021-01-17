@@ -1,8 +1,5 @@
 ig.module('crosscode-ru.fixes.saves-menu')
-  .requires(
-    'game.feature.menu.gui.save.save-misc',
-    'localize-me.final-locale.ready',
-  )
+  .requires('game.feature.menu.gui.save.save-misc', 'localize-me.final-locale.ready')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 

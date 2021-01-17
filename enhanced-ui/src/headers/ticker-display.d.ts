@@ -30,11 +30,7 @@ declare namespace sc {
 
 declare namespace sc.ui2 {
   namespace TickerDisplayHook {
-    type RenderTextCallback = (
-      renderer: ig.GuiRenderer,
-      x: number,
-      y: number,
-    ) => void;
+    type RenderTextCallback = (renderer: ig.GuiRenderer, x: number, y: number) => void;
 
     interface FocusTarget {
       focus?: boolean;
@@ -58,8 +54,7 @@ declare namespace sc.ui2 {
     updateDrawables(this: this, renderer: ig.GuiRenderer): void;
     _tryRenderTicker(this: this, renderer: ig.GuiRenderer): boolean;
   }
-  interface TickerDisplayHookConstructor
-    extends ImpactClass<TickerDisplayHook> {
+  interface TickerDisplayHookConstructor extends ImpactClass<TickerDisplayHook> {
     new (
       hook: ig.GuiHook,
       renderText: sc.ui2.TickerDisplayHook.RenderTextCallback,
@@ -98,8 +93,7 @@ declare namespace sc.ui2 {
     prerender(this: this): void;
     clear(this: this): void;
   }
-  interface LongHorizontalTextGuiConstructor
-    extends ImpactClass<LongHorizontalTextGui> {
+  interface LongHorizontalTextGuiConstructor extends ImpactClass<LongHorizontalTextGui> {
     new (
       text: sc.TextLike,
       settings?: sc.ui2.LongHorizontalTextGui.Settings,
@@ -129,10 +123,7 @@ declare namespace sc.ui2 {
     clear(this: this): void;
   }
   interface IconTextGuiConstructor extends ImpactClass<IconTextGui> {
-    new (
-      text: sc.TextLike,
-      settings?: sc.ui2.IconTextGui.Settings,
-    ): IconTextGui;
+    new (text: sc.TextLike, settings?: sc.ui2.IconTextGui.Settings): IconTextGui;
   }
   let IconTextGui: IconTextGuiConstructor;
 }

@@ -11,8 +11,7 @@ const PATCHED_FONT_URLS = [
   'media/font/ru_RU/tiny.png',
 ];
 
-const LEA_SPELLING =
-  localStorage.getItem('options.crosscode-ru.lea-spelling') || '0';
+const LEA_SPELLING = localStorage.getItem('options.crosscode-ru.lea-spelling') || '0';
 
 // relevant Wikipedia page: https://ru.wikipedia.org/wiki/Падеж#Падежная_система_русского_языка
 const LEA_SPELLING_CONVERSION_TABLES = new Map<string, Map<string, string>>([
@@ -51,12 +50,9 @@ if (leaSpellingTable != null) {
     'g',
   );
   textFilter = (text) =>
-    text.replace(
-      regex,
-      (_wholeStr, leftBoundary: string, str: string, rightBoundary: string) => {
-        return `${leftBoundary}${leaSpellingTable.get(str)}${rightBoundary}`;
-      },
-    );
+    text.replace(regex, (_wholeStr, leftBoundary: string, str: string, rightBoundary: string) => {
+      return `${leftBoundary}${leaSpellingTable.get(str)}${rightBoundary}`;
+    });
 }
 
 declare namespace LocalizeMe {
@@ -68,8 +64,6 @@ declare namespace LocalizeMe {
 localizeMe.add_locale('ru_RU', {
   /* eslint-disable @typescript-eslint/naming-convention */
   from_locale: 'en_US',
-  // TODO: this is a temporary solution until I integrate Localize Me with
-  // `ccmod.resources` better
   map_file: LOCALIZE_ME_MAPPING_FILE,
   url_prefix: LOCALIZE_ME_PACKS_DIR,
   language: {
@@ -117,11 +111,7 @@ localizeMe.add_locale('ru_RU', {
       return original;
     }
 
-    if (
-      dictPath.startsWith(
-        'lang/sc/gui.en_US.json/labels/options/crosscode-ru/lea-spelling/',
-      )
-    ) {
+    if (dictPath.startsWith('lang/sc/gui.en_US.json/labels/options/crosscode-ru/lea-spelling/')) {
       return original;
     }
 
@@ -135,9 +125,7 @@ localizeMe.add_locale('ru_RU', {
   pre_patch_font: async (context): Promise<void> => {
     let url = PATCHED_FONT_URLS[context.size_index];
     if (url != null) {
-      context.russianFont = await sc.ui2.waitForLoadable(
-        new ig.Font(url, context.char_height),
-      );
+      context.russianFont = await sc.ui2.waitForLoadable(new ig.Font(url, context.char_height));
     }
   },
 

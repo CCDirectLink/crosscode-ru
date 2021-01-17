@@ -10,9 +10,7 @@ let localizeSpritesOptionValue: boolean = sc.options.get(
   'crosscode-ru.localized-labels-on-sprites',
 );
 sc.ru.shouldPatchSpriteLabels = (notOptional) => {
-  return (
-    ig.currentLang === 'ru_RU' && (notOptional || localizeSpritesOptionValue)
-  );
+  return ig.currentLang === 'ru_RU' && (notOptional || localizeSpritesOptionValue);
 };
 
 sc.Model.addObserver(sc.options, {

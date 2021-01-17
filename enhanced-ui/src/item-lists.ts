@@ -21,10 +21,7 @@ ig.module('enhanced-ui.fixes.item-lists')
         if (this.enableTickerDisplay) {
           let oldTextChild = this.button.textChild;
           let newTextChild = new sc.ui2.IconTextGui(this.button.textChild.text);
-          newTextChild.setAlign(
-            oldTextChild.hook.align.x,
-            oldTextChild.hook.align.y,
-          );
+          newTextChild.setAlign(oldTextChild.hook.align.x, oldTextChild.hook.align.y);
           newTextChild.setPos(oldTextChild.hook.pos.x, oldTextChild.hook.pos.y);
           newTextChild.tickerHook.maxWidth =
             this.button.hook.size.x - sc.BUTTON_TYPE.ITEM.alignXPadding! * 2;
@@ -45,9 +42,7 @@ ig.module('enhanced-ui.fixes.item-lists')
       setButtonText(_text) {
         // well... [insert shrug face here]
         // setButtonText isn't used at all in the entire codebase
-        throw new Error(
-          'enhanced-ui: sc.ListBoxButton.setButtonText: unimplemented',
-        );
+        throw new Error('enhanced-ui: sc.ListBoxButton.setButtonText: unimplemented');
       },
     });
   });
@@ -126,10 +121,7 @@ ig.module('enhanced-ui.fixes.item-lists.trade-gui')
         this.parent();
 
         let newCompareItem = new sc.ui2.IconTextGui('');
-        newCompareItem.setPos(
-          this.compareItem.hook.pos.x,
-          this.compareItem.hook.pos.y,
-        );
+        newCompareItem.setPos(this.compareItem.hook.pos.x, this.compareItem.hook.pos.y);
 
         this.removeChildGui(this.compareItem);
         this.addChildGui(newCompareItem);
@@ -140,9 +132,7 @@ ig.module('enhanced-ui.fixes.item-lists.trade-gui')
 
       _updateTickerMaxSize() {
         this.compareItem.tickerHook.maxWidth =
-          this.hook.size.x -
-          this.compareItem.hook.pos.x -
-          this.compareHelpText.hook.pos.x;
+          this.hook.size.x - this.compareItem.hook.pos.x - this.compareHelpText.hook.pos.x;
       },
     });
 
@@ -161,9 +151,7 @@ ig.module('enhanced-ui.fixes.item-lists.trade-gui')
         this.parent();
         for (let entry of this.entries) {
           let { gui } = entry;
-          let newGui = new sc.ui2.IconTextGui(
-            gui.text,
-          ) as sc.ui2.IconTextGui & {
+          let newGui = new sc.ui2.IconTextGui(gui.text) as sc.ui2.IconTextGui & {
             tradeName: string;
           };
           newGui.tradeName = gui.tradeName;
@@ -173,13 +161,7 @@ ig.module('enhanced-ui.fixes.item-lists.trade-gui')
           if (level > 0) {
             // eslint-disable-next-line no-loop-func
             newGui.setDrawCallback((width, height) =>
-              sc.MenuHelper.drawLevel(
-                level,
-                width,
-                height,
-                numberGfx,
-                isScalable,
-              ),
+              sc.MenuHelper.drawLevel(level, width, height, numberGfx, isScalable),
             );
           }
           newGui.tickerHook.maxWidth = this.hook.size.x - 3 * 2;
@@ -197,10 +179,7 @@ ig.module('enhanced-ui.fixes.item-lists.trade-gui')
       setTraderData(...args) {
         this.parent(...args);
 
-        for (let { gui } of [
-          ...this.requireGui.hook.children,
-          ...this.getGui.hook.children,
-        ]) {
+        for (let { gui } of [...this.requireGui.hook.children, ...this.getGui.hook.children]) {
           if (gui instanceof sc.TradeItem) {
             // make ticker displays permanent here because there is no way to
             // move the mouse over those "buttons"
@@ -212,10 +191,7 @@ ig.module('enhanced-ui.fixes.item-lists.trade-gui')
   });
 
 ig.module('enhanced-ui.fixes.item-lists.shop-confirm')
-  .requires(
-    'game.feature.menu.gui.shop.shop-confirm',
-    'enhanced-ui.ticker-display',
-  )
+  .requires('game.feature.menu.gui.shop.shop-confirm', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.ShopConfirmEntry.inject({
       init(...args) {
@@ -235,66 +211,46 @@ ig.module('enhanced-ui.fixes.item-lists.shop-confirm')
   });
 
 ig.module('enhanced-ui.fixes.item-lists.status-main-equipment')
-  .requires(
-    'game.feature.menu.gui.status.status-view-main',
-    'enhanced-ui.ticker-display',
-  )
+  .requires('game.feature.menu.gui.status.status-view-main', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.StatusViewMainEquipment.Entry.inject({
       init(...args) {
         this.parent(...args);
         let newItemGui = new sc.ui2.IconTextGui(this.itemGui.text);
         newItemGui.setPos(this.textGui.hook.pos.x, this.itemGui.hook.pos.y);
-        newItemGui.tickerHook.maxWidth =
-          this.hook.size.x - this.itemGui.hook.pos.x * 2;
+        newItemGui.tickerHook.maxWidth = this.hook.size.x - this.itemGui.hook.pos.x * 2;
 
         this.removeChildGui(this.itemGui);
         this.addChildGui(newItemGui);
-        this.itemGui = (newItemGui as unknown) as sc.TextGui &
-          sc.TextGui.LevelDrawData;
+        this.itemGui = (newItemGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
       },
     });
   });
 
 ig.module('enhanced-ui.fixes.item-lists.social-menu')
-  .requires(
-    'game.feature.menu.gui.social.social-misc',
-    'enhanced-ui.ticker-display',
-  )
+  .requires('game.feature.menu.gui.social.social-misc', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.SocialInfoBox.inject({
       setCharacter(id) {
         this.parent(id);
 
-        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
-          this.equip,
-          (gui) => {
-            let newGui = new sc.ui2.IconTextGui(gui.text);
-            newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
-            let { level, numberGfx, isScalable } = gui;
-            newGui.setDrawCallback((width, height) =>
-              sc.MenuHelper.drawLevel(
-                level,
-                width,
-                height,
-                numberGfx,
-                isScalable,
-              ),
-            );
-            newGui.tickerHook.maxWidth = this.equip.hook.size.x;
+        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(this.equip, (gui) => {
+          let newGui = new sc.ui2.IconTextGui(gui.text);
+          newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
+          let { level, numberGfx, isScalable } = gui;
+          newGui.setDrawCallback((width, height) =>
+            sc.MenuHelper.drawLevel(level, width, height, numberGfx, isScalable),
+          );
+          newGui.tickerHook.maxWidth = this.equip.hook.size.x;
 
-            return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
-          },
-        );
+          return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
+        });
       },
     });
   });
 
 ig.module('enhanced-ui.fixes.item-lists.quests')
-  .requires(
-    'game.feature.menu.gui.quests.quest-entries',
-    'enhanced-ui.ticker-display',
-  )
+  .requires('game.feature.menu.gui.quests.quest-entries', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.SubTaskEntryBase.inject({
       init(...args) {
@@ -338,10 +294,7 @@ ig.module('enhanced-ui.fixes.item-lists.quests')
   });
 
 ig.module('enhanced-ui.fixes.item-lists.equipment-menu')
-  .requires(
-    'game.feature.menu.gui.equip.equip-bodypart',
-    'enhanced-ui.ticker-display',
-  )
+  .requires('game.feature.menu.gui.equip.equip-bodypart', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.EquipBodyPartContainer.Entry.inject({
       init(...args) {
@@ -349,20 +302,11 @@ ig.module('enhanced-ui.fixes.item-lists.equipment-menu')
 
         let oldTextChild = this.button.textChild;
         let newTextChild = new sc.ui2.IconTextGui(oldTextChild.text);
-        newTextChild.setAlign(
-          oldTextChild.hook.align.x,
-          oldTextChild.hook.align.y,
-        );
+        newTextChild.setAlign(oldTextChild.hook.align.x, oldTextChild.hook.align.y);
         newTextChild.setPos(oldTextChild.hook.pos.x, oldTextChild.hook.pos.y);
         newTextChild.setDrawCallback((width, height) => {
           if (this.level > 0) {
-            sc.MenuHelper.drawLevel(
-              this.level,
-              width,
-              height,
-              this.numberGfx,
-              this.isScalable,
-            );
+            sc.MenuHelper.drawLevel(this.level, width, height, this.numberGfx, this.isScalable);
           }
         });
         newTextChild.tickerHook.maxWidth = this.button.hook.size.x - 5 * 2;
@@ -377,82 +321,58 @@ ig.module('enhanced-ui.fixes.item-lists.equipment-menu')
   });
 
 ig.module('enhanced-ui.fixes.item-lists.quest-dialog')
-  .requires(
-    'game.feature.menu.gui.quests.quest-misc',
-    'enhanced-ui.ticker-display',
-  )
+  .requires('game.feature.menu.gui.quests.quest-misc', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.QuestDialog.inject({
       setQuestRewards(...args) {
         this.parent(...args);
 
-        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
-          this.itemsGui,
-          (gui) => {
-            let newGui = new sc.ui2.IconTextGui(gui.text);
-            newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
-            let { level, numberGfx, isScalable } = gui;
-            if (gui.textBlock.drawCallback != null) {
-              newGui.setDrawCallback((width, height) =>
-                sc.MenuHelper.drawLevel(
-                  level,
-                  width,
-                  height,
-                  numberGfx,
-                  isScalable,
-                ),
-              );
-            }
-            newGui.tickerHook.maxWidth = this.itemsGui.hook.size.x;
+        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(this.itemsGui, (gui) => {
+          let newGui = new sc.ui2.IconTextGui(gui.text);
+          newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
+          let { level, numberGfx, isScalable } = gui;
+          if (gui.textBlock.drawCallback != null) {
+            newGui.setDrawCallback((width, height) =>
+              sc.MenuHelper.drawLevel(level, width, height, numberGfx, isScalable),
+            );
+          }
+          newGui.tickerHook.maxWidth = this.itemsGui.hook.size.x;
 
-            return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
-          },
-        );
+          return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
+        });
       },
     });
   });
 
 ig.module('enhanced-ui.fixes.item-lists.quest-details-view')
-  .requires(
-    'game.feature.menu.gui.quests.quest-details',
-    'enhanced-ui.ticker-display',
-  )
+  .requires('game.feature.menu.gui.quests.quest-details', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.QuestDetailsView.inject({
       _setQuest(quest) {
         this.parent(quest);
-        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
-          this.itemsGui,
-          (gui, i) => {
-            // `isScalable` is added to the `sc.TextGui` instance in all other
-            // cases, but here it is instead captured into a closure from the
-            // local scope?  :SanCheeseAngry:.  This means that I have to look
-            // `isScalable` up manually.
-            let item = sc.inventory.getItem(quest.rewards.items[i].id);
-            let isScalable = Boolean(item.isScalable);
+        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(this.itemsGui, (gui, i) => {
+          // `isScalable` is added to the `sc.TextGui` instance in all other
+          // cases, but here it is instead captured into a closure from the
+          // local scope?  :SanCheeseAngry:.  This means that I have to look
+          // `isScalable` up manually.
+          let item = sc.inventory.getItem(quest.rewards.items[i].id);
+          let isScalable = Boolean(item.isScalable);
 
-            let newGui = new sc.ui2.IconTextGui(gui.text);
-            newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
-            let { level, numberGfx } = gui;
-            if (gui.textBlock.drawCallback == null) {
-              newGui.setDrawCallback((width, height) =>
-                sc.MenuHelper.drawLevel(
-                  level,
-                  width,
-                  height,
-                  numberGfx,
-                  isScalable,
-                ),
-              );
-            }
-            newGui.tickerHook.maxWidth =
-              this.personCharGui.hook.pos.x +
-              this.personCharGui.hook.size.x -
-              (this.itemsGui.hook.pos.x + gui.hook.pos.x);
+          let newGui = new sc.ui2.IconTextGui(gui.text);
+          newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
+          let { level, numberGfx } = gui;
+          if (gui.textBlock.drawCallback == null) {
+            newGui.setDrawCallback((width, height) =>
+              sc.MenuHelper.drawLevel(level, width, height, numberGfx, isScalable),
+            );
+          }
+          newGui.tickerHook.maxWidth =
+            this.personCharGui.hook.pos.x +
+            this.personCharGui.hook.size.x -
+            (this.itemsGui.hook.pos.x + gui.hook.pos.x);
 
-            return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
-          },
-        );
+          return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
+        });
       },
     });
   });

@@ -21,9 +21,7 @@ ig.module('enhanced-ui.debug.gui')
       }, 3000);
       clazz.prototype.updateDrawables = function (renderer) {
         updateDrawables.call(this, renderer);
-        renderer
-          .addColor('red', 0, 0, this.hook.size.x, this.hook.size.y)
-          .setAlpha(0.25);
+        renderer.addColor('red', 0, 0, this.hook.size.x, this.hook.size.y).setAlpha(0.25);
       };
     };
   });

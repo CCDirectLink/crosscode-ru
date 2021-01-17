@@ -3,9 +3,5 @@ declare namespace sc.ru {
     entries: ReadonlyArray<readonly [K, T]>,
   ): Record<K, T>;
 
-  function insertAfterOrAppend<T>(
-    array: T[],
-    index: number,
-    ...items: T[]
-  ): void;
+  function insertAfterOrAppend<T>(array: T[], index: number, ...items: T[]): void;
 }

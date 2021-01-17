@@ -78,11 +78,7 @@ export class NotaClient {
     let url = new URL(path, NOTABENOID_URL);
     let doc = await fetchDocument(url);
 
-    if (
-      doc.querySelector(
-        'form[method="post"][action="/"] input[name^="login"]',
-      ) != null
-    ) {
+    if (doc.querySelector('form[method="post"][action="/"] input[name^="login"]') != null) {
       throw new Error('authentication required');
     }
 
@@ -92,9 +88,7 @@ export class NotaClient {
   public async fetchAllChapterStatuses(): Promise<ChapterStatuses> {
     let doc = await this.makeRequest(`/book/${BOOK_ID}`);
     let result = new Map<string, ChapterStatus>();
-    for (let tr of doc.querySelectorAll<HTMLElement>(
-      '#Chapters > tbody > tr',
-    )) {
+    for (let tr of doc.querySelectorAll<HTMLElement>('#Chapters > tbody > tr')) {
       let chapterStatus = parseChapterStatus(tr);
       if (chapterStatus != null) result.set(chapterStatus.name, chapterStatus);
     }
@@ -114,9 +108,7 @@ export class NotaClient {
       iterator: function* (this: NotaClient): Generator<Promise<Fragment[]>> {
         for (let i = 0; i < pages; i++) {
           console.log(`${name}, page ${i + 1}/${pages}`);
-          yield this.makeRequest(
-            `/book/${BOOK_ID}/${id}?Orig_page=${i + 1}`,
-          ).then((doc) => {
+          yield this.makeRequest(`/book/${BOOK_ID}/${id}?Orig_page=${i + 1}`).then((doc) => {
             let fragments: Fragment[] = [];
             for (let tr of doc.querySelectorAll('#Tr > tbody > tr')) {
               let f = parseFragment(id, tr);
@@ -175,10 +167,7 @@ export class NotaClient {
     });
   }
 
-  public async deleteFragmentOriginal(
-    chapterId: string,
-    fragmentId: string,
-  ): Promise<void> {
+  public async deleteFragmentOriginal(chapterId: string, fragmentId: string): Promise<void> {
     await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/remove`, {
       method: 'POST',
       credentials: 'include',
@@ -248,13 +237,9 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   cs.id = id;
   let anchor = element.querySelector(':scope > td:nth-child(1) > a');
   if (anchor == null) return null;
-  let activityElem = element.querySelector<HTMLElement>(
-    ':scope > td:nth-child(3) > span',
-  );
+  let activityElem = element.querySelector<HTMLElement>(':scope > td:nth-child(3) > span');
   if (activityElem == null) return null;
-  let doneElem = element.querySelector<HTMLElement>(
-    ':scope > td:nth-child(4) > small',
-  );
+  let doneElem = element.querySelector<HTMLElement>(':scope > td:nth-child(4) > small');
   if (doneElem == null) return null;
 
   cs.name = anchor.textContent!;
@@ -262,9 +247,7 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   let match = /(\d+) ([а-я.]+) (\d+) г., (\d+):(\d+)/.exec(activityElem.title);
   if (match == null || match.length !== 6) return null;
   let [day, month, year, hour, minute] = match.slice(1);
-  let [dayN, yearN, hourN, minuteN] = [day, year, hour, minute].map((s) =>
-    parseInt(s, 10),
-  );
+  let [dayN, yearN, hourN, minuteN] = [day, year, hour, minute].map((s) => parseInt(s, 10));
   let monthIndex = RU_ABBREVIATED_MONTH_NAMES.indexOf(month);
   if (monthIndex < 0) return null;
   cs.modificationTimestamp = new Date(
@@ -273,9 +256,7 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
 
   match = /\((\d+) \/ (\d+)\)/.exec(doneElem.textContent!);
   if (match == null || match.length !== 3) return null;
-  let [translatedFragments, totalFragments] = match
-    .slice(1)
-    .map((s) => parseInt(s, 10));
+  let [translatedFragments, totalFragments] = match.slice(1).map((s) => parseInt(s, 10));
   cs.translatedFragments = translatedFragments;
   cs.totalFragments = totalFragments;
 
@@ -340,37 +321,29 @@ function parseTranslation(element: Element): Translation | null {
   t.id = element.id.slice(1);
   t.rawText = element.querySelector('.text')!.textContent!;
   t.authorUsername = element.querySelector('.user')!.textContent!;
-  t.votes = parseInt(
-    element.querySelector('.rating .current')!.textContent!,
-    10,
-  );
+  t.votes = parseInt(element.querySelector('.rating .current')!.textContent!, 10);
   t.score = 0;
 
   let match = /(\d+).(\d+).(\d+) в (\d+):(\d+)/.exec(
     element.querySelector('.info .icon-flag')!.nextSibling!.textContent!,
   );
   if (match == null || match.length !== 6) return null;
-  let [day, month, year, hour, minute] = match
-    .slice(1)
-    .map((s) => parseInt(s, 10));
+  let [day, month, year, hour, minute] = match.slice(1).map((s) => parseInt(s, 10));
   t.timestamp = Date.UTC(2000 + year, month - 1, day, hour - 3, minute);
 
   let flags: Record<string, boolean | string> = {};
-  t.text = t.rawText.replace(
-    /\n?⟪(.*)⟫\s*/,
-    (_match: string, group: string) => {
-      for (let s of group.split('|')) {
-        s = s.trim();
-        let i = s.indexOf(':');
-        if (i >= 0) {
-          flags[s.slice(0, i)] = s.slice(i + 1);
-        } else {
-          flags[s] = true;
-        }
+  t.text = t.rawText.replace(/\n?⟪(.*)⟫\s*/, (_match: string, group: string) => {
+    for (let s of group.split('|')) {
+      s = s.trim();
+      let i = s.indexOf(':');
+      if (i >= 0) {
+        flags[s.slice(0, i)] = s.slice(i + 1);
+      } else {
+        flags[s] = true;
       }
-      return '';
-    },
-  );
+    }
+    return '';
+  });
   t.flags = flags;
 
   t.score = calculateTranslationScore(t as Translation);
@@ -461,10 +434,7 @@ export function getChapterNameOfFile(path: string): string {
               return dirs[1];
 
             case 'areas':
-              if (
-                dirs.length === 2 &&
-                AREA_CHAPTER_NAMES.has(parsedPath.name)
-              ) {
+              if (dirs.length === 2 && AREA_CHAPTER_NAMES.has(parsedPath.name)) {
                 return parsedPath.name;
               }
               break;
@@ -497,10 +467,7 @@ interface FragmentDescriptionGeneratorContext {
 }
 
 // based on https://gitlab.com/Dimava/crosscode-translation-ru/-/blob/master/assets/editor/CrossFile.js#L247-300
-export function generateFragmentDescriptionText(
-  jsonPath: string[],
-  fileData: unknown,
-): string {
+export function generateFragmentDescriptionText(jsonPath: string[], fileData: unknown): string {
   let ctx: FragmentDescriptionGeneratorContext = {
     fileData,
     descriptionLines: [],

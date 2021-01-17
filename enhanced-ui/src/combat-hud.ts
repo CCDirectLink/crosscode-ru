@@ -1,8 +1,5 @@
 ig.module('enhanced-ui.fixes.combat-hud')
-  .requires(
-    'game.feature.combat.gui.hp-bar-boss',
-    'game.feature.combat.model.enemy-type',
-  )
+  .requires('game.feature.combat.gui.hp-bar-boss', 'game.feature.combat.model.enemy-type')
   .defines(() => {
     sc.SUB_HP_EDITOR.BOSS.inject({
       init(...args) {

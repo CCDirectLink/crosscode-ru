@@ -6,8 +6,7 @@ ig.module('enhanced-ui.fixes.trophies-menu')
         this.parent(...args);
 
         let descriptionHook = this.description.hook;
-        let calculatedHeight =
-          descriptionHook.pos.y + descriptionHook.size.y + 7;
+        let calculatedHeight = descriptionHook.pos.y + descriptionHook.size.y + 7;
         let oldHeight = this.hook.size.y;
         if (calculatedHeight > oldHeight) this.hook.size.y = calculatedHeight;
       },

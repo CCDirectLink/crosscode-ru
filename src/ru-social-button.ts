@@ -1,9 +1,5 @@
 ig.module('crosscode-ru.social-button')
-  .requires(
-    'game.feature.gui.screen.title-screen',
-    'dom.ready',
-    'localize-me.final-locale.ready',
-  )
+  .requires('game.feature.gui.screen.title-screen', 'dom.ready', 'localize-me.final-locale.ready')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 
@@ -126,10 +122,7 @@ ig.module('crosscode-ru.social-button')
         let languageIndex = ig.LANG_DETAILS.ru_RU.localizeme_global_index;
         let btn = this.followButton;
         btn.textChild.setText(`\\i[language-${languageIndex}]`);
-        btn.textChild.setPos(
-          btn.textChild.hook.pos.x + 1,
-          btn.textChild.hook.pos.y - 1,
-        );
+        btn.textChild.setPos(btn.textChild.hook.pos.x + 1, btn.textChild.hook.pos.y - 1);
         btn.onButtonPress = showRussianSocialDialog;
       },
     });

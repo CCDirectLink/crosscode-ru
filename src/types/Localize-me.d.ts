@@ -10,10 +10,7 @@ declare namespace LocalizeMe {
 
   type MapFileFunction = (
     url_to_patch: string,
-  ) =>
-    | string
-    | (() => MaybePromise<TranslationPack | TranslationPackFunction>)
-    | null;
+  ) => string | (() => MaybePromise<TranslationPack | TranslationPackFunction>) | null;
   type TranslationPackFunction = (dict_path: string) => TranslationResult;
 
   interface Rectangle {
@@ -58,40 +55,23 @@ declare namespace ig {
     from_locale?: string;
     map_file?: string | (() => MaybePromise<LocalizeMe.MapFileFunction>);
     url_prefix?: string;
-    missing_cb?: (
-      lang_label_or_string: ig.LangLabel.Data | string,
-      dict_path: string,
-    ) => string;
+    missing_cb?: (lang_label_or_string: ig.LangLabel.Data | string, dict_path: string) => string;
     language?: ig.LangLabel.Data;
-    text_filter?: (
-      text: string,
-      translation_result: LocalizeMe.TranslationResult,
-    ) => string;
+    text_filter?: (text: string, translation_result: LocalizeMe.TranslationResult) => string;
     patch_base_font: (
       canvas: HTMLCanvasElement,
       context: LocalizeMe.PatchBaseFontContext,
     ) => ig.Image.Data;
-    pre_patch_font: (
-      context: LocalizeMe.PrePatchFontContext,
-    ) => MaybePromise<void>;
+    pre_patch_font: (context: LocalizeMe.PrePatchFontContext) => MaybePromise<void>;
     number_locale?: string;
-    format_number?: (
-      number: number,
-      precision: number,
-      suffix: string,
-      template: string,
-    ) => string;
+    format_number?: (number: number, precision: number, suffix: string, template: string) => string;
     misc_time_function?: () => string;
     flag?: LocalizeMe.Resource<ig.Image.Data | string>;
   }
 }
 
 interface LocalizeMe {
-  add_locale(
-    this: this,
-    name: string,
-    options: NullablePartial<ig.LangOptions>,
-  ): void;
+  add_locale(this: this, name: string, options: NullablePartial<ig.LangOptions>): void;
 
   register_locale_chosen(this: this, func: () => void): void;
 }

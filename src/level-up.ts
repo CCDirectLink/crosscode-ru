@@ -1,8 +1,5 @@
 ig.module('crosscode-ru.fixes.level-up')
-  .requires(
-    'game.feature.gui.widget.level-up-hud',
-    'localize-me.final-locale.ready',
-  )
+  .requires('game.feature.gui.widget.level-up-hud', 'localize-me.final-locale.ready')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 

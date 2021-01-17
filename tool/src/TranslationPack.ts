@@ -25,11 +25,7 @@ export class LocalizeMePacker {
     if (localizeMeFilePath.startsWith('data/')) {
       localizeMeFilePath = localizeMeFilePath.slice('data/'.length);
     }
-    let pack: LocalizeMePack = miscUtils.mapGetOrInsert(
-      this.packs,
-      localizeMeFilePath,
-      {},
-    );
+    let pack: LocalizeMePack = miscUtils.mapGetOrInsert(this.packs, localizeMeFilePath, {});
 
     let translation = f.translations[0].text;
     if (translation === EMPTY_STRING_TAG) translation = '';

@@ -6,9 +6,7 @@ export interface Settings {
 }
 
 export async function readSettings(): Promise<Settings> {
-  let settings: Settings | null = await fsUtils.readJsonFileOptional(
-    paths.SETTINGS_FILE,
-  );
+  let settings: Settings | null = await fsUtils.readJsonFileOptional(paths.SETTINGS_FILE);
   if (settings == null) {
     settings = {
       autoOpen: true,

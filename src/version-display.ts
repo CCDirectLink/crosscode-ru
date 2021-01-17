@@ -13,10 +13,7 @@ ig.module('crosscode-ru.version-display')
       let newVersionGui = new sc.TextGui(`ru v${sc.ru.version}`, {
         font: sc.fontsystem.tinyFont,
       });
-      newVersionGui.setAlign(
-        prevVersionGui.hook.align.x,
-        prevVersionGui.hook.align.y,
-      );
+      newVersionGui.setAlign(prevVersionGui.hook.align.x, prevVersionGui.hook.align.y);
       newVersionGui.setPos(0, prevVersionGui.hook.size.y);
       prevVersionGui.addChildGui(newVersionGui);
       return newVersionGui;

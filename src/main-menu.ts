@@ -37,12 +37,7 @@ ig.module('crosscode-ru.fixes.main-menu.time-and-money-gui')
     sc.TimeAndMoneyGUI.inject({
       init() {
         this.parent();
-        for (let { hook } of [
-          this.credit,
-          this.timeSec,
-          this.timeMin,
-          this.timeHour,
-        ]) {
+        for (let { hook } of [this.credit, this.timeSec, this.timeMin, this.timeHour]) {
           hook.pos.x -= 4;
         }
       },
@@ -60,24 +55,8 @@ ig.module('crosscode-ru.fixes.main-menu.time-and-money-gui')
           MONEY_ICON_HEIGHT,
         );
 
-        renderer.addGfx(
-          this.timeGfx,
-          111,
-          21,
-          TIME_TILE_X,
-          TIME_TILE_Y,
-          TIME_WIDTH,
-          TIME_HEIGHT,
-        );
-        renderer.addGfx(
-          this.timeGfx,
-          86,
-          21,
-          TIME_TILE_X,
-          TIME_TILE_Y,
-          TIME_WIDTH,
-          TIME_HEIGHT,
-        );
+        renderer.addGfx(this.timeGfx, 111, 21, TIME_TILE_X, TIME_TILE_Y, TIME_WIDTH, TIME_HEIGHT);
+        renderer.addGfx(this.timeGfx, 86, 21, TIME_TILE_X, TIME_TILE_Y, TIME_WIDTH, TIME_HEIGHT);
       },
     });
   });

@@ -124,10 +124,7 @@
       "columns": 1,
       "order": 0,
       "key": "BASE",
-      "names": [
-        { "en_US": "Varenik1226" },
-        { "en_US": "Schepitsch", "ru_RU": "Щепыч" }
-      ]
+      "names": [{ "en_US": "Varenik1226" }, { "en_US": "Schepitsch", "ru_RU": "Щепыч" }]
     },
 
     "ru_specialThanks": {
