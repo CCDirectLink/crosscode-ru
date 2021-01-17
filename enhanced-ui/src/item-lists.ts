@@ -1,11 +1,12 @@
 function guiMapChildren<T extends ig.GuiElementBase = ig.GuiElementBase>(
   gui: ig.GuiElementBase,
-  callback: (child: T) => T,
+  callback: (child: T, index: number) => T,
 ): void {
   let oldChildHooks = [...gui.hook.children];
   gui.removeAllChildren();
-  for (let oldChildHook of oldChildHooks) {
-    let newChild = callback(oldChildHook.gui as T);
+  for (let i = 0, len = oldChildHooks.length; i < len; i++) {
+    let oldChildHook = oldChildHooks[i];
+    let newChild = callback(oldChildHook.gui as T, i);
     gui.addChildGui(newChild as ig.GuiElementBase);
   }
 }
@@ -377,13 +378,13 @@ ig.module('enhanced-ui.fixes.item-lists.equipment-menu')
 
 ig.module('enhanced-ui.fixes.item-lists.quest-dialog')
   .requires(
-    'game.feature.menu.gui.equip.equip-bodypart',
+    'game.feature.menu.gui.quests.quest-misc',
     'enhanced-ui.ticker-display',
   )
   .defines(() => {
     sc.QuestDialog.inject({
-      setQuestRewards(quest, hideRewards, finished) {
-        this.parent(quest, hideRewards, finished);
+      setQuestRewards(...args) {
+        this.parent(...args);
 
         guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
           this.itemsGui,
@@ -391,7 +392,7 @@ ig.module('enhanced-ui.fixes.item-lists.quest-dialog')
             let newGui = new sc.ui2.IconTextGui(gui.text);
             newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
             let { level, numberGfx, isScalable } = gui;
-            if (level > 0 && !hideRewards) {
+            if (gui.textBlock.drawCallback != null) {
               newGui.setDrawCallback((width, height) =>
                 sc.MenuHelper.drawLevel(
                   level,
@@ -403,6 +404,51 @@ ig.module('enhanced-ui.fixes.item-lists.quest-dialog')
               );
             }
             newGui.tickerHook.maxWidth = this.itemsGui.hook.size.x;
+
+            return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
+          },
+        );
+      },
+    });
+  });
+
+ig.module('enhanced-ui.fixes.item-lists.quest-details-view')
+  .requires(
+    'game.feature.menu.gui.quests.quest-details',
+    'enhanced-ui.ticker-display',
+  )
+  .defines(() => {
+    sc.QuestDetailsView.inject({
+      _setQuest(quest) {
+        this.parent(quest);
+        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(
+          this.itemsGui,
+          (gui, i) => {
+            // `isScalable` is added to the `sc.TextGui` instance in all other
+            // cases, but here it is instead captured into a closure from the
+            // local scope?  :SanCheeseAngry:.  This means that I have to look
+            // `isScalable` up manually.
+            let item = sc.inventory.getItem(quest.rewards.items[i].id);
+            let isScalable = Boolean(item.isScalable);
+
+            let newGui = new sc.ui2.IconTextGui(gui.text);
+            newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
+            let { level, numberGfx } = gui;
+            if (gui.textBlock.drawCallback == null) {
+              newGui.setDrawCallback((width, height) =>
+                sc.MenuHelper.drawLevel(
+                  level,
+                  width,
+                  height,
+                  numberGfx,
+                  isScalable,
+                ),
+              );
+            }
+            newGui.tickerHook.maxWidth =
+              this.personCharGui.hook.pos.x +
+              this.personCharGui.hook.size.x -
+              (this.itemsGui.hook.pos.x + gui.hook.pos.x);
 
             return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
           },
