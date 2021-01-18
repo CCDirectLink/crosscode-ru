@@ -6,7 +6,7 @@
     "en_US": "Russian translation for CrossCode",
     "ru_RU": "Русский перевод CrossCode и сопутствующие исправления интерфейса"
   },
-  "homepage": "https://github.com/dmitmel/crosscode-ru",
+  "homepage": "https://github.com/CCDirectLink/crosscode-ru",
   "main": "dist/main.js",
   "postload": "dist/postload.js",
   "poststart": "dist/poststart.js",

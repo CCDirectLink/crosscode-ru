@@ -97,7 +97,7 @@
 
 <big><strong>ВНИМАНИЕ!!! Пожалуйста, внимательно читайте, что и куда надо скачивать!</strong></big>
 
-Перейдите на страницу [последнего релиза](https://github.com/dmitmel/crosscode-ru/releases/latest) и скачайте архив с именем `crosscode-ru_quick-install_vX.Y.Z.zip` (или `crosscode-ru_quick-install_vX.Y.Z.tar.gz` если вам не нравится `.zip`). **Обратите внимание на приписку `quick-install` в названии!** Этот архив уже содержит все моды из русского модпака плюс загрузчик модов [CCLoader](https://github.com/CCDirectLink/CCLoader).
+Перейдите на страницу [последнего релиза](https://github.com/CCDirectLink/crosscode-ru/releases/latest) и скачайте архив с именем `crosscode-ru_quick-install_vX.Y.Z.zip` (или `crosscode-ru_quick-install_vX.Y.Z.tar.gz` если вам не нравится `.zip`). **Обратите внимание на приписку `quick-install` в названии!** Этот архив уже содержит все моды из русского модпака плюс загрузчик модов [CCLoader](https://github.com/CCDirectLink/CCLoader).
 
 ### Шаг 3. Установка модпака
 
@@ -228,4 +228,4 @@
 
 ## Разные вопросы о легальности
 
-Команда crosscode-ru никак не связана с [RadicalFishGames](http://www.radicalfishgames.com/?page_id=17). Разрешение на распространение модпака в таком виде, в котором он сейчас есть, было получено ([ссылка 1](https://discordapp.com/channels/143364538958348288/276459212807340034/676870708613087272), [ссылка 2](https://discordapp.com/channels/143364538958348288/276459212807340034/676891793417306132)). Переводы и изображения (ассеты) распространяются под лицензией [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). Код из [этого репозитория](https://github.com/dmitmel/crosscode-ru) распространяется под лицензией [MIT](https://choosealicense.com/licenses/mit/).
+Команда crosscode-ru никак не связана с [RadicalFishGames](http://www.radicalfishgames.com/?page_id=17). Разрешение на распространение модпака в таком виде, в котором он сейчас есть, было получено ([ссылка 1](https://discordapp.com/channels/143364538958348288/276459212807340034/676870708613087272), [ссылка 2](https://discordapp.com/channels/143364538958348288/276459212807340034/676891793417306132)). Переводы и изображения (ассеты) распространяются под лицензией [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). Код из [этого репозитория](https://github.com/CCDirectLink/crosscode-ru) распространяется под лицензией [MIT](https://choosealicense.com/licenses/mit/).
