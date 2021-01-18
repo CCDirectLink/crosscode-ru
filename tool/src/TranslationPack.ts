@@ -63,10 +63,7 @@ export class LocalizeMePacker {
           console.warn(`${file} ${jsonPath}: not a string`);
           return false;
         }
-        let obj2 = obj as {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          en_US?: unknown;
-        };
+        let obj2 = obj as { en_US?: unknown };
         if (typeof obj2.en_US !== 'string') {
           console.warn(`${file} ${jsonPath}: not a string`);
           return false;

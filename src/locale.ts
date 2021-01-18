@@ -62,9 +62,11 @@ declare namespace LocalizeMe {
 }
 
 localizeMe.add_locale('ru_RU', {
-  /* eslint-disable @typescript-eslint/naming-convention */
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   from_locale: 'en_US',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   map_file: LOCALIZE_ME_MAPPING_FILE,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   url_prefix: LOCALIZE_ME_PACKS_DIR,
   language: {
     en_US: 'Russian',
@@ -76,12 +78,10 @@ localizeMe.add_locale('ru_RU', {
     ko_KR: '러시아어',
   },
   flag: 'media/font/ru_RU/flag.png',
-  /* eslint-enable @typescript-eslint/naming-convention */
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   missing_cb: (langLabelOrString, dictPath) => {
     if (typeof langLabelOrString === 'string') {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       langLabelOrString = { en_US: langLabelOrString };
     }
     let original = langLabelOrString.en_US;

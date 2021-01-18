@@ -231,7 +231,6 @@ jsonPatches.add('data/maps/bergen/bergen.json', (data: any) => {
       hasKey(value, 'name') &&
       value.name === 'Holiday Man'
     ) {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       value.name = { en_US: value.name };
       return;
     }

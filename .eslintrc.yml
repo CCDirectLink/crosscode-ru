@@ -24,6 +24,24 @@ overrides:
       # because I have to use '.js' file extensions in imports
       node/no-missing-import: off
 
+      '@typescript-eslint/naming-convention':
+        - warn
+        - selector: default
+          format: null
+          filter:
+            regex: '^en_US|de_DE|fr_FR|ru_RU|zh_CN|ja_JP|ko_KR$'
+            match: true
+        - selector: default
+          format:
+            - camelCase
+            - PascalCase
+            - UPPER_CASE
+          leadingUnderscore: allow
+          trailingUnderscore: allow
+          filter:
+            regex: '^[a-zA-Z_$][a-zA-Z0-9_$]*$'
+            match: true
+
   - files:
       - 'src/**/*.ts'
     parserOptions:
