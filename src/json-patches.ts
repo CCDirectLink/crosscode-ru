@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 const { jsonPatches } = ccmod.resources;
+const { hasKey } = ccmod.utils;
 
 jsonPatches.add('data/lang/sc/gui.en_US.json', (data: any) =>
   ig.merge(data, {
@@ -211,4 +212,34 @@ jsonPatches.add('data/maps/rookie-harbor/teleporter.json', (data: any) => {
 
   step.pos.x = 131;
   step.size.x = 122;
+});
+
+jsonPatches.add('data/maps/bergen/bergen.json', (data: any) => {
+  if (ig.currentLang !== 'ru_RU') return;
+
+  let entity = data.entities.find(
+    (ent: any) => ent.type === 'NPC' && ent.settings.name === 'holiday-man',
+  );
+  patchSantamaRecursively(entity.settings.npcStates);
+
+  function patchSantamaRecursively(value: any): void {
+    if (value == null || typeof value !== 'object') return;
+
+    if (
+      hasKey(value, 'type') &&
+      value.type === 'ADD_MSG_PERSON' &&
+      hasKey(value, 'name') &&
+      value.name === 'Holiday Man'
+    ) {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      value.name = { en_US: value.name };
+      return;
+    }
+
+    for (let key in value) {
+      if (hasKey(value, key)) {
+        patchSantamaRecursively(value[key]);
+      }
+    }
+  }
 });
