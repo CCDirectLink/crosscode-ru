@@ -68,7 +68,7 @@
 
     "ru_tester": {
       "header": {
-        "en_US": "Toster",
+        "en_US": "Toster (testers)",
         "ru_RU": "Тостеры (тестировщики)"
       },
       "columns": 1,
