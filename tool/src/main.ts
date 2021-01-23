@@ -577,18 +577,15 @@ class Main {
           let globalIdxStr = String(globalLangLabelIndex).padStart(globalLangLabelIndexDigits, '0');
 
           let lines = [];
-          lines.push(
-            `\n`,
-            `#: ${orig.file} ${orig.jsonPath} #${orig.langUid}\n`,
-            `#, max-length:${orig.text.length * 10}\n`,
-            `#. [${globalIdxStr}] ${orig.file} ${orig.jsonPath} #${orig.langUid}\n`,
-          );
+          lines.push(`\n`, `#. [${globalIdxStr}] ${orig.file} ${orig.jsonPath} #${orig.langUid}\n`);
           for (let line of orig.descriptionText.length > 0
             ? orig.descriptionText.split('\n')
             : []) {
             lines.push(`#. ${line}\n`);
           }
           lines.push(
+            `#: ${orig.file} ${orig.jsonPath} #${orig.langUid}\n`,
+            `#, max-length:${orig.text.length * 10}\n`,
             `msgctxt ${JSON.stringify(`${orig.file}/${orig.jsonPath}`)}\n`,
             `msgid ${JSON.stringify(orig.text)}\n`,
             `msgstr ${JSON.stringify(translationStr)}\n`,
