@@ -28,6 +28,7 @@ import paths from './node-builtin-modules/path.js';
 import * as asyncUtils from './utils/async.js';
 import * as iteratorUtils from './utils/iterator.js';
 import * as miscUtils from './utils/misc.js';
+import * as urlUtils from './utils/url.js';
 
 declare global {
   var app: Main; // eslint-disable-line no-var
@@ -583,8 +584,9 @@ class Main {
             : []) {
             lines.push(`#. ${line}\n`);
           }
+          let locationText = `${orig.file}#${orig.jsonPath}#${orig.langUid}`;
           lines.push(
-            `#: ${orig.file} ${orig.jsonPath} #${orig.langUid}\n`,
+            `#: ${urlUtils.encodeURIWeblate(locationText)}\n`,
             `#, max-length:${orig.text.length * 10}\n`,
             `msgctxt ${JSON.stringify(`${orig.file}/${orig.jsonPath}`)}\n`,
             `msgid ${JSON.stringify(orig.text)}\n`,
