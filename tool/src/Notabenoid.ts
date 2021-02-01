@@ -39,6 +39,7 @@ export interface ChapterStatus {
   modificationTimestamp: number;
   translatedFragments: number;
   totalFragments: number;
+  pages: number;
 }
 
 export interface Chapter extends ChapterStatus {
@@ -95,12 +96,7 @@ export class NotaClient {
     return result;
   }
 
-  public createChapterFragmentFetcher({
-    totalFragments,
-    id,
-    name,
-  }: ChapterStatus): Fetcher<Fragment[]> {
-    let pages = Math.ceil(totalFragments / CHAPTER_PAGE_SIZE);
+  public createChapterFragmentFetcher({ id, name, pages }: ChapterStatus): Fetcher<Fragment[]> {
     return {
       total: pages,
       // seriously... JS has regular generator functions, yet it doesn't have
@@ -259,6 +255,7 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   let [translatedFragments, totalFragments] = match.slice(1).map((s) => parseInt(s, 10));
   cs.translatedFragments = translatedFragments;
   cs.totalFragments = totalFragments;
+  cs.pages = Math.ceil(totalFragments / CHAPTER_PAGE_SIZE);
 
   return cs as ChapterStatus;
 }

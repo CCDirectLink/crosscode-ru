@@ -638,11 +638,16 @@ class Main {
         chapterFragments.set(name, fragments);
       }
 
-      for (let [i, status] of chaptersWithUpdates.entries()) {
+      let totalNotaPagesCount = 0;
+      let fetchedNotaPagesCount = 0;
+      for (let chapter of chaptersWithUpdates) {
+        totalNotaPagesCount += chapter.pages;
+      }
+
+      for (let status of chaptersWithUpdates) {
         let { name } = status;
         console.log(`downloading ${name}`);
         this.progressBar.setTaskInfo(`Скачивание главы '${name}' с Ноты...`);
-        this.progressBar.setValue(i, chaptersWithUpdates.length);
 
         let fragments: Fragment[] = [];
 
@@ -650,11 +655,15 @@ class Main {
           status,
         );
         console.log('notaPageCount', notaPageCount);
+
+        let self = this;
         await asyncUtils.limitConcurrency(
           (function* () {
             for (let promise of iterator) {
               yield promise.then((pageFragments) => {
-                fragments = fragments.concat(pageFragments);
+                self.progressBar.setValue(fetchedNotaPagesCount, totalNotaPagesCount);
+                fragments.push(...pageFragments);
+                fetchedNotaPagesCount++;
               });
             }
           })(),
