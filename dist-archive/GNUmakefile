@@ -15,7 +15,7 @@ SHELL := bash
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-.PHONY: all clean
+.PHONY: all clean compile-translations
 
 # Function that returns relative paths (i.e. excluding the path to the base
 # directory) of all files matching any of the provided patterns in the provided
@@ -111,7 +111,7 @@ $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
 $(QUICK_INSTALL_TMP_DIR)/ccloader:
 	$(call download_archive,$(@D),http://stronghold.crosscode.ru/~dmitmel/ccloader3/20201114171305/ccloader_3.0.0-alpha_quick-install.tar.gz,)
 
-$(MOD_DIR)/$(TRANSLATIONS_DIR): $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
+compile-translations: $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
 
 $(MOD_DIR)/$(TRANSLATIONS_DIR)/%.json: ../$(TRANSLATION_TOOL_DATA_DIR)/%.json
 	mkdir -pv $(@D) && jq --compact-output . $< > $@
