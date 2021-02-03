@@ -489,8 +489,6 @@ class Main {
     console.log('Files with lang labels:', filePathsWithLangLabels.length);
     console.log('Total lang label count:', totalLangLabelCount);
 
-    let globalLangLabelIndexDigits = String(totalLangLabelCount).length;
-
     for (let translationLanguage of translationLanguages) {
       // translationLanguage = 'es';
       // console.log('Loading the monolithic translation pack...');
@@ -501,8 +499,6 @@ class Main {
       //     ),
       //   ),
       // );
-
-      let globalLangLabelIndex = 1;
 
       let chapterFileHandles = new Map<string, fs.promises.FileHandle>();
 
@@ -532,10 +528,17 @@ class Main {
               `msgid ""\n`,
               `msgstr ""\n`,
               `"Project-Id-Version: crosscode 0.0.0\\n"\n`,
+              `"Report-Msgid-Bugs-To: \\n"\n`,
+              `"POT-Creation-Date: \\n"\n`,
+              `"PO-Revision-Date: \\n"\n`,
+              `"Last-Translator: \\n"\n`,
+              `"Language-Team: \\n"\n`,
               `"Language: ${translationLanguage}\\n"\n`,
               `"MIME-Version: 1.0\\n"\n`,
               `"Content-Type: text/plain; charset=UTF-8\\n"\n`,
               `"Content-Transfer-Encoding: 8bit\\n"\n`,
+              `"Plural-Forms: \\n"\n`,
+              `"X-Generator: crosscode-ru-translation-tool-ng 0.0.0\\n"\n`,
             ].join(''),
           );
         }
@@ -575,11 +578,9 @@ class Main {
           // let translationStr = translation != null ? translation.text : '';
           let translationStr = translationLanguage === 'en_US' ? orig.text : '';
 
-          let globalIdxStr = String(globalLangLabelIndex).padStart(globalLangLabelIndexDigits, '0');
-
-          let locationText = `${orig.file} ${orig.jsonPath} #${orig.langUid}`;
+          let locationText = `${orig.file} ${orig.jsonPath} #${orig.langUid ?? 0}`;
           let lines = [];
-          lines.push(`\n`, `#. [${globalIdxStr}] ${locationText}\n`);
+          lines.push(`\n`, `#. ${locationText}\n`);
           for (let line of orig.descriptionText.length > 0
             ? orig.descriptionText.split('\n')
             : []) {
@@ -587,13 +588,11 @@ class Main {
           }
           lines.push(
             `#: ${urlUtils.encodeURIWeblate(locationText)}\n`,
-            `msgctxt ${JSON.stringify(`${orig.file}/${orig.jsonPath}`)}\n`,
+            `msgctxt ${JSON.stringify(`${orig.file} ${orig.jsonPath}`)}\n`,
             `msgid ${JSON.stringify(orig.text)}\n`,
             `msgstr ${JSON.stringify(translationStr)}\n`,
           );
           await poFileHandle.writeFile(lines.join(''));
-
-          globalLangLabelIndex++;
         }
       }
 

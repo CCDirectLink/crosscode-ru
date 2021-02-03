@@ -534,6 +534,7 @@ function getJsonObjectDescription(
   } else if (hasKey(obj, 'type') && typeof obj.type === 'string') {
     // the two common object types to have a string "type" field are event (and
     // action) steps and entities, we are mostly interested in these
+    words.push(obj.type);
 
     if (
       hasKey(obj, 'settings') &&
@@ -544,7 +545,6 @@ function getJsonObjectDescription(
       typeof obj.y === 'number'
     ) {
       // looks like this is an entity
-      words.push(obj.type);
       ctx.entityType = obj.type;
 
       let { settings } = obj;
@@ -580,13 +580,16 @@ function getJsonObjectDescription(
 
       switch (obj.type) {
         case 'IF': {
-          words.push(obj.type);
           if (key === 'elseStep') {
             words.push('NOT');
           } else if (key !== 'thenStep') {
             words.push(key);
           }
-          if (hasKey(obj, 'condition') && typeof obj.condition === 'string') {
+          if (
+            hasKey(obj, 'condition') &&
+            typeof obj.condition === 'string' &&
+            obj.condition.length > 0
+          ) {
             words.push(obj.condition);
           }
           break;
@@ -598,7 +601,7 @@ function getJsonObjectDescription(
             // SHOW_SIDE_MSG, ADD_MSG_PERSON and such
             if (typeof obj.person === 'string') {
               // legacy
-              words.push(`${obj.person} @DEFAULT`);
+              words.push(obj.person, '@DEFAULT');
             } else if (
               isObject(obj.person) &&
               hasKey(obj.person, 'person') &&
@@ -606,10 +609,8 @@ function getJsonObjectDescription(
               hasKey(obj.person, 'expression') &&
               typeof obj.person.expression === 'string'
             ) {
-              words.push(`${obj.person.person} @${obj.person.expression}`);
+              words.push(obj.person.person, `@${obj.person.expression}`);
             }
-          } else {
-            words.push(obj.type);
           }
         }
       }
@@ -618,7 +619,11 @@ function getJsonObjectDescription(
     }
 
     //
-  } else if (hasKey(obj, 'condition') && typeof obj.condition === 'string') {
+  } else if (
+    hasKey(obj, 'condition') &&
+    typeof obj.condition === 'string' &&
+    obj.condition.length > 0
+  ) {
     // there is a broad category of objects with just the `condition` field, so
     // let's include their conditions as well to not lose something important
     words.push('IF', obj.condition);
