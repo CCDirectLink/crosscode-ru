@@ -577,17 +577,16 @@ class Main {
 
           let globalIdxStr = String(globalLangLabelIndex).padStart(globalLangLabelIndexDigits, '0');
 
+          let locationText = `${orig.file} ${orig.jsonPath} #${orig.langUid}`;
           let lines = [];
-          lines.push(`\n`, `#. [${globalIdxStr}] ${orig.file} ${orig.jsonPath} #${orig.langUid}\n`);
+          lines.push(`\n`, `#. [${globalIdxStr}] ${locationText}\n`);
           for (let line of orig.descriptionText.length > 0
             ? orig.descriptionText.split('\n')
             : []) {
             lines.push(`#. ${line}\n`);
           }
-          let locationText = `${orig.file}#${orig.jsonPath}#${orig.langUid}`;
           lines.push(
             `#: ${urlUtils.encodeURIWeblate(locationText)}\n`,
-            `#, max-length:${orig.text.length * 10}\n`,
             `msgctxt ${JSON.stringify(`${orig.file}/${orig.jsonPath}`)}\n`,
             `msgid ${JSON.stringify(orig.text)}\n`,
             `msgstr ${JSON.stringify(translationStr)}\n`,
