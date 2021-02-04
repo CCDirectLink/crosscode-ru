@@ -132,7 +132,7 @@ class Main {
     }
     this.progressBar.setDone();
 
-    const autoTranslate = async (chapterId: string, f: Fragment): Promise<void> => {
+    const autoTranslate = async (chapterId: number, f: Fragment): Promise<void> => {
       if (f.translations.length > 0) return;
 
       let translation = LEA_PHRASES.get(f.original.text);
@@ -174,7 +174,7 @@ class Main {
     this.progressBar.setDone();
 
     let assetsCache = new Map<string, Promise<unknown>>();
-    const fixOriginal = async (chapterId: string, f: Fragment): Promise<void> => {
+    const fixOriginal = async (chapterId: number, f: Fragment): Promise<void> => {
       if (
         f.original.descriptionText.includes(IGNORE_IN_MOD_TAG) ||
         f.original.descriptionText.includes(INJECTED_IN_MOD_TAG)
@@ -783,7 +783,7 @@ class ProgressBar {
 
 interface LocalizableStringData {
   jsonPath: string[];
-  langUid: number | null;
+  langUid: number;
   text: string;
 }
 
@@ -803,7 +803,7 @@ function* findStringsInLangFileObject(
   if (obj == null) return;
 
   if (typeof obj === 'string') {
-    yield { jsonPath, langUid: null, text: obj };
+    yield { jsonPath, langUid: 0, text: obj };
   } else if (miscUtils.isObject(obj)) {
     for (let key in obj) {
       if (miscUtils.hasKey(obj, key)) {
@@ -825,7 +825,7 @@ function* findLangLabelsInObject(
     }
     let text = obj.en_US;
 
-    let langUid: number | null = null;
+    let langUid = 0;
     if (miscUtils.hasKey(obj, 'langUid')) {
       if (typeof obj.langUid !== 'number') {
         throw new Error(`Invalid LangLabel at ${jsonPath.join('/')}`);

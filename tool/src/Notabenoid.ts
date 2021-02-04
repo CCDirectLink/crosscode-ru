@@ -33,7 +33,7 @@ export type ChapterStatusesObj = Record<string, ChapterStatus>;
 export type ChapterStatuses = Map<string, ChapterStatus>;
 
 export interface ChapterStatus {
-  id: string;
+  id: number;
   name: string;
   fetchTimestamp: number;
   modificationTimestamp: number;
@@ -47,8 +47,8 @@ export interface Chapter extends ChapterStatus {
 }
 
 export interface Fragment {
-  chapterId: string;
-  id: string;
+  chapterId: number;
+  id: number;
   orderNumber: number;
   original: Original;
   translations: Translation[];
@@ -58,13 +58,13 @@ export interface Original {
   rawContent: string;
   file: string;
   jsonPath: string;
-  langUid: number | null;
+  langUid: number;
   descriptionText: string;
   text: string;
 }
 
 export interface Translation {
-  id: string;
+  id: number;
   rawText: string;
   text: string;
   authorUsername: string;
@@ -96,22 +96,24 @@ export class NotaClient {
     return result;
   }
 
-  public createChapterFragmentFetcher({ id, name, pages }: ChapterStatus): Fetcher<Fragment[]> {
+  public createChapterFragmentFetcher(chapter: ChapterStatus): Fetcher<Fragment[]> {
     return {
-      total: pages,
+      total: chapter.pages,
       // seriously... JS has regular generator functions, yet it doesn't have
       // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern again.
       iterator: function* (this: NotaClient): Generator<Promise<Fragment[]>> {
-        for (let i = 0; i < pages; i++) {
-          console.log(`${name}, page ${i + 1}/${pages}`);
-          yield this.makeRequest(`/book/${BOOK_ID}/${id}?Orig_page=${i + 1}`).then((doc) => {
-            let fragments: Fragment[] = [];
-            for (let tr of doc.querySelectorAll('#Tr > tbody > tr')) {
-              let f = parseFragment(id, tr);
-              if (f != null) fragments.push(f);
-            }
-            return fragments;
-          });
+        for (let i = 0; i < chapter.pages; i++) {
+          console.log(`${chapter.name}, page ${i + 1}/${chapter.pages}`);
+          yield this.makeRequest(`/book/${BOOK_ID}/${chapter.id}?Orig_page=${i + 1}`).then(
+            (doc) => {
+              let fragments: Fragment[] = [];
+              for (let tr of doc.querySelectorAll('#Tr > tbody > tr')) {
+                let f = parseFragment(chapter.id, tr);
+                if (f != null) fragments.push(f);
+              }
+              return fragments;
+            },
+          );
         }
       }.call(this),
     };
@@ -129,10 +131,10 @@ export class NotaClient {
   }
 
   public async addFragmentOriginal(
-    chapterId: string,
+    chapterId: number,
     orderNumber: number,
     text: string,
-  ): Promise<string> {
+  ): Promise<number> {
     let body = new FormData();
     body.append('Orig[ord]', String(orderNumber));
     body.append('Orig[body]', text);
@@ -142,13 +144,13 @@ export class NotaClient {
       body,
       credentials: 'include',
     });
-    let responseJson = (await response.json()) as { id: unknown };
-    return String(responseJson.id);
+    let responseJson = (await response.json()) as { id: string };
+    return parseInt(responseJson.id, 10);
   }
 
   public async editFragmentOriginal(
-    chapterId: string,
-    fragmentId: string,
+    chapterId: number,
+    fragmentId: number,
     orderNumber: number,
     newText: string,
   ): Promise<void> {
@@ -163,7 +165,7 @@ export class NotaClient {
     });
   }
 
-  public async deleteFragmentOriginal(chapterId: string, fragmentId: string): Promise<void> {
+  public async deleteFragmentOriginal(chapterId: number, fragmentId: number): Promise<void> {
     await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/remove`, {
       method: 'POST',
       credentials: 'include',
@@ -171,8 +173,8 @@ export class NotaClient {
   }
 
   public async addFragmentTranslation(
-    chapterId: string,
-    fragmentId: string,
+    chapterId: number,
+    fragmentId: number,
     // NOTE: don't forget to add flags when uploading text to notabenoid!
     text: string,
   ): Promise<void> {
@@ -187,9 +189,9 @@ export class NotaClient {
   }
 
   public async editFragmentTranslation(
-    chapterId: string,
-    fragmentId: string,
-    translationId: string,
+    chapterId: number,
+    fragmentId: number,
+    translationId: number,
     // NOTE: don't forget to add flags when uploading text to notabenoid!
     newText: string,
   ): Promise<void> {
@@ -207,12 +209,12 @@ export class NotaClient {
   }
 
   public async deleteFragmentTranslation(
-    chapterId: string,
-    fragmentId: string,
-    translationId: string,
+    chapterId: number,
+    fragmentId: number,
+    translationId: number,
   ): Promise<void> {
     let body = new FormData();
-    body.append('tr_id', translationId);
+    body.append('tr_id', String(translationId));
     body.append('ajax', '1');
     await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/tr_rm`, {
       method: 'POST',
@@ -226,11 +228,11 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   let cs: Partial<ChapterStatus> = {};
   // TODO: test the difference between this and the 'Date' HTTP header on slow
   // Internet connections
-  cs.fetchTimestamp = Date.now();
+  cs.fetchTimestamp = Math.floor(Date.now() / 1000);
 
   let { id } = element.dataset;
   if (id == null) return null;
-  cs.id = id;
+  cs.id = parseInt(id, 10);
   let anchor = element.querySelector(':scope > td:nth-child(1) > a');
   if (anchor == null) return null;
   let activityElem = element.querySelector<HTMLElement>(':scope > td:nth-child(3) > span');
@@ -246,9 +248,9 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   let [dayN, yearN, hourN, minuteN] = [day, year, hour, minute].map((s) => parseInt(s, 10));
   let monthIndex = RU_ABBREVIATED_MONTH_NAMES.indexOf(month);
   if (monthIndex < 0) return null;
-  cs.modificationTimestamp = new Date(
-    Date.UTC(yearN, monthIndex, dayN, hourN - 3, minuteN),
-  ).getTime();
+  cs.modificationTimestamp = Math.floor(
+    Date.UTC(yearN, monthIndex, dayN, hourN - 3, minuteN) / 1000,
+  );
 
   match = /\((\d+) \/ (\d+)\)/.exec(doneElem.textContent!);
   if (match == null || match.length !== 3) return null;
@@ -260,7 +262,7 @@ function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
   return cs as ChapterStatus;
 }
 
-function parseFragment(chapterId: string, element: Element): Fragment | null {
+function parseFragment(chapterId: number, element: Element): Fragment | null {
   if (element.id.length <= 1) return null;
   let text = element.querySelector('.o .text');
   if (text == null) return null;
@@ -269,7 +271,7 @@ function parseFragment(chapterId: string, element: Element): Fragment | null {
 
   let f: Partial<Fragment> = {};
   f.chapterId = chapterId;
-  f.id = element.id.slice(1);
+  f.id = parseInt(element.id.slice(1), 10);
   f.orderNumber = parseInt(anchor.textContent!.slice(1), 10);
 
   let original = parseOriginal(text.textContent!);
@@ -302,6 +304,8 @@ function parseOriginal(raw: string): Original | null {
   if (langUidMarkerIndex >= 0) {
     o.langUid = parseInt(locationLine.slice(langUidMarkerIndex + 2), 10);
     locationLine = locationLine.slice(0, langUidMarkerIndex);
+  } else {
+    o.langUid = 0;
   }
   let firstSpaceIndex = locationLine.indexOf(' ');
   if (firstSpaceIndex < 0) return null;
@@ -315,7 +319,7 @@ function parseOriginal(raw: string): Original | null {
 
 function parseTranslation(element: Element): Translation | null {
   let t: Partial<Translation> = {};
-  t.id = element.id.slice(1);
+  t.id = parseInt(element.id.slice(1), 10);
   t.rawText = element.querySelector('.text')!.textContent!;
   t.authorUsername = element.querySelector('.user')!.textContent!;
   t.votes = parseInt(element.querySelector('.rating .current')!.textContent!, 10);
@@ -326,7 +330,7 @@ function parseTranslation(element: Element): Translation | null {
   );
   if (match == null || match.length !== 6) return null;
   let [day, month, year, hour, minute] = match.slice(1).map((s) => parseInt(s, 10));
-  t.timestamp = Date.UTC(2000 + year, month - 1, day, hour - 3, minute);
+  t.timestamp = Math.floor(Date.UTC(2000 + year, month - 1, day, hour - 3, minute) / 1000);
 
   let flags: Record<string, boolean | string> = {};
   t.text = t.rawText.replace(/\n?⟪(.*)⟫\s*/, (_match: string, group: string) => {
@@ -348,7 +352,7 @@ function parseTranslation(element: Element): Translation | null {
 }
 
 function calculateTranslationScore(t: Translation): number {
-  let score = 1e10 + 1e10 * t.votes + t.timestamp / 1000 - 19e8;
+  let score = 1e10 + 1e10 * t.votes + t.timestamp - 19e8;
   if (t.authorUsername === 'p_zombie') score -= 1e9;
   if (t.authorUsername === 'DimavasBot') {
     score -= 3e9;
@@ -360,7 +364,7 @@ function calculateTranslationScore(t: Translation): number {
 
 export function stringifyFragmentOriginal(o: Original): string {
   let result = `${o.file} ${o.jsonPath}`;
-  if (o.langUid != null) result += ` #${o.langUid}`;
+  if (o.langUid !== 0) result += ` #${o.langUid}`;
   result += '\n';
   if (o.descriptionText.length > 0) result += `${o.descriptionText}\n`;
   result += `\n${o.text}`;
