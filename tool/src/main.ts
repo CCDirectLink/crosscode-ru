@@ -588,7 +588,7 @@ class Main {
           }
           lines.push(
             `#: ${urlUtils.encodeURIWeblate(locationText)}\n`,
-            `msgctxt ${JSON.stringify(`${orig.file} ${orig.jsonPath}`)}\n`,
+            `msgctxt ${JSON.stringify(`${orig.file}//${orig.jsonPath}`)}\n`,
             `msgid ${JSON.stringify(orig.text)}\n`,
             `msgstr ${JSON.stringify(translationStr)}\n`,
           );
