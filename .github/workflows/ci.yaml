@@ -56,10 +56,14 @@ jobs:
           popd >/dev/null
 
       - name: Build
-        run: yarn run build
-      - name: Build headless translation tool
-        working-directory: tool
-        run: yarn run build:headless
+        run: |
+          yarn run build
+
+          pushd tool >/dev/null
+          yarn run build:styles
+          yarn run build:headless
+          popd >/dev/null
+
       - name: Lint
         run: yarn run lint
       - name: Check formatting
