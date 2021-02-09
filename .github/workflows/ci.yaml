@@ -24,10 +24,11 @@ jobs:
         with:
           path: |
             ${{ steps.yarn_cache_dir.outputs.dir }}
-            **/node_modules
-          key: ${{ runner.os }}-yarn-2-${{ hashFiles('**/yarn.lock') }}
+            node_modules
+            */node_modules
+          key: ${{ runner.os }}-yarn-3-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-2-
+            ${{ runner.os }}-yarn-3-
 
       - name: Get the number of CPU threads
         id: cpu_threads
