@@ -8,6 +8,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: Download ultimate-crosscode-typedefs
+        uses: actions/checkout@v2
+        with:
+          repository: dmitmel/ultimate-crosscode-typedefs
+          path: ultimate-crosscode-typedefs
       - uses: actions/setup-node@v1
         with:
           node-version: '15.x'
@@ -25,14 +30,9 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Get the number of CPU threads
-        id: cpu_cores
-        run: echo "::set-output name=cpu_cores::$(nproc)"
+        id: cpu_threads
+        run: echo "::set-output name=cpu_threads::$(nproc)"
 
-      - name: Download ultimate-crosscode-typedefs
-        uses: actions/checkout@v2
-        with:
-          repository: dmitmel/ultimate-crosscode-typedefs
-          path: ultimate-crosscode-typedefs
       - name: Set up ultimate-crosscode-typedefs
         working-directory: ultimate-crosscode-typedefs
         run: |
@@ -41,7 +41,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          export MAKEFLAGS=-j${{ steps.cpu_cores.outputs.cpu_cores }}
+          export MAKEFLAGS=-j${{ steps.cpu_threads.outputs.cpu_threads }}
 
           yarn link ultimate-crosscode-typedefs
           yarn install --frozen-lockfile
