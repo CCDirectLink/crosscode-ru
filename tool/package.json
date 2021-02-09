@@ -5,9 +5,15 @@
   },
   "scripts": {
     "build:styles": "node-sass --recursive --output dist/styles --source-map true src/styles",
-    "watch:styles": "node-sass --recursive --output dist/styles --source-map true src/styles --watch"
+    "watch:styles": "node-sass --recursive --output dist/styles --source-map true src/styles --watch",
+    "clean:headless": "rm -rv dist-headless/",
+    "build:headless": "tsc --project ./tsconfig-headless.json",
+    "watch:headless": "tsc --project ./tsconfig-headless.json --watch"
   },
   "devDependencies": {
     "node-sass": "^4.13.1"
+  },
+  "dependencies": {
+    "jsdom": "^16.4.0"
   }
 }

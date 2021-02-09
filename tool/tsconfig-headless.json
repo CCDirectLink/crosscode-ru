@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/node-builtin-modules"],
+  "files": ["src/Notabenoid.ts"],
+  "compilerOptions": {
+    "composite": false,
+    "outDir": "dist-headless",
+    "tsBuildInfoFile": null,
+    "module": "commonjs"
+  }
+}
