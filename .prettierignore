@@ -1,3 +1,4 @@
-/**/dist/**/*
-/dist-archive/**/*
-/assets/ru-translation-tool*/**/*
+/**/dist/
+/dist-archive/
+/assets/ru-translation-tool*/
+/ultimate-crosscode-typedefs/

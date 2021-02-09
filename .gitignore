@@ -4,3 +4,4 @@ dist/
 /dist-archive/*
 !/dist-archive/GNUmakefile
 /assets/ru-translation-tool*/
+/ultimate-crosscode-typedefs/
