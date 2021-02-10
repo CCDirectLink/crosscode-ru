@@ -1,11 +1,10 @@
 import { NotaClient } from './Notabenoid';
+import { NodejsNotaHttpClient } from './Notabenoid/nodejs';
 
 async function main(): Promise<void> {
-  try {
-  } catch (err) {
-    console.error(err);
-    process.exitCode = 1;
-  }
+  let notaClient = new NotaClient(new NodejsNotaHttpClient());
+  await notaClient.login('username', 'password');
+  console.log(await notaClient.fetchAllChapterStatuses());
 }
 
 void main();

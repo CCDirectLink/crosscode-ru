@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "include": ["src/node-builtin-modules"],
-  "files": ["src/Notabenoid.ts"],
+  "files": ["src/headless-main.ts"],
   "compilerOptions": {
     "composite": false,
     "outDir": "dist-headless",

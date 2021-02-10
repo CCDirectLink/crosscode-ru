@@ -11,6 +11,7 @@ import {
   getChapterNameOfFile,
   stringifyFragmentOriginal,
 } from './Notabenoid.js';
+import { NwNotaHttpClient } from './Notabenoid/nw.js';
 import { IGNORE_IN_MOD_TAG, INJECTED_IN_MOD_TAG, LocalizeMePacker } from './TranslationPack.js';
 import { readSettings, writeSettings } from './settings.js';
 import {
@@ -75,7 +76,7 @@ const IGNORED_LABELS = new Set<string>([
 ]);
 
 class Main {
-  public notaClient = new NotaClient();
+  public notaClient = new NotaClient(new NwNotaHttpClient());
   public progressBar = new ProgressBar();
 
   public async start(): Promise<void> {

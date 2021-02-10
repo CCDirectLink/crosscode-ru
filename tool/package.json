@@ -11,9 +11,12 @@
     "watch:headless": "tsc --project ./tsconfig-headless.json --watch"
   },
   "devDependencies": {
+    "@types/jsdom": "^16.2.6",
+    "@types/request": "^2.48.5",
     "node-sass": "^4.13.1"
   },
   "dependencies": {
-    "jsdom": "^16.4.0"
+    "jsdom": "^16.4.0",
+    "request": "^2.88.2"
   }
 }

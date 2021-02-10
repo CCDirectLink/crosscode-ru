@@ -1,7 +1,6 @@
 // useful links:
 // https://github.com/uisky/notabenoid
 
-import { fetchDocument } from './utils/http.js';
 import { Fetcher } from './utils/async.js';
 import paths from './node-builtin-modules/path.js';
 import { hasKey, isArray, isObject } from './utils/misc.js';
@@ -75,9 +74,10 @@ export interface Translation {
 }
 
 export class NotaClient {
-  private async makeRequest(path: string): Promise<Document> {
-    let url = new URL(path, NOTABENOID_URL);
-    let doc = await fetchDocument(url);
+  public constructor(public httpClient: NotaHttpClient) {}
+
+  public async requestPage(path: string): Promise<Document> {
+    let doc = await this.httpClient.requestDocument('GET', `${NOTABENOID_URL}${path}`);
 
     if (doc.querySelector('form[method="post"][action="/"] input[name^="login"]') != null) {
       throw new Error('authentication required');
@@ -87,7 +87,7 @@ export class NotaClient {
   }
 
   public async fetchAllChapterStatuses(): Promise<ChapterStatuses> {
-    let doc = await this.makeRequest(`/book/${BOOK_ID}`);
+    let doc = await this.requestPage(`/book/${BOOK_ID}`);
     let result = new Map<string, ChapterStatus>();
     for (let tr of doc.querySelectorAll<HTMLElement>('#Chapters > tbody > tr')) {
       let chapterStatus = parseChapterStatus(tr);
@@ -104,7 +104,7 @@ export class NotaClient {
       iterator: function* (this: NotaClient): Generator<Promise<Fragment[]>> {
         for (let i = 0; i < chapter.pages; i++) {
           console.log(`${chapter.name}, page ${i + 1}/${chapter.pages}`);
-          yield this.makeRequest(`/book/${BOOK_ID}/${chapter.id}?Orig_page=${i + 1}`).then(
+          yield this.requestPage(`/book/${BOOK_ID}/${chapter.id}?Orig_page=${i + 1}`).then(
             (doc) => {
               let fragments: Fragment[] = [];
               for (let tr of doc.querySelectorAll('#Tr > tbody > tr')) {
@@ -120,13 +120,9 @@ export class NotaClient {
   }
 
   public async login(username: string, password: string): Promise<void> {
-    let body = new FormData();
-    body.append('login[login]', username);
-    body.append('login[pass]', password);
-    await fetch(NOTABENOID_URL, {
-      method: 'POST',
-      body,
-      credentials: 'include',
+    await this.httpClient.requestDocument('POST', NOTABENOID_URL, {
+      'login[login]': username,
+      'login[pass]': password,
     });
   }
 
@@ -135,17 +131,16 @@ export class NotaClient {
     orderNumber: number,
     text: string,
   ): Promise<number> {
-    let body = new FormData();
-    body.append('Orig[ord]', String(orderNumber));
-    body.append('Orig[body]', text);
-    body.append('ajax', '1');
-    let response = await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/0/edit`, {
-      method: 'POST',
-      body,
-      credentials: 'include',
-    });
-    let responseJson = (await response.json()) as { id: string };
-    return parseInt(responseJson.id, 10);
+    let response = (await this.httpClient.requestJSON(
+      'POST',
+      `${NOTABENOID_BOOK_URL}/${chapterId}/0/edit`,
+      {
+        'Orig[ord]': String(orderNumber),
+        'Orig[body]': String(text),
+        ajax: '1',
+      },
+    )) as { id: string };
+    return parseInt(response.id, 10);
   }
 
   public async editFragmentOriginal(
@@ -158,18 +153,22 @@ export class NotaClient {
     body.append('Orig[ord]', String(orderNumber));
     body.append('Orig[body]', newText);
     body.append('ajax', '1');
-    await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/edit`, {
-      method: 'POST',
-      body,
-      credentials: 'include',
-    });
+    await this.httpClient.requestJSON(
+      'POST',
+      `${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/edit`,
+      {
+        'Orig[ord]': String(orderNumber),
+        'Orig[body]': String(newText),
+        ajax: '1',
+      },
+    );
   }
 
   public async deleteFragmentOriginal(chapterId: number, fragmentId: number): Promise<void> {
-    await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/remove`, {
-      method: 'POST',
-      credentials: 'include',
-    });
+    await this.httpClient.requestJSON(
+      'POST',
+      `${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/remove`,
+    );
   }
 
   public async addFragmentTranslation(
@@ -178,14 +177,14 @@ export class NotaClient {
     // NOTE: don't forget to add flags when uploading text to notabenoid!
     text: string,
   ): Promise<void> {
-    let body = new FormData();
-    body.append('Translation[body]', text);
-    body.append('ajax', '1');
-    await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/translate`, {
-      method: 'POST',
-      body,
-      credentials: 'include',
-    });
+    await this.httpClient.requestJSON(
+      'POST',
+      `${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/translate`,
+      {
+        'Translation[body]': String(text),
+        ajax: '1',
+      },
+    );
   }
 
   public async editFragmentTranslation(
@@ -195,15 +194,12 @@ export class NotaClient {
     // NOTE: don't forget to add flags when uploading text to notabenoid!
     newText: string,
   ): Promise<void> {
-    let body = new FormData();
-    body.append('Translation[body]', newText);
-    body.append('ajax', '1');
-    await fetch(
+    await this.httpClient.requestJSON(
+      'POST',
       `${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/translate?tr_id=${translationId}`,
       {
-        method: 'POST',
-        body,
-        credentials: 'include',
+        'Translation[body]': String(newText),
+        ajax: '1',
       },
     );
   }
@@ -213,14 +209,15 @@ export class NotaClient {
     fragmentId: number,
     translationId: number,
   ): Promise<void> {
-    let body = new FormData();
-    body.append('tr_id', String(translationId));
-    body.append('ajax', '1');
-    await fetch(`${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/tr_rm`, {
-      method: 'POST',
-      body,
-      credentials: 'include',
-    });
+    await this.httpClient.requestJSON(
+      'POST',
+      `${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/tr_rm`,
+      {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        tr_id: String(translationId),
+        ajax: '1',
+      },
+    );
   }
 }
 
@@ -360,6 +357,19 @@ function calculateTranslationScore(t: Translation): number {
   }
   if (t.text.startsWith('tr_ru:ERR')) score -= 1e12;
   return score;
+}
+
+export interface NotaHttpClient {
+  requestJSON(
+    method: 'GET' | 'POST',
+    url: string,
+    body?: Record<string, string> | null,
+  ): Promise<unknown>;
+  requestDocument(
+    method: 'GET' | 'POST',
+    url: string,
+    body?: Record<string, string> | null,
+  ): Promise<Document>;
 }
 
 export function stringifyFragmentOriginal(o: Original): string {

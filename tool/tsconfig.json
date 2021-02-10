@@ -8,6 +8,7 @@
     "sourceMap": true,
     "strict": true,
     "module": "esnext",
+    "moduleResolution": "node",
     "target": "es2018",
     "allowJs": true,
     "forceConsistentCasingInFileNames": true
