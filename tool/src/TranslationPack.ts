@@ -4,7 +4,7 @@ import paths from './node-builtin-modules/path.js';
 import * as fsUtils from './utils/fs.js';
 import * as miscUtils from './utils/misc.js';
 
-type LocalizeMePack = Record<string, { orig: string; text: string }>;
+export type LocalizeMePack = Record<string, { orig: string; text: string }>;
 
 export const INJECTED_IN_MOD_TAG = 'INJECTED_IN_MOD';
 export const IGNORE_IN_MOD_TAG = 'IGNORE_IN_MOD';

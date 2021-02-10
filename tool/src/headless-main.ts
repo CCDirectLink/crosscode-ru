@@ -18,6 +18,7 @@ interface CliOptions {
   force: boolean;
   progress: boolean;
   fetchConnections: number;
+  checkUpdates: boolean;
 }
 
 function parseCliOptions(): CliOptions {
@@ -32,6 +33,8 @@ function parseCliOptions(): CliOptions {
 
   return yargs(process.argv.slice(2))
     .usage('$0')
+    .help()
+    .strict()
     .options({
       username: {
         string: true,
@@ -75,8 +78,12 @@ function parseCliOptions(): CliOptions {
         default: 8,
         description: 'Number of parallel connections for fetching chapters from Notabenoid',
       },
-    })
-    .help().argv;
+      checkUpdates: {
+        boolean: true,
+        default: false,
+        description: 'Print the names of chapters which need updating',
+      },
+    }).argv;
 }
 
 async function main(): Promise<void> {
@@ -84,18 +91,6 @@ async function main(): Promise<void> {
   await fs.promises.mkdir(opts.output, { recursive: true });
   let chapterStatusesFile = paths.join(opts.output, 'chapter-statuses.json');
   let chapterFragmentsDir = paths.join(opts.output, 'chapter-fragments');
-
-  function createProgressBar(format: string, total: number): ProgressBar | null {
-    let stream = process.stderr;
-    return stream.isTTY
-      ? new ProgressBar(format, {
-          total,
-          stream,
-          complete: '=',
-          incomplete: ' ',
-        })
-      : null;
-  }
 
   let notaClient = new NotaClient(new NodejsNotaHttpClient());
   await notaClient.login(opts.username, opts.password);
@@ -117,11 +112,18 @@ async function main(): Promise<void> {
   }
 
   if (chaptersWithUpdates.length === 0) {
-    console.log('All chapters are up to date!');
+    console.error('All chapters are up to date!');
     return;
   }
 
-  console.log(
+  if (opts.checkUpdates) {
+    for (let chapter of chaptersWithUpdates) {
+      console.log(chapter.name);
+    }
+    return;
+  }
+
+  console.error(
     `${chaptersWithUpdates.length}/${
       chaptersWithUpdates.length + chaptersWithoutUpdates.length
     } chapter(s) need to be updated.`,
@@ -159,7 +161,7 @@ async function main(): Promise<void> {
           if (progress != null) {
             progress.tick(1);
           } else {
-            console.log(
+            console.error(
               `[${i}/${chaptersWithUpdates.length}] [${fetchedNotaPagesCount}/${totalNotaPagesCount}] downloading chapter '${chapterName}'`,
             );
           }
@@ -174,6 +176,18 @@ async function main(): Promise<void> {
 
   progress?.terminate();
   await fsUtils.writeJsonFile(chapterStatusesFile, miscUtils.mapToObject(chapterStatuses));
+}
+
+function createProgressBar(format: string, total: number): ProgressBar | null {
+  let stream = process.stderr;
+  return stream.isTTY
+    ? new ProgressBar(format, {
+        total,
+        stream,
+        complete: '=',
+        incomplete: ' ',
+      })
+    : null;
 }
 
 void main();

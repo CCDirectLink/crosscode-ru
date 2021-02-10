@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "include": ["src/node-builtin-modules"],
-  "files": ["src/headless-main.ts"],
+  "files": ["src/headless-main.ts", "src/headless-export.ts"],
   "compilerOptions": {
     "composite": false,
     "outDir": "dist-headless",

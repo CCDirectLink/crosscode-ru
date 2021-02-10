@@ -699,16 +699,15 @@ class Main {
       await fs.promises.mkdir(LOCALIZE_ME_PACKS_DIR, { recursive: true });
 
       let totalPackCount = packer.packs.size;
-      let currentPackIndex = 0;
-      for (let [originalFile, packContents] of packer.packs.entries()) {
-        mappingTable[originalFile] = originalFile;
+      for (let [i, [originalFile, packContents]] of iteratorUtils.enumerate(
+        packer.packs.entries(),
+      )) {
         this.progressBar.setTaskInfo(`Запись транслейт-пака '${originalFile}'...`);
-        this.progressBar.setValue(currentPackIndex, totalPackCount + 1);
-        currentPackIndex++;
-        await fs.promises.mkdir(paths.join(LOCALIZE_ME_PACKS_DIR, paths.dirname(originalFile)), {
-          recursive: true,
-        });
-        await fsUtils.writeJsonFile(paths.join(LOCALIZE_ME_PACKS_DIR, originalFile), packContents);
+        this.progressBar.setValue(i, totalPackCount + 1);
+        mappingTable[originalFile] = originalFile;
+        let outputPath = paths.join(LOCALIZE_ME_PACKS_DIR, originalFile);
+        await fs.promises.mkdir(paths.dirname(outputPath), { recursive: true });
+        await fsUtils.writeJsonFile(outputPath, packContents);
       }
 
       this.progressBar.setTaskInfo(`Запись таблицы маппингов транслейт-паков...`);
