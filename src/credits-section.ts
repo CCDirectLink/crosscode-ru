@@ -51,7 +51,6 @@ ig.module('crosscode-ru.fixes.credits-section')
           // of 'columnGui'. Well, I have one more trick up my sleeve:
           let currentNameIndex = 0;
           let { update } = columnGui;
-          // eslint-disable-next-line no-loop-func
           columnGui.update = () => {
             update.call(columnGui);
 

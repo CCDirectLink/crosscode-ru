@@ -1,5 +1,3 @@
-/* eslint-disable no-loop-func */
-
 import {
   ChapterStatus,
   Fragment,
@@ -75,6 +73,7 @@ const IGNORED_LABELS = new Set<string>([
 
 class Main {
   public notaClient = new NotaClient(new NwNotaHttpClient());
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   public progressBar = new ProgressBar();
 
   public async start(): Promise<void> {

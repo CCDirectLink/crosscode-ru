@@ -28,6 +28,8 @@ overrides:
       # because I have to use '.js' file extensions in imports
       node/no-missing-import: off
 
+      '@typescript-eslint/no-loop-func': off
+
       '@typescript-eslint/naming-convention':
         - warn
         - selector: default
@@ -46,17 +48,19 @@ overrides:
             regex: '^[a-zA-Z_$][a-zA-Z0-9_$]*$'
             match: true
 
-  - files:
-      - 'src/**/*.ts'
+  - files: '**/*.d.ts'
+    rules:
+      # <https://github.com/dmitmel/ultimate-crosscode-typedefs/blob/f09433a688bf1db86172f40aa4156566ae1d2c1e/.eslintrc.yml#L37-L39>
+      '@typescript-eslint/no-unused-vars': off
+
+  - files: 'src/**/*.ts'
     parserOptions:
       project: 'tsconfig.json'
 
-  - files:
-      - 'enhanced-ui/src/**/*.ts'
+  - files: 'enhanced-ui/src/**/*.ts'
     parserOptions:
       project: 'enhanced-ui/tsconfig.json'
 
-  - files:
-      - 'tool/src/**/*.ts'
+  - files: 'tool/src/**/*.ts'
     parserOptions:
       project: 'tool/tsconfig.json'

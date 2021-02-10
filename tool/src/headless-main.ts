@@ -1,5 +1,3 @@
-/* eslint-disable no-loop-func */
-
 import { ChapterStatus, Fragment, NotaClient } from './Notabenoid.js';
 import { NodejsNotaHttpClient } from './Notabenoid/nodejs.js';
 

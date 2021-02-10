@@ -696,8 +696,8 @@ escodegen@^1.14.1:
     source-map "~0.6.1"
 
 eslint-config-dmitmel@dmitmel/eslint-config-dmitmel:
-  version "7.0.0"
-  resolved "https://codeload.github.com/dmitmel/eslint-config-dmitmel/tar.gz/4072e37476f659766b4b18be28e0339eca42833e"
+  version "7.1.0"
+  resolved "https://codeload.github.com/dmitmel/eslint-config-dmitmel/tar.gz/9b14f45aef7efbf333b38a06277296f5b0304484"
 
 eslint-config-prettier@^7.2.0:
   version "7.2.0"
@@ -2331,7 +2331,7 @@ typescript@^4.1.4:
 
 ultimate-crosscode-typedefs@dmitmel/ultimate-crosscode-typedefs:
   version "0.0.1"
-  resolved "https://codeload.github.com/dmitmel/ultimate-crosscode-typedefs/tar.gz/22f2aefbe91ac4f9638a0bc171801620405a735f"
+  resolved "https://codeload.github.com/dmitmel/ultimate-crosscode-typedefs/tar.gz/f09433a688bf1db86172f40aa4156566ae1d2c1e"
   dependencies:
     "@types/jquery" "~1.10"
     "@types/node" ">=11.9"

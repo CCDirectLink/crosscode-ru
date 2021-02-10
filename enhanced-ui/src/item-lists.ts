@@ -159,7 +159,6 @@ ig.module('enhanced-ui.fixes.item-lists.trade-gui')
           newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
           let { level, numberGfx, isScalable } = gui;
           if (level > 0) {
-            // eslint-disable-next-line no-loop-func
             newGui.setDrawCallback((width, height) =>
               sc.MenuHelper.drawLevel(level, width, height, numberGfx, isScalable),
             );

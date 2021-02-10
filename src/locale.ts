@@ -55,6 +55,7 @@ if (leaSpellingTable != null) {
     });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare namespace LocalizeMe {
   interface FontPatchingContextCommon {
     russianFont: ig.Font;
