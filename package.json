@@ -4,6 +4,8 @@
     "node": ">=11.0.0"
   },
   "devDependencies": {
+    "@types/jsdom": "^16.2.6",
+    "@types/request": "^2.48.5",
     "@typescript-eslint/eslint-plugin": "^3.0.2",
     "@typescript-eslint/parser": "^3.0.2",
     "eslint": "^7.1.0",
@@ -11,16 +13,27 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.3",
+    "node-sass": "^5.0.0",
     "prettier": "^2.0.5",
     "typescript": "^3.9.0",
     "ultimate-crosscode-typedefs": "dmitmel/ultimate-crosscode-typedefs"
+  },
+  "dependencies": {
+    "form-data": "^3.0.0",
+    "jsdom": "^16.4.0",
+    "request": "^2.88.2"
   },
   "scripts": {
     "clean": "rm -rv dist/ enhanced-ui/dist/ tool/dist/",
     "build": "tsc --build",
     "watch": "tsc --build --watch",
     "lint": "eslint . --ext .js,.ts --ignore-path .gitignore",
-    "check-fmt": "yarn run prettier --check '**/*.{js,ts,json,css,scss,html}'"
+    "check-fmt": "yarn run prettier --check '**/*.{js,ts,json,css,scss,html}'",
+    "build:styles": "node-sass --recursive --output tool/dist/styles --source-map true tool/src/styles",
+    "watch:styles": "node-sass --recursive --output tool/dist/styles --source-map true tool/src/styles --watch",
+    "clean:headless": "rm -rv tool/dist-headless/",
+    "build:headless": "tsc --project tool/tsconfig-headless.json",
+    "watch:headless": "tsc --project tool/tsconfig-headless.json --watch"
   },
   "__comment__": "The following fields are for an nw.js app which will open if the user downloaded and unpacked the source code and point them to use the distribution archives instead.",
   "name": "CrossCode",

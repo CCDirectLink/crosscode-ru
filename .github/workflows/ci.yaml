@@ -25,10 +25,9 @@ jobs:
           path: |
             ${{ steps.yarn_cache_dir.outputs.dir }}
             node_modules
-            */node_modules
-          key: ${{ runner.os }}-yarn-3-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-4-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-3-
+            ${{ runner.os }}-yarn-4-
 
       - name: Set up ultimate-crosscode-typedefs
         working-directory: ultimate-crosscode-typedefs
@@ -36,24 +35,16 @@ jobs:
           yarn install --production --no-lockfile
           yarn link
 
-      - name: Install dependencies (mod)
+      - name: Install dependencies
         run: |
           yarn link ultimate-crosscode-typedefs
           yarn install --frozen-lockfile
-      - name: Install dependencies (enhanced-ui)
-        working-directory: enhanced-ui
-        run: yarn install --frozen-lockfile
-      - name: Install dependencies (tool)
-        working-directory: tool
-        run: yarn install --frozen-lockfile
 
-      - name: Build (all)
-        run: yarn run build
-      - name: Build (tool-specific)
-        working-directory: tool
+      - name: Build
         run: |
-          yarn run build:styles
+          yarn run build
           yarn run build:headless
+          yarn run build:styles
 
       - name: Lint
         run: yarn run lint
