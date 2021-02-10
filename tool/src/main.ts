@@ -658,15 +658,12 @@ class Main {
 
         let self = this;
         await asyncUtils.limitConcurrency(
-          (function* () {
-            for (let promise of fetcher.iterator) {
-              yield promise.then((pageFragments) => {
-                self.progressBar.setValue(fetchedNotaPagesCount, totalNotaPagesCount);
-                fragments.push(...pageFragments);
-                fetchedNotaPagesCount++;
-              });
-            }
-          })(),
+          iteratorUtils.map(fetcher.iterator, async (pageFragmentsPromise) => {
+            let pageFragments = await pageFragmentsPromise;
+            fragments.push(...pageFragments);
+            self.progressBar.setValue(fetchedNotaPagesCount, totalNotaPagesCount);
+            fetchedNotaPagesCount++;
+          }),
           8,
         );
 

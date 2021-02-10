@@ -7,6 +7,7 @@ import * as miscUtils from './utils/misc.js';
 import hasKey = miscUtils.hasKey;
 import isObject = miscUtils.isObject;
 import isArray = miscUtils.isArray;
+import * as iteratorUtils from './utils/iterator.js';
 
 const BOOK_ID = '74823';
 const NOTABENOID_URL = 'http://notabenoid.org';
@@ -111,19 +112,20 @@ export class NotaClient {
     if (this.useNotabridge) {
       return {
         total: 1,
-        iterator: function* (this: NotaClient): Generator<Promise<Fragment[]>> {
-          yield this.httpClient.requestJSON(
+        iterator: iteratorUtils.once(
+          this.httpClient.requestJSON(
             'GET',
             `${NOTABRIDGE_SERVICE_URL}/chapter-fragments/${chapter.name}.json`,
-          );
-        }.call(this),
+          ),
+        ),
       };
     }
 
     return {
       total: chapter.pages,
       // seriously... JS has regular generator functions, yet it doesn't have
-      // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern again.
+      // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern
+      // again.
       iterator: function* (this: NotaClient): Generator<Promise<Fragment[]>> {
         for (let i = 0; i < chapter.pages; i++) {
           yield this.requestPage(`/book/${BOOK_ID}/${chapter.id}?Orig_page=${i + 1}`).then(

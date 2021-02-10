@@ -4,6 +4,7 @@ import { NodejsNotaHttpClient } from './Notabenoid/nodejs.js';
 import * as asyncUtils from './utils/async.js';
 import * as fsUtils from './utils/fs.js';
 import * as miscUtils from './utils/misc.js';
+import * as iteratorUtils from './utils/iterator.js';
 
 import * as fs from 'fs';
 import * as paths from 'path';
@@ -150,23 +151,20 @@ async function main(): Promise<void> {
     let fragments: Fragment[] = [];
 
     await asyncUtils.limitConcurrency(
-      (function* () {
-        for (let promise of fetcher.iterator) {
-          yield promise.then((pageFragments) => {
-            fragments.push(...pageFragments);
-            fetchedNotaPagesCount++;
-            if (opts.progress) {
-              if (progress != null) {
-                progress.tick(1);
-              } else {
-                console.log(
-                  `[${i}/${chaptersWithUpdates.length}] [${fetchedNotaPagesCount}/${totalNotaPagesCount}] downloading chapter '${chapterName}'`,
-                );
-              }
-            }
-          });
+      iteratorUtils.map(fetcher.iterator, async (pageFragmentsPromise) => {
+        let pageFragments = await pageFragmentsPromise;
+        fragments.push(...pageFragments);
+        fetchedNotaPagesCount++;
+        if (opts.progress) {
+          if (progress != null) {
+            progress.tick(1);
+          } else {
+            console.log(
+              `[${i}/${chaptersWithUpdates.length}] [${fetchedNotaPagesCount}/${totalNotaPagesCount}] downloading chapter '${chapterName}'`,
+            );
+          }
         }
-      })(),
+      }),
       opts.fetchConnections,
     );
 
