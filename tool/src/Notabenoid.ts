@@ -173,10 +173,6 @@ export class NotaClient {
     orderNumber: number,
     newText: string,
   ): Promise<void> {
-    let body = new FormData();
-    body.append('Orig[ord]', String(orderNumber));
-    body.append('Orig[body]', newText);
-    body.append('ajax', '1');
     await this.httpClient.requestJSON(
       'POST',
       `${NOTABENOID_BOOK_URL}/${chapterId}/${fragmentId}/edit`,
