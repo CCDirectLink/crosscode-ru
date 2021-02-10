@@ -128,8 +128,11 @@ async function main(): Promise<void> {
 
   let totalNotaPagesCount = 0;
   let fetchedNotaPagesCount = 0;
+  let fetchers: Array<{ chapterName: string; fetcher: asyncUtils.Fetcher<Fragment[]> }> = [];
   for (let chapter of chaptersWithUpdates) {
-    totalNotaPagesCount += chapter.pages;
+    let fetcher = notaClient.createChapterFragmentFetcher(chapter);
+    totalNotaPagesCount += fetcher.total;
+    fetchers.push({ chapterName: chapter.name, fetcher });
   }
 
   let progress = createProgressBar(
@@ -137,19 +140,18 @@ async function main(): Promise<void> {
     totalNotaPagesCount,
   );
 
-  for (let [i, chapterStatus] of chaptersWithUpdates.entries()) {
+  for (let [i, { chapterName, fetcher }] of fetchers.entries()) {
     i++;
     if (opts.progress) {
       progress?.interrupt(
-        `[${i}/${chaptersWithUpdates.length}] downloading chapter '${chapterStatus.name}'`,
+        `[${i}/${chaptersWithUpdates.length}] downloading chapter '${chapterName}'`,
       );
     }
     let fragments: Fragment[] = [];
 
-    let { iterator } = notaClient.createChapterFragmentFetcher(chapterStatus);
     await asyncUtils.limitConcurrency(
       (function* () {
-        for (let promise of iterator) {
+        for (let promise of fetcher.iterator) {
           yield promise.then((pageFragments) => {
             fragments.push(...pageFragments);
             fetchedNotaPagesCount++;
@@ -158,7 +160,7 @@ async function main(): Promise<void> {
                 progress.tick(1);
               } else {
                 console.log(
-                  `[${i}/${chaptersWithUpdates.length}] [${fetchedNotaPagesCount}/${totalNotaPagesCount}] downloading chapter '${chapterStatus.name}'`,
+                  `[${i}/${chaptersWithUpdates.length}] [${fetchedNotaPagesCount}/${totalNotaPagesCount}] downloading chapter '${chapterName}'`,
                 );
               }
             }
@@ -169,11 +171,7 @@ async function main(): Promise<void> {
     );
 
     fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
-
-    await fsUtils.writeJsonFile(
-      paths.join(chapterFragmentsDir, `${chapterStatus.name}.json`),
-      fragments,
-    );
+    await fsUtils.writeJsonFile(paths.join(chapterFragmentsDir, `${chapterName}.json`), fragments);
   }
 
   progress?.terminate();

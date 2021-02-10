@@ -81,6 +81,7 @@ class Main {
       await fs.promises.mkdir(MOD_DATA_DIR, { recursive: true });
 
       let settings = await readSettings();
+      this.notaClient.useNotabridge = settings.useNotabridge;
 
       let autoOpenCheckbox = document.getElementById(
         'settings_translations_autoOpen',
@@ -89,6 +90,17 @@ class Main {
       autoOpenCheckbox.checked = settings.autoOpen;
       autoOpenCheckbox.addEventListener('change', () => {
         settings.autoOpen = autoOpenCheckbox.checked;
+        void writeSettings(settings);
+      });
+
+      let useNotabridgeCheckbox = document.getElementById(
+        'settings_translations_useNotabridge',
+      )! as HTMLInputElement;
+      useNotabridgeCheckbox.disabled = false;
+      useNotabridgeCheckbox.checked = settings.useNotabridge;
+      useNotabridgeCheckbox.addEventListener('change', () => {
+        settings.useNotabridge = useNotabridgeCheckbox.checked;
+        this.notaClient.useNotabridge = settings.useNotabridge;
         void writeSettings(settings);
       });
 
@@ -632,21 +644,22 @@ class Main {
 
       let totalNotaPagesCount = 0;
       let fetchedNotaPagesCount = 0;
+      let fetchers: Array<{ chapterName: string; fetcher: asyncUtils.Fetcher<Fragment[]> }> = [];
       for (let chapter of chaptersWithUpdates) {
-        totalNotaPagesCount += chapter.pages;
+        let fetcher = this.notaClient.createChapterFragmentFetcher(chapter);
+        totalNotaPagesCount += fetcher.total;
+        fetchers.push({ chapterName: chapter.name, fetcher });
       }
 
-      for (let chapterStatus of chaptersWithUpdates) {
-        console.log(`downloading ${chapterStatus.name}`);
-        this.progressBar.setTaskInfo(`Скачивание главы '${chapterStatus.name}' с Ноты...`);
-
+      for (let { chapterName, fetcher } of fetchers) {
+        console.log(`downloading ${chapterName}`);
+        this.progressBar.setTaskInfo(`Скачивание главы '${chapterName}' с Ноты...`);
         let fragments: Fragment[] = [];
 
-        let { iterator } = this.notaClient.createChapterFragmentFetcher(chapterStatus);
         let self = this;
         await asyncUtils.limitConcurrency(
           (function* () {
-            for (let promise of iterator) {
+            for (let promise of fetcher.iterator) {
               yield promise.then((pageFragments) => {
                 self.progressBar.setValue(fetchedNotaPagesCount, totalNotaPagesCount);
                 fragments.push(...pageFragments);
@@ -658,10 +671,9 @@ class Main {
         );
 
         fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
-        chapterFragments.set(chapterStatus.name, fragments);
-
+        chapterFragments.set(chapterName, fragments);
         await fsUtils.writeJsonFile(
-          paths.join(CHAPTER_FRAGMENTS_DIR, `${chapterStatus.name}.json`),
+          paths.join(CHAPTER_FRAGMENTS_DIR, `${chapterName}.json`),
           fragments,
         );
       }

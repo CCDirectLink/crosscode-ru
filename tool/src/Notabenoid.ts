@@ -3,11 +3,15 @@
 
 import { Fetcher } from './utils/async.js';
 import paths from './node-builtin-modules/path.js';
-import { hasKey, isArray, isObject } from './utils/misc.js';
+import * as miscUtils from './utils/misc.js';
+import hasKey = miscUtils.hasKey;
+import isObject = miscUtils.isObject;
+import isArray = miscUtils.isArray;
 
 const BOOK_ID = '74823';
 const NOTABENOID_URL = 'http://notabenoid.org';
 const NOTABENOID_BOOK_URL = `${NOTABENOID_URL}/book/${BOOK_ID}`;
+const NOTABRIDGE_SERVICE_URL = 'https://stronghold.crosscode.ru/~notabridge/crosscode';
 
 const RU_ABBREVIATED_MONTH_NAMES = [
   'янв.',
@@ -27,8 +31,6 @@ const RU_ABBREVIATED_MONTH_NAMES = [
 // I hope this doesn't get changed... although, the latest commit on Nota's
 // repo is from 2016, so such changes are very unlikely.
 const CHAPTER_PAGE_SIZE = 50;
-
-export type ChapterStatuses = Map<string, ChapterStatus>;
 
 export interface ChapterStatus {
   id: number;
@@ -73,6 +75,8 @@ export interface Translation {
 }
 
 export class NotaClient {
+  public useNotabridge = false;
+
   public constructor(public httpClient: NotaHttpClient) {}
 
   public async requestPage(path: string): Promise<DocumentFragment> {
@@ -85,7 +89,15 @@ export class NotaClient {
     return doc;
   }
 
-  public async fetchAllChapterStatuses(): Promise<ChapterStatuses> {
+  public async fetchAllChapterStatuses(): Promise<Map<string, ChapterStatus>> {
+    if (this.useNotabridge) {
+      let response: Record<string, ChapterStatus> = await this.httpClient.requestJSON(
+        'GET',
+        `${NOTABRIDGE_SERVICE_URL}/chapter-statuses.json`,
+      );
+      return miscUtils.objectToMap(response);
+    }
+
     let doc = await this.requestPage(`/book/${BOOK_ID}`);
     let result = new Map<string, ChapterStatus>();
     for (let tr of doc.querySelectorAll<HTMLElement>('#Chapters > tbody > tr')) {
@@ -96,6 +108,18 @@ export class NotaClient {
   }
 
   public createChapterFragmentFetcher(chapter: ChapterStatus): Fetcher<Fragment[]> {
+    if (this.useNotabridge) {
+      return {
+        total: 1,
+        iterator: function* (this: NotaClient): Generator<Promise<Fragment[]>> {
+          yield this.httpClient.requestJSON(
+            'GET',
+            `${NOTABRIDGE_SERVICE_URL}/chapter-fragments/${chapter.name}.json`,
+          );
+        }.call(this),
+      };
+    }
+
     return {
       total: chapter.pages,
       // seriously... JS has regular generator functions, yet it doesn't have
@@ -129,7 +153,7 @@ export class NotaClient {
     orderNumber: number,
     text: string,
   ): Promise<number> {
-    let response = (await this.httpClient.requestJSON(
+    let response = await this.httpClient.requestJSON<{ id: string }>(
       'POST',
       `${NOTABENOID_BOOK_URL}/${chapterId}/0/edit`,
       {
@@ -137,7 +161,7 @@ export class NotaClient {
         'Orig[body]': String(text),
         ajax: '1',
       },
-    )) as { id: string };
+    );
     return parseInt(response.id, 10);
   }
 
@@ -358,11 +382,11 @@ function calculateTranslationScore(t: Translation): number {
 }
 
 export interface NotaHttpClient {
-  requestJSON(
+  requestJSON<T>(
     method: 'GET' | 'POST',
     url: string,
     body?: Record<string, string> | null,
-  ): Promise<unknown>;
+  ): Promise<T>;
   requestDocument(
     method: 'GET' | 'POST',
     url: string,

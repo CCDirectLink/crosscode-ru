@@ -1,11 +1,11 @@
 import { NotaHttpClient } from '../Notabenoid.js';
 
 export class NwNotaHttpClient implements NotaHttpClient {
-  public async requestJSON(
+  public async requestJSON<T>(
     method: 'GET' | 'POST',
     url: string,
     body?: Record<string, string> | null,
-  ): Promise<unknown> {
+  ): Promise<T> {
     let res = await fetch(url, { method, body: bodyToFormData(body), credentials: 'include' });
     if (!res.ok) throw new Error(`HTTP error: ${res.status} ${res.statusText}`);
     return await res.json();

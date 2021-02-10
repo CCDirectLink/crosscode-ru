@@ -3,11 +3,11 @@ import * as request from 'request';
 import { JSDOM } from 'jsdom';
 
 export class NodejsNotaHttpClient implements NotaHttpClient {
-  public async requestJSON(
+  public async requestJSON<T>(
     method: 'GET' | 'POST',
     url: string,
     body?: Record<string, string> | null,
-  ): Promise<unknown> {
+  ): Promise<T> {
     return JSON.parse(await this.request(method, url, body));
   }
 
