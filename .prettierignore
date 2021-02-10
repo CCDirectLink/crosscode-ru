@@ -1,6 +1,6 @@
 /**/dist/
 /tool/dist-headless/
-/tool/headless-config.json
+/headless-credentials*
 /dist-archive/
 /assets/ru-translation-tool*/
 /ultimate-crosscode-typedefs/

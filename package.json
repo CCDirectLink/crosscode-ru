@@ -6,6 +6,7 @@
   "devDependencies": {
     "@types/jsdom": "^16.2.6",
     "@types/request": "^2.48.5",
+    "@types/yargs": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "^3.0.2",
     "@typescript-eslint/parser": "^3.0.2",
     "eslint": "^7.1.0",
@@ -21,7 +22,8 @@
   "dependencies": {
     "form-data": "^3.0.0",
     "jsdom": "^16.4.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "yargs": "^16.2.0"
   },
   "scripts": {
     "clean": "rm -rv dist/ enhanced-ui/dist/ tool/dist/",
