@@ -27,14 +27,13 @@
     "yargs": "^16.2.0"
   },
   "scripts": {
-    "clean": "rm -rv dist/ enhanced-ui/dist/ tool/dist/",
+    "clean": "rm -rv dist/ enhanced-ui/dist/ tool/dist/ tool/dist-headless/",
     "build": "tsc --build",
     "watch": "tsc --build --watch",
     "lint": "eslint . --ext .js,.ts --ignore-path .gitignore",
     "check-fmt": "yarn run prettier --check '**/*.{js,ts,json,css,scss,html}'",
     "build:styles": "node-sass --recursive --output tool/dist/styles --source-map true tool/src/styles",
     "watch:styles": "node-sass --recursive --output tool/dist/styles --source-map true tool/src/styles --watch",
-    "clean:headless": "rm -rv tool/dist-headless/",
     "build:headless": "tsc --project tool/tsconfig-headless.json",
     "watch:headless": "tsc --project tool/tsconfig-headless.json --watch"
   },

@@ -74,14 +74,14 @@ QUICK_INSTALL_ARCHIVES := $(call archive_names,$(QUICK_INSTALL_ARCHIVE_NAME))
 ALL_ARCHIVE_NAMES := $(ZIP_ARCHIVE_NAMES) $(TAR_ARCHIVE_NAMES) $(QUICK_INSTALL_ARCHIVES)
 
 define download_archive
-mkdir -pv $1 && \
-curl --max-time 10 --location --fail $2 | tar --verbose --directory $1 --gzip $4 --extract $3
+@echo "downloading" $2 "into" $1
+@mkdir -p $1 && curl --max-time 10 --location --fail $2 | tar --directory $1 --gzip $4 --extract --file - $3
 endef
 
 all: $(ALL_ARCHIVE_NAMES)
 
 clean:
-	rm -rvf \
+	@rm -rf \
 		$(ALL_ARCHIVE_NAMES) $(MOD_DIR) $(TOOL_DIR) $(LOCALIZE_ME_MOD_DIR) \
 		$(CC_WORLD_MAP_OVERHAUL_MOD_DIR) $(ENHANCED_UI_MOD_DIR) \
 		$(QUICK_INSTALL_TMP_DIR)
@@ -94,14 +94,18 @@ $(call archive_names,$(ENHANCED_UI_MOD_ARCHIVE_NAME)): $(ENHANCED_UI_MOD_ARCHIVE
 $(QUICK_INSTALL_ARCHIVES): $(QUICK_INSTALL_ARCHIVE_FILES)
 
 $(ZIP_ARCHIVE_NAMES):
-	rm -rvf $@ && zip --quiet --recurse-paths $@ -- $^
+	@echo "packing .zip archive" $@
+	@rm -rf $@ && zip --quiet --recurse-paths $@ -- $^
 $(TAR_ARCHIVE_NAMES):
-	rm -rvf $@ && tar --create --file $@ --gzip -- $^
+	@echo "packing .tar.gz archive" $@
+	@rm -rf $@ && tar --create --file $@ --gzip -- $^
 
 $(QUICK_INSTALL_ARCHIVE_NAME).zip:
-	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && zip --quiet --recurse-paths ../$@ .
+	@echo "packing quick-install .zip archive" $@
+	@rm -rf $@ && cd $(QUICK_INSTALL_TMP_DIR) && zip --quiet --recurse-paths ../$@ .
 $(QUICK_INSTALL_ARCHIVE_NAME).tar.gz:
-	rm -rvf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip .
+	@echo "packing quick-install .tar.gz archive" $@
+	@rm -rf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip .
 
 $(LOCALIZE_ME_MOD_DIR):
 	$(call download_archive,$@,https://github.com/L-Sherry/Localize-me/tarball/47dc03c57cabe7b6d673bd26b0f147bcd787bf61,,--strip-components=1)
@@ -109,18 +113,19 @@ $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
 	$(call download_archive,$@,https://github.com/ccdirectlink3/cc-world-map-overhaul/tarball/5e6dc32f2c0d9d0106b3f209f920a99ea3b52b54,,--strip-components=1)
 
 $(QUICK_INSTALL_TMP_DIR)/ccloader:
-	$(call download_archive,$(@D),http://stronghold.crosscode.ru/~dmitmel/ccloader3/20201114171305/ccloader_3.0.0-alpha_quick-install.tar.gz,)
+	$(call download_archive,$(@D),http://stronghold.crosscode.ru/~dmitmel/ccloader3/20201114171305/ccloader_3.0.0-alpha_quick-install.tar.gz,,)
 
 compile-translations: $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
 
 $(MOD_DIR)/$(TRANSLATIONS_DIR)/%.json: ../$(TRANSLATION_TOOL_DATA_DIR)/%.json
-	mkdir -pv $(@D) && jq --compact-output . $< > $@
+	@echo "processing tr pack:" $@
+	@mkdir -p $(@D) && jq --compact-output . $< > $@
 # Unfortuntately, the following file copying rules can't be merged together
 $(MOD_DIR)/%: ../%
-	mkdir -pv $(@D) && cp -r $< $@
+	@mkdir -p $(@D) && cp -r $< $@
 $(TOOL_DIR)/%: ../tool/%
-	mkdir -pv $(@D) && cp -r $< $@
+	@mkdir -p $(@D) && cp -r $< $@
 $(ENHANCED_UI_MOD_DIR)/%: ../enhanced-ui/%
-	mkdir -pv $(@D) && cp -r $< $@
+	@mkdir -p $(@D) && cp -r $< $@
 $(QUICK_INSTALL_TMP_DIR)/assets/mods/%: %
-	mkdir -pv $(@D) && cp -r $< $@
+	@mkdir -p $(@D) && cp -r $< $@
