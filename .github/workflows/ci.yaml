@@ -30,39 +30,30 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-3-
 
-      - name: Get the number of CPU threads
-        id: cpu_threads
-        run: echo "::set-output name=cpu_threads::$(nproc)"
-
       - name: Set up ultimate-crosscode-typedefs
         working-directory: ultimate-crosscode-typedefs
         run: |
           yarn install --production --no-lockfile
           yarn link
 
-      - name: Install dependencies
+      - name: Install dependencies (mod)
         run: |
-          export MAKEFLAGS=-j${{ steps.cpu_threads.outputs.cpu_threads }}
-
           yarn link ultimate-crosscode-typedefs
           yarn install --frozen-lockfile
+      - name: Install dependencies (enhanced-ui)
+        working-directory: enhanced-ui
+        run: yarn install --frozen-lockfile
+      - name: Install dependencies (tool)
+        working-directory: tool
+        run: yarn install --frozen-lockfile
 
-          pushd enhanced-ui >/dev/null
-          yarn install --frozen-lockfile
-          popd >/dev/null
-
-          pushd tool >/dev/null
-          yarn install --frozen-lockfile
-          popd >/dev/null
-
-      - name: Build
+      - name: Build (all)
+        run: yarn run build
+      - name: Build (tool-specific)
+        working-directory: tool
         run: |
-          yarn run build
-
-          pushd tool >/dev/null
           yarn run build:styles
           yarn run build:headless
-          popd >/dev/null
 
       - name: Lint
         run: yarn run lint
