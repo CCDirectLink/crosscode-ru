@@ -10,6 +10,7 @@ import * as miscUtils from './utils/misc.js';
 import * as fs from 'fs';
 import * as paths from 'path';
 import * as yargs from 'yargs';
+import * as ProgressBar from 'progress';
 
 interface CliOptions {
   username: string;
@@ -85,6 +86,18 @@ async function main(): Promise<void> {
   let chapterStatusesFile = paths.join(opts.output, 'chapter-statuses.json');
   let chapterFragmentsDir = paths.join(opts.output, 'chapter-fragments');
 
+  function createProgressBar(format: string, total: number): ProgressBar | null {
+    let stream = process.stderr;
+    return stream.isTTY
+      ? new ProgressBar(format, {
+          total,
+          stream,
+          complete: '=',
+          incomplete: ' ',
+        })
+      : null;
+  }
+
   let notaClient = new NotaClient(new NodejsNotaHttpClient());
   await notaClient.login(opts.username, opts.password);
 
@@ -104,21 +117,16 @@ async function main(): Promise<void> {
     (opts.force || needsUpdate ? chaptersWithUpdates : chaptersWithoutUpdates).push(status);
   }
 
-  let chapterFragments = new Map<string, Fragment[]>();
-
-  for (let [i, chapterStatus] of chaptersWithoutUpdates.entries()) {
-    if (opts.progress) {
-      console.log(
-        `[${i + 1}/${chaptersWithoutUpdates.length}] loading chapter ${
-          chapterStatus.name
-        } from the local database`,
-      );
-    }
-    let fragments: Fragment[] = await fsUtils.readJsonFile(
-      paths.join(chapterFragmentsDir, `${chapterStatus.name}.json`),
-    );
-    chapterFragments.set(chapterStatus.name, fragments);
+  if (chaptersWithUpdates.length === 0) {
+    console.log('All chapters are up to date!');
+    return;
   }
+
+  console.log(
+    `${chaptersWithUpdates.length}/${
+      chaptersWithUpdates.length + chaptersWithoutUpdates.length
+    } chapter(s) need to be updated.`,
+  );
 
   let totalNotaPagesCount = 0;
   let fetchedNotaPagesCount = 0;
@@ -126,10 +134,16 @@ async function main(): Promise<void> {
     totalNotaPagesCount += chapter.pages;
   }
 
+  let progress = createProgressBar(
+    '[:bar] :percent  :rate pages/s  ETA :etas ',
+    totalNotaPagesCount,
+  );
+
   for (let [i, chapterStatus] of chaptersWithUpdates.entries()) {
+    i++;
     if (opts.progress) {
-      console.log(
-        `[${i + 1}/${chaptersWithUpdates.length}] downloading chapter ${chapterStatus.name}`,
+      progress?.interrupt(
+        `[${i}/${chaptersWithUpdates.length}] downloading chapter '${chapterStatus.name}'`,
       );
     }
     let fragments: Fragment[] = [];
@@ -142,13 +156,13 @@ async function main(): Promise<void> {
             fragments.push(...pageFragments);
             fetchedNotaPagesCount++;
             if (opts.progress) {
-              console.log(
-                `[${i + 1}/${
-                  chaptersWithUpdates.length
-                }] [${fetchedNotaPagesCount}/${totalNotaPagesCount}] fetching pages of chapter ${
-                  chapterStatus.name
-                }`,
-              );
+              if (progress != null) {
+                progress.tick(1);
+              } else {
+                console.log(
+                  `[${i}/${chaptersWithUpdates.length}] [${fetchedNotaPagesCount}/${totalNotaPagesCount}] downloading chapter '${chapterStatus.name}'`,
+                );
+              }
             }
           });
         }
@@ -157,15 +171,15 @@ async function main(): Promise<void> {
     );
 
     fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
-    chapterFragments.set(chapterStatus.name, fragments);
 
     await fsUtils.writeJsonFile(
       paths.join(chapterFragmentsDir, `${chapterStatus.name}.json`),
       fragments,
     );
-
-    await fsUtils.writeJsonFile(chapterStatusesFile, miscUtils.mapToObject(chapterStatuses));
   }
+
+  progress?.terminate();
+  await fsUtils.writeJsonFile(chapterStatusesFile, miscUtils.mapToObject(chapterStatuses));
 }
 
 void main();
