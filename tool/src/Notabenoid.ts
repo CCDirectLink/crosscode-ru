@@ -28,7 +28,6 @@ const RU_ABBREVIATED_MONTH_NAMES = [
 // repo is from 2016, so such changes are very unlikely.
 const CHAPTER_PAGE_SIZE = 50;
 
-export type ChapterStatusesObj = Record<string, ChapterStatus>;
 export type ChapterStatuses = Map<string, ChapterStatus>;
 
 export interface ChapterStatus {

@@ -40,3 +40,21 @@ export function mapGetOrInsert<K, V>(map: Map<K, V>, key: K, defaultValue: V): V
     return defaultValue;
   }
 }
+
+export function objectToMap<K extends PropertyKey, V>(obj: Record<K, V>): Map<K, V> {
+  let map = new Map();
+  for (let k in obj) {
+    if (hasKey(obj, k)) {
+      map.set(k, obj[k]);
+    }
+  }
+  return map;
+}
+
+export function mapToObject<K extends PropertyKey, V>(map: Map<K, V>): Record<K, V> {
+  let obj = {} as Record<K, V>;
+  for (let [k, v] of map) {
+    obj[k] = v;
+  }
+  return obj;
+}

@@ -12,6 +12,10 @@ rules:
     - ignores:
         - modules
         - dynamicImport
+  node/no-unsupported-features/node-builtins:
+    - error
+    - ignores:
+        - fs.promises
 
 overrides:
   - files: 'tool/scripts/**/*.js'

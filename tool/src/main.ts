@@ -2,8 +2,6 @@
 
 import {
   ChapterStatus,
-  ChapterStatuses,
-  ChapterStatusesObj,
   Fragment,
   NotaClient,
   Original,
@@ -118,7 +116,7 @@ class Main {
   }
 
   public async autoTranslateCommonPhrases(): Promise<void> {
-    let chapterStatuses: ChapterStatuses = await this.readChapterStatuses();
+    let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
     let chapterFragments = new Map<string, Fragment[]>();
     let allChapterFragmentsCount = 0;
     for (let [i, name] of iteratorUtils.enumerate(chapterStatuses.keys())) {
@@ -159,7 +157,7 @@ class Main {
   }
 
   public async fixFragmentOriginals(): Promise<void> {
-    let chapterStatuses: ChapterStatuses = await this.readChapterStatuses();
+    let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
     let chapterFragments = new Map<string, Fragment[]>();
     let allChapterFragmentsCount = 0;
     for (let [i, name] of iteratorUtils.enumerate(chapterStatuses.keys())) {
@@ -274,7 +272,7 @@ class Main {
   }
 
   public async uploadNewFragments(): Promise<void> {
-    let chapterStatuses: ChapterStatuses = await this.readChapterStatuses();
+    let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
     let chapterFragments = new Map<string, Fragment[]>();
     // arrays are used as pointers for the sake of updating max order numbers
     // by reference instead of performing a lookup in `Map#set` every time
@@ -364,7 +362,7 @@ class Main {
   }
 
   public async fixFragmentOrder(): Promise<void> {
-    let chapterStatuses: ChapterStatuses = await this.readChapterStatuses();
+    let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
     let chapterFragments = new Map<string, Fragment[]>();
     let allChapterFragmentsCount = 0;
     // arrays are used as pointers for the sake of updating max order numbers
@@ -493,12 +491,8 @@ class Main {
     for (let translationLanguage of translationLanguages) {
       // translationLanguage = 'es';
       // console.log('Loading the monolithic translation pack...');
-      // let trPack = new Map<string, { orig: string; text: string }>(
-      //   Object.entries(
-      //     await fsUtils.readJsonFile(
-      //       paths.join('CrossCode-Esp', 'translations.pack.json'),
-      //     ),
-      //   ),
+      // let trPack = miscUtils.objectToMap(
+      //   await fsUtils.readJsonFile(paths.join('CrossCode-Esp', 'translations.pack.json')),
       // );
 
       let chapterFileHandles = new Map<string, fs.promises.FileHandle>();
@@ -610,8 +604,8 @@ class Main {
       this.progressBar.setTaskInfo('Скачивание данных о главах на Ноте...');
       this.progressBar.setIndeterminate();
 
-      let statuses: ChapterStatuses = await this.notaClient.fetchAllChapterStatuses();
-      let prevStatuses: ChapterStatuses = await this.readChapterStatuses();
+      let statuses: Map<string, ChapterStatus> = await this.notaClient.fetchAllChapterStatuses();
+      let prevStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
 
       await fs.promises.mkdir(CHAPTER_FRAGMENTS_DIR, { recursive: true });
 
@@ -626,15 +620,15 @@ class Main {
 
       let chapterFragments = new Map<string, Fragment[]>();
 
-      for (let [i, { name }] of chaptersWithoutUpdates.entries()) {
-        console.log(`loading ${name} from disk`);
-        this.progressBar.setTaskInfo(`Чтение главы '${name}' с диска...`);
+      for (let [i, chapterStatus] of chaptersWithoutUpdates.entries()) {
+        console.log(`loading ${chapterStatus.name} from disk`);
+        this.progressBar.setTaskInfo(`Чтение главы '${chapterStatus.name}' с диска...`);
         this.progressBar.setValue(i, chaptersWithoutUpdates.length);
 
         let fragments: Fragment[] = await fsUtils.readJsonFile(
-          paths.join(CHAPTER_FRAGMENTS_DIR, `${name}.json`),
+          paths.join(CHAPTER_FRAGMENTS_DIR, `${chapterStatus.name}.json`),
         );
-        chapterFragments.set(name, fragments);
+        chapterFragments.set(chapterStatus.name, fragments);
       }
 
       let totalNotaPagesCount = 0;
@@ -643,14 +637,13 @@ class Main {
         totalNotaPagesCount += chapter.pages;
       }
 
-      for (let status of chaptersWithUpdates) {
-        let { name } = status;
-        console.log(`downloading ${name}`);
-        this.progressBar.setTaskInfo(`Скачивание главы '${name}' с Ноты...`);
+      for (let chapterStatus of chaptersWithUpdates) {
+        console.log(`downloading ${chapterStatus.name}`);
+        this.progressBar.setTaskInfo(`Скачивание главы '${chapterStatus.name}' с Ноты...`);
 
         let fragments: Fragment[] = [];
 
-        let { iterator } = this.notaClient.createChapterFragmentFetcher(status);
+        let { iterator } = this.notaClient.createChapterFragmentFetcher(chapterStatus);
         let self = this;
         await asyncUtils.limitConcurrency(
           (function* () {
@@ -666,9 +659,12 @@ class Main {
         );
 
         fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
-        chapterFragments.set(name, fragments);
+        chapterFragments.set(chapterStatus.name, fragments);
 
-        await fsUtils.writeJsonFile(paths.join(CHAPTER_FRAGMENTS_DIR, `${name}.json`), fragments);
+        await fsUtils.writeJsonFile(
+          paths.join(CHAPTER_FRAGMENTS_DIR, `${chapterStatus.name}.json`),
+          fragments,
+        );
       }
 
       let packer = new LocalizeMePacker();
@@ -722,15 +718,12 @@ class Main {
     }
   }
 
-  public async readChapterStatuses(): Promise<ChapterStatuses> {
-    let data: ChapterStatusesObj | null = await fsUtils.readJsonFileOptional(CHAPTER_STATUSES_FILE);
-    return new Map<string, ChapterStatus>(data != null ? Object.entries(data) : []);
+  public async readChapterStatuses(): Promise<Map<string, ChapterStatus>> {
+    return miscUtils.objectToMap((await fsUtils.readJsonFileOptional(CHAPTER_STATUSES_FILE)) ?? {});
   }
 
-  public async writeChapterStatuses(statuses: ChapterStatuses): Promise<void> {
-    let data: ChapterStatusesObj = {};
-    for (let [k, v] of statuses) data[k] = v;
-    await fsUtils.writeJsonFile(CHAPTER_STATUSES_FILE, data);
+  public async writeChapterStatuses(statuses: Map<string, ChapterStatus>): Promise<void> {
+    await fsUtils.writeJsonFile(CHAPTER_STATUSES_FILE, miscUtils.mapToObject(statuses));
   }
 }
 
