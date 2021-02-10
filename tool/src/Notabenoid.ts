@@ -76,7 +76,7 @@ export interface Translation {
 export class NotaClient {
   public constructor(public httpClient: NotaHttpClient) {}
 
-  public async requestPage(path: string): Promise<Document> {
+  public async requestPage(path: string): Promise<DocumentFragment> {
     let doc = await this.httpClient.requestDocument('GET', `${NOTABENOID_URL}${path}`);
 
     if (doc.querySelector('form[method="post"][action="/"] input[name^="login"]') != null) {
@@ -103,7 +103,6 @@ export class NotaClient {
       // GENERATOR ARROW FUNCTIONS! I guess I have to use this old pattern again.
       iterator: function* (this: NotaClient): Generator<Promise<Fragment[]>> {
         for (let i = 0; i < chapter.pages; i++) {
-          console.log(`${chapter.name}, page ${i + 1}/${chapter.pages}`);
           yield this.requestPage(`/book/${BOOK_ID}/${chapter.id}?Orig_page=${i + 1}`).then(
             (doc) => {
               let fragments: Fragment[] = [];
@@ -369,7 +368,7 @@ export interface NotaHttpClient {
     method: 'GET' | 'POST',
     url: string,
     body?: Record<string, string> | null,
-  ): Promise<Document>;
+  ): Promise<DocumentFragment>;
 }
 
 export function stringifyFragmentOriginal(o: Original): string {

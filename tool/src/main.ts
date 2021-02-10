@@ -650,11 +650,7 @@ class Main {
 
         let fragments: Fragment[] = [];
 
-        let { total: notaPageCount, iterator } = this.notaClient.createChapterFragmentFetcher(
-          status,
-        );
-        console.log('notaPageCount', notaPageCount);
-
+        let { iterator } = this.notaClient.createChapterFragmentFetcher(status);
         let self = this;
         await asyncUtils.limitConcurrency(
           (function* () {

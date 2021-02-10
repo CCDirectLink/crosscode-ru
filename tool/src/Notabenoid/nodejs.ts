@@ -15,8 +15,8 @@ export class NodejsNotaHttpClient implements NotaHttpClient {
     method: 'GET' | 'POST',
     url: string,
     body?: Record<string, string> | null,
-  ): Promise<Document> {
-    return (JSDOM.fragment(await this.request(method, url, body)) as unknown) as Document;
+  ): Promise<DocumentFragment> {
+    return JSDOM.fragment(await this.request(method, url, body));
   }
 
   protected async request(

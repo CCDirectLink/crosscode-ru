@@ -15,7 +15,7 @@ export class NwNotaHttpClient implements NotaHttpClient {
     method: 'GET' | 'POST',
     url: string,
     body?: Record<string, string> | null,
-  ): Promise<Document> {
+  ): Promise<DocumentFragment> {
     return new Promise((resolve, reject) => {
       let xhr = new XMLHttpRequest();
       xhr.open(method, url);
@@ -31,7 +31,10 @@ export class NwNotaHttpClient implements NotaHttpClient {
           reject(new Error('responseXML is null'));
           return;
         }
-        resolve(doc);
+        // TODO: Only types of the field `ownerDocument` are incompatible: for
+        // a real document the type is `null` and for a fragment it is another
+        // real `Document`.
+        resolve((doc as unknown) as DocumentFragment);
       };
       xhr.onerror = () => {
         reject(new Error('Network error'));
