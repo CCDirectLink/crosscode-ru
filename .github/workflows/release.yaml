@@ -38,7 +38,7 @@ jobs:
       - name: Set up ultimate-crosscode-typedefs
         working-directory: ultimate-crosscode-typedefs
         run: |
-          yarn install --frozne-lockfile --production
+          yarn install --frozen-lockfile --production
           yarn link
 
       - name: Install dependencies
