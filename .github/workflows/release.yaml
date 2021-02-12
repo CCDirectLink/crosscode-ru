@@ -59,11 +59,12 @@ jobs:
 
       - name: Ensure that translations are up to date
         env:
-          NOTA_USER: ${{ secrets.NOTABENOID_USERNAME }}
-          NOTA_PASSWD: ${{ secrets.NOTABENOID_PASSWORD }}
-        if: env.NOTA_USER != '' && env.NOTA_PASSWD != ''
+          NOTABENOID_CREDENTIALS: ${{ secrets.NOTABENOID_CREDENTIALS }}
+        if: env.NOTABENOID_CREDENTIALS != ''
         run: |
-          chapters_with_updates="$(node tool/dist-headless/headless-main.js -u @"$NOTA_USER" -p @"$NOTA_PASSWD" -o assets/ru-translation-tool --checkUpdates)"
+          nota_username="${NOTABENOID_CREDENTIALS%%:*}"
+          nota_password="${NOTABENOID_CREDENTIALS#*:}"
+          chapters_with_updates="$(node tool/dist-headless/headless-main.js -u @"$nota_username" -p @"$nota_password" -o assets/ru-translation-tool --checkUpdates)"
           if [[ -n "$chapters_with_updates" ]]; then
             printf "ERROR: The following chapters are not up to date (re-run of Notabridge is needed):\n%s\n" "$chapters_with_updates"
             exit 1
