@@ -18,17 +18,11 @@ rules:
         - fs.promises
 
 overrides:
-  - files: 'tool/scripts/**/*.js'
-    rules:
-      node/shebang: off
-
   - files: '**/*.ts'
     extends: eslint-config-dmitmel/presets/typescript-with-type-checking-addon
     rules:
       # because I have to use '.js' file extensions in imports
       node/no-missing-import: off
-
-      '@typescript-eslint/no-loop-func': off
 
       '@typescript-eslint/naming-convention':
         - warn
