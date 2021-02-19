@@ -230,20 +230,28 @@ ig.module('enhanced-ui.fixes.item-lists.social-menu')
   .requires('game.feature.menu.gui.social.social-misc', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.SocialInfoBox.inject({
-      setCharacter(id) {
-        this.parent(id);
+      createEquipEntry(itemID, ...args) {
+        let result = this.parent(itemID, ...args);
 
-        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(this.equip, (gui) => {
+        let lastIndex = this.equip.hook.children.length - 1;
+        if (lastIndex >= 0) {
+          let gui = this.equip.removeChildGuiByIndex(lastIndex) as sc.TextGui &
+            sc.TextGui.LevelDrawData;
+          let item = sc.inventory.getItem(itemID);
+          let isScalable = item != null && Boolean(item.isScalable);
+
           let newGui = new sc.ui2.IconTextGui(gui.text);
           newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
-          let { level, numberGfx, isScalable } = gui;
+          let { level, numberGfx } = gui;
           newGui.setDrawCallback((width, height) =>
             sc.MenuHelper.drawLevel(level, width, height, numberGfx, isScalable),
           );
           newGui.tickerHook.maxWidth = this.equip.hook.size.x;
 
-          return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
-        });
+          this.equip.addChildGui(newGui);
+        }
+
+        return result;
       },
     });
   });
@@ -323,13 +331,16 @@ ig.module('enhanced-ui.fixes.item-lists.quest-dialog')
   .requires('game.feature.menu.gui.quests.quest-misc', 'enhanced-ui.ticker-display')
   .defines(() => {
     sc.QuestDialog.inject({
-      setQuestRewards(...args) {
-        this.parent(...args);
+      setQuestRewards(quest, ...args) {
+        this.parent(quest, ...args);
 
-        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(this.itemsGui, (gui) => {
+        guiMapChildren<sc.TextGui & sc.TextGui.LevelDrawData>(this.itemsGui, (gui, i) => {
+          let item = sc.inventory.getItem(quest.rewards.items[i].id);
+          let isScalable = item != null && Boolean(item.isScalable);
+
           let newGui = new sc.ui2.IconTextGui(gui.text);
           newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
-          let { level, numberGfx, isScalable } = gui;
+          let { level, numberGfx } = gui;
           if (gui.textBlock.drawCallback != null) {
             newGui.setDrawCallback((width, height) =>
               sc.MenuHelper.drawLevel(level, width, height, numberGfx, isScalable),
@@ -355,7 +366,7 @@ ig.module('enhanced-ui.fixes.item-lists.quest-details-view')
           // local scope?  :SanCheeseAngry:.  This means that I have to look
           // `isScalable` up manually.
           let item = sc.inventory.getItem(quest.rewards.items[i].id);
-          let isScalable = Boolean(item.isScalable);
+          let isScalable = item != null && Boolean(item.isScalable);
 
           let newGui = new sc.ui2.IconTextGui(gui.text);
           newGui.setPos(gui.hook.pos.x, gui.hook.pos.y);
