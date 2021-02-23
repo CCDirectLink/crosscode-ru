@@ -331,7 +331,25 @@ function parseOriginal(raw: string): Original | null {
   o.descriptionText = raw.slice(locationLineLen + 1, headersLen);
   o.text = raw.slice(headersLen + 2);
 
+  let p = parsePathsWithLangFileMigrations(o.file, o.jsonPath);
+  o.file = p.file;
+  o.jsonPath = p.jsonPath;
+
   return o as Original;
+}
+
+function parsePathsWithLangFileMigrations(
+  file: string,
+  jsonPath: string,
+): { file: string; jsonPath: string } {
+  if (file === 'data/LANG') {
+    let realJsonPathStart = jsonPath.indexOf('/labels/');
+    if (realJsonPathStart > 0) {
+      file = `data/lang/${jsonPath.slice(0, realJsonPathStart)}.en_US.json`;
+      jsonPath = jsonPath.slice(realJsonPathStart + 1);
+    }
+  }
+  return { file, jsonPath };
 }
 
 function parseTranslation(element: Element): Translation | null {
@@ -393,12 +411,26 @@ export interface NotaHttpClient {
 }
 
 export function stringifyFragmentOriginal(o: Original): string {
-  let result = `${o.file} ${o.jsonPath}`;
+  let p = stringifyPathsWithLangFileMigrations(o.file, o.jsonPath);
+  let result = `${p.file} ${p.jsonPath}`;
   if (o.langUid !== 0) result += ` #${o.langUid}`;
   result += '\n';
   if (o.descriptionText.length > 0) result += `${o.descriptionText}\n`;
   result += `\n${o.text}`;
   return result;
+}
+
+function stringifyPathsWithLangFileMigrations(
+  file: string,
+  jsonPath: string,
+): { file: string; jsonPath: string } {
+  const PREFIX = 'data/lang/';
+  const SUFFIX = '.en_US.json';
+  if (file.startsWith(PREFIX) && file.endsWith(SUFFIX)) {
+    file = 'data/LANG';
+    jsonPath = `${file.slice(PREFIX.length, -SUFFIX.length)}/${jsonPath}`;
+  }
+  return { file, jsonPath };
 }
 
 export function stringifyFragmentTranslation(t: Translation): string {
@@ -459,6 +491,8 @@ export function getChapterNameOfFile(path: string): string {
         if (dirs.length >= 2) {
           switch (dirs[1]) {
             case 'lang':
+              return 'LANG';
+
             case 'arena':
             case 'enemies':
             case 'characters':
