@@ -4,7 +4,9 @@ ig.module('enhanced-ui.fixes.combat-hud')
     sc.SUB_HP_EDITOR.BOSS.inject({
       init(...args) {
         this.parent(...args);
-        this.labelGui.setText(ig.lang.get('sc.gui.combat-hud.boss'));
+        if (this.labelGui.text === 'Boss') {
+          this.labelGui.setText(ig.lang.get('sc.gui.combat-hud.boss'));
+        }
       },
     });
 
@@ -24,8 +26,12 @@ ig.module('enhanced-ui.fixes.pvp')
     sc.PvpRoundGui.inject({
       init(...args) {
         this.parent(...args);
-        let textGui = this.hook.children[0].gui as sc.TextGui;
-        textGui.setText(ig.lang.get('sc.gui.combat-hud.pvp-round'));
+        for (let { gui } of this.hook.children) {
+          if (gui instanceof sc.TextGui && gui.text === 'Round') {
+            gui.setText(ig.lang.get('sc.gui.combat-hud.pvp-round'));
+            break;
+          }
+        }
       },
     });
   });

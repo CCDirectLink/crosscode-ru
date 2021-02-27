@@ -27,10 +27,12 @@ ig.module('enhanced-ui.fixes.options-menu')
 
         this.childFocusTargets = focusTargets;
 
-        let lineHook = this.hook.children[1];
-        this.nameGui.tickerHook.maxWidth = lineHook.size.x - this.nameGui.hook.pos.x + 2;
-        this.nameGui.tickerHook.speed *= 1.25;
-        this.nameGui.tickerHook.delayAtBorders /= 1.25;
+        let lineHook = this.hook.children.find(({ gui }) => gui instanceof ig.ColorGui);
+        if (lineHook != null) {
+          this.nameGui.tickerHook.maxWidth = lineHook.size.x - this.nameGui.hook.pos.x + 2;
+          this.nameGui.tickerHook.speed *= 1.25;
+          this.nameGui.tickerHook.delayAtBorders /= 1.25;
+        }
       },
 
       update() {
@@ -43,13 +45,22 @@ ig.module('enhanced-ui.fixes.options-menu')
     });
 
     sc.KeyBinderGui.inject({
+      anykeyText: null,
+
       init() {
         this.parent();
-        this.anykeyText = this.box.hook.children[2].gui as sc.TextGui;
+        let anykeyTextStr = ig.lang.get('sc.gui.options.controls.anykey');
+        for (let { gui } of this.box.hook.children) {
+          if (gui instanceof sc.TextGui && gui.text === anykeyTextStr) {
+            this.anykeyText = gui;
+            break;
+          }
+        }
       },
 
       show(...args) {
         this.parent(...args);
+        if (this.anykeyText == null) return;
 
         let maxButtonWidth = Math.max(this.button.hook.size.x, this.back.hook.size.x);
         this.button.setWidth(maxButtonWidth);

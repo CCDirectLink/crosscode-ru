@@ -4,9 +4,15 @@ ig.module('enhanced-ui.fixes.quest-menu')
     sc.QuestInfoBox.inject({
       init() {
         this.parent();
-        let locationIconHook = this.locationGui.hook.children[1];
-        this.locationText.tickerHook.maxWidth =
-          this.locationGui.hook.size.x - this.locationText.hook.pos.x - locationIconHook.pos.x / 2;
+        let locationIconHook = this.locationGui.hook.children.find(
+          ({ gui }) => gui instanceof ig.ImageGui && gui.image === this.gfx,
+        );
+        if (locationIconHook != null) {
+          this.locationText.tickerHook.maxWidth =
+            this.locationGui.hook.size.x -
+            this.locationText.hook.pos.x -
+            locationIconHook.pos.x / 2;
+        }
       },
     });
   });

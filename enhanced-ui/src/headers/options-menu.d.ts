@@ -4,6 +4,6 @@ declare namespace sc {
   }
 
   interface KeyBinderGui {
-    anykeyText: sc.TextGui;
+    anykeyText?: sc.TextGui | null;
   }
 }

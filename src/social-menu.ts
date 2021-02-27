@@ -10,8 +10,11 @@ ig.module('crosscode-ru.fixes.social-menu')
     sc.SocialList.inject({
       init() {
         this.parent();
-        let statusHeaderHook = this.bg.hook.children[1];
-        statusHeaderHook.pos.x -= 2;
+        let statusStr = ig.lang.get('sc.gui.menu.social.status');
+        let statusHeaderHook = this.bg.hook.children.find(
+          ({ gui }) => gui instanceof sc.TextGui && gui.text === statusStr,
+        );
+        if (statusHeaderHook != null) statusHeaderHook.pos.x -= 2;
       },
     });
 
