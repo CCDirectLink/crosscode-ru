@@ -7,13 +7,16 @@ ig.module('crosscode-ru.fixes.credits-section')
     const CREDITS_SPPED_DEFAULT = 30;
     const CREDITS_SPEED = 36.45;
     const HEADER_TRANSITION_DELAY = 1.2 * (CREDITS_SPPED_DEFAULT / CREDITS_SPEED);
-    const NAME_TRANSITION_DELAY = 2 * (CREDITS_SPPED_DEFAULT / CREDITS_SPEED);
+    const NAME_TRANSITION_DELAY = 1 * (CREDITS_SPPED_DEFAULT / CREDITS_SPEED);
 
     ig.GUI.CreditSection.inject({
       update() {
-        let y = this.content.hook.pos.y - CREDITS_SPEED * ig.system.actualTick;
+        // TODO: use sc.credits.speed for adjusting the credits speed, this
+        // removes the need for injections into `update` and (possibly)
+        // `createHeader`
+        let y = this.content.hook.pos.y - CREDITS_SPEED * ig.system.actualTick * sc.credits.speed;
         this.finished = y <= -this.content.hook.size.y + ig.system.height;
-        this.isOffscreen = y <= -this.content.hook.size.y;
+        this.isOffscreen = y <= -this.content.hook.size.y && this.finished;
         if (this.isOffscreen) this.remove();
         this.content.hook.pos.y = y;
       },
@@ -25,7 +28,13 @@ ig.module('crosscode-ru.fixes.credits-section')
         for (let { gui } of addedChildren) {
           gui.onVisibilityChange = (visible) => {
             if (visible) {
-              gui.doStateTransition('DEFAULT', false, false, null, HEADER_TRANSITION_DELAY);
+              gui.doStateTransition(
+                'DEFAULT',
+                false,
+                false,
+                null,
+                HEADER_TRANSITION_DELAY / sc.credits.speed,
+              );
             } else {
               gui.doStateTransition('HIDDEN', true);
             }
@@ -63,7 +72,13 @@ ig.module('crosscode-ru.fixes.credits-section')
               let absoluteY = content.hook.pos.y + columnContainerGui.hook.pos.y + nameHook.pos.y;
               if (absoluteY >= ig.system.height) break;
 
-              nameHook.doStateTransition('DEFAULT', false, false, null, NAME_TRANSITION_DELAY);
+              nameHook.doStateTransition(
+                'DEFAULT',
+                false,
+                false,
+                null,
+                NAME_TRANSITION_DELAY / sc.credits.speed,
+              );
               currentNameIndex++;
             }
           };

@@ -10,7 +10,7 @@
   "homepage": "https://github.com/CCDirectLink/crosscode-ru/tree/master/enhanced-ui",
   "postload": "dist/postload.js",
   "dependencies": {
-    "crosscode": "~1.3.0"
+    "crosscode": "~1.4.0"
   },
   "assets": ["data/lang/sc/gui.en_US.json.patch"]
 }
