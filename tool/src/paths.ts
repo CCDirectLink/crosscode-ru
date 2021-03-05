@@ -13,3 +13,4 @@ export const CHAPTER_STATUSES_FILE = paths.join(MOD_DATA_DIR, 'chapter-statuses.
 export const CHAPTER_FRAGMENTS_DIR = paths.join(MOD_DATA_DIR, 'chapter-fragments');
 export const LOCALIZE_ME_PACKS_DIR = paths.join(MOD_DATA_DIR, 'localize-me-packs');
 export const LOCALIZE_ME_MAPPING_FILE = paths.join(MOD_DATA_DIR, 'localize-me-mapping.json');
+export const MIGRATION_LOOKUP_TABLE_FILE = paths.join(MOD_DATA_DIR, 'migration-lookup-table.json');

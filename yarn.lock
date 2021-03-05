@@ -65,7 +65,7 @@
   resolved "https://registry.yarnpkg.com/@types/caseless/-/caseless-0.12.2.tgz#f65d3d6389e01eeb458bd54dc8f52b95a9463bc8"
   integrity sha512-6ckxMjBBD8URvjB6J3NcnuAn5Pkl7t3TizAg+xdlzzQGSPSmBcXf8KoIH0ua/i+tio+ZRUHEXp0HEmvaR4kt0w==
 
-"@types/jquery@1.10.x":
+"@types/jquery@~1.10":
   version "1.10.36"
   resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-1.10.36.tgz#c15b1b7c6b80315d4855521737345415b7eadb42"
   integrity sha512-ABu01ZHcqx2lA9s2CL8x+BfCXmi4BB10aH/LDhBz0I0QgzzhUmxmBuFXQoK3U3dL0RoGYnNpfJC0w5bbH7ZbTg==
@@ -111,7 +111,7 @@
     "@types/tough-cookie" "*"
     form-data "^2.5.0"
 
-"@types/semver@6.2.x || 6.3.x":
+"@types/semver@^6.2.0":
   version "6.2.2"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-6.2.2.tgz#5c27df09ca39e3c9beb4fae6b95f4d71426df0a9"
   integrity sha512-RxAwYt4rGwK5GyoRwuP0jT6ZHAVTdz2EqgsHmX0PYNjGsko+OeT4WFXXTs/lM3teJUJodM+SNtAL5/pXIJ61IQ==
@@ -2333,9 +2333,9 @@ ultimate-crosscode-typedefs@dmitmel/ultimate-crosscode-typedefs:
   version "0.0.1"
   resolved "https://codeload.github.com/dmitmel/ultimate-crosscode-typedefs/tar.gz/8313295d14496721400f3f34a046d42f1c3468a8"
   dependencies:
-    "@types/jquery" "1.10.x"
+    "@types/jquery" "~1.10"
     "@types/node" ">=11.9"
-    "@types/semver" "6.2.x || 6.3.x"
+    "@types/semver" "^6.2.0"
 
 uri-js@^4.2.2:
   version "4.4.1"

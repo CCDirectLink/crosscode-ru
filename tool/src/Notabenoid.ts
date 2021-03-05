@@ -9,10 +9,10 @@ import isObject = miscUtils.isObject;
 import isArray = miscUtils.isArray;
 import * as iteratorUtils from './utils/iterator.js';
 
-const BOOK_ID = '74823';
-const NOTABENOID_URL = 'http://notabenoid.org';
-const NOTABENOID_BOOK_URL = `${NOTABENOID_URL}/book/${BOOK_ID}`;
-const NOTABRIDGE_SERVICE_URL = 'https://stronghold.crosscode.ru/~notabridge/crosscode';
+export const BOOK_ID = '74823';
+export const NOTABENOID_URL = 'http://notabenoid.org';
+export const NOTABENOID_BOOK_URL = `${NOTABENOID_URL}/book/${BOOK_ID}`;
+export const NOTABRIDGE_SERVICE_URL = 'https://stronghold.crosscode.ru/~notabridge/crosscode';
 
 const RU_ABBREVIATED_MONTH_NAMES = [
   'янв.',
@@ -148,6 +148,10 @@ export class NotaClient {
       'login[login]': username,
       'login[pass]': password,
     });
+  }
+
+  public async logout(): Promise<void> {
+    await this.httpClient.requestDocument('GET', '/register/logout');
   }
 
   public async addFragmentOriginal(
@@ -427,8 +431,8 @@ function stringifyPathsWithLangFileMigrations(
   const PREFIX = 'data/lang/';
   const SUFFIX = '.en_US.json';
   if (file.startsWith(PREFIX) && file.endsWith(SUFFIX)) {
-    file = 'data/LANG';
     jsonPath = `${file.slice(PREFIX.length, -SUFFIX.length)}/${jsonPath}`;
+    file = 'data/LANG';
   }
   return { file, jsonPath };
 }
@@ -453,23 +457,26 @@ export function stringifyFragmentTranslation(t: Translation): string {
 
 const AREA_CHAPTER_NAMES = new Set([
   'arena',
-  'arid-dng',
   'arid',
-  'autumn-fall',
+  'arid-dng',
   'autumn',
-  'bergen-trail',
+  'autumn-fall',
+  'beach',
   'bergen',
+  'bergen-trail',
   'cargo-ship',
   'cold-dng',
   'dreams',
+  'evo-village',
+  'final-dng',
   'flashback',
   'forest',
+  'heat',
   'heat-dng',
   'heat-village',
-  'heat',
   'hideout',
-  'jungle-city',
   'jungle',
+  'jungle-city',
   'rhombus-dng',
   'rhombus-sqr',
   'rookie-harbor',
@@ -479,44 +486,55 @@ const AREA_CHAPTER_NAMES = new Set([
 ]);
 
 export function getChapterNameOfFile(path: string): string {
-  let parsedPath = paths.parse(path);
+  let parsedPath = paths.posix.parse(path);
   let dirs = parsedPath.dir.split(paths.sep);
 
-  if (parsedPath.dir !== '' && dirs.length > 0) {
-    switch (dirs[0]) {
-      case 'extension':
-        return dirs[0];
+  if (parsedPath.dir.length > 0) {
+    while (dirs.length > 0) {
+      switch (dirs[0]) {
+        case 'extension':
+          if (dirs.length > 2) {
+            // This path is inside an extension. Normalize it by removing the
+            // extension directory prefix and retry getting the chapter name.
+            dirs.shift();
+            dirs.shift();
+            continue;
+          }
+          break;
 
-      case 'data':
-        if (dirs.length >= 2) {
-          switch (dirs[1]) {
-            case 'lang':
-              return 'LANG';
+        case 'data':
+          if (dirs.length >= 2) {
+            switch (dirs[1]) {
+              case 'lang':
+                return 'LANG';
 
-            case 'arena':
-            case 'enemies':
-            case 'characters':
-              return dirs[1];
+              case 'arena':
+              case 'enemies':
+              case 'characters':
+                return dirs[1];
 
-            case 'areas':
-              if (dirs.length === 2 && AREA_CHAPTER_NAMES.has(parsedPath.name)) {
+              case 'areas':
+                if (dirs.length === 2 && AREA_CHAPTER_NAMES.has(parsedPath.name)) {
+                  return parsedPath.name;
+                }
+                break;
+
+              case 'maps':
+                if (dirs.length >= 3 && AREA_CHAPTER_NAMES.has(dirs[2])) {
+                  return dirs[2];
+                }
+                break;
+            }
+          } else {
+            switch (parsedPath.name) {
+              case 'item-database':
+              case 'database':
                 return parsedPath.name;
-              }
-              break;
+            }
+          }
+      }
 
-            case 'maps':
-              if (dirs.length >= 3 && AREA_CHAPTER_NAMES.has(dirs[2])) {
-                return dirs[2];
-              }
-              break;
-          }
-        } else {
-          switch (parsedPath.name) {
-            case 'item-database':
-            case 'database':
-              return parsedPath.name;
-          }
-        }
+      break;
     }
   }
 

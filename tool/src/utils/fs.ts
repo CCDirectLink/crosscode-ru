@@ -22,11 +22,13 @@ export async function readJsonFileOptional<T>(
 export function writeJsonFile<T>(
   path: fs.PathLike | fs.promises.FileHandle,
   data: T,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  replacer?: (this: any, key: string, value: any) => any,
 ): Promise<void> {
   return fs.promises.writeFile(
     path,
     // eslint-disable-next-line no-undefined
-    `${JSON.stringify(data, undefined, ENABLE_PRETTY_PRINT ? 2 : undefined)}\n`,
+    `${JSON.stringify(data, replacer, ENABLE_PRETTY_PRINT ? 2 : undefined)}\n`,
   );
 }
 

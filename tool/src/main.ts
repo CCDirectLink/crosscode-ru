@@ -1,11 +1,14 @@
 import {
   ChapterStatus,
   Fragment,
+  NOTABENOID_BOOK_URL,
   NotaClient,
   Original,
+  Translation,
   generateFragmentDescriptionText,
   getChapterNameOfFile,
   stringifyFragmentOriginal,
+  stringifyFragmentTranslation,
 } from './Notabenoid.js';
 import { NwNotaHttpClient } from './Notabenoid/nw.js';
 import { IGNORE_IN_MOD_TAG, INJECTED_IN_MOD_TAG, LocalizeMePacker } from './TranslationPack.js';
@@ -15,12 +18,14 @@ import {
   CHAPTER_STATUSES_FILE,
   LOCALIZE_ME_MAPPING_FILE,
   LOCALIZE_ME_PACKS_DIR,
+  MIGRATION_LOOKUP_TABLE_FILE,
   MOD_DATA_DIR,
 } from './paths.js';
 
 import fs from './node-builtin-modules/fs.js';
 import * as fsUtils from './utils/fs.js';
 import paths from './node-builtin-modules/path.js';
+import subprocess from './node-builtin-modules/child_process.js';
 
 import * as asyncUtils from './utils/async.js';
 import * as iteratorUtils from './utils/iterator.js';
@@ -37,7 +42,7 @@ window.addEventListener('load', () => {
   void app.start();
 });
 
-const LEA_PHRASES = new Map([
+const COMMON_PHRASES = new Map([
   ['???', '???'],
   ['????', '????'],
   ['...', '...'],
@@ -52,14 +57,28 @@ const LEA_PHRASES = new Map([
   ['Hi!', 'Привет!'],
   ['Hi?', 'Привет?'],
   ['Hi.', 'Привет.'],
+  ['Hi...', 'Привет...'],
+  ['Hi!!', 'Привет!!'],
+  ['Hi!!!', 'Привет!!!'],
   ['Why?', 'Почему?'],
   ['How?', 'Как?'],
   ['Bye!', 'Пока!'],
   ['Bye.', 'Пока.'],
+  ['Bye?', 'Пока?'],
   ['Thanks!', 'Спасибо!'],
   ['Lea!', 'Лея!'],
   ['[yes]', '[да]'],
   ['[no]', '[нет]'],
+  ['Up', 'Наверх'],
+  ['Down', 'Вниз'],
+  ['Meet', 'Встреча'],
+  ['Yes', 'Да'],
+  ['No', 'Нет'],
+  ['Logout', 'Выход из игры'],
+  ['Login', 'Инициализация'],
+  ['What?', 'Что?'],
+  ['Who?', 'Кто?'],
+  ['Where?', 'Где?'],
 ]);
 
 const IGNORED_LABELS = new Set<string>([
@@ -142,24 +161,23 @@ class Main {
     }
     this.progressBar.setDone();
 
-    const autoTranslate = async (chapterId: number, f: Fragment): Promise<void> => {
+    const autoTranslate = async (f: Fragment): Promise<void> => {
       if (f.translations.length > 0) return;
 
-      let translation = LEA_PHRASES.get(f.original.text);
+      let translation = COMMON_PHRASES.get(f.original.text);
       if (translation == null) return;
 
-      await this.notaClient.addFragmentTranslation(chapterId, f.id, translation);
+      await this.notaClient.addFragmentTranslation(f.chapterId, f.id, translation);
     };
 
     let fixedFragmentsCount = 0;
     for (let chapterStatus of chapterStatuses.values()) {
       this.progressBar.setTaskInfo(chapterStatus.name);
       let fragments = chapterFragments.get(chapterStatus.name)!;
-      let chapterId = chapterStatus.id;
 
       for (let fragment of fragments) {
         this.progressBar.setValue(fixedFragmentsCount, allChapterFragmentsCount);
-        await autoTranslate(chapterId, fragment);
+        await autoTranslate(fragment);
         fixedFragmentsCount++;
       }
     }
@@ -167,7 +185,7 @@ class Main {
     this.progressBar.setDone();
   }
 
-  public async fixFragmentOriginals(): Promise<void> {
+  public async fixFragmentOriginals(wdiff = false): Promise<void> {
     let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
     let chapterFragments = new Map<string, Fragment[]>();
     let allChapterFragmentsCount = 0;
@@ -184,7 +202,7 @@ class Main {
     this.progressBar.setDone();
 
     let assetsCache = new Map<string, Promise<unknown>>();
-    const fixOriginal = async (chapterId: number, f: Fragment): Promise<void> => {
+    const fixOriginal = async (f: Fragment): Promise<void> => {
       if (
         f.original.descriptionText.includes(IGNORE_IN_MOD_TAG) ||
         f.original.descriptionText.includes(INJECTED_IN_MOD_TAG)
@@ -206,7 +224,7 @@ class Main {
       if (fileData == null) {
         console.warn(`${filePath} ${jsonPathStr}: unknown file`);
         await this.notaClient.addFragmentTranslation(
-          chapterId,
+          f.chapterId,
           f.id,
           'tr_ru:ERR_REMOVED_FROM_GAME',
         );
@@ -237,7 +255,7 @@ class Main {
       if (realOriginalText == null) {
         console.warn(`${filePath} ${jsonPathStr}: not a string`);
         await this.notaClient.addFragmentTranslation(
-          chapterId,
+          f.chapterId,
           f.id,
           'tr_ru:ERR_REMOVED_FROM_GAME',
         );
@@ -246,17 +264,36 @@ class Main {
 
       if (f.original.text !== realOriginalText) {
         console.warn(`${filePath} ${jsonPathStr}: stale original`);
+        const TMP_PATH_PREFIX = '/tmp/crosscode-ru-translation-tool-';
+        const OLD_FILE_PATH = `${TMP_PATH_PREFIX}old`;
+        const NEW_FILE_PATH = `${TMP_PATH_PREFIX}new`;
+        fs.writeFileSync(OLD_FILE_PATH, f.original.text);
+        fs.writeFileSync(NEW_FILE_PATH, realOriginalText);
+        let diffStr = f.original.text;
+        if (wdiff) {
+          try {
+            subprocess.execFileSync('wdiff', [OLD_FILE_PATH, NEW_FILE_PATH], { encoding: 'utf8' });
+          } catch (err: unknown) {
+            if (
+              miscUtils.isObject(err) &&
+              miscUtils.hasKey(err, 'stdout') &&
+              typeof err.stdout === 'string'
+            ) {
+              diffStr = err.stdout;
+            }
+          }
+        }
         await this.notaClient.addFragmentTranslation(
-          chapterId,
+          f.chapterId,
           f.id,
-          `tr_ru:ERR_STALE_ORIGINAL\n\n${f.original.text}`,
+          `tr_ru:ERR_STALE_ORIGINAL\n\n${diffStr}`,
         );
       }
       f.original.text = realOriginalText;
 
       let newRawText = stringifyFragmentOriginal(f.original);
       if (newRawText !== f.original.rawContent) {
-        await this.notaClient.editFragmentOriginal(chapterId, f.id, f.orderNumber, newRawText);
+        await this.notaClient.editFragmentOriginal(f.chapterId, f.id, f.orderNumber, newRawText);
       }
     };
 
@@ -265,12 +302,11 @@ class Main {
     for (let chapterStatus of chapterStatuses.values()) {
       this.progressBar.setTaskInfo(chapterStatus.name);
       let fragments = chapterFragments.get(chapterStatus.name)!;
-      let chapterId = chapterStatus.id;
 
       let iterator = function* (this: Main) {
         for (let fragment of fragments) {
           this.progressBar.setValue(fixedFragmentsCount, allChapterFragmentsCount);
-          yield fixOriginal(chapterId, fragment);
+          yield fixOriginal(fragment);
           fixedFragmentsCount++;
         }
       }.call(this);
@@ -441,7 +477,6 @@ class Main {
       let chapterName = chapterStatus.name;
       this.progressBar.setTaskInfo(chapterName);
       let fragments = chapterFragments.get(chapterName)!;
-      let chapterId = chapterStatus.id;
 
       fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
 
@@ -449,7 +484,7 @@ class Main {
         this.progressBar.setValue(fixedFragmentsCount, allChapterFragmentsCount);
         console.log(`${chapterName}: ${f.original.file} ${f.original.jsonPath} ${f.orderNumber}`);
         await this.notaClient.editFragmentOriginal(
-          chapterId,
+          f.chapterId,
           f.id,
           f.orderNumber,
           f.original.rawContent,
@@ -460,6 +495,305 @@ class Main {
     this.progressBar.setDone();
 
     this.progressBar.setTaskInfo('');
+  }
+
+  public async compileMigrationLookupTable(): Promise<void> {
+    let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
+    let lookupTable = new Map<string, Set<string>>();
+    for (let [i, name] of iteratorUtils.enumerate(chapterStatuses.keys())) {
+      this.progressBar.setTaskInfo(`Чтение главы '${name}' с диска...`);
+      this.progressBar.setValue(i, chapterStatuses.size);
+
+      let fragments: Fragment[] = await fsUtils.readJsonFile(
+        paths.join(CHAPTER_FRAGMENTS_DIR, `${name}.json`),
+      );
+
+      for (let f of fragments) {
+        if (f.translations.length > 0) {
+          let lookupResult = lookupTable.get(f.original.text);
+          if (lookupResult == null) {
+            lookupResult = new Set();
+            lookupTable.set(f.original.text, lookupResult);
+          }
+          for (let t of f.translations) {
+            // rawText usage is intended
+            lookupResult.add(t.rawText);
+          }
+        }
+      }
+    }
+    this.progressBar.setDone();
+
+    this.progressBar.setTaskInfo('Запись миграционной таблицы...');
+    this.progressBar.setIndeterminate();
+
+    await fsUtils.writeJsonFile(MIGRATION_LOOKUP_TABLE_FILE, lookupTable, (_k, v) => {
+      if (v instanceof Set) {
+        return Array.from(v);
+      } else if (v instanceof Map) {
+        return miscUtils.mapToObject(v);
+      } else {
+        return v;
+      }
+    });
+
+    this.progressBar.setTaskInfo('');
+    this.progressBar.setDone();
+  }
+
+  public async performExperimentalMigrations(dangerousLutMode = false): Promise<void> {
+    let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
+    let chapterFragments = new Map<string, Fragment[]>();
+    let allChapterFragmentsCount = 0;
+    for (let [i, name] of iteratorUtils.enumerate(chapterStatuses.keys())) {
+      this.progressBar.setTaskInfo(`Чтение главы '${name}' с диска...`);
+      this.progressBar.setValue(i, chapterStatuses.size);
+
+      let fragments: Fragment[] = await fsUtils.readJsonFile(
+        paths.join(CHAPTER_FRAGMENTS_DIR, `${name}.json`),
+      );
+      chapterFragments.set(name, fragments);
+      allChapterFragmentsCount += fragments.length;
+    }
+    this.progressBar.setDone();
+
+    this.progressBar.setTaskInfo('Чтение миграционной таблицы...');
+    this.progressBar.setIndeterminate();
+    let lookupTable = dangerousLutMode
+      ? miscUtils.objectToMap<string, string[]>(
+          await fsUtils.readJsonFile(MIGRATION_LOOKUP_TABLE_FILE),
+        )
+      : null;
+    this.progressBar.setDone();
+
+    const migrateFragment = async (f: Fragment): Promise<void> => {
+      let translations: Translation[] = [];
+      let errors: Translation[] = [];
+      for (let t of f.translations) {
+        (t.text.startsWith('tr_ru:ERR') ? errors : translations).push(t);
+      }
+      if (errors.length === 0) return;
+
+      if (errors.length > 1) {
+        console.error(
+          // what the heck has happened here?
+          `${f.original.file} ${f.original.jsonPath}: multiple errors on a single fragment`,
+        );
+        return;
+      }
+
+      if (translations.length === 0) {
+        // there is no value in this fragment, no need to keep it
+        console.warn(
+          `${f.original.file} ${f.original.jsonPath}: no translations, deleting fragment`,
+        );
+        await this.notaClient.deleteFragmentOriginal(f.chapterId, f.id);
+        return;
+      }
+
+      if (translations.length > 1) {
+        console.warn(
+          `${f.original.file} ${f.original.jsonPath}: multiple translations, can't resolve such conflict`,
+        );
+        return;
+      }
+
+      if (errors[0].text.startsWith('tr_ru:ERR_REMOVED_FROM_GAME')) {
+        //
+
+        let commonTranslation = COMMON_PHRASES.get(f.original.text);
+        if (commonTranslation != null && translations[0].text === commonTranslation) {
+          console.warn(
+            `${f.original.file} ${f.original.jsonPath}: common phrase, deleting fragment`,
+          );
+          await this.notaClient.deleteFragmentOriginal(f.chapterId, f.id);
+          return;
+        }
+
+        let similarUntranslatedFragments: Fragment[] = [];
+        let similarTranslatedFragments: Fragment[] = [];
+        for (let fragmentsList of chapterFragments.values()) {
+          for (let f2 of fragmentsList) {
+            if (
+              f2 !== f &&
+              // NOTE: Various comparisons can be uncommented, but make sure to
+              // review the logs before applying (cross-file) migrations.
+              f2.original.file === f.original.file &&
+              f2.original.langUid === f.original.langUid &&
+              f2.original.descriptionText === f.original.descriptionText &&
+              f2.original.text === f.original.text
+            ) {
+              if (f2.translations.length === 0) {
+                similarUntranslatedFragments.push(f2);
+              } else if (f2.translations.every((t) => t.text === translations[0].text)) {
+                similarTranslatedFragments.push(f2);
+              }
+            }
+          }
+        }
+
+        if (similarTranslatedFragments.length > 0) {
+          console.warn(
+            `${f.original.file} ${f.original.jsonPath}: fragment has already been translated elsewhere, deleting`,
+          );
+          await this.notaClient.deleteFragmentOriginal(f.chapterId, f.id);
+          return;
+        }
+
+        if (similarUntranslatedFragments.length === 0) {
+          console.error(
+            `${f.original.file} ${f.original.jsonPath}: couldn't find a similar fragment, can't rename`,
+          );
+          return;
+        } else if (similarUntranslatedFragments.length !== 1) {
+          console.error(
+            `${f.original.file} ${f.original.jsonPath}: multiple similar fragments found, can't migrate`,
+          );
+          return;
+        }
+
+        let f2 = similarUntranslatedFragments[0];
+        console.warn(
+          `${f.original.file} ${f.original.jsonPath}: migrating to ${f2.original.file} ${f2.original.jsonPath}`,
+        );
+        for (let t of translations) {
+          await this.notaClient.addFragmentTranslation(
+            f.chapterId,
+            f2.id,
+            stringifyFragmentTranslation(t),
+          );
+        }
+        await this.notaClient.deleteFragmentOriginal(f.chapterId, f.id);
+
+        return;
+
+        //
+      } else if (errors[0].text.startsWith('tr_ru:ERR_STALE_ORIGINAL')) {
+        //
+
+        if (dangerousLutMode) {
+          let possibleTranslations = lookupTable!.get(f.original.text) ?? [];
+          if (possibleTranslations.length > 1) {
+            console.error(`${f.original.file} ${f.original.jsonPath}: ambiguous lookup results`);
+            return;
+          }
+
+          if (possibleTranslations.length === 1) {
+            console.error(
+              `${f.original.file} ${f.original.jsonPath}: found an exact match in the lookup table`,
+            );
+            await this.notaClient.addFragmentTranslation(
+              f.chapterId,
+              f.id,
+              possibleTranslations[0],
+            );
+            for (let t of f.translations) {
+              await this.notaClient.deleteFragmentTranslation(f.chapterId, f.id, t.id);
+            }
+            return;
+          }
+        }
+
+        console.error(
+          `${f.original.file} ${f.original.jsonPath}: can't handle stale originals for now`,
+        );
+        return;
+      } else {
+        console.error(`${f.original.file} ${f.original.jsonPath}: unknown error`);
+        return;
+      }
+
+      console.error(`${f.original.file} ${f.original.jsonPath}: unable to migrate, generic error`);
+    };
+
+    let migratedFragmentsCount = 0;
+
+    for (let chapterStatus of chapterStatuses.values()) {
+      this.progressBar.setTaskInfo(chapterStatus.name);
+      let fragments = chapterFragments.get(chapterStatus.name)!;
+
+      let iterator = function* (this: Main) {
+        for (let fragment of fragments) {
+          this.progressBar.setValue(migratedFragmentsCount, allChapterFragmentsCount);
+          yield migrateFragment(fragment);
+          migratedFragmentsCount++;
+        }
+      }.call(this);
+
+      await asyncUtils.limitConcurrency(iterator, 16);
+    }
+
+    this.progressBar.setTaskInfo('');
+    this.progressBar.setDone();
+  }
+
+  // Part of the Extension Instrumentality Project.
+  public async resplitChapters(): Promise<void> {
+    let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
+    let chapterFragments = new Map<string, Fragment[]>();
+    let allChapterFragmentsCount = 0;
+    for (let [i, name] of iteratorUtils.enumerate(chapterStatuses.keys())) {
+      this.progressBar.setTaskInfo(`Чтение главы '${name}' с диска...`);
+      this.progressBar.setValue(i, chapterStatuses.size);
+
+      let fragments: Fragment[] = await fsUtils.readJsonFile(
+        paths.join(CHAPTER_FRAGMENTS_DIR, `${name}.json`),
+      );
+      chapterFragments.set(name, fragments);
+      allChapterFragmentsCount += fragments.length;
+    }
+    this.progressBar.setDone();
+
+    const moveFragment = async (f: Fragment): Promise<void> => {
+      let newChapterName = getChapterNameOfFile(f.original.file);
+      let newChapterStatus = chapterStatuses.get(newChapterName);
+      if (newChapterStatus == null) {
+        console.error(
+          `${f.original.file} ${f.original.jsonPath}: Please create chapter '${newChapterName}'`,
+        );
+        return;
+      }
+      let newChapterId = newChapterStatus.id;
+      if (newChapterId === f.chapterId) return;
+
+      console.warn(
+        `${f.original.file} ${f.original.jsonPath}: moving to chapter '${newChapterName}'`,
+      );
+
+      let newFragmentId = await this.notaClient.addFragmentOriginal(
+        newChapterId,
+        f.orderNumber,
+        stringifyFragmentOriginal(f.original),
+      );
+      for (let t of f.translations) {
+        await this.notaClient.addFragmentTranslation(
+          newChapterId,
+          newFragmentId,
+          stringifyFragmentTranslation(t),
+        );
+      }
+      await this.notaClient.deleteFragmentOriginal(f.chapterId, f.id);
+    };
+
+    let migratedFragmentsCount = 0;
+
+    for (let chapterStatus of chapterStatuses.values()) {
+      this.progressBar.setTaskInfo(chapterStatus.name);
+      let fragments = chapterFragments.get(chapterStatus.name)!;
+
+      let iterator = function* (this: Main) {
+        for (let fragment of fragments) {
+          this.progressBar.setValue(migratedFragmentsCount, allChapterFragmentsCount);
+          yield moveFragment(fragment);
+          migratedFragmentsCount++;
+        }
+      }.call(this);
+
+      await asyncUtils.limitConcurrency(iterator, 16);
+    }
+
+    this.progressBar.setTaskInfo('');
+    this.progressBar.setDone();
   }
 
   public async generatePO(translationLanguages: string[] = ['ru']): Promise<void> {
