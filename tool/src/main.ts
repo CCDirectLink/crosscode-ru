@@ -1,7 +1,6 @@
 import {
   ChapterStatus,
   Fragment,
-  NOTABENOID_BOOK_URL,
   NotaClient,
   Original,
   Translation,
@@ -410,7 +409,7 @@ class Main {
 
   public async fixFragmentOrder(): Promise<void> {
     let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
-    let chapterFragments = new Map<string, Fragment[]>();
+    let chapterFragments = new Map<string, Array<Fragment & { prevOrderNumber?: number }>>();
     let allChapterFragmentsCount = 0;
     // arrays are used as pointers for the sake of updating max order numbers
     // by reference instead of performing a lookup in `Map#set` every time
@@ -419,10 +418,16 @@ class Main {
       this.progressBar.setTaskInfo(`Чтение главы '${name}' с диска...`);
       this.progressBar.setValue(i, chapterStatuses.size);
 
-      let fragments: Fragment[] = await fsUtils.readJsonFile(
+      let fragments: Array<Fragment & { prevOrderNumber?: number }> = await fsUtils.readJsonFile(
         paths.join(CHAPTER_FRAGMENTS_DIR, `${name}.json`),
       );
-      chapterFragments.set(name, fragments);
+      chapterFragments.set(
+        name,
+        fragments.map((f) => {
+          f.prevOrderNumber = f.orderNumber;
+          return f;
+        }),
+      );
       allChapterFragmentsCount += fragments.length;
       chapterMaxOrderNumbers.set(name, [1]);
     }
@@ -482,13 +487,15 @@ class Main {
 
       for (let f of fragments) {
         this.progressBar.setValue(fixedFragmentsCount, allChapterFragmentsCount);
-        console.log(`${chapterName}: ${f.original.file} ${f.original.jsonPath} ${f.orderNumber}`);
-        await this.notaClient.editFragmentOriginal(
-          f.chapterId,
-          f.id,
-          f.orderNumber,
-          f.original.rawContent,
-        );
+        if (f.orderNumber !== f.prevOrderNumber) {
+          console.log(`${chapterName}: ${f.original.file} ${f.original.jsonPath} ${f.orderNumber}`);
+          await this.notaClient.editFragmentOriginal(
+            f.chapterId,
+            f.id,
+            f.orderNumber,
+            f.original.rawContent,
+          );
+        }
         fixedFragmentsCount++;
       }
     }
