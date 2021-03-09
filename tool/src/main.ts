@@ -166,6 +166,7 @@ class Main {
       let translation = COMMON_PHRASES.get(f.original.text);
       if (translation == null) return;
 
+      console.warn(`${f.original.file} ${f.original.jsonPath}: common phrase`);
       await this.notaClient.addFragmentTranslation(f.chapterId, f.id, translation);
     };
 
@@ -799,6 +800,54 @@ class Main {
       await asyncUtils.limitConcurrency(iterator, 16);
     }
 
+    this.progressBar.setTaskInfo('');
+    this.progressBar.setDone();
+  }
+
+  public async autoTranslateWithDangerousLut(): Promise<void> {
+    let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
+    let chapterFragments = new Map<string, Fragment[]>();
+    let allChapterFragmentsCount = 0;
+    for (let [i, name] of iteratorUtils.enumerate(chapterStatuses.keys())) {
+      this.progressBar.setTaskInfo(`Чтение главы '${name}' с диска...`);
+      this.progressBar.setValue(i, chapterStatuses.size);
+
+      let fragments: Fragment[] = await fsUtils.readJsonFile(
+        paths.join(CHAPTER_FRAGMENTS_DIR, `${name}.json`),
+      );
+      chapterFragments.set(name, fragments);
+      allChapterFragmentsCount += fragments.length;
+    }
+    this.progressBar.setDone();
+
+    this.progressBar.setTaskInfo('Чтение lookup-таблицы...');
+    this.progressBar.setIndeterminate();
+    let lookupTable = miscUtils.objectToMap<string, string[]>(
+      await fsUtils.readJsonFile(MIGRATION_LOOKUP_TABLE_FILE),
+    );
+    this.progressBar.setDone();
+
+    const autoTranslate = async (f: Fragment): Promise<void> => {
+      if (f.translations.length > 0) return;
+
+      let translations = lookupTable.get(f.original.text);
+      if (translations == null || translations.length !== 1) return;
+
+      console.warn(`${f.original.file} ${f.original.jsonPath}: found in the LUT`);
+      await this.notaClient.addFragmentTranslation(f.chapterId, f.id, translations[0]);
+    };
+
+    let fixedFragmentsCount = 0;
+    for (let chapterStatus of chapterStatuses.values()) {
+      this.progressBar.setTaskInfo(chapterStatus.name);
+      let fragments = chapterFragments.get(chapterStatus.name)!;
+
+      for (let fragment of fragments) {
+        this.progressBar.setValue(fixedFragmentsCount, allChapterFragmentsCount);
+        await autoTranslate(fragment);
+        fixedFragmentsCount++;
+      }
+    }
     this.progressBar.setTaskInfo('');
     this.progressBar.setDone();
   }
