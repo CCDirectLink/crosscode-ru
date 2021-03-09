@@ -489,52 +489,45 @@ export function getChapterNameOfFile(path: string): string {
   let parsedPath = paths.posix.parse(path);
   let dirs = parsedPath.dir.split(paths.sep);
 
-  if (parsedPath.dir.length > 0) {
-    while (dirs.length > 0) {
-      switch (dirs[0]) {
-        case 'extension':
-          if (dirs.length > 2) {
-            // This path is inside an extension. Normalize it by removing the
-            // extension directory prefix and retry getting the chapter name.
-            dirs.shift();
-            dirs.shift();
-            continue;
-          }
-          break;
+  if (parsedPath.dir.length > 0 && dirs.length > 0) {
+    if (dirs[0] === 'extension' && dirs.length > 2) {
+      // This path is inside an extension. Normalize it by removing the
+      // extension directory prefix and retry getting the chapter name.
+      dirs.shift();
+      dirs.shift();
+    }
 
-        case 'data':
-          if (dirs.length >= 2) {
-            switch (dirs[1]) {
-              case 'lang':
-                return 'LANG';
+    switch (dirs[0]) {
+      case 'data':
+        if (dirs.length >= 2) {
+          switch (dirs[1]) {
+            case 'lang':
+              return 'LANG';
 
-              case 'arena':
-              case 'enemies':
-              case 'characters':
-                return dirs[1];
+            case 'arena':
+            case 'enemies':
+            case 'characters':
+              return dirs[1];
 
-              case 'areas':
-                if (dirs.length === 2 && AREA_CHAPTER_NAMES.has(parsedPath.name)) {
-                  return parsedPath.name;
-                }
-                break;
-
-              case 'maps':
-                if (dirs.length >= 3 && AREA_CHAPTER_NAMES.has(dirs[2])) {
-                  return dirs[2];
-                }
-                break;
-            }
-          } else {
-            switch (parsedPath.name) {
-              case 'item-database':
-              case 'database':
+            case 'areas':
+              if (dirs.length === 2 && AREA_CHAPTER_NAMES.has(parsedPath.name)) {
                 return parsedPath.name;
-            }
-          }
-      }
+              }
+              break;
 
-      break;
+            case 'maps':
+              if (dirs.length >= 3 && AREA_CHAPTER_NAMES.has(dirs[2])) {
+                return dirs[2];
+              }
+              break;
+          }
+        } else {
+          switch (parsedPath.name) {
+            case 'item-database':
+            case 'database':
+              return parsedPath.name;
+          }
+        }
     }
   }
 
