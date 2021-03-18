@@ -65,11 +65,11 @@ QUICK_INSTALL_ARCHIVE_NAME := $(MOD_ID)_quick-install_v$(MOD_VERSION)
 QUICK_INSTALL_FILES := ccloader $(addprefix assets/mods/,$(MODPACK_ARCHIVE_FILES))
 QUICK_INSTALL_ARCHIVE_FILES := $(addprefix $(QUICK_INSTALL_TMP_DIR)/,$(QUICK_INSTALL_FILES))
 
-archive_names = $(addsuffix .zip,$1) $(addsuffix .tar.gz,$1)
+archive_names = $(addsuffix .zip,$1) $(addsuffix .tgz,$1)
 
 ALL_ARCHIVE_NAMES_WITHOUT_FILETYPES := $(MOD_ARCHIVE_NAME) $(TOOL_ARCHIVE_NAME) $(ENHANCED_UI_MOD_ARCHIVE_NAME) $(MODPACK_ARCHIVE_NAME) $(TOOL_MODPACK_ARCHIVE_NAME)
 ZIP_ARCHIVE_NAMES := $(addsuffix .zip,$(ALL_ARCHIVE_NAMES_WITHOUT_FILETYPES))
-TAR_ARCHIVE_NAMES := $(addsuffix .tar.gz,$(ALL_ARCHIVE_NAMES_WITHOUT_FILETYPES))
+TAR_ARCHIVE_NAMES := $(addsuffix .tgz,$(ALL_ARCHIVE_NAMES_WITHOUT_FILETYPES))
 QUICK_INSTALL_ARCHIVES := $(call archive_names,$(QUICK_INSTALL_ARCHIVE_NAME))
 ALL_ARCHIVE_NAMES := $(ZIP_ARCHIVE_NAMES) $(TAR_ARCHIVE_NAMES) $(QUICK_INSTALL_ARCHIVES)
 
@@ -97,14 +97,14 @@ $(ZIP_ARCHIVE_NAMES):
 	@echo "packing .zip archive" $@
 	@rm -rf $@ && zip --quiet --recurse-paths $@ -- $^
 $(TAR_ARCHIVE_NAMES):
-	@echo "packing .tar.gz archive" $@
+	@echo "packing .tgz archive" $@
 	@rm -rf $@ && tar --create --file $@ --gzip -- $^
 
 $(QUICK_INSTALL_ARCHIVE_NAME).zip:
 	@echo "packing quick-install .zip archive" $@
 	@rm -rf $@ && cd $(QUICK_INSTALL_TMP_DIR) && zip --quiet --recurse-paths ../$@ .
-$(QUICK_INSTALL_ARCHIVE_NAME).tar.gz:
-	@echo "packing quick-install .tar.gz archive" $@
+$(QUICK_INSTALL_ARCHIVE_NAME).tgz:
+	@echo "packing quick-install .tgz archive" $@
 	@rm -rf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip .
 
 $(LOCALIZE_ME_MOD_DIR):
