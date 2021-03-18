@@ -110,7 +110,7 @@ $(QUICK_INSTALL_ARCHIVE_NAME).tar.gz:
 $(LOCALIZE_ME_MOD_DIR):
 	$(call download_archive,$@,https://github.com/L-Sherry/Localize-me/tarball/47dc03c57cabe7b6d673bd26b0f147bcd787bf61,,--strip-components=1)
 $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
-	$(call download_archive,$@,https://github.com/ccdirectlink3/cc-world-map-overhaul/tarball/5e6dc32f2c0d9d0106b3f209f920a99ea3b52b54,,--strip-components=1)
+	$(call download_archive,$@,https://github.com/dmitmel/cc-world-map-overhaul/tarball/v1.1.0,,--strip-components=1)
 
 $(QUICK_INSTALL_TMP_DIR)/ccloader:
 	$(call download_archive,$(@D),http://stronghold.crosscode.ru/~dmitmel/ccloader3/20201114171305/ccloader_3.0.0-alpha_quick-install.tar.gz,,)
