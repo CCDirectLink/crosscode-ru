@@ -1,4 +1,4 @@
-export default class implements modloader.Mod.MainClass {
+export default class implements modloader.Mod.PluginClass {
   public constructor() {
     if (
       modloader.loadedMods.has('CCLoader display version') ||
