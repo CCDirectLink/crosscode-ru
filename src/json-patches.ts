@@ -30,30 +30,33 @@ jsonPatches.add('data/lang/sc/gui.en_US.json', (data: any) =>
   }),
 );
 
-jsonPatches.add(
-  // sorry, Felix... not many people watch credits until the end, so I'll have
-  // to inject our names in the first data file. hope RFG doesn't mind :P
-  'data/credits/radicalfish-core.json',
-  async (data: any) => {
-    if (ig.currentLang !== 'ru_RU') return;
+async function patchCredits(data: any): Promise<void> {
+  if (ig.currentLang !== 'ru_RU') return;
 
-    let entries = Object.entries<any>(data.entries);
+  let entries = Object.entries<any>(data.entries);
 
-    let russianCreditsData: {
-      entries: Record<string, any>;
-    } = await ccmod.resources.loadJSON('data/credits/crosscode-ru.json');
-    let russianEntries = Object.entries(russianCreditsData.entries);
+  let russianCreditsData: {
+    entries: Record<string, any>;
+  } = await ccmod.resources.loadJSON('data/credits/crosscode-ru.json');
+  let russianEntries = Object.entries(russianCreditsData.entries);
 
-    let felixIndex = entries.findIndex(([key, _value]) => key === 'creativeDirector');
-    if (felixIndex >= 0) {
-      // don't forget that `entries` here has type `Array<[K, V]>`
-      entries[felixIndex][1].bottomPad = 80;
-    }
-    sc.ru.insertAfterOrAppend(entries, felixIndex, ...russianEntries);
+  let felixIndex = entries.findIndex(([key, _value]) => key === 'creativeDirector');
+  if (felixIndex >= 0) {
+    // don't forget that `entries` here has type `Array<[K, V]>`
+    entries[felixIndex][1].bottomPad = 80;
+  }
+  sc.ru.insertAfterOrAppend(entries, felixIndex, ...russianEntries);
 
-    data.entries = sc.ru.objectFromEntries(entries);
-  },
-);
+  data.entries = sc.ru.objectFromEntries(entries);
+}
+
+// Sorry, Felix... Not many people watch credits until the end, so I'll have to
+// inject our names in the first data file. hope RFG doesn't mind :P
+jsonPatches.add('data/credits/radicalfish-core.json', patchCredits);
+// Both credits lists are more or less the same, the only difference is that in
+// the DLC one the second composer (who has worked on the DLC-only track in the
+// absence of Intero) is listed.
+jsonPatches.add('data/credits/radicalfish-core-dlc.json', patchCredits);
 
 jsonPatches.add('data/scale-props/dungeon-ar.json', (data: any) => {
   if (!sc.ru.shouldPatchSpriteLabels()) return;
