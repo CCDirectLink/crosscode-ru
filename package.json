@@ -15,8 +15,8 @@
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.3",
-    "node-sass": "^5.0.0",
     "prettier": "^2.0.5",
+    "sass": "^1.32.8",
     "typescript": "^4.1.4",
     "ultimate-crosscode-typedefs": "dmitmel/ultimate-crosscode-typedefs"
   },
@@ -32,8 +32,8 @@
     "watch": "tsc --build --watch",
     "lint": "eslint . --ext .js,.ts --ignore-path .gitignore",
     "check-fmt": "yarn run prettier --check '**/*.{js,ts,json,css,scss,html}'",
-    "build:styles": "node-sass --recursive --output tool/dist/styles --source-map true tool/src/styles",
-    "watch:styles": "node-sass --recursive --output tool/dist/styles --source-map true tool/src/styles --watch",
+    "build:styles": "sass tool/src/styles:tool/dist/styles",
+    "watch:styles": "sass tool/src/styles:tool/dist/styles --watch",
     "build:headless": "tsc --project tool/tsconfig-headless.json",
     "watch:headless": "tsc --project tool/tsconfig-headless.json --watch"
   },
