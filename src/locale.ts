@@ -1,3 +1,14 @@
+// NOTE: Most of the commented out code in this file is a brilliant solution to
+// the problem of duplicated lang labels in the `meta` object of files in
+// `data/enemies/`: the lang labels `meta/species` and `meta/descriptions/*/text`
+// are actually contained in `data/database.json` as well, their text values
+// are 100% identical, and moreover the database contains more entries, but for
+// some reason they are duplicated in the enemies files. But see, apparently the
+// source code of the game doesn't contain even a single mention of the word
+// `meta`, and the only class which loads those files (`sc.EnemyType`) doesn't
+// access either of the duplicate lang labels, but the code I wrote was too
+// brilliant, so I decided to keep it in the source tree.
+
 const TRANSLATION_DATA_DIR = 'mod://crosscode-ru/assets/ru-translation-tool/';
 const LOCALIZE_ME_PACKS_DIR = `${TRANSLATION_DATA_DIR}localize-me-packs/`;
 const LOCALIZE_ME_MAPPING_FILE = `${TRANSLATION_DATA_DIR}localize-me-mapping.json`;
@@ -41,7 +52,7 @@ const IGNORED_LABELS = new Set<string>([
   '\\c[1][DO NOT TRANSLATE FOLLOWING TEXTS]\\c[0]',
 ]);
 
-let textFilter: ((text: string) => string) | null = null;
+let textFilter = (text: string): string => text;
 const leaSpellingTable = LEA_SPELLING_CONVERSION_TABLES.get(LEA_SPELLING);
 if (leaSpellingTable != null) {
   let regex = new RegExp(
@@ -62,9 +73,36 @@ declare namespace LocalizeMe {
   }
 }
 
+// let improvisedEnemiesTrPack = new Map<string, LocalizeMe.TranslationResult>();
+
 localizeMe.add_locale('ru_RU', {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   from_locale: 'en_US',
+
+  // map_file: async () => {
+  //   let mapping: Record<string, string> = await ccmod.resources.loadJSON(LOCALIZE_ME_MAPPING_FILE);
+  //   return (urlToPatch) => {
+  //     if (!hasKey(mapping, urlToPatch)) return null;
+  //     let trPackPath = mapping[urlToPatch];
+
+  //     return async () => {
+  //       let trPackData: LocalizeMe.TranslationPack = await ccmod.resources.loadJSON(
+  //         `${LOCALIZE_ME_PACKS_DIR}${trPackPath}`,
+  //       );
+
+  //       if (urlToPatch === 'database.json') {
+  //         for (let key in trPackData) {
+  //           if (hasKey(trPackData, key) && key.startsWith('database.json/enemies/')) {
+  //             improvisedEnemiesTrPack.set(key, trPackData[key]);
+  //           }
+  //         }
+  //       }
+
+  //       return trPackData;
+  //     };
+  //   };
+  // },
+
   // eslint-disable-next-line @typescript-eslint/naming-convention
   map_file: LOCALIZE_ME_MAPPING_FILE,
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -101,6 +139,19 @@ localizeMe.add_locale('ru_RU', {
     if (translated) return translated;
 
     if (original === 'en_US') return 'ru_RU';
+
+    // if (dictPath.startsWith('enemies/')) {
+    //   let match = /^enemies\/(.+?)\.json\/meta\/(.+)$/.exec(dictPath);
+    //   if (match != null && match.length === 3) {
+    //     let enemyPath = match[1];
+    //     let jsonPath = match[2];
+    //     let enemyId = enemyPath.replace(/\//g, '.');
+    //     let result = improvisedEnemiesTrPack.get(`database.json/enemies/${enemyId}/${jsonPath}`);
+    //     if (result != null && result.orig === original) {
+    //       return textFilter(result.text);
+    //     }
+    //   }
+    // }
 
     if (!sc.ru.debug.showUntranslatedStrings) return original;
 

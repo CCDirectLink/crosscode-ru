@@ -804,6 +804,59 @@ class Main {
     this.progressBar.setDone();
   }
 
+  public async deleteIgnoredLangLabels(): Promise<void> {
+    let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
+    let chapterFragments = new Map<string, Fragment[]>();
+    let allChapterFragmentsCount = 0;
+    for (let [i, name] of iteratorUtils.enumerate(chapterStatuses.keys())) {
+      this.progressBar.setTaskInfo(`Чтение главы '${name}' с диска...`);
+      this.progressBar.setValue(i, chapterStatuses.size);
+
+      let fragments: Fragment[] = await fsUtils.readJsonFile(
+        paths.join(CHAPTER_FRAGMENTS_DIR, `${name}.json`),
+      );
+      chapterFragments.set(name, fragments);
+      allChapterFragmentsCount += fragments.length;
+    }
+    this.progressBar.setDone();
+
+    const deleteFragment = async (f: Fragment): Promise<void> => {
+      if (
+        isLangLabelIgnored(
+          {
+            jsonPath: f.original.jsonPath.split('/'),
+            langUid: f.original.langUid,
+            text: f.original.text,
+          },
+          f.original.file,
+        )
+      ) {
+        console.warn(`${f.original.file} ${f.original.jsonPath}: ignored, deleting`);
+        await this.notaClient.deleteFragmentOriginal(f.chapterId, f.id);
+      }
+    };
+
+    let migratedFragmentsCount = 0;
+
+    for (let chapterStatus of chapterStatuses.values()) {
+      this.progressBar.setTaskInfo(chapterStatus.name);
+      let fragments = chapterFragments.get(chapterStatus.name)!;
+
+      let iterator = function* (this: Main) {
+        for (let fragment of fragments) {
+          this.progressBar.setValue(migratedFragmentsCount, allChapterFragmentsCount);
+          yield deleteFragment(fragment);
+          migratedFragmentsCount++;
+        }
+      }.call(this);
+
+      await asyncUtils.limitConcurrency(iterator, 16);
+    }
+
+    this.progressBar.setTaskInfo('');
+    this.progressBar.setDone();
+  }
+
   public async autoTranslateWithDangerousLut(): Promise<void> {
     let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
     let chapterFragments = new Map<string, Fragment[]>();
@@ -1232,16 +1285,26 @@ function* findLangLabelsInObject(
 }
 
 function isLangLabelIgnored(langLabel: LocalizableStringData, filePath: string): boolean {
+  /* eslint-disable no-useless-escape */
+
   if (IGNORED_LABELS.has(langLabel.text.trim())) return true;
 
   let jsonPathStr = langLabel.jsonPath.join('/');
 
+  filePath = filePath.replace(/^extension\/[^\/]+\//, '');
+
   if (
-    /^data\/credits\/.+\.json/.test(filePath) &&
-    /^entries\/[^/]+\/names\/\d+$/.test(jsonPathStr)
+    /^data\/credits\/.+\.json$/.test(filePath) &&
+    /^entries\/[^\/]+\/names\/\d+$/.test(jsonPathStr)
   ) {
     return true;
   }
 
+  if (/^data\/enemies\/.+\.json$/.test(filePath) && /^meta\/.+$/.test(jsonPathStr)) {
+    return true;
+  }
+
   return false;
+
+  /* eslint-enable no-useless-escape */
 }
