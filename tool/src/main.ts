@@ -687,7 +687,7 @@ class Main {
           }
 
           if (possibleTranslations.length === 1) {
-            console.error(
+            console.warn(
               `${f.original.file} ${f.original.jsonPath}: found an exact match in the lookup table`,
             );
             await this.notaClient.addFragmentTranslation(
