@@ -12,7 +12,7 @@
   "postload": "dist/postload.js",
   "poststart": "dist/poststart.js",
   "dependencies": {
-    "crosscode": "~1.4.0",
+    "crosscode": "~1.4.1",
     "localize-me": "^1.0.0",
     "enhanced-ui": "^0.2.3"
   },
