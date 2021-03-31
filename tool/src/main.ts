@@ -216,6 +216,13 @@ class Main {
     }
     this.progressBar.setDone();
 
+    let scanDb: ScanDb | null = null;
+    if (this.useScanDb) {
+      this.progressBar.setTaskInfo('Чтение базы данных сканирования CrossLocalE...');
+      this.progressBar.setIndeterminate();
+      scanDb = ScanDb.deserialize(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
+    }
+
     let assetsCache = new Map<string, Promise<unknown>>();
     const fixOriginal = async (f: Fragment): Promise<void> => {
       if (
@@ -226,45 +233,66 @@ class Main {
       }
 
       let { file: filePath, jsonPath: jsonPathStr } = f.original;
-
-      let promise: Promise<unknown>;
-      if (assetsCache.has(filePath)) {
-        promise = assetsCache.get(filePath)!;
-      } else {
-        promise = fsUtils.readJsonFileOptional(paths.join('assets', filePath));
-        assetsCache.set(filePath, promise);
-      }
-
-      let fileData = await promise;
-      if (fileData == null) {
-        console.warn(`${filePath} ${jsonPathStr}: unknown file`);
-        await this.notaClient.addFragmentTranslation(
-          f.chapterId,
-          f.id,
-          'tr_ru:ERR_REMOVED_FROM_GAME',
-        );
-        return;
-      }
-      let isLangFile =
-        filePath.startsWith(paths.normalize('data/lang/')) && filePath.endsWith('.en_US.json');
-
-      let jsonPath = jsonPathStr.split('/');
-      let obj = miscUtils.getValueByPath(fileData, jsonPath);
-      if (obj != null) {
-        f.original.descriptionText = !isLangFile
-          ? generateFragmentDescriptionText(jsonPath, fileData)
-          : '';
-      }
-
       let realOriginalText: string | null = null;
-      if (isLangFile) {
-        if (typeof obj === 'string') realOriginalText = obj;
-      } else if (
-        miscUtils.isObject(obj) &&
-        miscUtils.hasKey(obj, 'en_US') &&
-        typeof obj.en_US === 'string'
-      ) {
-        realOriginalText = obj.en_US;
+
+      if (scanDb != null) {
+        let gameFile = scanDb.gameFiles.get(filePath);
+        if (gameFile == null) {
+          console.warn(`${filePath} ${jsonPathStr}: unknown file`);
+          await this.notaClient.addFragmentTranslation(
+            f.chapterId,
+            f.id,
+            'tr_ru:ERR_REMOVED_FROM_GAME',
+          );
+          return;
+        }
+
+        let fragment = gameFile.fragments.get(jsonPathStr);
+        if (fragment != null) {
+          f.original.file = fragment.file.path;
+          f.original.jsonPath = fragment.jsonPath;
+          f.original.langUid = fragment.langUid;
+          f.original.descriptionText = fragment.description.join('\n');
+          realOriginalText = fragment.text.get('en_US')!;
+        }
+      } else {
+        let promise: Promise<unknown>;
+        if (assetsCache.has(filePath)) {
+          promise = assetsCache.get(filePath)!;
+        } else {
+          promise = fsUtils.readJsonFileOptional(paths.join('assets', filePath));
+          assetsCache.set(filePath, promise);
+        }
+
+        let fileData = await promise;
+        if (fileData == null) {
+          console.warn(`${filePath} ${jsonPathStr}: unknown file`);
+          await this.notaClient.addFragmentTranslation(
+            f.chapterId,
+            f.id,
+            'tr_ru:ERR_REMOVED_FROM_GAME',
+          );
+          return;
+        }
+        let isLangFile = filePath.endsWith('.en_US.json');
+
+        let jsonPath = jsonPathStr.split('/');
+        let obj = miscUtils.getValueByPath(fileData, jsonPath);
+        if (obj != null) {
+          f.original.descriptionText = !isLangFile
+            ? generateFragmentDescriptionText(jsonPath, fileData)
+            : '';
+        }
+
+        if (isLangFile) {
+          if (typeof obj === 'string') realOriginalText = obj;
+        } else if (
+          miscUtils.isObject(obj) &&
+          miscUtils.hasKey(obj, 'en_US') &&
+          typeof obj.en_US === 'string'
+        ) {
+          realOriginalText = obj.en_US;
+        }
       }
 
       if (realOriginalText == null) {
@@ -356,19 +384,30 @@ class Main {
     }
     this.progressBar.setDone();
 
-    this.progressBar.setIndeterminate();
-    this.progressBar.setTaskInfo(`Поиск файлов...`);
+    let scanDb: ScanDb | null = null;
+    if (this.useScanDb) {
+      this.progressBar.setTaskInfo('Чтение базы данных сканирования CrossLocalE...');
+      this.progressBar.setIndeterminate();
+      scanDb = ScanDb.deserialize(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
+    }
+
     let filePaths: string[] = [];
-    for (let jsonDir of ['data', 'extension']) {
-      for await (let path of fsUtils.findFilesRecursively(paths.join('assets', jsonDir))) {
-        if (path.endsWith('.json')) {
-          filePaths.push(paths.join(jsonDir, path));
-          this.progressBar.setTaskInfo(`Найдено файлов: ${filePaths.length}`);
+    if (scanDb != null) {
+      filePaths = Array.from(scanDb.gameFiles.keys());
+    } else {
+      this.progressBar.setIndeterminate();
+      this.progressBar.setTaskInfo(`Поиск файлов...`);
+      for (let jsonDir of ['data', 'extension']) {
+        for await (let path of fsUtils.findFilesRecursively(paths.join('assets', jsonDir))) {
+          if (path.endsWith('.json')) {
+            filePaths.push(paths.join(jsonDir, path));
+            this.progressBar.setTaskInfo(`Найдено файлов: ${filePaths.length}`);
+          }
         }
       }
+      filePaths.sort();
+      this.progressBar.setDone();
     }
-    filePaths.sort();
-    this.progressBar.setDone();
 
     for (let [i, filePath] of filePaths.entries()) {
       this.progressBar.setTaskInfo(filePath);
@@ -377,14 +416,29 @@ class Main {
       let isLangFile = filePath.startsWith(paths.normalize('data/lang/'));
       if (isLangFile && !filePath.endsWith('.en_US.json')) continue;
 
-      let data = await fsUtils.readJsonFile(paths.join('assets', filePath));
+      let langLabelIterable: Iterable<LocalizableStringData>;
+      let data: unknown = null;
+      if (scanDb != null) {
+        langLabelIterable = iteratorUtils.map(
+          scanDb.gameFiles.get(filePath)!.fragments.values(),
+          (fragment) => ({
+            jsonPath: fragment.jsonPath.split('/'),
+            langUid: fragment.langUid,
+            description: fragment.description,
+            text: fragment.text.get('en_US')!,
+          }),
+        );
+      } else {
+        data = await fsUtils.readJsonFile(paths.join('assets', filePath));
+        langLabelIterable = findLangLabelsInFile(isLangFile, data);
+      }
 
       let chapterName = getChapterNameOfFile(filePath);
       let chapterId = chapterStatuses.get(chapterName)!.id;
       let thisChapterFragments = chapterFragments.get(chapterName)!;
       let chapterMaxOrderNumber = chapterMaxOrderNumbers.get(chapterName)!;
 
-      for (let langLabel of findLangLabelsInFile(isLangFile, data)) {
+      for (let langLabel of langLabelIterable) {
         if (isLangLabelIgnored(langLabel, filePath)) continue;
 
         let jsonPathStr = langLabel.jsonPath.join('/');
@@ -401,9 +455,9 @@ class Main {
           file: filePath,
           jsonPath: jsonPathStr,
           langUid: langLabel.langUid,
-          descriptionText: !isLangFile
-            ? generateFragmentDescriptionText(langLabel.jsonPath, data)
-            : '',
+          descriptionText:
+            langLabel.description?.join('\n') ??
+            (!isLangFile ? generateFragmentDescriptionText(langLabel.jsonPath, data) : ''),
           text: langLabel.text,
         };
         orig.rawContent = stringifyFragmentOriginal(orig);
@@ -449,19 +503,30 @@ class Main {
     }
     this.progressBar.setDone();
 
-    this.progressBar.setIndeterminate();
-    this.progressBar.setTaskInfo(`Поиск файлов...`);
+    let scanDb: ScanDb | null = null;
+    if (this.useScanDb) {
+      this.progressBar.setTaskInfo('Чтение базы данных сканирования CrossLocalE...');
+      this.progressBar.setIndeterminate();
+      scanDb = ScanDb.deserialize(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
+    }
+
     let filePaths: string[] = [];
-    for (let jsonDir of ['data', 'extension']) {
-      for await (let path of fsUtils.findFilesRecursively(paths.join('assets', jsonDir))) {
-        if (path.endsWith('.json')) {
-          filePaths.push(paths.join(jsonDir, path));
-          this.progressBar.setTaskInfo(`Найдено файлов: ${filePaths.length}`);
+    if (scanDb != null) {
+      filePaths = Array.from(scanDb.gameFiles.keys());
+    } else {
+      this.progressBar.setIndeterminate();
+      this.progressBar.setTaskInfo(`Поиск файлов...`);
+      for (let jsonDir of ['data', 'extension']) {
+        for await (let path of fsUtils.findFilesRecursively(paths.join('assets', jsonDir))) {
+          if (path.endsWith('.json')) {
+            filePaths.push(paths.join(jsonDir, path));
+            this.progressBar.setTaskInfo(`Найдено файлов: ${filePaths.length}`);
+          }
         }
       }
+      filePaths.sort();
+      this.progressBar.setDone();
     }
-    filePaths.sort();
-    this.progressBar.setDone();
 
     for (let [i, filePath] of filePaths.entries()) {
       this.progressBar.setTaskInfo(filePath);
@@ -470,13 +535,28 @@ class Main {
       let isLangFile = filePath.startsWith(paths.normalize('data/lang/'));
       if (isLangFile && !filePath.endsWith('.en_US.json')) continue;
 
-      let data = await fsUtils.readJsonFile(paths.join('assets', filePath));
+      let langLabelIterable: Iterable<LocalizableStringData>;
+      let data: unknown = null;
+      if (scanDb != null) {
+        langLabelIterable = iteratorUtils.map(
+          scanDb.gameFiles.get(filePath)!.fragments.values(),
+          (fragment) => ({
+            jsonPath: fragment.jsonPath.split('/'),
+            langUid: fragment.langUid,
+            description: fragment.description,
+            text: fragment.text.get('en_US')!,
+          }),
+        );
+      } else {
+        data = await fsUtils.readJsonFile(paths.join('assets', filePath));
+        langLabelIterable = findLangLabelsInFile(isLangFile, data);
+      }
 
       let chapterName = getChapterNameOfFile(filePath);
       let thisChapterFragments = chapterFragments.get(chapterName)!;
       let chapterMaxOrderNumber = chapterMaxOrderNumbers.get(chapterName)!;
 
-      for (let langLabel of findLangLabelsInFile(isLangFile, data)) {
+      for (let langLabel of langLabelIterable) {
         if (isLangLabelIgnored(langLabel, filePath)) continue;
 
         let jsonPathStr = langLabel.jsonPath.join('/');
@@ -1246,6 +1326,7 @@ class ProgressBar {
 interface LocalizableStringData {
   jsonPath: string[];
   langUid: number;
+  description?: string[] | null;
   text: string;
 }
 
