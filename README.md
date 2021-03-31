@@ -182,7 +182,7 @@
 ### Редакторы
 
 - Sandorik
-- MysKa
+- Mystical Kitsune
 
 ### Тостеры (тестировщики)
 
@@ -192,6 +192,7 @@
 ### Переводчики
 
 - Packy
+- Mystical Kitsune
 - Sandorik
 - dymeon
 - MegaGazon
