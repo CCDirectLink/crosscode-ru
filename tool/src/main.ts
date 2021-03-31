@@ -15,11 +15,13 @@ import { readSettings, writeSettings } from './settings.js';
 import {
   CHAPTER_FRAGMENTS_DIR,
   CHAPTER_STATUSES_FILE,
+  CROSSLOCALE_SCAN_DB_FILE,
   LOCALIZE_ME_MAPPING_FILE,
   LOCALIZE_ME_PACKS_DIR,
   MIGRATION_LOOKUP_TABLE_FILE,
   MOD_DATA_DIR,
 } from './paths.js';
+import { ScanDb } from './crosslocale/scan.js';
 
 import fs from './node-builtin-modules/fs.js';
 import * as fsUtils from './utils/fs.js';
@@ -93,6 +95,7 @@ class Main {
   public notaClient = new NotaClient(new NwNotaHttpClient());
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   public progressBar = new ProgressBar();
+  public useScanDb = false;
 
   public async start(): Promise<void> {
     try {
@@ -100,6 +103,7 @@ class Main {
 
       let settings = await readSettings();
       this.notaClient.useNotabridge = settings.useNotabridge;
+      this.useScanDb = settings.useScanDb;
 
       let autoOpenCheckbox = document.getElementById(
         'settings_translations_autoOpen',
@@ -119,6 +123,17 @@ class Main {
       useNotabridgeCheckbox.addEventListener('change', () => {
         settings.useNotabridge = useNotabridgeCheckbox.checked;
         this.notaClient.useNotabridge = settings.useNotabridge;
+        void writeSettings(settings);
+      });
+
+      let useScanDbCheckbox = document.getElementById(
+        'settings_translations_useScanDb',
+      )! as HTMLInputElement;
+      useScanDbCheckbox.disabled = false;
+      useScanDbCheckbox.checked = settings.useScanDb;
+      useScanDbCheckbox.addEventListener('change', () => {
+        settings.useScanDb = useScanDbCheckbox.checked;
+        this.useScanDb = settings.useScanDb;
         void writeSettings(settings);
       });
 
@@ -1118,7 +1133,14 @@ class Main {
         );
       }
 
-      let packer = new LocalizeMePacker();
+      let scanDb: ScanDb | null = null;
+      if (this.useScanDb) {
+        this.progressBar.setTaskInfo('Чтение базы данных сканирования CrossLocalE...');
+        this.progressBar.setIndeterminate();
+        scanDb = ScanDb.deserialize(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
+      }
+
+      let packer = new LocalizeMePacker(scanDb);
       let packedFragmentsCount = 0;
       let allChapterFragmentsCount = 0;
       for (let fragments of chapterFragments.values()) {

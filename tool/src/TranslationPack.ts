@@ -3,6 +3,7 @@ import { Fragment } from './Notabenoid';
 import paths from './node-builtin-modules/path.js';
 import * as fsUtils from './utils/fs.js';
 import * as miscUtils from './utils/misc.js';
+import { ScanDb } from './crosslocale/scan.js';
 
 export type LocalizeMePack = Record<string, { orig: string; text: string }>;
 
@@ -13,6 +14,8 @@ export const EMPTY_STRING_TAG = 'tr_ru:EMPTY_STRING';
 export class LocalizeMePacker {
   public packs = new Map<string, LocalizeMePack>();
   private assetsCache = new Map<string, unknown>();
+
+  public constructor(public scanDb: ScanDb | null) {}
 
   public async addNotaFragment(f: Fragment): Promise<void> {
     if (f.translations.length === 0) return;
@@ -38,6 +41,25 @@ export class LocalizeMePacker {
 
   public async validateFragment(f: Fragment): Promise<boolean> {
     let { file, jsonPath } = f.original;
+
+    if (this.scanDb != null) {
+      if (!f.original.descriptionText.includes(INJECTED_IN_MOD_TAG)) {
+        let scanGameFile = this.scanDb.gameFiles.get(file);
+        if (scanGameFile == null) {
+          console.warn(`${file} ${jsonPath}: unknown file`);
+          return false;
+        }
+        let scanFragment = scanGameFile.fragments.get(jsonPath);
+        if (scanFragment == null) {
+          console.warn(`${file} ${jsonPath}: unknown fragment`);
+          return false;
+        }
+        if (f.original.text !== scanFragment.text.get('en_US')) {
+          console.warn(`${file} ${jsonPath}: stale translation`);
+        }
+      }
+      return true;
+    }
 
     let realFilePath = paths.join('assets', file);
     let obj: unknown;

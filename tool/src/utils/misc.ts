@@ -58,3 +58,11 @@ export function mapToObject<K extends PropertyKey, V>(map: Map<K, V>): Record<K,
   }
   return obj;
 }
+
+export function* objectIterator<K extends PropertyKey, V>(obj: Record<K, V>): Generator<[K, V]> {
+  for (let k in obj) {
+    if (hasKey(obj, k)) {
+      yield [k, obj[k]];
+    }
+  }
+}

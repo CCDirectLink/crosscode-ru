@@ -4,6 +4,7 @@ import * as paths from './paths.js';
 export interface Settings {
   autoOpen: boolean;
   useNotabridge: boolean;
+  useScanDb: boolean;
 }
 
 export async function readSettings(): Promise<Settings> {
@@ -12,6 +13,7 @@ export async function readSettings(): Promise<Settings> {
     settings = {
       autoOpen: true,
       useNotabridge: false,
+      useScanDb: false,
     };
   }
   // TODO: remove this
