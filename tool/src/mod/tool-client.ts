@@ -1,6 +1,6 @@
 import { Settings, readSettings } from '../settings.js';
 
-const TOOL_HTML_PAGE_URL: URL = new URL('../../main.html', import.meta.url);
+const TOOL_HTML_PAGE_URL: URL = new URL('../../../crosscode-ru/tool/main.html', import.meta.url);
 
 export class TranslationToolClient {
   private gameWindow: nw.Window = nw.Window.get();
