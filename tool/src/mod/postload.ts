@@ -1,11 +1,14 @@
 import { TranslationToolClient } from './tool-client.js';
 
 ig.module('crosscode-ru.translation-tool')
-  .requires('game.main', 'game.feature.gui.screen.title-screen', 'localize-me.final-locale.ready')
+  .requires('game.main', 'game.feature.gui.screen.title-screen')
   .defines(() => {
-    if (ig.currentLang !== 'ru_RU') return;
-
     sc.ru.translationTool = new TranslationToolClient();
+
+    let translationToolButtonText: ig.LangLabel.Data = {
+      en_US: 'Translateinator',
+      ru_RU: 'Переводилка',
+    };
 
     sc.CrossCode.inject({
       onGameLoopStart() {
@@ -17,7 +20,10 @@ ig.module('crosscode-ru.translation-tool')
     });
 
     function createTranslationToolButton(): sc.ButtonGui {
-      let btn = new sc.ButtonGui('Переводилка', sc.BUTTON_DEFAULT_WIDTH);
+      let btn = new sc.ButtonGui(
+        ig.LangLabel.getText(translationToolButtonText),
+        sc.BUTTON_DEFAULT_WIDTH,
+      );
       btn.onButtonPress = () => sc.ru.translationTool.open();
       return btn;
     }
