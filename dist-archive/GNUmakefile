@@ -108,7 +108,7 @@ $(QUICK_INSTALL_ARCHIVE_NAME).tgz:
 	@rm -rf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip .
 
 $(LOCALIZE_ME_MOD_DIR):
-	$(call download_archive,$@,https://github.com/L-Sherry/Localize-me/tarball/47dc03c57cabe7b6d673bd26b0f147bcd787bf61,,--strip-components=1)
+	$(call download_archive,$@,https://github.com/L-Sherry/Localize-me/tarball/6a7ec30756a0b742661936ee809d7b5f93ff359a,,--strip-components=1)
 $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
 	$(call download_archive,$@,https://github.com/dmitmel/cc-world-map-overhaul/tarball/v1.1.0,,--strip-components=1)
 
