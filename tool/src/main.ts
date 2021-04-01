@@ -1237,6 +1237,7 @@ class Main {
           await packer.addNotaFragment(fragment);
           packedFragmentsCount++;
         }
+        await asyncUtils.waitForAnimationFrame();
       }
 
       let mappingTable: Record<string, string> = {};

@@ -9,6 +9,12 @@ export function wait(ms: number): Promise<void> {
   });
 }
 
+export function waitForAnimationFrame(): Promise<number> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(resolve);
+  });
+}
+
 export async function limitConcurrency(
   promises: Iterator<PromiseLike<void>>,
   threads: number,
