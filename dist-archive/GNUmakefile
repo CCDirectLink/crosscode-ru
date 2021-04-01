@@ -113,7 +113,7 @@ $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
 	$(call download_archive,$@,https://github.com/dmitmel/cc-world-map-overhaul/tarball/v1.1.0,,--strip-components=1)
 
 $(QUICK_INSTALL_TMP_DIR)/ccloader:
-	$(call download_archive,$(@D),http://stronghold.crosscode.ru/~dmitmel/ccloader3/20201114171305/ccloader_3.0.0-alpha_quick-install.tar.gz,,)
+	$(call download_archive,$(@D),http://stronghold.crosscode.ru/~dmitmel/ccloader3/20210401155559/ccloader_3.0.0-alpha_quick-install.tar.gz,,)
 
 compile-translations: $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
 
