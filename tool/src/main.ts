@@ -220,7 +220,7 @@ class Main {
     if (this.useScanDb) {
       this.progressBar.setTaskInfo('Чтение базы данных сканирования CrossLocalE...');
       this.progressBar.setIndeterminate();
-      scanDb = ScanDb.deserialize(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
+      scanDb = ScanDb.fromJSON(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
     }
 
     let assetsCache = new Map<string, Promise<unknown>>();
@@ -388,7 +388,7 @@ class Main {
     if (this.useScanDb) {
       this.progressBar.setTaskInfo('Чтение базы данных сканирования CrossLocalE...');
       this.progressBar.setIndeterminate();
-      scanDb = ScanDb.deserialize(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
+      scanDb = ScanDb.fromJSON(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
     }
 
     let filePaths: string[] = [];
@@ -507,7 +507,7 @@ class Main {
     if (this.useScanDb) {
       this.progressBar.setTaskInfo('Чтение базы данных сканирования CrossLocalE...');
       this.progressBar.setIndeterminate();
-      scanDb = ScanDb.deserialize(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
+      scanDb = ScanDb.fromJSON(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
     }
 
     let filePaths: string[] = [];
@@ -1217,7 +1217,7 @@ class Main {
       if (this.useScanDb) {
         this.progressBar.setTaskInfo('Чтение базы данных сканирования CrossLocalE...');
         this.progressBar.setIndeterminate();
-        scanDb = ScanDb.deserialize(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
+        scanDb = ScanDb.fromJSON(await fsUtils.readJsonFile(CROSSLOCALE_SCAN_DB_FILE));
       }
 
       let packer = new LocalizeMePacker(scanDb);
