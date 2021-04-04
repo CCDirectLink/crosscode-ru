@@ -18,7 +18,6 @@ jsonPatches.add('data/lang/sc/gui.en_US.json', (data: any) =>
           // `text_filter` (which corrects spelling of "Lea" literally
           // everywhere) on these string by patching them directly in the
           // original files
-          // TODO: No, actually, add this to Nota.
           'lea-spelling': {
             name: 'Перевод имени "Lea"',
             description:

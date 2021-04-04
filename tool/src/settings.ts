@@ -16,12 +16,9 @@ export async function readSettings(): Promise<Settings> {
       useScanDb: false,
     };
   }
-  // TODO: remove this
-  console.log('settings:', settings);
   return settings;
 }
 
 export function writeSettings(settings: Settings): Promise<void> {
-  console.log('writing settings:', settings);
   return fsUtils.writeJsonFile(paths.SETTINGS_FILE, settings);
 }

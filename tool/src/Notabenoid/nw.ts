@@ -31,7 +31,7 @@ export class NwNotaHttpClient implements NotaHttpClient {
           reject(new Error('responseXML is null'));
           return;
         }
-        // TODO: Only types of the field `ownerDocument` are incompatible: for
+        // NOTE: Only types of the field `ownerDocument` are incompatible: for
         // a real document the type is `null` and for a fragment it is another
         // real `Document`.
         resolve((doc as unknown) as DocumentFragment);
