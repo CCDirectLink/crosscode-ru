@@ -43,20 +43,18 @@ export class LocalizeMePacker {
     let { file, jsonPath } = f.original;
 
     if (this.scanDb != null) {
-      if (!f.original.descriptionText.includes(INJECTED_IN_MOD_TAG)) {
-        let scanGameFile = this.scanDb.gameFiles.get(file);
-        if (scanGameFile == null) {
-          console.warn(`${file} ${jsonPath}: unknown file`);
-          return false;
-        }
-        let scanFragment = scanGameFile.fragments.get(jsonPath);
-        if (scanFragment == null) {
-          console.warn(`${file} ${jsonPath}: unknown fragment`);
-          return false;
-        }
-        if (f.original.text !== scanFragment.text.get('en_US')) {
-          console.warn(`${file} ${jsonPath}: stale translation`);
-        }
+      let scanGameFile = this.scanDb.gameFiles.get(file);
+      if (scanGameFile == null) {
+        console.warn(`${file} ${jsonPath}: unknown file`);
+        return false;
+      }
+      let scanFragment = scanGameFile.fragments.get(jsonPath);
+      if (scanFragment == null) {
+        console.warn(`${file} ${jsonPath}: unknown fragment`);
+        return false;
+      }
+      if (f.original.text !== scanFragment.text.get('en_US')) {
+        console.warn(`${file} ${jsonPath}: stale translation`);
       }
       return true;
     }

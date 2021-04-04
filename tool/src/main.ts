@@ -225,10 +225,7 @@ class Main {
 
     let assetsCache = new Map<string, Promise<unknown>>();
     const fixOriginal = async (f: Fragment): Promise<void> => {
-      if (
-        f.original.descriptionText.includes(IGNORE_IN_MOD_TAG) ||
-        f.original.descriptionText.includes(INJECTED_IN_MOD_TAG)
-      ) {
+      if (f.original.descriptionText.includes(IGNORE_IN_MOD_TAG)) {
         return;
       }
 
@@ -256,6 +253,10 @@ class Main {
           realOriginalText = fragment.text.get('en_US')!;
         }
       } else {
+        if (f.original.descriptionText.includes(INJECTED_IN_MOD_TAG)) {
+          return;
+        }
+
         let promise: Promise<unknown>;
         if (assetsCache.has(filePath)) {
           promise = assetsCache.get(filePath)!;
@@ -461,10 +462,10 @@ class Main {
           text: langLabel.text,
         };
         orig.rawContent = stringifyFragmentOriginal(orig);
-        console.warn(chapterName, orig.rawContent);
 
         chapterMaxOrderNumber[0]++;
         console.warn(`${filePath} ${jsonPathStr}: new fragment`);
+        console.log(chapterName, orig.rawContent);
         await this.notaClient.addFragmentOriginal(
           chapterId,
           chapterMaxOrderNumber[0],
