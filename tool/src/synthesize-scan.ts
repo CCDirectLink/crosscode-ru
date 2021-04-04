@@ -1,4 +1,5 @@
 // <https://gist.github.com/dmitmel/5a498b9c9ac33994ac1ab5accbe0d7da>
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ScanDb, ScanFragment, ScanGameFile } from './crosslocale/scan.js';
 import * as uuid from 'uuid';
@@ -207,6 +208,27 @@ async function main(): Promise<void> {
       },
     ]) {
       addFragment(file, { jsonPath: path, description, text: 'Holiday Man' });
+    }
+  }
+
+  {
+    let databaseJson = await fsUtils.readJsonFile<any>(
+      paths.join(opts.gameAssetsDir, 'data', 'database.json'),
+    );
+    let file = addGameFile({ path: 'data/database.json' });
+
+    for (let [areaId, area] of Object.entries<any>(databaseJson.areas)) {
+      let { landmarks } = area;
+      if (landmarks == null) continue;
+      for (let [landmarkId, landmark] of Object.entries<any>(landmarks)) {
+        if (landmark.teleportQuestion == null && landmark.name != null) {
+          addFragment(file, {
+            jsonPath: `areas/${areaId}/landmarks/${landmarkId}/teleportQuestion`,
+            description: [],
+            text: `Teleport to ${landmark.name.en_US}?`,
+          });
+        }
+      }
     }
   }
 

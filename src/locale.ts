@@ -140,6 +140,14 @@ localizeMe.add_locale('ru_RU', {
 
     if (original === 'en_US') return 'ru_RU';
 
+    // Pattern matches must be ordered by frequency of successful firing when
+    // playing the game normally. database.json and gui.en_US.json for instance
+    // are read every time the game is booted.
+
+    if (/^database\.json\/areas\/[^/]+\/landmarks\/[^/]+\/teleportQuestion$/.test(dictPath)) {
+      return '';
+    }
+
     // if (dictPath.startsWith('enemies/')) {
     //   let match = /^enemies\/(.+?)\.json\/meta\/(.+)$/.exec(dictPath);
     //   if (match != null && match.length === 3) {
@@ -159,11 +167,11 @@ localizeMe.add_locale('ru_RU', {
       return original;
     }
 
-    if (/^credits\/[^/]+\.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)) {
+    if (dictPath.startsWith('lang/sc/gui.en_US.json/labels/options/crosscode-ru/lea-spelling/')) {
       return original;
     }
 
-    if (dictPath.startsWith('lang/sc/gui.en_US.json/labels/options/crosscode-ru/lea-spelling/')) {
+    if (/^credits\/[^/]+\.json\/entries\/[^/]+\/names\/[^/]+$/.test(dictPath)) {
       return original;
     }
 

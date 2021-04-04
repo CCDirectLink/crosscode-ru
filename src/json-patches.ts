@@ -18,6 +18,7 @@ jsonPatches.add('data/lang/sc/gui.en_US.json', (data: any) =>
           // `text_filter` (which corrects spelling of "Lea" literally
           // everywhere) on these string by patching them directly in the
           // original files
+          // TODO: No, actually, add this to Nota.
           'lea-spelling': {
             name: 'Перевод имени "Lea"',
             description:
@@ -243,5 +244,29 @@ jsonPatches.add('data/maps/bergen/bergen.json', (data: any) => {
         patchSantamaRecursively(value[key]);
       }
     }
+  }
+});
+
+jsonPatches.add('data/database.json', (data: any) => {
+  if (ig.currentLang !== 'ru_RU') return;
+
+  let realCurrentLang = ig.currentLang;
+  try {
+    ig.currentLang = 'en_US';
+
+    for (let area of Object.values<any>(data.areas)) {
+      let { landmarks } = area;
+      if (landmarks == null) continue;
+      for (let landmark of Object.values<any>(landmarks)) {
+        if (landmark.teleportQuestion == null && landmark.name != null) {
+          let str = `Teleport to ${ig.LangLabel.getText(landmark.name)}?`;
+          landmark.teleportQuestion = { en_US: realCurrentLang !== 'en_US' ? str : '' };
+        }
+      }
+    }
+
+    //
+  } finally {
+    ig.currentLang = realCurrentLang;
   }
 });
