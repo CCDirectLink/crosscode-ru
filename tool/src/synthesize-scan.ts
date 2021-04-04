@@ -135,6 +135,7 @@ async function main(): Promise<void> {
       jsonPath: 'labels/options/logLevel-error/description',
       text: 'Enables error popups. \\c[1]Needs a restart!',
     });
+    addFragment(file, { jsonPath: 'labels/misc-time-var/12-00', text: "It's High Noon" });
   }
 
   {

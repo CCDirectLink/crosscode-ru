@@ -221,8 +221,9 @@ localizeMe.add_locale('ru_RU', {
   misc_time_function: (): string => {
     let date = new Date();
     // https://pikabu.ru/story/a_gdeto_seychas_rovno_polden_4223194
-    // TODO: add this to Nota
-    if (date.getHours() >= 11 && date.getHours() <= 13) return 'час расплаты';
+    if (date.getHours() >= 11 && date.getHours() <= 13) {
+      return ig.lang.get('sc.gui.misc-time-var.12-00');
+    }
     let h = date.getHours().toString();
     let m = date.getMinutes().toString().padStart(2, '0');
     return `${h}:${m}`;

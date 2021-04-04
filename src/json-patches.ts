@@ -26,6 +26,9 @@ jsonPatches.add('data/lang/sc/gui.en_US.json', (data: any) =>
           },
         },
       },
+      'misc-time-var': {
+        '12-00': "It's High Noon",
+      },
     },
   }),
 );
