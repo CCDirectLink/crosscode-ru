@@ -7,6 +7,9 @@
     "ru_RU": "Русский перевод CrossCode и сопутствующие исправления интерфейса"
   },
   "homepage": "https://github.com/CCDirectLink/crosscode-ru",
+  "icons": {
+    "24": "icon24.png"
+  },
   "main": "dist/main.js",
   "plugin": "dist/main.js",
   "postload": "dist/postload.js",
