@@ -105,7 +105,7 @@ $(QUICK_INSTALL_ARCHIVE_NAME).zip:
 	@rm -rf $@ && cd $(QUICK_INSTALL_TMP_DIR) && zip --quiet --recurse-paths ../$@ .
 $(QUICK_INSTALL_ARCHIVE_NAME).tgz:
 	@echo "packing quick-install .tgz archive" $@
-	@rm -rf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip .
+	@rm -rf $@ && cd $(QUICK_INSTALL_TMP_DIR) && tar --create --file ../$@ --gzip --owner=0 --group=0 .
 
 $(LOCALIZE_ME_MOD_DIR):
 	$(call download_archive,$@,https://github.com/L-Sherry/Localize-me/tarball/6a7ec30756a0b742661936ee809d7b5f93ff359a,,--strip-components=1)
