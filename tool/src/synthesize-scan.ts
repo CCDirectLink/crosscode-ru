@@ -3,16 +3,45 @@
 import { ScanDb, ScanFragment, ScanGameFile } from './crosslocale/scan.js';
 import * as uuid from 'uuid';
 import * as paths from 'path';
-// eslint-disable-next-line node/no-unpublished-import
 import { ChangelogFileData } from 'ultimate-crosscode-typedefs/file-types/changelog';
 import * as fsUtils from './utils/fs.js';
+import * as yargs from 'yargs';
 
 async function main(): Promise<void> {
-  let gameAssetsDir = paths.normalize(process.argv[2]);
-  let outputFile = paths.normalize(process.argv[3]);
+  let opts = yargs(process.argv.slice(2))
+    .usage('$0')
+    .help()
+    .strict()
+    .options({
+      gameAssetsDir: {
+        string: true,
+        requiresArg: true,
+        alias: 'g',
+        demandOption: true,
+        normalize: true,
+      },
+      outputFile: {
+        string: true,
+        requiresArg: true,
+        alias: 'o',
+        demandOption: true,
+        normalize: true,
+      },
+      prevFile: {
+        string: true,
+        requiresArg: true,
+        alias: 'p',
+        normalize: true,
+      },
+    }).argv;
 
-  let gameVersion = await loadGameVersion(gameAssetsDir);
-  let scanDb = new ScanDb(uuid.v4(), new Date(), gameVersion);
+  let scanDb: ScanDb;
+  if (opts.prevFile != null) {
+    scanDb = ScanDb.fromJSON(await fsUtils.readJsonFile(opts.prevFile));
+  } else {
+    let gameVersion = await loadGameVersion(opts.gameAssetsDir);
+    scanDb = new ScanDb(uuid.v4(), new Date(), gameVersion);
+  }
 
   function addGameFile(opts: { path: string; assetRoot?: string | null }): ScanGameFile {
     opts.assetRoot ??= '';
@@ -32,19 +61,29 @@ async function main(): Promise<void> {
       description?: string[] | null;
       text: string;
       injected?: boolean | null;
+      flags?: string[] | null;
     },
   ): ScanFragment {
     opts.langUid ??= 0;
     opts.description ??= [];
     opts.injected ??= true;
+    opts.flags ??= [];
+
+    let flags = new Set(opts.flags);
+    let description = [...opts.description];
+    if (opts.injected) {
+      flags.add('injected_in_mod');
+      description.push('INJECTED_IN_MOD');
+    }
+
     let fragment = new ScanFragment(
       scanDb,
       gameFile,
       opts.jsonPath,
       opts.langUid,
-      opts.description,
+      description,
       new Map([['en_US', opts.text]]),
-      new Set(opts.injected ? ['injected_in_mod'] : []),
+      flags,
     );
     gameFile.fragments.set(fragment.jsonPath, fragment);
     return fragment;
@@ -171,7 +210,7 @@ async function main(): Promise<void> {
     }
   }
 
-  await fsUtils.writeJsonFile(outputFile, scanDb);
+  await fsUtils.writeJsonFile(opts.outputFile, scanDb);
 }
 
 // Taken from <https://github.com/dmitmel/ccloader3/blob/8cdfed34dacb46879cb1aa86729e9b2c5aa7b0a2/src/game.ts#L9-L32>
