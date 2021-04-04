@@ -98,7 +98,7 @@ $(ZIP_ARCHIVE_NAMES):
 	@rm -rf $@ && zip --quiet --recurse-paths $@ -- $^
 $(TAR_ARCHIVE_NAMES):
 	@echo "packing .tgz archive" $@
-	@rm -rf $@ && tar --create --file $@ --gzip -- $^
+	@rm -rf $@ && tar --create --file $@ --gzip --owner=0 --group=0 -- $^
 
 $(QUICK_INSTALL_ARCHIVE_NAME).zip:
 	@echo "packing quick-install .zip archive" $@
