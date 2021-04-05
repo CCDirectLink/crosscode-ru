@@ -573,26 +573,37 @@ class Main {
     }
     this.progressBar.setDone();
 
-    let fixedFragmentsCount = 0;
+    let fragmentsNeedingFix = new Map<string, Array<Fragment & { prevOrderNumber?: number }>>();
+    let fragmentsNeedingFixCount = 0;
 
     for (let chapterStatus of chapterStatuses.values()) {
       let chapterName = chapterStatus.name;
-      this.progressBar.setTaskInfo(chapterName);
       let fragments = chapterFragments.get(chapterName)!;
+      let fragments2 = miscUtils.mapGetOrInsert(fragmentsNeedingFix, chapterName, []);
 
       fragments.sort((f1, f2) => f1.orderNumber - f2.orderNumber);
 
       for (let f of fragments) {
-        this.progressBar.setValue(fixedFragmentsCount, allChapterFragmentsCount);
         if (f.orderNumber !== f.prevOrderNumber) {
-          console.log(`${chapterName}: ${f.original.file} ${f.original.jsonPath} ${f.orderNumber}`);
-          await this.notaClient.editFragmentOriginal(
-            f.chapterId,
-            f.id,
-            f.orderNumber,
-            f.original.rawContent,
-          );
+          fragments2.push(f);
+          fragmentsNeedingFixCount++;
         }
+      }
+    }
+
+    let fixedFragmentsCount = 0;
+    for (let [chapterName, fragments] of fragmentsNeedingFix) {
+      this.progressBar.setTaskInfo(chapterName);
+
+      for (let f of fragments) {
+        this.progressBar.setValue(fixedFragmentsCount, fragmentsNeedingFixCount);
+        console.log(`${chapterName}: ${f.original.file} ${f.original.jsonPath} ${f.orderNumber}`);
+        await this.notaClient.editFragmentOriginal(
+          f.chapterId,
+          f.id,
+          f.orderNumber,
+          f.original.rawContent,
+        );
         fixedFragmentsCount++;
       }
     }
