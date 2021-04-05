@@ -1,5 +1,5 @@
-ig.module('enhanced-ui.fixes.inventory-menu')
-  .requires('game.feature.menu.gui.item.item-status-trade', 'enhanced-ui.ticker-display')
+ig.module('ultimate-localized-ui.fixes.inventory-menu')
+  .requires('game.feature.menu.gui.item.item-status-trade', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
     sc.ItemStatusTrade.inject({
       _setTradeInfo(itemID) {

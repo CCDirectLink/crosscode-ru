@@ -1,5 +1,5 @@
 ig.module('crosscode-ru.fixes.lore-menu')
-  .requires('game.feature.menu.gui.lore.lore-misc')
+  .requires('game.feature.menu.gui.lore.lore-misc', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
     const TITLE_HORIZONTAL_MARGIN_LEFT = 33;
 

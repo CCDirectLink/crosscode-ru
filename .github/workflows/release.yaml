@@ -103,5 +103,5 @@ jobs:
             dist-archive/crosscode-ru_quick-install_v*.zip
             dist-archive/crosscode-ru_v*.tgz
             dist-archive/crosscode-ru_v*.zip
-            dist-archive/enhanced-ui_v*.tgz
-            dist-archive/enhanced-ui_v*.zip
+            dist-archive/ultimate-localized-ui_v*.tgz
+            dist-archive/ultimate-localized-ui_v*.zip

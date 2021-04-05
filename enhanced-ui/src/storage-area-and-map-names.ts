@@ -1,4 +1,4 @@
-ig.module('enhanced-ui.fixes.storage-area-and-map-names')
+ig.module('ultimate-localized-ui.fixes.storage-area-and-map-names')
   .requires(
     'impact.feature.database.database',
     'game.feature.menu.area-loadable',
@@ -162,7 +162,7 @@ ig.module('enhanced-ui.fixes.storage-area-and-map-names')
 // moved into `ig.GameAddon#onLevelLoaded`, but I wanted to make this process
 // as seamless as possible due to the fact that `ig.GameAddon#onLevelLoaded` is
 // executed after literally all of the map loading code.
-ig.module('enhanced-ui.fixes.storage-area-and-map-names.map-model-fix')
+ig.module('ultimate-localized-ui.fixes.storage-area-and-map-names.map-model-fix')
   .requires('game.feature.menu.map-model')
   .defines(() => {
     sc.MapModel.inject({

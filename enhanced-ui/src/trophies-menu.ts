@@ -1,4 +1,4 @@
-ig.module('enhanced-ui.fixes.trophies-menu')
+ig.module('ultimate-localized-ui.fixes.trophies-menu')
   .requires('game.feature.menu.gui.trophy.trophy-misc')
   .defines(() => {
     sc.TrophyListEntry.inject({

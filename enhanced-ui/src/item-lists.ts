@@ -11,8 +11,8 @@ function guiMapChildren<T extends ig.GuiElementBase = ig.GuiElementBase>(
   }
 }
 
-ig.module('enhanced-ui.fixes.item-lists')
-  .requires('game.feature.menu.gui.menu-misc', 'enhanced-ui.ticker-display')
+ig.module('ultimate-localized-ui.fixes.item-lists')
+  .requires('game.feature.menu.gui.menu-misc', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
     sc.ListBoxButton.inject({
       init(...args) {
@@ -42,7 +42,7 @@ ig.module('enhanced-ui.fixes.item-lists')
       setButtonText(_text) {
         // well... [insert shrug face here]
         // setButtonText isn't used at all in the entire codebase
-        throw new Error('enhanced-ui: sc.ListBoxButton.setButtonText: unimplemented');
+        throw new Error('ultimate-localized-ui: sc.ListBoxButton.setButtonText: unimplemented');
       },
     });
   });
@@ -51,7 +51,7 @@ function createListButtonPatch<T extends sc.ListBoxButton>(
   gameFeatureModule: string,
   getConstructor: () => { prototype: T & { enableTickerDisplay: boolean } },
 ): void {
-  ig.module(`enhanced-ui.fixes.item-lists.${gameFeatureModule}`)
+  ig.module(`ultimate-localized-ui.fixes.item-lists.${gameFeatureModule}`)
     .requires(`game.feature.${gameFeatureModule}`)
     .defines(() => {
       getConstructor().prototype.enableTickerDisplay = true;
@@ -82,7 +82,7 @@ function createListButtonPatch<T extends sc.ListBoxButton>(
   createListButtonPatch('menu.gui.lore.lore-misc', () => sc.LoreEntryButton);
 }
 
-ig.module('enhanced-ui.fixes.new-game-menu')
+ig.module('ultimate-localized-ui.fixes.new-game-menu')
   .requires('game.feature.menu.gui.new-game.new-game-misc')
   .defines(() => {
     sc.NewGameOptionButton.inject({
@@ -107,13 +107,13 @@ ig.module('enhanced-ui.fixes.new-game-menu')
     });
   });
 
-ig.module('enhanced-ui.fixes.item-lists.trade-gui')
+ig.module('ultimate-localized-ui.fixes.item-lists.trade-gui')
   .requires(
     'game.feature.trade.gui.trade-icon',
     'game.feature.trade.gui.equip-toggle-stats',
     'game.feature.menu.gui.shop.shop-stats',
     'game.feature.menu.gui.trade.trade-misc',
-    'enhanced-ui.ticker-display',
+    'ultimate-localized-ui.ticker-display',
   )
   .defines(() => {
     sc.TradeToggleStats.inject({
@@ -189,8 +189,8 @@ ig.module('enhanced-ui.fixes.item-lists.trade-gui')
     });
   });
 
-ig.module('enhanced-ui.fixes.item-lists.shop-confirm')
-  .requires('game.feature.menu.gui.shop.shop-confirm', 'enhanced-ui.ticker-display')
+ig.module('ultimate-localized-ui.fixes.item-lists.shop-confirm')
+  .requires('game.feature.menu.gui.shop.shop-confirm', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
     sc.ShopConfirmEntry.inject({
       init(...args) {
@@ -209,8 +209,8 @@ ig.module('enhanced-ui.fixes.item-lists.shop-confirm')
     });
   });
 
-ig.module('enhanced-ui.fixes.item-lists.status-main-equipment')
-  .requires('game.feature.menu.gui.status.status-view-main', 'enhanced-ui.ticker-display')
+ig.module('ultimate-localized-ui.fixes.item-lists.status-main-equipment')
+  .requires('game.feature.menu.gui.status.status-view-main', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
     sc.StatusViewMainEquipment.Entry.inject({
       init(...args) {
@@ -226,8 +226,8 @@ ig.module('enhanced-ui.fixes.item-lists.status-main-equipment')
     });
   });
 
-ig.module('enhanced-ui.fixes.item-lists.social-menu')
-  .requires('game.feature.menu.gui.social.social-misc', 'enhanced-ui.ticker-display')
+ig.module('ultimate-localized-ui.fixes.item-lists.social-menu')
+  .requires('game.feature.menu.gui.social.social-misc', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
     sc.SocialInfoBox.inject({
       createEquipEntry(itemID, ...args) {
@@ -256,8 +256,8 @@ ig.module('enhanced-ui.fixes.item-lists.social-menu')
     });
   });
 
-ig.module('enhanced-ui.fixes.item-lists.quests')
-  .requires('game.feature.menu.gui.quests.quest-entries', 'enhanced-ui.ticker-display')
+ig.module('ultimate-localized-ui.fixes.item-lists.quests')
+  .requires('game.feature.menu.gui.quests.quest-entries', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
     sc.SubTaskEntryBase.inject({
       init(...args) {
@@ -300,8 +300,8 @@ ig.module('enhanced-ui.fixes.item-lists.quests')
     });
   });
 
-ig.module('enhanced-ui.fixes.item-lists.equipment-menu')
-  .requires('game.feature.menu.gui.equip.equip-bodypart', 'enhanced-ui.ticker-display')
+ig.module('ultimate-localized-ui.fixes.item-lists.equipment-menu')
+  .requires('game.feature.menu.gui.equip.equip-bodypart', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
     sc.EquipBodyPartContainer.Entry.inject({
       init(...args) {
@@ -327,8 +327,8 @@ ig.module('enhanced-ui.fixes.item-lists.equipment-menu')
     });
   });
 
-ig.module('enhanced-ui.fixes.item-lists.quest-dialog')
-  .requires('game.feature.menu.gui.quests.quest-misc', 'enhanced-ui.ticker-display')
+ig.module('ultimate-localized-ui.fixes.item-lists.quest-dialog')
+  .requires('game.feature.menu.gui.quests.quest-misc', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
     sc.QuestDialog.inject({
       setQuestRewards(quest, ...args) {
@@ -354,8 +354,8 @@ ig.module('enhanced-ui.fixes.item-lists.quest-dialog')
     });
   });
 
-ig.module('enhanced-ui.fixes.item-lists.quest-details-view')
-  .requires('game.feature.menu.gui.quests.quest-details', 'enhanced-ui.ticker-display')
+ig.module('ultimate-localized-ui.fixes.item-lists.quest-details-view')
+  .requires('game.feature.menu.gui.quests.quest-details', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
     sc.QuestDetailsView.inject({
       _setQuest(quest) {

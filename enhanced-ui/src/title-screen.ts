@@ -1,4 +1,4 @@
-ig.module('enhanced-ui.fixes.title-screen')
+ig.module('ultimate-localized-ui.fixes.title-screen')
   .requires('game.feature.gui.screen.title-screen')
   .defines(() => {
     sc.TitleScreenButtonGui.inject({

@@ -17,7 +17,7 @@
   "dependencies": {
     "crosscode": "~1.4.1",
     "localize-me": "^1.0.0",
-    "enhanced-ui": "^0.2.3"
+    "ultimate-localized-ui": "^0.2.3"
   },
   "assets": [
     "data/credits/crosscode-ru.json",

@@ -1,4 +1,4 @@
-ig.module('enhanced-ui.fixes.combat-hud')
+ig.module('ultimate-localized-ui.fixes.combat-hud')
   .requires('game.feature.combat.gui.hp-bar-boss', 'game.feature.combat.model.enemy-type')
   .defines(() => {
     sc.SUB_HP_EDITOR.BOSS.inject({
@@ -20,7 +20,7 @@ ig.module('enhanced-ui.fixes.combat-hud')
     });
   });
 
-ig.module('enhanced-ui.fixes.pvp')
+ig.module('ultimate-localized-ui.fixes.pvp')
   .requires('game.feature.combat.gui.pvp-gui')
   .defines(() => {
     sc.PvpRoundGui.inject({

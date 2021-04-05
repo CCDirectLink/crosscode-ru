@@ -11,7 +11,7 @@ sc.ui2.debug.highlightUpdateDrawables = function (renderer) {
   renderer.addColor('red', 0, 0, size.x, size.y).setAlpha(0.25);
 };
 
-ig.module('enhanced-ui.debug.gui')
+ig.module('ultimate-localized-ui.debug.gui')
   .requires('impact.feature.gui.gui')
   .defines(() => {
     sc.ui2.debug.highlightGuiInstances = (clazz) => {

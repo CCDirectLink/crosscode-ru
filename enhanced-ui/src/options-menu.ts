@@ -1,8 +1,8 @@
-ig.module('enhanced-ui.fixes.options-menu')
+ig.module('ultimate-localized-ui.fixes.options-menu')
   .requires(
     'game.feature.menu.gui.options.options-types',
     'game.feature.menu.gui.options.options-misc',
-    'enhanced-ui.ticker-display',
+    'ultimate-localized-ui.ticker-display',
   )
   .defines(() => {
     sc.OptionRow.inject({
