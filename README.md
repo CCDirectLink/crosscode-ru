@@ -1,4 +1,4 @@
-# crosscode-ru
+# ![icon48.png](icon48.png) crosscode-ru
 
 Комьюнити-модпак русского перевода игры [CrossCode](https://cross-code.com/en/home), который мы все заслужили.
 
