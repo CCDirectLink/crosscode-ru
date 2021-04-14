@@ -31,14 +31,15 @@ TOOL_MOD_VERSION := $(shell jq -r '.version' ../tool/ccmod.json)
 TOOL_DIR := $(TOOL_MOD_ID)
 ENHANCED_UI_MOD_ID := $(shell jq -r '.id' ../enhanced-ui/ccmod.json)
 ENHANCED_UI_MOD_VERSION := $(shell jq -r '.version' ../enhanced-ui/ccmod.json)
-ENHANCED_UI_MOD_DIR := enhanced-ui
+ENHANCED_UI_MOD_DIR := $(ENHANCED_UI_MOD_ID)
+ENHANCED_UI_MOD_DIR_OLD := enhanced-ui
 LOCALIZE_ME_MOD_DIR := Localize-me
 CC_WORLD_MAP_OVERHAUL_MOD_DIR := cc-world-map-overhaul
 TRANSLATIONS_DIR := assets/ru-translation-tool
 
-TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map LICENSE* main.html ccmod.json
+TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map LICENSE* main.html ccmod.json icon*.png
 TOOL_FILES := $(call find_by_patterns,../tool,$(TOOL_FILES))
-MOD_FILES := dist/*.js dist/*.js.map LICENSE* ccmod.json README.md
+MOD_FILES := dist/*.js dist/*.js.map LICENSE* ccmod.json README.md icon*.png
 MOD_FILES := $(shell jq -r '"assets/\(.assets[])"' ../ccmod.json) $(call find_by_patterns,..,$(MOD_FILES))
 ENHANCED_UI_MOD_FILES := media/*.png dist/*.js dist/*.js.map LICENSE* ccmod.json
 ENHANCED_UI_MOD_FILES := $(shell jq -r '"assets/\(.assets[])"' ../enhanced-ui/ccmod.json) $(call find_by_patterns,../enhanced-ui,$(ENHANCED_UI_MOD_FILES))
@@ -53,8 +54,9 @@ TOOL_ARCHIVE_NAME := $(TOOL_MOD_ID)_v$(TOOL_MOD_VERSION)
 TOOL_ARCHIVE_FILES := $(addprefix $(TOOL_DIR)/,$(TOOL_FILES))
 ENHANCED_UI_MOD_ARCHIVE_NAME := $(ENHANCED_UI_MOD_ID)_v$(ENHANCED_UI_MOD_VERSION)
 ENHANCED_UI_MOD_ARCHIVE_FILES := $(addprefix $(ENHANCED_UI_MOD_DIR)/,$(ENHANCED_UI_MOD_FILES))
+ENHANCED_UI_MOD_ARCHIVE_FILES_OLD := $(addprefix $(ENHANCED_UI_MOD_DIR_OLD)/,$(ENHANCED_UI_MOD_FILES))
 
-MODPACKS_COMMON_FILES := $(ENHANCED_UI_MOD_ARCHIVE_FILES) $(LOCALIZE_ME_MOD_DIR) $(CC_WORLD_MAP_OVERHAUL_MOD_DIR)
+MODPACKS_COMMON_FILES := $(ENHANCED_UI_MOD_ARCHIVE_FILES_OLD) $(LOCALIZE_ME_MOD_DIR) $(CC_WORLD_MAP_OVERHAUL_MOD_DIR)
 MODPACK_ARCHIVE_NAME := $(MOD_ID)_modpack_v$(MOD_VERSION)
 MODPACK_ARCHIVE_FILES := $(MOD_ARCHIVE_FILES) $(MODPACKS_COMMON_FILES)
 TOOL_MODPACK_ARCHIVE_NAME := $(TOOL_MOD_ID)_modpack_v$(TOOL_MOD_VERSION)
@@ -84,7 +86,7 @@ clean:
 	@rm -rf \
 		$(ALL_ARCHIVE_NAMES) $(MOD_DIR) $(TOOL_DIR) $(LOCALIZE_ME_MOD_DIR) \
 		$(CC_WORLD_MAP_OVERHAUL_MOD_DIR) $(ENHANCED_UI_MOD_DIR) \
-		$(QUICK_INSTALL_TMP_DIR)
+		$(ENHANCED_UI_MOD_DIR_OLD) $(QUICK_INSTALL_TMP_DIR)
 
 $(call archive_names,$(MOD_ARCHIVE_NAME)): $(MOD_ARCHIVE_FILES)
 $(call archive_names,$(TOOL_ARCHIVE_NAME)): $(TOOL_ARCHIVE_FILES)
@@ -126,6 +128,8 @@ $(MOD_DIR)/%: ../%
 $(TOOL_DIR)/%: ../tool/%
 	@mkdir -p $(@D) && cp -r $< $@
 $(ENHANCED_UI_MOD_DIR)/%: ../enhanced-ui/%
+	@mkdir -p $(@D) && cp -r $< $@
+$(ENHANCED_UI_MOD_DIR_OLD)/%: ../enhanced-ui/%
 	@mkdir -p $(@D) && cp -r $< $@
 $(QUICK_INSTALL_TMP_DIR)/assets/mods/%: %
 	@mkdir -p $(@D) && cp -r $< $@
