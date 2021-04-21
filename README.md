@@ -2,15 +2,17 @@
 
 Комьюнити-модпак русского перевода игры [CrossCode](https://cross-code.com/en/home), который мы все заслужили.
 
-![community translation official response 1](docs/media/community-translation-official-response1.png)
-
-![community translation official response 2](docs/media/community-translation-official-response2.png)
-
 **Наш веб-сайт**: https://crosscode.ru/ \
 **Наш Discord-сервер**: https://crosscode.ru/discord (https://discord.com/invite/QANXNbR) \
 **Наша группа в VK**: https://vk.com/crusscode
 
 [**Перейти к инструкции по установке!**](#инструкции-по-установке)
+
+[**Перейти к инструкции по обновлению!**](#инструкции-по-обновлению)
+
+![community translation official response 1](docs/media/community-translation-official-response1.png)
+
+![community translation official response 2](docs/media/community-translation-official-response2.png)
 
 ## Фичи
 
