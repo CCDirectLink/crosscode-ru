@@ -4,6 +4,9 @@ on:
     tags:
       - v*
 
+env:
+  FORCE_COLOR: true
+
 jobs:
   build:
     name: Build Release
@@ -29,11 +32,10 @@ jobs:
         with:
           path: |
             ${{ steps.yarn_cache_dir.outputs.dir }}
-            node_modules
-            ultimate-crosscode-typedefs/node_modules
-          key: ${{ runner.os }}-yarn-4-${{ hashFiles('**/yarn.lock') }}
+          key: |
+            r1/${{ github.workflow }}/${{ runner.os }}/yarn/${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-4-
+            r1/${{ github.workflow }}/${{ runner.os }}/yarn/
 
       - name: Set up ultimate-crosscode-typedefs
         working-directory: ultimate-crosscode-typedefs

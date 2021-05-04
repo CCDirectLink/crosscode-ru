@@ -481,7 +481,6 @@ class Main {
   public async fixFragmentOrder(): Promise<void> {
     let chapterStatuses: Map<string, ChapterStatus> = await this.readChapterStatuses();
     let chapterFragments = new Map<string, Array<Fragment & { prevOrderNumber?: number }>>();
-    let allChapterFragmentsCount = 0;
     // arrays are used as pointers for the sake of updating max order numbers
     // by reference instead of performing a lookup in `Map#set` every time
     let chapterMaxOrderNumbers = new Map<string, [number]>();
@@ -499,7 +498,6 @@ class Main {
           return f;
         }),
       );
-      allChapterFragmentsCount += fragments.length;
       chapterMaxOrderNumbers.set(name, [1]);
     }
     this.progressBar.setDone();
