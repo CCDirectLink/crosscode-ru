@@ -34,6 +34,7 @@ export class NodejsNotaHttpClient implements NotaHttpClient {
           followRedirect: true,
           followAllRedirects: true, // needed for authenication
           followOriginalHttpMethod: true,
+          gzip: true,
         },
         (error: unknown, _response: request.Response, body: unknown) => {
           if (error != null) {
