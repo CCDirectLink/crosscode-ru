@@ -151,7 +151,7 @@ export class NotaClient {
   }
 
   public async logout(): Promise<void> {
-    await this.httpClient.requestDocument('GET', '/register/logout');
+    await this.httpClient.requestDocument('GET', `${NOTABENOID_URL}/register/logout`);
   }
 
   public async addFragmentOriginal(
