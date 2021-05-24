@@ -53,6 +53,7 @@ export interface Fragment {
   orderNumber: number;
   original: Original;
   translations: Translation[];
+  url: string;
 }
 
 export interface Original {
@@ -294,6 +295,7 @@ function parseFragment(chapterId: number, element: Element): Fragment | null {
   f.chapterId = chapterId;
   f.id = parseInt(element.id.slice(1), 10);
   f.orderNumber = parseInt(anchor.textContent!.slice(1), 10);
+  f.url = `${NOTABENOID_BOOK_URL}/${f.chapterId}/${f.id}#${f.orderNumber}`;
 
   let original = parseOriginal(text.textContent!);
   if (original == null) return null;
