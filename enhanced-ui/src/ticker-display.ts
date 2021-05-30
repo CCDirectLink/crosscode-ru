@@ -208,13 +208,15 @@ ig.module('ultimate-localized-ui.ticker-display')
         if (!ignoreCommands) commands!.push(...text.commands);
         return text.parsedText;
       }
-      return (textParserParse as (
-        this: ig.TextParser,
-        text: string,
-        commands: ig.TextCommand[] | null,
-        font: ig.MultiFont,
-        ignoreCommands?: boolean,
-      ) => string).call(this, text as string, commands, font, ignoreCommands);
+      return (
+        textParserParse as (
+          this: ig.TextParser,
+          text: string,
+          commands: ig.TextCommand[] | null,
+          font: ig.MultiFont,
+          ignoreCommands?: boolean,
+        ) => string
+      ).call(this, text as string, commands, font, ignoreCommands);
     };
 
     ig.TextBlock.inject({

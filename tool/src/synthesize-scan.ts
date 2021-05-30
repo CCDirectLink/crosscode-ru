@@ -101,14 +101,12 @@ async function main(): Promise<void> {
     });
     addFragment(file, {
       jsonPath: 'labels/options/crosscode-ru/localized-labels-on-sprites/description',
-      text:
-        'Enables translated labels on sprites such as signs in the game world. \\c[1]Needs a restart!',
+      text: 'Enables translated labels on sprites such as signs in the game world. \\c[1]Needs a restart!',
     });
     addFragment(file, { jsonPath: 'labels/menu/option/mods', text: 'Mods' });
     addFragment(file, {
       jsonPath: 'labels/options/mods-description/description',
-      text:
-        'In this menu you can \\c[3]enable or disable installed mods\\c[0]. Mod descriptions are shown below. \\c[1]The game needs to be restarted\\c[0] if you change any options here!',
+      text: 'In this menu you can \\c[3]enable or disable installed mods\\c[0]. Mod descriptions are shown below. \\c[1]The game needs to be restarted\\c[0] if you change any options here!',
     });
     addFragment(file, { jsonPath: 'labels/options/headers/logLevel', text: 'Log levels' });
     addFragment(file, {

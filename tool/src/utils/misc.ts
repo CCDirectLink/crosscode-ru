@@ -2,7 +2,7 @@ export function hasKey<
   K extends PropertyKey,
   // `{}` in TypeScript means "any non-nullish value"
   // eslint-disable-next-line @typescript-eslint/ban-types
-  T extends {} = {}
+  T extends {} = {},
 >(obj: T, key: K): obj is T & { [k in K]: unknown } {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }

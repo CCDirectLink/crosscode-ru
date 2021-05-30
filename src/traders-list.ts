@@ -57,9 +57,11 @@ ig.module('crosscode-ru.fixes.traders-list')
         for (let hook of list.contentPane.hook.children) {
           hook.pos.x += TRADERS_LIST_ADDITIONAL_WIDTH;
         }
-        for (let hook of (list as sc.ButtonListBox & {
-          traderInfoGui: ig.GuiElementBase;
-        }).traderInfoGui.hook.children) {
+        for (let hook of (
+          list as sc.ButtonListBox & {
+            traderInfoGui: ig.GuiElementBase;
+          }
+        ).traderInfoGui.hook.children) {
           hook.size.x += TRADERS_LIST_ADDITIONAL_WIDTH;
         }
       },

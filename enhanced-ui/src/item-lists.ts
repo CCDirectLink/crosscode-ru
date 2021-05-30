@@ -29,7 +29,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists')
 
           this.button.removeChildGui(oldTextChild);
           this.button.addChildGui(newTextChild);
-          this.button.textChild = (newTextChild as unknown) as sc.TextGui;
+          this.button.textChild = newTextChild as unknown as sc.TextGui;
         }
       },
 
@@ -125,7 +125,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists.trade-gui')
 
         this.removeChildGui(this.compareItem);
         this.addChildGui(newCompareItem);
-        this.compareItem = (newCompareItem as unknown) as sc.TextGui;
+        this.compareItem = newCompareItem as unknown as sc.TextGui;
 
         this._updateTickerMaxSize();
       },
@@ -167,7 +167,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists.trade-gui')
 
           this.removeChildGui(gui);
           this.addChildGui(newGui);
-          entry.gui = (newGui as unknown) as sc.TextGui & {
+          entry.gui = newGui as unknown as sc.TextGui & {
             tradeName: string;
           } & sc.TextGui.LevelDrawData;
         }
@@ -221,7 +221,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists.status-main-equipment')
 
         this.removeChildGui(this.itemGui);
         this.addChildGui(newItemGui);
-        this.itemGui = (newItemGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
+        this.itemGui = newItemGui as unknown as sc.TextGui & sc.TextGui.LevelDrawData;
       },
     });
   });
@@ -270,7 +270,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists.quests')
 
         this.removeChildGui(this.textGui);
         this.addChildGui(newTextGui);
-        this.textGui = (newTextGui as unknown) as sc.TextGui;
+        this.textGui = newTextGui as unknown as sc.TextGui;
 
         this._updateTickerMaxSize();
       },
@@ -280,7 +280,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists.quests')
         maxWidth -= this.textGui.hook.pos.x; // left margin
         maxWidth -= this.textGui.hook.pos.x / 2; // right margin
         // check GUI elements created in subclasses
-        let { numberGui } = (this as unknown) as {
+        let { numberGui } = this as unknown as {
           numberGui: ig.GuiElementBase;
         };
         if (numberGui != null) {
@@ -322,7 +322,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists.equipment-menu')
 
         this.button.removeChildGui(oldTextChild);
         this.button.addChildGui(newTextChild);
-        this.button.textChild = (newTextChild as unknown) as sc.TextGui;
+        this.button.textChild = newTextChild as unknown as sc.TextGui;
       },
     });
   });
@@ -348,7 +348,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists.quest-dialog')
           }
           newGui.tickerHook.maxWidth = this.itemsGui.hook.size.x;
 
-          return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
+          return newGui as unknown as sc.TextGui & sc.TextGui.LevelDrawData;
         });
       },
     });
@@ -381,7 +381,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists.quest-details-view')
             this.personCharGui.hook.size.x -
             (this.itemsGui.hook.pos.x + gui.hook.pos.x);
 
-          return (newGui as unknown) as sc.TextGui & sc.TextGui.LevelDrawData;
+          return newGui as unknown as sc.TextGui & sc.TextGui.LevelDrawData;
         });
       },
     });

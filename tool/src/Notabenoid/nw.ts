@@ -34,7 +34,7 @@ export class NwNotaHttpClient implements NotaHttpClient {
         // NOTE: Only types of the field `ownerDocument` are incompatible: for
         // a real document the type is `null` and for a fragment it is another
         // real `Document`.
-        resolve((doc as unknown) as DocumentFragment);
+        resolve(doc as unknown as DocumentFragment);
       };
       xhr.onerror = () => {
         reject(new Error('Network error'));

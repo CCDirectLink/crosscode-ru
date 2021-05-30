@@ -31,7 +31,7 @@
     "build": "tsc --build",
     "watch": "tsc --build --watch",
     "lint": "eslint . --ext .js,.ts --ignore-path .gitignore",
-    "check-fmt": "yarn run prettier --check '**/*.{js,ts,json,css,scss,html}'",
+    "check-fmt": "yarn run prettier --check '**/*.{js,ts,json,css,scss,html,md}'",
     "build:styles": "sass tool/src/styles:tool/dist/styles",
     "watch:styles": "sass tool/src/styles:tool/dist/styles --watch",
     "build:headless": "tsc --project tool/tsconfig-headless.json",

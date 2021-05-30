@@ -18,7 +18,7 @@ ig.module('ultimate-localized-ui.fixes.info-bar')
         // API of sc.ui2.LongHorizontalTextGui is almost identical to that of
         // sc.TextGui, so I hope that replacing the later with the former
         // doesn't break anything
-        this.text = (newText as unknown) as sc.TextGui;
+        this.text = newText as unknown as sc.TextGui;
 
         this.text.tickerHook.speed *= 2;
         this._updateTickerMaxSize();

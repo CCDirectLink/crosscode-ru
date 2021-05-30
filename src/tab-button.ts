@@ -9,7 +9,7 @@ function createPatch<T extends ImpactClass<unknown>>(
     .defines(() => {
       if (ig.currentLang !== 'ru_RU') return;
 
-      ((getConstructor() as unknown) as typeof ig.Class).inject({
+      (getConstructor() as unknown as typeof ig.Class).inject({
         [methodName](
           this: ig.Class & {
             parent(...args: unknown[]): sc.ItemTabbedBox.TabButton;
