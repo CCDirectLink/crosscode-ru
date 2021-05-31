@@ -1,5 +1,7 @@
+@use "sass:math";
+
 @function rem($pixels) {
-  @return #{$pixels/16}rem;
+  @return math.div($pixels, 16) * 1rem;
 }
 
 $default_border-width: 1px;
