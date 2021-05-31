@@ -18,12 +18,7 @@ declare namespace ig {
       areaData: sc.AreaLoadable.Data,
     ): void;
     _fixAreaAndMapNames(this: this, slot: ig.SaveSlot): void;
-    _fixAreaAndMapLangLabel<K1 extends PropertyKey, K2 extends PropertyKey>(
-      this: this,
-      obj: { [key in K1 | K2]: ig.LangLabel.Data },
-      areaKey: K1,
-      mapKey: K2,
-    ): void;
+    _fixAreaAndMapLangLabel(this: this, obj: unknown, areaKey: string, mapKey: string): void;
   }
 }
 

@@ -6,6 +6,21 @@ ig.module('ultimate-localized-ui.fixes.storage-area-and-map-names')
     'impact.feature.storage.storage',
   )
   .defines(() => {
+    // Hardened `ccmod.utils.hasKey`.
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    function hasKey<K extends PropertyKey, T extends {} = {}>(
+      obj: T,
+      key: K,
+    ): obj is T & { [k in K]: unknown } {
+      return Object.prototype.hasOwnProperty.call(obj, key);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    function isObject(value: unknown): value is {} {
+      // eslint-disable-next-line eqeqeq
+      return typeof value === 'object' && value !== null;
+    }
+
     ig.Database.inject({
       areaLoadables: null,
 
@@ -27,14 +42,24 @@ ig.module('ultimate-localized-ui.fixes.storage-area-and-map-names')
       init(...args) {
         this.parent(...args);
 
-        this._areaAndMapNamesLookupTable = new Map();
-        let areas = ig.database.get('areas');
-        for (let [id, loadable] of ig.database.areaLoadables) {
-          this._addAreaToLookupTable(areas[id].name, loadable.data);
-        }
+        try {
+          this._areaAndMapNamesLookupTable = new Map();
+          let areas = ig.database.get('areas');
+          for (let [id, loadable] of ig.database.areaLoadables) {
+            this._addAreaToLookupTable(areas[id].name, loadable.data);
+          }
 
-        for (let slot of this.slots) this._fixAreaAndMapNames(slot);
-        if (this.autoSlot != null) this._fixAreaAndMapNames(this.autoSlot);
+          for (let slot of this.slots) this._fixAreaAndMapNames(slot);
+          if (this.autoSlot != null) this._fixAreaAndMapNames(this.autoSlot);
+        } catch (err) {
+          // This section tends to cause relatively a lot of crashes without a
+          // clear indication to the user, so the least I can do is to hope for
+          // the error logging option to be enabled (though it will be almost
+          // always because such crashes typically happen when after the user
+          // has just installed the mod).
+          console.error('SAVE PATCHER FAILURE:', err);
+          throw err;
+        }
       },
 
       _addAreaToLookupTable(areaName: ig.LangLabel.Data, areaData: sc.AreaLoadable.Data): void {
@@ -80,39 +105,50 @@ ig.module('ultimate-localized-ui.fixes.storage-area-and-map-names')
         // unused, so I'm not patching it. If someone finds where floor names
         // are shown in the GUI - please tell me.
 
-        let { tradersFound, quests } = slot.data;
-        this._fixAreaAndMapLangLabel(slot.data, 'area', 'specialMap');
+        // eslint-disable-next-line prefer-destructuring
+        let data: unknown = slot.data;
+        if (!isObject(data)) return;
 
-        for (let traderFound of Object.values(tradersFound)) {
-          this._fixAreaAndMapLangLabel(traderFound, 'area', 'map');
+        this._fixAreaAndMapLangLabel(data, 'area', 'specialMap');
+
+        if (hasKey(data, 'tradersFound') && isObject(data.tradersFound)) {
+          for (let traderFound of Object.values(data.tradersFound)) {
+            this._fixAreaAndMapLangLabel(traderFound, 'area', 'map');
+          }
         }
 
-        for (let quest of Object.values(quests.locale)) {
-          this._fixAreaAndMapLangLabel(quest.location, 'area', 'map');
+        if (
+          hasKey(data, 'quests') &&
+          isObject(data.quests) &&
+          hasKey(data.quests, 'locale') &&
+          isObject(data.quests.locale)
+        ) {
+          for (let quest of Object.values(data.quests.locale)) {
+            if (isObject(quest) && hasKey(quest, 'location')) {
+              this._fixAreaAndMapLangLabel(quest.location, 'area', 'map');
+            }
+          }
         }
 
         // if a rebuild of the encrypted data is needed, uncomment this:
         // slot.mergeData({});
       },
 
-      // so it looks like whenever "this codebase" and "generic functions" meet,
-      // generic parameters break automatic type inference and I have to specify
-      // all of the types manually. Moreover, here I need to define `this` as
-      // well because as soon as I introduce generic parameters in this exact
-      // spot `this` inference breaks as well.
-      _fixAreaAndMapLangLabel<K1 extends PropertyKey, K2 extends PropertyKey>(
-        this: ImpactClassMethodThis<
-          '_fixAreaAndMapLangLabel',
-          typeof ig.Storage,
-          typeof ig.Storage['prototype'],
-          typeof ig.Storage['prototype']
-        >,
-        obj: { [key in K1 | K2]: ig.LangLabel.Data },
-        areaKey: K1,
-        mapKey: K2,
-      ): void {
+      // This function used to be generic which led to a funny comment here.
+      _fixAreaAndMapLangLabel(obj, areaKey, mapKey) {
+        if (!isObject(obj)) return;
+
+        if (!hasKey(obj, areaKey)) return;
         let areaLabel = obj[areaKey];
-        if (areaLabel == null || typeof areaLabel !== 'object' || areaLabel.langUid == null) {
+        if (
+          !(
+            isObject(areaLabel) &&
+            hasKey(areaLabel, 'langUid') &&
+            typeof areaLabel.langUid === 'number' &&
+            hasKey(areaLabel, 'en_US') &&
+            typeof areaLabel.en_US === 'string'
+          )
+        ) {
           return;
         }
 
@@ -124,7 +160,15 @@ ig.module('ultimate-localized-ui.fixes.storage-area-and-map-names')
         }
 
         let mapLabel = obj[mapKey];
-        if (mapLabel == null || typeof mapLabel !== 'object' || mapLabel.langUid == null) {
+        if (
+          !(
+            isObject(mapLabel) &&
+            hasKey(mapLabel, 'langUid') &&
+            typeof mapLabel.langUid === 'number' &&
+            hasKey(mapLabel, 'en_US') &&
+            typeof mapLabel.en_US === 'string'
+          )
+        ) {
           return;
         }
 
