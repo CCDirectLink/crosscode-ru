@@ -21,7 +21,8 @@ export class LocalizeMePacker {
     if (f.translations.length === 0) return;
     if (f.original.descriptionText.includes(IGNORE_IN_MOD_TAG)) return;
 
-    if (!(await this.validateFragment(f))) return;
+    // if (!(await this.validateFragment(f))) return;
+    await this.validateFragment(f);
 
     let { file, jsonPath } = f.original;
     let localizeMeFilePath = file;
