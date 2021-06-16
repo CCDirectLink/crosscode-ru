@@ -61,6 +61,35 @@ jsonPatches.add('data/credits/radicalfish-core.json', patchCredits);
 // absence of Intero) is listed.
 jsonPatches.add('data/credits/radicalfish-core-dlc.json', patchCredits);
 
+// // Credits playback timings:
+// //  #1: 248483.300ms
+// //  #2: 247657.300ms
+// //  #3: 246389.800ms
+// //  #4: 247593.200ms
+// //  #5: 248481.000ms
+// // avg: 247720.919ms
+// function patchCreditsMap(data: any): void {
+//   if (ig.currentLang !== 'ru_RU') return;
+//
+//   let entity = data.entities.find(
+//     (ent: any) => ent.type === 'EventTrigger' && ent.settings.name === 'credits',
+//   );
+//
+//   const CREDITS_SPEED_MULTIPLIER = 1.215;
+//   for (let step of entity.settings.event) {
+//     if (step.type === 'SET_CREDITS_SPEED') {
+//       step.value *= CREDITS_SPEED_MULTIPLIER;
+//     }
+//   }
+//   entity.settings.event.unshift({
+//     type: 'SET_CREDITS_SPEED',
+//     value: CREDITS_SPEED_MULTIPLIER,
+//   });
+// }
+//
+// jsonPatches.add('data/maps/dreams/credits.json', patchCreditsMap);
+// jsonPatches.add('extension/post-game/data/maps/final-dng/b4/credits.json', patchCreditsMap);
+
 jsonPatches.add('data/scale-props/dungeon-ar.json', (data: any) => {
   if (!sc.ru.shouldPatchSpriteLabels()) return;
 

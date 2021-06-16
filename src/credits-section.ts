@@ -4,10 +4,10 @@ ig.module('crosscode-ru.fixes.credits-section')
     if (ig.currentLang !== 'ru_RU') return;
 
     // TODO: calculate total credits length and derive CREDITS_SPEED from it
-    const CREDITS_SPPED_DEFAULT = 30;
+    const CREDITS_SPEED_DEFAULT = 30;
     const CREDITS_SPEED = 36.45;
-    const HEADER_TRANSITION_DELAY = 1.2 * (CREDITS_SPPED_DEFAULT / CREDITS_SPEED);
-    const NAME_TRANSITION_DELAY = 1 * (CREDITS_SPPED_DEFAULT / CREDITS_SPEED);
+    const HEADER_TRANSITION_DELAY = 1.2 * (CREDITS_SPEED_DEFAULT / CREDITS_SPEED);
+    const NAME_TRANSITION_DELAY = 1 * (CREDITS_SPEED_DEFAULT / CREDITS_SPEED);
 
     ig.GUI.CreditSection.inject({
       update() {
@@ -54,6 +54,15 @@ ig.module('crosscode-ru.fixes.credits-section')
           columnGui.onVisibilityChange = null!;
           for (let nameHook of columnGui.hook.children) {
             nameHook.doStateTransition('HIDDEN', true);
+            // // request screenCoords calculation
+            // nameHook.screenCoords = {
+            //   x: 0,
+            //   y: 0,
+            //   w: nameHook.size.x,
+            //   h: nameHook.size.y,
+            //   active: false,
+            //   zIndex: 0,
+            // };
           }
 
           // Unfortunately, 'onVisibilityChange' works incorrectly on children
@@ -68,8 +77,9 @@ ig.module('crosscode-ru.fixes.credits-section')
             let { children } = columnGui.hook;
             while (currentNameIndex < children.length) {
               let nameHook = children[currentNameIndex];
-              // TODO: can this be calculated with `screenCoords`?
               let absoluteY = content.hook.pos.y + columnContainerGui.hook.pos.y + nameHook.pos.y;
+              // NOTE: screenCoords are broken, don't use.
+              // let absoluteY = nameHook.screenCoords!.y;
               if (absoluteY >= ig.system.height) break;
 
               nameHook.doStateTransition(
