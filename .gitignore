@@ -7,3 +7,4 @@ dist/
 !/dist-archive/GNUmakefile
 /assets/ru-translation-tool*/
 /ultimate-crosscode-typedefs/
+__pycache__/
