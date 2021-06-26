@@ -15,6 +15,20 @@
 
 ![community translation official response 2](docs/media/community-translation-official-response2.png)
 
+## Важная заметка о сообществе
+
+Discord-сервер русского сообщества нынче заархивирован и заморожен. Другими словами, туда нельзя
+ничего писать, а сам он является музеем. Но команда переводчиков создала новый сервер, не связанный
+с тематикой CrossCode, зайти на него можно по ссылке:
+
+https://discord.gg/P9hKbZkYym
+
+Тем не менее, поддержка мода не заканчивается, об этом можно прочитать в
+[заметках к релизу 1.2.3](https://github.com/CCDirectLink/crosscode-ru/releases/tag/v1.2.3). Насчёт
+возможного перевода будущих проектов [RadicalFishGames](http://www.radicalfishgames.com/?page_id=17)
+читайте в
+[заметках к релизу 1.2.0](https://github.com/CCDirectLink/crosscode-ru/releases/tag/v1.2.0).
+
 ## Фичи
 
 ### 1. Собственно, русский перевод CrossCode
