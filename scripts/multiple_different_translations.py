@@ -167,10 +167,7 @@ for original_text, fragments in all_fragments_sorted:
             print(
                 "<span>{}, {} UTC</span>".format(
                     translation["authorUsername"],
-                    time.strftime(
-                        "%Y-%m-%d %H:%M:%S",
-                        time.gmtime(translation["timestamp"] // 1000),
-                    ),
+                    time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(translation["timestamp"])),
                 )
             )
             print("</div>")  # .translation_info
