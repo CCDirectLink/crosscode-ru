@@ -1010,6 +1010,37 @@ class Main {
     this.progressBar.setDone();
   }
 
+  public async bulkLockDownChapters(stateName: string): Promise<void> {
+    const CHAPTER_STATES = new Map<string, number>([
+      ['none', 0],
+      ['translating', 1],
+      ['editing', 2],
+      ['complete', 3],
+    ]);
+    let state = CHAPTER_STATES.get(stateName);
+    if (state == null) {
+      throw new Error(`unknown chapter state: ${stateName}`);
+    }
+
+    try {
+      this.progressBar.setTaskInfo('Скачивание списка глав с Ноты...');
+      this.progressBar.setIndeterminate();
+      let statuses: Map<string, ChapterStatus> = await this.notaClient.fetchAllChapterStatuses();
+
+      for (let [i, chapter] of iteratorUtils.enumerate(statuses.values())) {
+        this.progressBar.setTaskInfo(`Изменение состояния главы ${chapter.name}...`);
+        this.progressBar.setValue(i, statuses.size);
+        await this.notaClient.editChapter(chapter.id, chapter.name, state);
+      }
+
+      this.progressBar.setTaskInfo('Закрытие глав успешно завершено!');
+      this.progressBar.setDone();
+    } catch (err) {
+      console.error('err', err);
+      this.progressBar.setTaskError(err);
+    }
+  }
+
   public async generatePO(translationLanguages: string[] = ['ru']): Promise<void> {
     let filePaths: string[] = [];
     console.log('Scanning JSON directories...');
@@ -1204,12 +1235,11 @@ class Main {
         this.progressBar.setTaskInfo(`Скачивание главы '${chapterName}' с Ноты...`);
         let fragments: Fragment[] = [];
 
-        let self = this;
         await asyncUtils.limitConcurrency(
           iteratorUtils.map(fetcher.iterator, async (pageFragmentsPromise) => {
             let pageFragments = await pageFragmentsPromise;
             fragments.push(...pageFragments);
-            self.progressBar.setValue(fetchedNotaPagesCount, totalNotaPagesCount);
+            this.progressBar.setValue(fetchedNotaPagesCount, totalNotaPagesCount);
             fetchedNotaPagesCount++;
           }),
           8,

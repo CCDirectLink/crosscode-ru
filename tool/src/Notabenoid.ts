@@ -244,6 +244,19 @@ export class NotaClient {
       },
     );
   }
+
+  public async editChapter(
+    chapterId: number,
+    newChapterName: string,
+    newChapterState: number,
+  ): Promise<void> {
+    await this.httpClient.requestDocument('POST', `${NOTABENOID_BOOK_URL}/${chapterId}/edit`, {
+      ajax: '1',
+      placement: '0',
+      'Chapter[title]': String(newChapterName),
+      'Chapter[status]': String(newChapterState),
+    });
+  }
 }
 
 function parseChapterStatus(element: HTMLElement): ChapterStatus | null {
