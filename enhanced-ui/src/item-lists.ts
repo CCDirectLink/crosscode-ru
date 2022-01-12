@@ -24,7 +24,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists')
           newTextChild.setAlign(oldTextChild.hook.align.x, oldTextChild.hook.align.y);
           newTextChild.setPos(oldTextChild.hook.pos.x, oldTextChild.hook.pos.y);
           newTextChild.tickerHook.maxWidth =
-            this.button.hook.size.x - sc.BUTTON_TYPE.ITEM.alignXPadding! * 2;
+            this.button.hook.size.x - (this.button.buttonType.alignXPadding ?? 0) * 2;
           newTextChild.tickerHook.focusTarget = this.button;
 
           this.button.removeChildGui(oldTextChild);
@@ -66,7 +66,7 @@ function createListButtonPatch<T extends sc.ListBoxButton>(
 // sc.EnemyEntryButton
 // sc.LoreEntryButton
 // sc.TradeItem
-// - TradeEntryButton
+// - sc.TradeEntryButton
 // sc.BotanicsEntryButton
 // sc.ArenaEntryButton
 // - sc.ArenaRoundEntryButton
@@ -80,7 +80,34 @@ function createListButtonPatch<T extends sc.ListBoxButton>(
   createListButtonPatch('menu.gui.botanics.botanics-misc', () => sc.BotanicsEntryButton);
   createListButtonPatch('menu.gui.new-game.new-game-misc', () => sc.NewGameOptionButton);
   createListButtonPatch('menu.gui.lore.lore-misc', () => sc.LoreEntryButton);
+  createListButtonPatch('menu.gui.arena.arena-misc', () => sc.ArenaEntryButton);
 }
+
+ig.module('ultimate-localized-ui.fixes.arena-menu')
+  .requires(
+    'ultimate-localized-ui.fixes.item-lists.menu.gui.arena.arena-misc',
+    'game.feature.menu.gui.arena.arena-misc',
+    'ultimate-localized-ui.ticker-display',
+  )
+  .defines(() => {
+    sc.ArenaRoundEntryButton.inject({
+      init(...args) {
+        this.parent(...args);
+        if (this.enableTickerDisplay && this.button.textChild.hook.pos.x > 0) {
+          this.button.textChild.tickerHook.maxWidth! -=
+            this.button.textChild.hook.pos.x - (this.button.buttonType.alignXPadding ?? 0);
+        }
+      },
+    });
+
+    sc.ArenaInfoBox.inject({
+      init(...args) {
+        this.parent(...args);
+        this.title.tickerHook.maxWidth =
+          this.hook.size.x - (this.level.hook.pos.x * 3 + this.level.hook.size.x) * 2;
+      },
+    });
+  });
 
 ig.module('ultimate-localized-ui.fixes.new-game-menu')
   .requires('game.feature.menu.gui.new-game.new-game-misc')
