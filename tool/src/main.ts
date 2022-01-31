@@ -93,7 +93,6 @@ const IGNORED_LABELS = new Set<string>([
 
 class Main {
   public notaClient = new NotaClient(new NwNotaHttpClient());
-  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   public progressBar = new ProgressBar();
   public useScanDb = false;
 
@@ -1340,9 +1339,9 @@ class ProgressBar {
     this.taskElement.textContent = info.toString();
   }
 
-  public setTaskError(err: { toString(): string }): void {
+  public setTaskError(err: unknown): void {
     this.taskErrorElement.style.display = 'inline';
-    this.taskElement.textContent = err.toString();
+    this.taskElement.textContent = String(err);
     this.setDone();
   }
 
