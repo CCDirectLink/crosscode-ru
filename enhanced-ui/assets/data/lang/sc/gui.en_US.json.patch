@@ -2,7 +2,8 @@
   "labels": {
     "combat-hud": {
       "pvp-round": "Round",
-      "boss": "Boss"
+      "boss": "Boss",
+      "rank": "Rank"
     },
     "title-screen": {
       "changelog": "Changelog"

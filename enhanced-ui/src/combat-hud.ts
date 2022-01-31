@@ -1,5 +1,9 @@
 ig.module('ultimate-localized-ui.fixes.combat-hud')
-  .requires('game.feature.combat.gui.hp-bar-boss', 'game.feature.combat.model.enemy-type')
+  .requires(
+    'game.feature.combat.gui.hp-bar-boss',
+    'game.feature.combat.model.enemy-type',
+    'game.feature.gui.hud.combat-hud',
+  )
   .defines(() => {
     sc.SUB_HP_EDITOR.BOSS.inject({
       init(...args) {
@@ -15,6 +19,16 @@ ig.module('ultimate-localized-ui.fixes.combat-hud')
         this.parent(...args);
         if (this.bossLabel === 'Boss') {
           this.bossLabel = ig.lang.get('sc.gui.combat-hud.boss');
+        }
+      },
+    });
+
+    sc.CombatUpperHud.inject({
+      init(...args) {
+        this.parent(...args);
+        let { rankLabel } = this.sub.ranked;
+        if (rankLabel.text === 'Rank') {
+          rankLabel.setText(ig.lang.get('sc.gui.combat-hud.rank'));
         }
       },
     });

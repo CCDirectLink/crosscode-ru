@@ -94,6 +94,7 @@ async function main(): Promise<void> {
     let file = addGameFile({ path: 'data/lang/sc/gui.en_US.json' });
     addFragment(file, { jsonPath: 'labels/combat-hud/pvp-round', text: 'Round' });
     addFragment(file, { jsonPath: 'labels/combat-hud/boss', text: 'Boss' });
+    addFragment(file, { jsonPath: 'labels/combat-hud/rank', text: 'Rank' });
     addFragment(file, { jsonPath: 'labels/title-screen/changelog', text: 'Changelog' });
     addFragment(file, {
       jsonPath: 'labels/options/crosscode-ru/localized-labels-on-sprites/name',
