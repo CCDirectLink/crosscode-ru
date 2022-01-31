@@ -20,7 +20,7 @@ jobs:
 
       - uses: actions/setup-node@v1
         with:
-          node-version: '15.x'
+          node-version: '16.x'
 
       - name: Get Yarn cache directory
         id: yarn_cache_dir
