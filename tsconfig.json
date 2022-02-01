@@ -2,7 +2,8 @@
   "include": [
     "src",
     "node_modules/ultimate-crosscode-typedefs/crosscode-ccloader-all.d.ts",
-    "enhanced-ui/src/headers"
+    "enhanced-ui/src/headers",
+    "node_modules/ultimate-crosscode-typedefs/mods/Localize-me.d.ts"
   ],
   "compilerOptions": {
     "outDir": "dist",
