@@ -49,7 +49,6 @@ jobs:
       - name: Build
         run: |
           yarn run build
-          yarn run build:headless
           yarn run build:styles
 
       - name: Lint

@@ -6,7 +6,7 @@ import * as uuid from 'uuid';
 import * as paths from 'path';
 import { ChangelogFileData } from 'ultimate-crosscode-typedefs/file-types/changelog';
 import * as fsUtils from './utils/fs.js';
-import * as yargs from 'yargs';
+import yargs from 'yargs';
 
 async function main(): Promise<void> {
   let opts = yargs(process.argv.slice(2))

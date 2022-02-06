@@ -8,8 +8,8 @@ import * as iteratorUtils from './utils/iterator.js';
 
 import * as fs from 'fs';
 import * as paths from 'path';
-import * as yargs from 'yargs';
-import * as ProgressBar from 'progress';
+import yargs from 'yargs';
+import ProgressBar from 'progress';
 
 interface CliOptions {
   username: string;

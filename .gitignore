@@ -1,7 +1,6 @@
 node_modules/
 yarn-error.log
 dist/
-/tool/dist-headless/
 /headless-credentials*
 /dist-archive/*
 !/dist-archive/GNUmakefile

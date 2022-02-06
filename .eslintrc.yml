@@ -3,6 +3,8 @@ env:
   browser: true
 parserOptions:
   sourceType: module
+globals:
+  __cc_ru_hacked_require: true
 
 settings:
   node:

@@ -9,6 +9,7 @@
     "strict": true,
     "module": "esnext",
     "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "target": "es2018",
     "allowJs": true,
     "forceConsistentCasingInFileNames": true

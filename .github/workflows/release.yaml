@@ -51,7 +51,6 @@ jobs:
       - name: Build
         run: |
           yarn run build
-          yarn run build:headless
           yarn run build:styles
 
       - name: Download the latest translations from Notabridge
@@ -66,14 +65,14 @@ jobs:
         run: |
           nota_username="${NOTABENOID_CREDENTIALS%%:*}"
           nota_password="${NOTABENOID_CREDENTIALS#*:}"
-          chapters_with_updates="$(node tool/dist-headless/headless-main.js -u @"$nota_username" -p @"$nota_password" -o assets/ru-translation-tool --checkUpdates)"
+          chapters_with_updates="$(node tool/dist/headless-main.js -u @"$nota_username" -p @"$nota_password" -o assets/ru-translation-tool --checkUpdates)"
           if [[ -n "$chapters_with_updates" ]]; then
             printf "ERROR: The following chapters are not up to date (re-run of Notabridge is needed):\n%s\n" "$chapters_with_updates"
             exit 1
           fi
 
       - name: Export Localize Me translation packs
-        run: node tool/dist-headless/headless-export.js assets/ru-translation-tool/
+        run: node tool/dist/headless-export.js assets/ru-translation-tool/
 
       - name: Make translations
         working-directory: dist-archive

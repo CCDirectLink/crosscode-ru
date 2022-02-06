@@ -1,5 +1,6 @@
 {
   "private": true,
+  "type": "module",
   "engines": {
     "node": ">=11.0.0"
   },
@@ -27,15 +28,13 @@
     "yargs": "^16.2.0"
   },
   "scripts": {
-    "clean": "rm -rv dist/ enhanced-ui/dist/ tool/dist/ tool/dist-headless/",
+    "clean": "rm -rv dist/ enhanced-ui/dist/ tool/dist/",
     "build": "tsc --build",
     "watch": "tsc --build --watch",
     "lint": "eslint . --ext .js,.ts --ignore-path .gitignore",
     "check-fmt": "yarn run prettier --check '**/*.{js,ts,json,css,scss,html,md}'",
     "build:styles": "sass tool/src/styles:tool/dist/styles",
-    "watch:styles": "sass tool/src/styles:tool/dist/styles --watch",
-    "build:headless": "tsc --project tool/tsconfig-headless.json",
-    "watch:headless": "tsc --project tool/tsconfig-headless.json --watch"
+    "watch:styles": "sass tool/src/styles:tool/dist/styles --watch"
   },
   "__comment__": "The following fields are for an nw.js app which will open if the user downloaded and unpacked the source code and point them to use the distribution archives instead.",
   "name": "CrossCode",

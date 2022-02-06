@@ -1,1 +1,2 @@
-export default require('child_process');
+import '../node-require-hack.cjs';
+export default __cc_ru_hacked_require('child_process');
