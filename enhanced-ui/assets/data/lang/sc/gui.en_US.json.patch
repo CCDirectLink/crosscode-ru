@@ -12,6 +12,15 @@
       "analyze": {
         "enemy-level": "LV"
       }
+    },
+    "menu": {
+      "social": {
+        "statuses": {
+          "party": "Party",
+          "online": "Online",
+          "offline": "Offline"
+        }
+      }
     }
   }
 }

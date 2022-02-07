@@ -19,3 +19,4 @@ import './trophies-menu.js';
 import './combat-hud.js';
 import './title-screen.js';
 import './quick-menu.js';
+import './social-menu.js';
