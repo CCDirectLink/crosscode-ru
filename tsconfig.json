@@ -11,9 +11,12 @@
     "strict": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2017",
+    "target": "es2018",
     "allowJs": true,
     "forceConsistentCasingInFileNames": true
   },
-  "references": [{ "path": "enhanced-ui" }, { "path": "tool" }]
+  "references": [
+    { "path": "enhanced-ui" },
+    { "path": "tool" }
+  ]
 }

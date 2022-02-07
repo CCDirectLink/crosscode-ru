@@ -1,5 +1,9 @@
 {
-  "include": ["src", "../node_modules/ultimate-crosscode-typedefs/crosscode-nw.d.ts"],
+  "include": [
+    "src",
+    "../node_modules/ultimate-crosscode-typedefs/crosscode-nw.d.ts",
+    "../enhanced-ui/src/headers/locale-json-patches.d.ts"
+  ],
   "compilerOptions": {
     "composite": true,
     "rootDir": "src",

@@ -13,7 +13,7 @@
     "strict": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2017",
+    "target": "es2018",
     "forceConsistentCasingInFileNames": true
   }
 }
