@@ -7,6 +7,11 @@
     },
     "title-screen": {
       "changelog": "Changelog"
+    },
+    "quick-menu": {
+      "analyze": {
+        "enemy-level": "LV"
+      }
     }
   }
 }

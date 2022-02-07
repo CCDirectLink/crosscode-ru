@@ -18,3 +18,4 @@ import './synopsis-menu.js';
 import './trophies-menu.js';
 import './combat-hud.js';
 import './title-screen.js';
+import './quick-menu.js';
