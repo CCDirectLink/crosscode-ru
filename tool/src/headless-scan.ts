@@ -110,10 +110,12 @@ async function main(): Promise<void> {
         });
       }
 
-      await addPatchScript('../../enhanced-ui/dist/locale-json-patches.js');
-      await addPatchScript('../../dist/locale-json-patches.js');
       addPatchFile('../../enhanced-ui/assets', 'data/lang/sc/gui.en_US.json');
       addPatchFile(`${opts.ccloaderDir}/runtime/assets`, 'data/lang/sc/gui.en_US.json');
+      await addPatchScript('../../enhanced-ui/dist/locale-json-patches.js');
+      if (opts.includeRuSpecificPatches) {
+        await addPatchScript('../../dist/locale-json-patches.js');
+      }
 
       for (let [filePath, patchers] of filePatches) {
         let text: string;
