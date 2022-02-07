@@ -4,6 +4,7 @@ import './utils.js';
 
 import './ticker-display.js';
 
+import './json-patches.js';
 import './storage-area-and-map-names.js';
 
 import './help.js';

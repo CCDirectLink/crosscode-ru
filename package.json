@@ -8,7 +8,7 @@
     "@types/jsdom": "^16.2.14",
     "@types/progress": "^2.0.5",
     "@types/request": "^2.48.8",
-    "@types/uuid": "^8.3.4",
+    "@types/tmp": "^0.2.3",
     "@types/yargs": "^16.0.4",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
@@ -24,8 +24,9 @@
     "jsdom": "^19.0.0",
     "progress": "^2.0.3",
     "request": "^2.88.2",
-    "uuid": "^8.3.2",
-    "yargs": "^16.2.0"
+    "tmp": "^0.2.1",
+    "tmp-promise": "^3.0.3",
+    "yargs": "^17.3.1"
   },
   "scripts": {
     "clean": "rm -rv dist/ enhanced-ui/dist/ tool/dist/",

@@ -25,11 +25,13 @@ interface CliOptions {
 
 function parseCliOptions(): CliOptions {
   function loadSecretOption(arg: unknown): string {
-    let argStr = String(arg);
+    let argStr = arg != null ? String(arg) : '';
     if (argStr.startsWith('@')) {
       return argStr.slice(1);
-    } else {
+    } else if (argStr.length > 0) {
       return fs.readFileSync(argStr, 'utf8').trim();
+    } else {
+      return '';
     }
   }
 
