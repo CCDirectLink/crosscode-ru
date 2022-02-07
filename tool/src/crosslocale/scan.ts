@@ -33,7 +33,7 @@ export class ScanDb {
   ) {}
 
   public static fromJSON(raw: ScanDbSerde): ScanDb {
-    let self = new ScanDb(raw.id, new Date(raw.ctime), raw.game_version);
+    let self = new ScanDb(raw.id, new Date(raw.ctime * 1000), raw.game_version);
     for (let [gameFilePath, gameFileRaw] of miscUtils.objectIterator(raw.game_files)) {
       let gameFile = new ScanGameFile(self, gameFilePath, gameFileRaw.asset_root);
       for (let [fragmentJsonPath, fragmentRaw] of miscUtils.objectIterator(gameFileRaw.fragments)) {
