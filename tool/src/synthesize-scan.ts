@@ -1,6 +1,8 @@
 // <https://gist.github.com/dmitmel/5a498b9c9ac33994ac1ab5accbe0d7da>
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import './hacked-require/nodejs.js';
+
 import { ScanDb, ScanFragment, ScanGameFile } from './crosslocale/scan.js';
 import * as uuid from 'uuid';
 import * as paths from 'path';

@@ -1,3 +1,5 @@
+import './hacked-require/nodejs.js';
+
 import * as fs from 'fs';
 import * as fsUtils from './utils/fs.js';
 import { ChapterStatus, Fragment } from './Notabenoid.js';

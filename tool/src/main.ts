@@ -1,3 +1,5 @@
+import './hacked-require/nwjs.js';
+
 import {
   ChapterStatus,
   Fragment,
