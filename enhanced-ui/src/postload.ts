@@ -13,7 +13,7 @@ import './inventory-menu.js';
 import './item-lists.js';
 import './options-menu.js';
 import './quest-hub.js';
-import './quest-menu.js';
+import './quest-dialog.js';
 import './synopsis-menu.js';
 import './trophies-menu.js';
 import './hud.js';

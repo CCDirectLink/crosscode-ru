@@ -20,6 +20,9 @@
           "online": "Online",
           "offline": "Offline"
         }
+      },
+      "quests": {
+        "lvl": "LVL"
       }
     }
   }
