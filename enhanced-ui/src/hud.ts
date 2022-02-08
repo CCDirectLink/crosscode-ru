@@ -49,3 +49,23 @@ ig.module('ultimate-localized-ui.fixes.pvp')
       },
     });
   });
+
+ig.module('ultimate-localized-ui.fixes.param-hud')
+  .requires('game.feature.gui.hud.param-hud')
+  .defines(() => {
+    sc.ParamHudGui.inject({
+      init(...args) {
+        this.parent(...args);
+        let offset = 0;
+        for (let param of [this.hp, this.atk, this.def, this.foc]) {
+          param.hook.pos.x += offset;
+          let newParamWidth = Math.max(
+            param.hook.size.x,
+            param._text.hook.pos.x + param._text.hook.size.x + param.hook.size.y - 1,
+          );
+          offset += newParamWidth - param.hook.size.x;
+          param.hook.size.x = newParamWidth;
+        }
+      },
+    });
+  });
