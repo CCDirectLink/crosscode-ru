@@ -8,23 +8,25 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
     sc.SocialList.inject({
       onCreateListEntries(list, ...args) {
         this.parent(list, ...args);
+        if (!sc.SocialEntryButton.prototype.renderStatusAsTextBlock) return;
+
         let entries = list.contentPane.hook.children;
-        if (entries.length > 0) {
-          let entry = entries[0].gui as sc.SocialEntryButton;
-          let statusHeaderStr = ig.lang.get('sc.gui.menu.social.status');
-          let statusHeaderHook = this.bg.hook.children.find(
-            ({ gui }) => gui instanceof sc.TextGui && gui.text === statusHeaderStr,
-          );
-          if (statusHeaderHook != null) {
-            let scrollbarWidth = 4;
-            // This is done to achieve perfect centering, see a comment below.
-            statusHeaderHook.size.x -= 1;
-            statusHeaderHook.pos.x =
-              entry.statusWrapperGui.hook.pos.x +
-              scrollbarWidth +
-              (entry.statusWrapperGui.hook.size.x - statusHeaderHook.size.x) / 2;
-          }
-        }
+        if (entries.length === 0) return;
+        let entry = entries[0].gui as sc.SocialEntryButton;
+
+        let statusHeaderStr = ig.lang.get('sc.gui.menu.social.status');
+        let statusHeaderHook = this.bg.hook.children.find(
+          ({ gui }) => gui instanceof sc.TextGui && gui.text === statusHeaderStr,
+        );
+        if (statusHeaderHook == null) return;
+
+        let scrollbarWidth = 4;
+        // This is done to achieve perfect centering, see a comment below.
+        statusHeaderHook.size.x -= 1;
+        statusHeaderHook.pos.x =
+          entry.statusWrapperGui.hook.pos.x +
+          scrollbarWidth +
+          (entry.statusWrapperGui.hook.size.x - statusHeaderHook.size.x) / 2;
       },
     });
 
