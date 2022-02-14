@@ -199,6 +199,21 @@ ig.module('ultimate-localized-ui.fixes.item-lists.trade-gui')
           } & sc.TextGui.LevelDrawData;
         }
       },
+
+      // The replacement of this method is purely a performance optimization:
+      // it is a copy of the original implementation, but with a check before
+      // `setText` to avoid excessive text redraws (it's pretty bad otherwise -
+      // they show up in the profiler).
+      _updateTexts() {
+        for (let entry of this.entries) {
+          let newText = this._hasMissingItem(entry.require)
+            ? `\\c[4]${entry.gui.tradeName}\\c[0]`
+            : entry.gui.tradeName;
+          if (entry.gui.text !== newText) {
+            entry.gui.setText(newText);
+          }
+        }
+      },
     });
 
     sc.TradeDetailsView.inject({
