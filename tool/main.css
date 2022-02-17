@@ -1,0 +1,111 @@
+:root {
+  --border-width: 1px;
+  --border: var(--border-width) solid black;
+  --container-padding: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+body,
+main {
+  display: flex;
+  flex-direction: column;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+header,
+main,
+.tabContent {
+  padding: var(--container-padding);
+}
+
+header {
+  border-bottom: var(--border);
+}
+
+header > h1 {
+  font-size: 1.5em;
+  margin: 0;
+}
+
+section:not(:last-child) {
+  margin-bottom: calc(var(--container-padding) * 2);
+}
+
+section > h2 {
+  font-size: 1.2em;
+}
+
+section > h2,
+section > p {
+  margin: 0;
+  margin-bottom: 0.5em;
+}
+
+main {
+  flex-grow: 1;
+  background: #eeeeee;
+}
+
+button,
+input[type='submit'],
+input[type='reset'],
+input[type='button'] {
+  padding: 0.125rem 0.5rem;
+  font-size: 1em;
+  font-family: sans-serif;
+}
+
+.tabs {
+  display: flex;
+  margin-top: calc(-1 * var(--border-width));
+  transform: translateY(var(--border-width));
+}
+
+.tabs > button {
+  -webkit-appearance: none;
+  background: #dddddd;
+}
+
+.tabs > button:not(:last-child) {
+  border-right: none;
+}
+
+.tabs > button.current {
+  border-bottom: none;
+}
+
+.tabContent,
+.tabs button {
+  border: var(--border);
+}
+
+.tabContent {
+  flex-grow: 1;
+}
+
+.tabContent,
+.tabs button.current {
+  background: #ffffff;
+}
+
+#settings_translations_progress {
+  width: 75%;
+  margin-right: var(--container-padding);
+}
+
+#settings_translations_progressTask_error {
+  color: red;
+  font-weight: bold;
+}

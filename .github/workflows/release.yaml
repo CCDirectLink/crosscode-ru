@@ -49,9 +49,7 @@ jobs:
           yarn install --frozen-lockfile
 
       - name: Build
-        run: |
-          yarn run build
-          yarn run build:styles
+        run: yarn run build
 
       - name: Download the latest translations from Notabridge
         run: |
@@ -93,7 +91,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: ${{ steps.release_values.outputs.tag }}, LTS ${{ steps.release_values.outputs.date }}
+          name:
+            ${{ steps.release_values.outputs.tag }}, LTS ${{ steps.release_values.outputs.date }}
           draft: true
           prerelease: false
           body_path: .github/release_body_template.md

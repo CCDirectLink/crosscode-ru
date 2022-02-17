@@ -47,9 +47,7 @@ jobs:
           yarn install --frozen-lockfile
 
       - name: Build
-        run: |
-          yarn run build
-          yarn run build:styles
+        run: yarn run build
 
       - name: Lint
         run: yarn run lint

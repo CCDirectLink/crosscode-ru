@@ -16,7 +16,6 @@
     "eslint-config-dmitmel": "dmitmel/eslint-config-dmitmel",
     "eslint-plugin-node": "^11.0.0",
     "prettier": "^2.5.1",
-    "sass": "^1.49.0",
     "typescript": "^4.5.5",
     "ultimate-crosscode-typedefs": "dmitmel/ultimate-crosscode-typedefs"
   },
@@ -33,9 +32,7 @@
     "build": "tsc --build",
     "watch": "tsc --build --watch",
     "lint": "eslint . --ext .js,.ts --ignore-path .gitignore",
-    "check-fmt": "yarn run prettier --check '**/*.{js,ts,json,css,scss,html,md}'",
-    "build:styles": "sass tool/src/styles:tool/dist/styles",
-    "watch:styles": "sass tool/src/styles:tool/dist/styles --watch"
+    "check-fmt": "yarn run prettier --check '**/*.{js,ts,json,css,html,md}'"
   },
   "__comment__": "The following fields are for an nw.js app which will open if the user downloaded and unpacked the source code and point them to use the distribution archives instead.",
   "name": "CrossCode",

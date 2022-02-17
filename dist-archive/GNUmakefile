@@ -37,7 +37,7 @@ LOCALIZE_ME_MOD_DIR := Localize-me
 CC_WORLD_MAP_OVERHAUL_MOD_DIR := cc-world-map-overhaul
 TRANSLATIONS_DIR := assets/ru-translation-tool
 
-TOOL_FILES := dist/*.js dist/*.js.map dist/*.css dist/*.css.map LICENSE* main.html ccmod.json icon*.png
+TOOL_FILES := dist/*.js dist/*.js.map LICENSE* main.css main.html ccmod.json icon*.png
 TOOL_FILES := $(call find_by_patterns,../tool,$(TOOL_FILES))
 MOD_FILES := dist/*.js dist/*.js.map LICENSE* ccmod.json README.md icon*.png
 MOD_FILES := $(shell jq -r '"assets/\(.assets[])"' ../ccmod.json) $(call find_by_patterns,..,$(MOD_FILES))
