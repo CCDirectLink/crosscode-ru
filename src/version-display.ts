@@ -6,32 +6,37 @@ ig.module('crosscode-ru.version-display')
     'ccloader-runtime.ui.version-display',
   )
   .defines(() => {
-    // At this point I'm just copying code from `ccloader-version-display`. You
-    // know, I might as well propose a standardized way of displaying versions
-    // of the "big" mods.
-    function attachVersionText(prevVersionGui: sc.TextGui): sc.TextGui {
-      let newVersionGui = new sc.TextGui(`ru v${sc.ru.version}`, {
-        font: sc.fontsystem.tinyFont,
-      });
-      newVersionGui.setAlign(prevVersionGui.hook.align.x, prevVersionGui.hook.align.y);
-      newVersionGui.setPos(0, prevVersionGui.hook.size.y);
-      prevVersionGui.addChildGui(newVersionGui);
-      return newVersionGui;
+    const VERSION_TEXT_STR = `ru v${sc.ru.version}`;
+
+    function attachVersionTextGui(
+      self: ig.GuiElementBase & {
+        versionGui: sc.TextGui;
+        ccloaderVersionGui: sc.TextGui;
+        modVersionGuis?: sc.TextGui[];
+      },
+    ): void {
+      if (self.modVersionGuis == null) {
+        self.modVersionGuis = [self.ccloaderVersionGui];
+      }
+      let prevGui = self.modVersionGuis.last();
+      let newGui = new sc.TextGui(VERSION_TEXT_STR, { font: sc.fontsystem.tinyFont });
+      newGui.setAlign(prevGui.hook.align.x, prevGui.hook.align.y);
+      newGui.setPos(prevGui.hook.pos.x, prevGui.hook.pos.y + prevGui.hook.size.y);
+      self.versionGui.addChildGui(newGui);
+      self.modVersionGuis.push(newGui);
     }
 
     sc.TitleScreenGui.inject({
-      crosscodeRuVersionGui: null,
       init(...args) {
         this.parent(...args);
-        this.crosscodeRuVersionGui = attachVersionText(this.ccloaderVersionGui);
+        attachVersionTextGui(this);
       },
     });
 
     sc.PauseScreenGui.inject({
-      crosscodeRuVersionGui: null,
       init(...args) {
         this.parent(...args);
-        this.crosscodeRuVersionGui = attachVersionText(this.ccloaderVersionGui);
+        attachVersionTextGui(this);
       },
     });
   });
