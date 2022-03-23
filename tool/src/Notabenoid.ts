@@ -12,7 +12,7 @@ import * as iteratorUtils from './utils/iterator.js';
 export const BOOK_ID = '74823';
 export const NOTABENOID_URL = 'http://notabenoid.org';
 export const NOTABENOID_BOOK_URL = `${NOTABENOID_URL}/book/${BOOK_ID}`;
-export const NOTABRIDGE_SERVICE_URL = 'https://stronghold.crosscode.ru/~notabridge/crosscode';
+export const NOTABRIDGE_SERVICE_URL = 'https://stronghold.openkrosskod.org/~notabridge/crosscode';
 
 const RU_ABBREVIATED_MONTH_NAMES = [
   'янв.',

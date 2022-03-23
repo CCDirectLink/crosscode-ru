@@ -54,7 +54,7 @@ jobs:
       - name: Download the latest translations from Notabridge
         run: |
           mkdir assets/ru-translation-tool/
-          curl --location --fail https://stronghold.crosscode.ru/~notabridge/crosscode.tgz | tar --extract --gzip --file - -C assets/ru-translation-tool/ --strip-components 1
+          curl --location --fail https://stronghold.openkrosskod.org/~notabridge/crosscode.tgz | tar --extract --gzip --file - -C assets/ru-translation-tool/ --strip-components 1
 
       - name: Ensure that translations are up to date
         env:
