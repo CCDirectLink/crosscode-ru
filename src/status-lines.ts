@@ -1,15 +1,14 @@
-// TODO reduce number of colored sprites and figure out more constants
-
-// R.D. (Stefan) said that it's okay to copy copyrighted code from the
-// game, so I'll copy the copyrighted source code, specifically constants
-// (because they aren't present in the compiled code)
+const ORIG_STATUS_LINE_START_X = 0;
+const ORIG_STATUS_LINE_START_Y = 329;
+const ORIG_STATUS_LINE_SIMPLE_START_X = 144;
+const ORIG_STATUS_LINE_SIMPLE_START_Y = 408;
 
 const STATUS_LINE_START_X = 0;
 const STATUS_LINE_START_Y = 12;
-const STATUS_LINE_HEIGHT = 11;
+const STATUS_LINE_SIMPLE_START_X = 0;
+const STATUS_LINE_SIMPLE_START_Y = 84;
 
-const STATUS_LINE_START_SIMPLE_X = 0;
-const STATUS_LINE_START_SIMPLE_Y = 84;
+const STATUS_LINE_HEIGHT = 11;
 
 ig.module('crosscode-ru.fixes.status-line-graphics.enemy-list')
   .requires('game.feature.menu.gui.enemies.enemy-pages', 'localize-me.final-locale.ready')
@@ -20,16 +19,20 @@ ig.module('crosscode-ru.fixes.status-line-graphics.enemy-list')
       patchedGfx: new ig.Image('media/gui/menu.ru_RU.png'),
 
       updateDrawables(renderer) {
-        renderer.addGfx(this.patchedGfx, 0, 0, 0, 0, 118, 11);
-        renderer.addGfx(
-          this.gfx,
-          0,
-          0,
-          sc.MODIFIER_ICON_DRAW.X + this.icon * 12,
-          sc.MODIFIER_ICON_DRAW.Y,
-          11,
-          11,
-        );
+        let { addGfx } = renderer;
+        try {
+          renderer.addGfx = (gfx, posX, posY, srcX, srcY, sizeX, sizeY, flipX, flipY) => {
+            if (gfx === this.gfx && srcX === 520 && srcY === 48 && sizeX === 118 && sizeY === 11) {
+              gfx = this.patchedGfx;
+              srcX = 0;
+              srcY = 0;
+            }
+            return addGfx.call(renderer, gfx, posX, posY, srcX, srcY, sizeX, sizeY, flipX, flipY);
+          };
+          this.parent(renderer);
+        } finally {
+          renderer.addGfx = addGfx;
+        }
       },
     });
   });
@@ -56,50 +59,28 @@ ig.module('crosscode-ru.fixes.status-line-graphics.simple-status-display')
       },
 
       updateDrawables(renderer) {
-        let x = this.simpleMode ? STATUS_LINE_START_SIMPLE_X : STATUS_LINE_START_X;
-        let y =
-          (this.simpleMode ? STATUS_LINE_START_SIMPLE_Y : STATUS_LINE_START_Y) +
-          this.lineID * (STATUS_LINE_HEIGHT + 1);
-        renderer.addGfx(
-          this.patchedGfx,
-          0,
-          0,
-          x,
-          y,
-          this.noPercentMode ? 74 : this.hook.size.x,
-          STATUS_LINE_HEIGHT,
-        );
-
-        if (this.noPercentMode) {
-          renderer.addGfx(
-            this.patchedGfx,
-            72,
-            0,
-            x + sc.MODIFIER_ICON_DRAW.SIZE,
-            y,
-            12,
-            STATUS_LINE_HEIGHT,
-          );
-          renderer.addGfx(
-            this.patchedGfx,
-            84,
-            STATUS_LINE_HEIGHT - 1,
-            x + 84,
-            y,
-            this.simpleMode ? 45 : 88,
-            STATUS_LINE_HEIGHT,
-          );
+        let { addGfx } = renderer;
+        try {
+          let lineOffsetY = this.lineID * (STATUS_LINE_HEIGHT + 1);
+          let simple = this.simpleMode;
+          let origStartX = simple ? ORIG_STATUS_LINE_SIMPLE_START_X : ORIG_STATUS_LINE_START_X;
+          let origStartY = simple ? ORIG_STATUS_LINE_SIMPLE_START_Y : ORIG_STATUS_LINE_START_Y;
+          let replaceStartX = simple ? STATUS_LINE_SIMPLE_START_X : STATUS_LINE_START_X;
+          let replaceStartY = simple ? STATUS_LINE_SIMPLE_START_Y : STATUS_LINE_START_Y;
+          renderer.addGfx = (gfx, posX, posY, srcX, srcY, sizeX, sizeY, flipX, flipY) => {
+            if (gfx === this.gfx && sizeX === this.width && sizeY === STATUS_LINE_HEIGHT) {
+              if (srcX === origStartX && srcY === origStartY + lineOffsetY) {
+                gfx = this.patchedGfx;
+                srcX = replaceStartX;
+                srcY = replaceStartY + lineOffsetY;
+              }
+            }
+            return addGfx.call(renderer, gfx, posX, posY, srcX, srcY, sizeX, sizeY, flipX, flipY);
+          };
+          this.parent(renderer);
+        } finally {
+          renderer.addGfx = addGfx;
         }
-
-        renderer.addGfx(
-          this.gfx,
-          0,
-          0,
-          sc.MODIFIER_ICON_DRAW.X + this.iconIndex.x * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
-          sc.MODIFIER_ICON_DRAW.Y + this.iconIndex.y * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
-          sc.MODIFIER_ICON_DRAW.SIZE,
-          sc.MODIFIER_ICON_DRAW.SIZE,
-        );
       },
     });
   });
@@ -109,84 +90,31 @@ ig.module('crosscode-ru.fixes.status-line-graphics.status-menu')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 
-    const LINE_COLORS = ['#8bb5ff', '#ba0000', '#0036d0', '#a121bc', '#00994c', '#c7c7c7'];
-
     sc.StatusParamBar.inject({
       patchedGfx: new ig.Image('media/gui/menu.ru_RU.png'),
-
       updateDrawables(renderer) {
-        // goddammit, RFG, you are kidding me...
-
-        let { x } = this.hook.size;
-        let y = this.lineID * (STATUS_LINE_HEIGHT + 1);
-
-        if (this._hideAll) {
-          renderer.addColor(LINE_COLORS[this.lineID], 0, 10, 152, 1);
-          renderer.addGfx(
-            this.patchedGfx,
-            152,
-            0,
-            STATUS_LINE_START_X + 74,
-            STATUS_LINE_START_Y + 60,
-            13,
-            11,
-          );
-          renderer.addColor(LINE_COLORS[this.lineID], 165, 0, x - 244, 1);
-        } else {
-          renderer.addGfx(
-            this.patchedGfx,
-            0,
-            0,
-            STATUS_LINE_START_X,
-            STATUS_LINE_START_Y + y,
-            90,
-            11,
-          );
-          renderer.addColor(LINE_COLORS[this.lineID], 90, 0, x - 90 - 79, 1);
-        }
-
-        renderer.addGfx(
-          this.patchedGfx,
-          x - 79,
-          0,
-          STATUS_LINE_START_X + 90,
-          STATUS_LINE_START_Y + y,
-          79,
-          1,
-        );
-        if (!this.skipVertLine) {
-          renderer.addColor(
-            LINE_COLORS[this.lineID],
-            209 - (this._skillHidden ? 44 : 0),
-            0,
-            1,
-            this.hook.size.y,
-          );
-        }
-
-        if (this.usePercent && !this._hideAll) {
-          renderer.addGfx(this.gfx, 107, 3, this._baseRed ? 9 : 0, 407, 8, 8);
-          renderer.addGfx(this.gfx, 151, 3, this._equipRed ? 9 : 0, 407, 8, 8);
-          if (!this._skillHidden) {
-            renderer.addGfx(this.gfx, 195, 3, this._skillsRed ? 9 : 0, 407, 8, 8);
-          }
-          if (sc.menu.statusDiff) {
-            renderer.addGfx(this.gfx, 151, 13, 0, 416, 8, 8);
-            if (!this._skillHidden) {
-              renderer.addGfx(this.gfx, 195, 13, 0, 416, 8, 8);
+        let { addGfx } = renderer;
+        try {
+          renderer.addGfx = (gfx, posX, posY, srcX, srcY, sizeX, sizeY, flipX, flipY) => {
+            let lineSrcX = srcX - ORIG_STATUS_LINE_START_X;
+            let lineSrcY = srcY - ORIG_STATUS_LINE_START_Y;
+            if (
+              gfx === this.gfx &&
+              ((lineSrcX === 0 && sizeX === 90) || (lineSrcX === 90 && sizeX === 79)) &&
+              lineSrcY >= 0 &&
+              lineSrcY < 6 * (STATUS_LINE_HEIGHT + 1) &&
+              lineSrcY % (STATUS_LINE_HEIGHT + 1) === 0
+            ) {
+              gfx = this.patchedGfx;
+              srcX = STATUS_LINE_START_X + lineSrcX;
+              srcY = STATUS_LINE_START_Y + lineSrcY;
             }
-          }
+            return addGfx.call(renderer, gfx, posX, posY, srcX, srcY, sizeX, sizeY, flipX, flipY);
+          };
+          this.parent(renderer);
+        } finally {
+          renderer.addGfx = addGfx;
         }
-
-        renderer.addGfx(
-          this.gfx,
-          0,
-          0,
-          sc.MODIFIER_ICON_DRAW.X + this.iconIndex.x * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
-          sc.MODIFIER_ICON_DRAW.Y + this.iconIndex.y * (sc.MODIFIER_ICON_DRAW.SIZE + 1),
-          sc.MODIFIER_ICON_DRAW.SIZE,
-          sc.MODIFIER_ICON_DRAW.SIZE,
-        );
       },
     });
   });

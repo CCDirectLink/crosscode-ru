@@ -17,9 +17,9 @@ ig.module('crosscode-ru.fixes.level-up')
           renderer.addGfx = (...args) => {
             addGfxCalls++;
             // skip the first call of addGfx
-            if (addGfxCalls < 2) return;
+            if (addGfxCalls < 2) return null!;
             renderer.addGfx = oldAddGfx;
-            renderer.addGfx(...args);
+            return renderer.addGfx(...args);
           };
 
           this.parent(renderer);
