@@ -18,7 +18,7 @@ ig.module('ultimate-localized-ui.fixes.item-lists')
       init(...args) {
         this.parent(...args);
 
-        if (this.enableTickerDisplay) {
+        if (this.UI2_LIST_BOX_BTN_TICKER_DISPLAY) {
           let oldTextChild = this.button.textChild;
           let newTextChild = new sc.ui2.IconTextGui(this.button.textChild.text);
           newTextChild.setAlign(oldTextChild.hook.align.x, oldTextChild.hook.align.y);
@@ -47,14 +47,14 @@ ig.module('ultimate-localized-ui.fixes.item-lists')
     });
   });
 
-function createListButtonPatch<T extends sc.ListBoxButton>(
+function createListButtonPatch(
   gameFeatureModule: string,
-  getConstructor: () => { prototype: T & { enableTickerDisplay: boolean } },
+  getConstructor: () => { prototype: sc.ListBoxButton },
 ): void {
   ig.module(`ultimate-localized-ui.fixes.item-lists.${gameFeatureModule}`)
     .requires(`game.feature.${gameFeatureModule}`)
     .defines(() => {
-      getConstructor().prototype.enableTickerDisplay = true;
+      getConstructor().prototype.UI2_LIST_BOX_BTN_TICKER_DISPLAY = true;
     });
 }
 
@@ -89,7 +89,7 @@ ig.module('ultimate-localized-ui.fixes.arena-menu')
     sc.ArenaRoundEntryButton.inject({
       init(...args) {
         this.parent(...args);
-        if (this.enableTickerDisplay && this.button.textChild.hook.pos.x > 0) {
+        if (this.UI2_LIST_BOX_BTN_TICKER_DISPLAY && this.button.textChild.hook.pos.x > 0) {
           this.button.textChild.tickerHook.maxWidth! -=
             this.button.textChild.hook.pos.x - (this.button.buttonType.alignXPadding ?? 0);
         }

@@ -1,38 +1,3 @@
-function createPatch<M extends string>(
-  gameMenuModule: string,
-  getConstructor: () => ImpactClass<
-    { UI2_INCREASE_TAB_BUTTON_WIDTH: number } & { [onTabButtonCreation in M]: unknown }
-  >,
-  methodName: M,
-): void {
-  ig.module(`ultimate-localized-ui.fixes.tab-buttons.${gameMenuModule}`)
-    .requires(`game.feature.menu.gui.${gameMenuModule}`)
-    .defines(() => {
-      (getConstructor() as unknown as typeof sc.TabbedPane).inject({
-        UI2_INCREASE_TAB_BUTTON_WIDTH: null,
-        init(...args) {
-          this.parent(...args);
-          // Don't look at me like that.
-          let strOnTabButtonCreation = methodName as unknown as 'onTabButtonCreation';
-          let origOnTabButtonCreation = this[strOnTabButtonCreation];
-          // This method needs to be patched out in the constructor because in
-          // sc.TabbedPane it is just an empty stub, so, naturally, its
-          // descendants don't bother calling that empty function. Either way,
-          // even if they did, that function would not be of much use unless it
-          // instantiated the sc.ItemTabbedBox.TabButton.
-          this[strOnTabButtonCreation] = function (...args) {
-            let btn = origOnTabButtonCreation.apply(this, args);
-            let minLargeWidth = this.UI2_INCREASE_TAB_BUTTON_WIDTH;
-            if (minLargeWidth != null) {
-              btn._largeWidth = Math.max(btn._largeWidth, minLargeWidth);
-            }
-            return btn;
-          };
-        },
-      });
-    });
-}
-
 // NOTE: A list of every descendant of sc.TabbedPane and similar tab pane classes:
 // sc.ItemTabbedBox
 // sc.OptionsTabBox
@@ -47,7 +12,92 @@ function createPatch<M extends string>(
 // sc.BotanicsListBox
 // sc.ArenaRoundList
 // sc.ArenaCupList
-createPatch('tab-box', () => sc.TabbedPane, 'onTabButtonCreation');
-createPatch('item.item-list', () => sc.ItemTabbedBox, '_createTabButton');
-createPatch('options.options-list', () => sc.OptionsTabBox, '_createTabButton');
-createPatch('quests.quest-tab-list', () => sc.QuestListBox, '_createTabButton');
+
+function autoAdjustTabWidths(
+  container: sc.ui2.TabbedPaneMixin,
+  newIndex: number,
+  tabs: sc.ItemTabbedBox.TabButton[],
+): boolean {
+  let newBtn = tabs[newIndex];
+  let width = 0;
+
+  if (container.UI2_INCREASE_TAB_BUTTON_WIDTH != null) {
+    width = Math.max(newBtn._largeWidth, container.UI2_INCREASE_TAB_BUTTON_WIDTH);
+  } else if (container.UI2_TAB_BTN_AUTO_WIDTH) {
+    let prevPressed = newBtn.pressed;
+    let prevText = newBtn.textChild.text;
+    try {
+      newBtn.pressed = true;
+      newBtn.textChild.setText(newBtn.getButtonText());
+      width = newBtn.textChild.hook.size.x + (container.UI2_TAB_BTN_AUTO_WIDTH_PADDING ?? 16);
+    } finally {
+      newBtn.pressed = prevPressed;
+      newBtn.textChild.setText(prevText);
+    }
+    let newBtnMinWidth = container.UI2_TAB_BTN_AUTO_WIDTH_MIN ?? newBtn._largeWidth;
+    width = tabs.reduce((x, otherBtn, idx) => {
+      return Math.max(x, idx === newIndex ? newBtnMinWidth : otherBtn._largeWidth);
+    }, width);
+  } else {
+    return false;
+  }
+
+  let changedAny = false;
+  for (let btn of tabs) {
+    if (btn._largeWidth !== width) changedAny = true;
+    btn._largeWidth = width;
+    btn.hook.size.x = btn.pressed ? btn._largeWidth : btn._smallWidth;
+  }
+  return changedAny;
+}
+
+ig.module('ultimate-localized-ui.fixes.tab-buttons')
+  .requires('game.feature.menu.gui.tab-box')
+  .defines(() => {
+    sc.TabbedPane.inject({
+      addTab(key, index, settings, ...args) {
+        let result = this.parent(key, index, settings, ...args);
+        let changedAny = autoAdjustTabWidths(this, index, this.tabArray);
+        if (changedAny) {
+          this.rearrangeTabs();
+        }
+        return result;
+      },
+    });
+  });
+
+ig.module('ultimate-localized-ui.fixes.tab-buttons.item-list')
+  .requires('game.feature.menu.gui.item.item-list')
+  .defines(() => {
+    sc.ItemTabbedBox.inject({
+      _createTabButton(name, icon, x, type, subType, ...args) {
+        let btn = this.parent(name, icon, x, type, subType, ...args);
+        autoAdjustTabWidths(this, x, this.tabArray);
+        return btn;
+      },
+    });
+  });
+
+ig.module('ultimate-localized-ui.fixes.tab-buttons.options-list')
+  .requires('game.feature.menu.gui.options.options-list')
+  .defines(() => {
+    sc.OptionsTabBox.inject({
+      _createTabButton(name, x, type, ...args) {
+        let btn = this.parent(name, x, type, ...args);
+        autoAdjustTabWidths(this, x, this.tabArray);
+        return btn;
+      },
+    });
+  });
+
+ig.module('ultimate-localized-ui.fixes.tab-buttons.quest-tab-list')
+  .requires('game.feature.menu.gui.quests.quest-tab-list')
+  .defines(() => {
+    sc.QuestListBox.inject({
+      _createTabButton(name, x, type, ...args) {
+        let btn = this.parent(name, x, type, ...args);
+        autoAdjustTabWidths(this, x, this.tabArray);
+        return btn;
+      },
+    });
+  });

@@ -1,4 +1,4 @@
-function createPatch<T extends { prototype: { UI2_INCREASE_TAB_BUTTON_WIDTH: number } }>(
+function createPatch<T extends { prototype: sc.ui2.TabbedPaneMixin }>(
   gameMenuModule: string,
   getConstructor: () => T,
   minLargeWidth: number,

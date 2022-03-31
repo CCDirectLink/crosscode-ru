@@ -1,6 +1,6 @@
 declare namespace sc {
   interface ListBoxButton {
-    enableTickerDisplay: boolean;
+    UI2_LIST_BOX_BTN_TICKER_DISPLAY?: boolean | null;
   }
 
   interface NewGameOptionButton {
