@@ -1,6 +1,6 @@
 declare namespace sc {
   interface SocialEntryButton {
-    renderStatusAsTextBlock: boolean;
+    UI2_DRAW_STATUS_AS_TEXT_BLOCK: boolean;
     statusNinepatch: ig.NinePatch;
     statusWrapperGui: ig.BoxGui;
     statusTextGui: sc.TextGui;

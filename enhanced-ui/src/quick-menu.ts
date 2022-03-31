@@ -2,11 +2,11 @@ ig.module('ultimate-localized-ui.fixes.quick-menu')
   .requires('game.feature.quick-menu.gui.quick-misc', 'ultimate-localized-ui.text-gui-utils')
   .defines(() => {
     sc.QuickBorderArrowLevelBox.inject({
-      renderLevelLabelAsTextBlock: false,
+      UI2_DRAW_LEVEL_LABEL_AS_TEXT_BLOCK: false,
 
       init(...args) {
         this.parent(...args);
-        if (!this.renderLevelLabelAsTextBlock) return;
+        if (!this.UI2_DRAW_LEVEL_LABEL_AS_TEXT_BLOCK) return;
 
         this.levelLabel = new sc.TextGui(ig.lang.get('sc.gui.quick-menu.analyze.enemy-level'), {
           font: sc.fontsystem.tinyFont,
@@ -41,7 +41,7 @@ ig.module('ultimate-localized-ui.fixes.quick-menu')
       },
 
       updateDrawables(renderer) {
-        if (!this.renderLevelLabelAsTextBlock) {
+        if (!this.UI2_DRAW_LEVEL_LABEL_AS_TEXT_BLOCK) {
           this.parent(renderer);
           return;
         }

@@ -8,7 +8,7 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
     sc.SocialList.inject({
       onCreateListEntries(list, ...args) {
         this.parent(list, ...args);
-        if (!sc.SocialEntryButton.prototype.renderStatusAsTextBlock) return;
+        if (!sc.SocialEntryButton.prototype.UI2_DRAW_STATUS_AS_TEXT_BLOCK) return;
 
         let entries = list.contentPane.hook.children;
         if (entries.length === 0) return;
@@ -31,7 +31,7 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
     });
 
     sc.SocialEntryButton.inject({
-      renderStatusAsTextBlock: false,
+      UI2_DRAW_STATUS_AS_TEXT_BLOCK: false,
 
       statusNinepatch: new ig.NinePatch('mod://ultimate-localized-ui/media/menu.png', {
         width: 4,
@@ -54,7 +54,7 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
 
       init(...args) {
         this.parent(...args);
-        if (!this.renderStatusAsTextBlock) return;
+        if (!this.UI2_DRAW_STATUS_AS_TEXT_BLOCK) return;
 
         this.statusTextGui = new sc.TextGui('', {
           font: sc.fontsystem.tinyFont,
@@ -98,7 +98,7 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
       },
 
       updateMemberStatus(...args) {
-        if (!this.renderStatusAsTextBlock) {
+        if (!this.UI2_DRAW_STATUS_AS_TEXT_BLOCK) {
           this.parent(...args);
           return;
         }

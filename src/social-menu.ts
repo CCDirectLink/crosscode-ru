@@ -3,5 +3,5 @@ ig.module('crosscode-ru.fixes.social-menu')
   .defines(() => {
     if (ig.currentLang !== 'ru_RU') return;
 
-    sc.SocialEntryButton.prototype.renderStatusAsTextBlock = true;
+    sc.SocialEntryButton.prototype.UI2_DRAW_STATUS_AS_TEXT_BLOCK = true;
   });
