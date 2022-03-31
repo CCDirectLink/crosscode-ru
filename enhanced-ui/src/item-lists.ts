@@ -58,7 +58,7 @@ function createListButtonPatch<T extends sc.ListBoxButton>(
     });
 }
 
-// here's a full list of classes which are descendants of sc.ListBoxButton:
+// NOTE: Here's a full list of classes which are descendants of sc.ListBoxButton:
 // sc.ItemBoxButton
 // sc.DebugSkillLearner.ItemBoxButton
 // sc.ShopItemButton
@@ -71,17 +71,13 @@ function createListButtonPatch<T extends sc.ListBoxButton>(
 // sc.ArenaEntryButton
 // - sc.ArenaRoundEntryButton
 // sc.NewGameOptionButton
-// prettier-ignore
-// eslint-disable-next-line no-lone-blocks
-{
-  createListButtonPatch('menu.gui.menu-misc', () => sc.ItemBoxButton);
-  createListButtonPatch('menu.gui.shop.shop-list', () => sc.ShopItemButton);
-  createListButtonPatch('trade.gui.trade-dialog', () => sc.TradeItem);
-  createListButtonPatch('menu.gui.botanics.botanics-misc', () => sc.BotanicsEntryButton);
-  createListButtonPatch('menu.gui.new-game.new-game-misc', () => sc.NewGameOptionButton);
-  createListButtonPatch('menu.gui.lore.lore-misc', () => sc.LoreEntryButton);
-  createListButtonPatch('menu.gui.arena.arena-misc', () => sc.ArenaEntryButton);
-}
+createListButtonPatch('menu.gui.menu-misc', () => sc.ItemBoxButton);
+createListButtonPatch('menu.gui.shop.shop-list', () => sc.ShopItemButton);
+createListButtonPatch('trade.gui.trade-dialog', () => sc.TradeItem);
+createListButtonPatch('menu.gui.botanics.botanics-misc', () => sc.BotanicsEntryButton);
+createListButtonPatch('menu.gui.new-game.new-game-misc', () => sc.NewGameOptionButton);
+createListButtonPatch('menu.gui.lore.lore-misc', () => sc.LoreEntryButton);
+createListButtonPatch('menu.gui.arena.arena-misc', () => sc.ArenaEntryButton);
 
 ig.module('ultimate-localized-ui.fixes.arena-menu')
   .requires(

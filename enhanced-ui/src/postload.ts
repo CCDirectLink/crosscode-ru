@@ -11,6 +11,7 @@ import './help.js';
 import './info-bar.js';
 import './inventory-menu.js';
 import './item-lists.js';
+import './tab-buttons.js';
 import './options-menu.js';
 import './quest-hub.js';
 import './quest-dialog.js';
