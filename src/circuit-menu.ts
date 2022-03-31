@@ -10,7 +10,7 @@ ig.module('crosscode-ru.fixes.circuit-menu')
     sc.CircuitInfoBox.inject({
       init(...args) {
         this.parent(...args);
-        this.special.setPos(8, 2);
+        this.special.setPos(this.header.hook.pos.x, this.header.hook.pos.y);
         this.special.setAlign(ig.GUI_ALIGN.X_LEFT, ig.GUI_ALIGN.Y_BOTTOM);
       },
     });
