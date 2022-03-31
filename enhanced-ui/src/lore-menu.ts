@@ -1,21 +1,9 @@
 ig.module('ultimate-localized-ui.fixes.lore-menu')
   .requires('game.feature.menu.gui.lore.lore-misc', 'ultimate-localized-ui.ticker-display')
   .defines(() => {
-    const LORE_TITLE_HORIZONTAL_MARGIN_LEFT = 33;
     sc.LoreInfoBox.inject({
       init(...args) {
         this.parent(...args);
-
-        this.title.tickerHook.enable = false;
-        this.title.tickerHook.maxWidth =
-          this.scrollContainer.hook.pos.x +
-          this.scrollContainer.hook.size.x -
-          LORE_TITLE_HORIZONTAL_MARGIN_LEFT;
-
-        this.alternative.tickerHook.maxWidth =
-          this.scrollContainer.hook.pos.x +
-          this.scrollContainer.hook.size.x -
-          this.alternative.hook.pos.x;
 
         this.title.tickerHook.focusTarget = this;
         this.alternative.tickerHook.focusTarget = this;
@@ -24,14 +12,25 @@ ig.module('ultimate-localized-ui.fixes.lore-menu')
       setLore(...args) {
         let result = this.parent(...args);
 
-        let overflow =
-          this.title.hook.size.x > this.hook.size.x - LORE_TITLE_HORIZONTAL_MARGIN_LEFT * 2;
-        this.title.setAlign(
-          overflow ? ig.GUI_ALIGN.X_LEFT : ig.GUI_ALIGN.X_CENTER,
-          this.title.hook.align.y,
-        );
-        this.title.setPos(overflow ? LORE_TITLE_HORIZONTAL_MARGIN_LEFT : 0, this.title.hook.pos.y);
-        this.title.tickerHook.enable = overflow;
+        const TITLE_HORIZONTAL_MARGIN_LEFT = 33;
+        let overflow = this.title.hook.size.x > this.hook.size.x - TITLE_HORIZONTAL_MARGIN_LEFT * 2;
+        if (overflow) {
+          this.title.setAlign(ig.GUI_ALIGN.X_LEFT, this.title.hook.align.y);
+          this.title.setPos(TITLE_HORIZONTAL_MARGIN_LEFT, this.title.hook.pos.y);
+          this.title.tickerHook.maxWidth =
+            this.scrollContainer.hook.pos.x +
+            this.scrollContainer.hook.size.x -
+            this.title.hook.pos.x;
+        } else {
+          this.title.setAlign(ig.GUI_ALIGN.X_CENTER, this.title.hook.align.y);
+          this.title.setPos(0, this.title.hook.pos.y);
+          this.title.tickerHook.maxWidth = null;
+        }
+
+        this.alternative.tickerHook.maxWidth =
+          this.scrollContainer.hook.pos.x +
+          this.scrollContainer.hook.size.x -
+          this.alternative.hook.pos.x;
 
         return result;
       },
