@@ -79,7 +79,7 @@ if (leaSpellingTable != null) {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare namespace LocalizeMe {
   interface FontPatchingContextCommon {
-    russianFont: ig.Font;
+    patchedFonts: Record<string, ig.Font>;
   }
 }
 
@@ -193,30 +193,33 @@ localizeMe.add_locale('ru_RU', {
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   pre_patch_font: async (context): Promise<void> => {
+    context.patchedFonts ??= {};
     let url = PATCHED_FONT_URLS[context.size_index];
     if (url != null) {
-      context.russianFont = await sc.ui2.waitForLoadable(new ig.Font(url, context.char_height));
+      context.patchedFonts.ru_RU = await sc.ui2.waitForLoadable(
+        new ig.Font(url, context.char_height),
+      );
     }
   },
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
   patch_base_font: (canvas, context) => {
-    let { russianFont } = context;
-    if (russianFont != null) {
+    let patchedFont = context.patchedFonts.ru_RU;
+    if (patchedFont != null) {
       let ctx2d = canvas.getContext('2d')!;
       for (let i = 0; i < RUSSIAN_FONT_CHARACTERS.length; i++) {
-        let width = russianFont.widthMap[i] + 1;
+        let width = patchedFont.widthMap[i] + 1;
         let rect = context.reserve_char(canvas, width);
         let char = RUSSIAN_FONT_CHARACTERS[i];
         context.set_char_pos(char, rect);
-        let srcX = russianFont.indicesX[i];
-        let srcY = russianFont.indicesY[i];
+        let srcX = patchedFont.indicesX[i];
+        let srcY = patchedFont.indicesY[i];
         ctx2d.drawImage(
-          russianFont.data,
+          patchedFont.data,
           srcX,
           srcY,
           width,
-          russianFont.charHeight,
+          patchedFont.charHeight,
           rect.x,
           rect.y,
           rect.width,
