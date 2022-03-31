@@ -22,3 +22,4 @@ import './title-screen.js';
 import './quick-menu.js';
 import './social-menu.js';
 import './traders-list.js';
+import './lore-menu.js';

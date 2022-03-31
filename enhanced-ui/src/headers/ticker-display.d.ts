@@ -41,6 +41,7 @@ declare namespace sc.ui2 {
   interface TickerDisplayHook {
     hook: ig.GuiHook;
     renderText: TickerDisplayHook.RenderTextCallback;
+    enable: boolean;
     timer: number;
     speed: number;
     delayAtBorders: number;

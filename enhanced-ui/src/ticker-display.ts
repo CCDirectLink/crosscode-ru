@@ -20,6 +20,7 @@ ig.module('ultimate-localized-ui.ticker-display')
     sc.ui2.TickerDisplayHook = ig.Class.extend({
       hook: null,
       renderText: null,
+      enable: true,
       timer: 0, // seconds
       speed: 50, // pixels per second
       delayAtBorders: 1, // seconds
@@ -78,12 +79,13 @@ ig.module('ultimate-localized-ui.ticker-display')
 
       updateDrawables(renderer) {
         let tickerDrawn = this._tryRenderTicker(renderer);
-        if (tickerDrawn) return;
-        this.renderText(renderer, this.constantTextOffset.x, this.constantTextOffset.y);
+        if (!tickerDrawn) {
+          this.renderText(renderer, this.constantTextOffset.x, this.constantTextOffset.y);
+        }
       },
 
       _tryRenderTicker(renderer) {
-        if (this.maxWidth == null) return false;
+        if (this.maxWidth == null || !this.enable) return false;
 
         let { size, align } = this.hook;
 
