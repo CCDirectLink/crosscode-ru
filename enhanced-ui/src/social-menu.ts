@@ -5,28 +5,55 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
     'ultimate-localized-ui.text-gui-utils',
   )
   .defines(() => {
+    const STATUS_TEXT_GUI_SETTINGS: sc.TextGui.Settings = {
+      font: sc.fontsystem.tinyFont,
+      textAlign: ig.Font.ALIGN.CENTER,
+    };
+
     sc.SocialList.inject({
       onCreateListEntries(list, ...args) {
         this.parent(list, ...args);
         if (!sc.SocialEntryButton.prototype.UI2_DRAW_STATUS_AS_TEXT_BLOCK) return;
 
-        let entries = list.contentPane.hook.children;
-        if (entries.length === 0) return;
-        let entry = entries[0].gui as sc.SocialEntryButton;
+        let allStatusTexts: Record<string, string> = ig.lang.get('sc.gui.menu.social.statuses');
+        let dummyStatusTextGui = new sc.TextGui('', STATUS_TEXT_GUI_SETTINGS);
+        let newStatusWidth = 0;
+        let ninepatch = sc.SocialEntryButton.prototype.statusNinepatch.tile;
+        for (let text of Object.values(allStatusTexts)) {
+          dummyStatusTextGui.setText(text);
+          newStatusWidth = Math.max(
+            newStatusWidth,
+            dummyStatusTextGui.hook.size.x - 1 + (ninepatch.left + 1) + (ninepatch.right + 1),
+          );
+        }
+        dummyStatusTextGui.setText('');
 
         let statusHeaderStr = ig.lang.get('sc.gui.menu.social.status');
         let statusHeaderHook = this.bg.hook.children.find(
           ({ gui }) => gui instanceof sc.TextGui && gui.text === statusHeaderStr,
         );
-        if (statusHeaderHook == null) return;
 
-        let scrollbarWidth = 4;
-        // This is done to achieve perfect centering, see a comment below.
-        statusHeaderHook.size.x -= 1;
-        statusHeaderHook.pos.x =
-          entry.statusWrapperGui.hook.pos.x +
-          scrollbarWidth +
-          (entry.statusWrapperGui.hook.size.x - statusHeaderHook.size.x) / 2;
+        for (let { gui } of list.contentPane.hook.children) {
+          if (!(gui instanceof sc.SocialEntryButton)) continue;
+
+          let newButtonWidth =
+            gui.button.hook.size.x - (newStatusWidth - gui.statusTextBg.hook.size.x);
+          let newLineWidth = gui.hook.size.x - newButtonWidth;
+          gui.setWidth(newButtonWidth, newLineWidth);
+          gui.button.setWidth(newButtonWidth);
+          gui.statusTextBg.setSize(newStatusWidth, gui.statusTextBg.hook.size.y);
+
+          if (statusHeaderHook != null) {
+            let scrollbarWidth = 4;
+            // This is done to achieve perfect centering, see a comment below.
+            statusHeaderHook.size.x -= 1;
+            statusHeaderHook.pos.x =
+              gui.statusTextBg.hook.pos.x +
+              scrollbarWidth +
+              (gui.statusTextBg.hook.size.x - statusHeaderHook.size.x) / 2;
+            statusHeaderHook = null!;
+          }
+        }
       },
     });
 
@@ -56,40 +83,20 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
         this.parent(...args);
         if (!this.UI2_DRAW_STATUS_AS_TEXT_BLOCK) return;
 
-        this.statusTextGui = new sc.TextGui('', {
-          font: sc.fontsystem.tinyFont,
-          textAlign: ig.Font.ALIGN.CENTER,
-        });
+        this.statusTextGui = new sc.TextGui('', STATUS_TEXT_GUI_SETTINGS);
         this.statusTextGui.setAlign(ig.GUI_ALIGN.X_CENTER, ig.GUI_ALIGN.Y_TOP);
         this.statusTextGui.setPos(0, 0);
 
-        this.statusTexts = ig.lang.get('sc.gui.menu.social.statuses');
-        let newStatusWidth = 0;
-        for (let text of Object.values(this.statusTexts)) {
-          this.statusTextGui.setText(text);
-          let ninepatch = this.statusNinepatch.tile;
-          newStatusWidth = Math.max(
-            newStatusWidth,
-            this.statusTextGui.hook.size.x + (ninepatch.left + 1) + (ninepatch.right + 1) - 1,
-          );
-        }
-        this.statusTextGui.setText('');
-
-        let newButtonWidth = this.button.hook.size.x - (newStatusWidth - this.status.hook.size.x);
-        let newLineWidth = this.hook.size.x - newButtonWidth;
-        this.setWidth(newButtonWidth, newLineWidth);
-        this.button.setWidth(newButtonWidth);
-
-        this.statusWrapperGui = new ig.BoxGui(
-          newStatusWidth,
+        this.statusTextBg = new ig.BoxGui(
+          this.status.hook.size.x,
           this.status.hook.size.y,
           false,
           this.statusNinepatch,
         );
-        this.statusWrapperGui.setAlign(ig.GUI_ALIGN.X_RIGHT, ig.GUI_ALIGN.Y_TOP);
-        this.statusWrapperGui.setPos(this.status.hook.pos.x, this.status.hook.pos.y);
-        this.addChildGui(this.statusWrapperGui);
-        this.statusWrapperGui.addChildGui(this.statusTextGui);
+        this.statusTextBg.setAlign(ig.GUI_ALIGN.X_RIGHT, ig.GUI_ALIGN.Y_TOP);
+        this.statusTextBg.setPos(this.status.hook.pos.x, this.status.hook.pos.y);
+        this.statusTextBg.addChildGui(this.statusTextGui);
+        this.addChildGui(this.statusTextBg);
 
         this.removeChildGui(this.status);
         this.status = null!;
@@ -106,8 +113,11 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
         let isPartyMember = sc.party.isPartyMember(this.key);
         let isOnline = sc.party.contacts[this.key].online;
         let state = isPartyMember ? 'party' : isOnline ? 'online' : 'offline';
-        this.statusWrapperGui.currentTileOffset = state;
-        this.statusTextGui.setText(this.statusTexts[state]);
+
+        this.head.active = isPartyMember;
+        this.statusTextBg.currentTileOffset = state;
+
+        this.statusTextGui.setText(ig.lang.get(`sc.gui.menu.social.statuses.${state}`));
         // To align in the middle perfectly, subtract the final empty pixel
         // added after each letter, including the last one.
         this.statusTextGui.hook.size.x -= 1;
@@ -117,7 +127,6 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
             this.statusTextRecolors[state],
           );
         });
-        this.head.active = isPartyMember;
       },
     });
   });
