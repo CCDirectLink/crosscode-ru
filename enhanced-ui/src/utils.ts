@@ -26,13 +26,6 @@ sc.ui2.waitForLoadable = <T extends ig.Loadable | ig.SingleLoadable>(loadable: T
   });
 };
 
-// TODO: explain why this function is needed
-// NOTE: I hope I won't need this anytime soon...
-sc.ui2.forciblyTriggerResourceLoad = () => {
-  if (ig.ready) return;
-  ig.mainLoader._loadCallback('FakeResource', `FakeResource/${Math.random()}`, true);
-};
-
 ig.module('ultimate-localized-ui.text-gui-utils')
   .requires(
     'impact.base.system',
