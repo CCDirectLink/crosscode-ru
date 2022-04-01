@@ -7,24 +7,19 @@ ig.module('crosscode-ru.fixes.level-up')
       patchedGfx: new ig.Image('media/gui/status-gui.ru_RU.png'),
 
       updateDrawables(renderer) {
-        renderer.addGfx(this.patchedGfx, 0, 0, 0, 0, 114, 20);
-
         renderer.addTransform().setTranslate(3, 0);
 
-        let oldAddGfx = renderer.addGfx;
+        let { addGfx } = renderer;
         try {
-          let addGfxCalls = 0;
-          renderer.addGfx = (...args) => {
-            addGfxCalls++;
-            // skip the first call of addGfx
-            if (addGfxCalls < 2) return null!;
-            renderer.addGfx = oldAddGfx;
-            return renderer.addGfx(...args);
+          renderer.addGfx = (gfx, posX, posY, srcX, srcY, sizeX, sizeY, flipX, flipY) => {
+            if (gfx === this.gfx && srcX === 0 && srcY === 192 && sizeX === 112 && sizeY === 20) {
+              return addGfx.call(renderer, this.patchedGfx, -3, 0, 0, 0, 114, 20);
+            }
+            return addGfx.call(renderer, gfx, posX, posY, srcX, srcY, sizeX, sizeY, flipX, flipY);
           };
-
           this.parent(renderer);
         } finally {
-          renderer.addGfx = oldAddGfx;
+          renderer.addGfx = addGfx;
         }
 
         renderer.undoTransform();
