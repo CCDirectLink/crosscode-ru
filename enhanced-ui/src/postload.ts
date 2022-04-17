@@ -23,3 +23,4 @@ import './quick-menu.js';
 import './social-menu.js';
 import './traders-list.js';
 import './lore-menu.js';
+import './main-menu.js';

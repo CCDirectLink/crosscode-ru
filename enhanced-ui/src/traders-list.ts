@@ -82,6 +82,8 @@ ig.module('ultimate-localized-ui.fixes.traders-list')
     });
 
     sc.TradeButtonBox.inject({
+      UI2_SPLIT_LOCATION_INTO_TWO_LINES: false,
+
       init(trader, ...args) {
         this.parent(trader, ...args);
         if (this.UI2_SPLIT_LOCATION_INTO_TWO_LINES) {
