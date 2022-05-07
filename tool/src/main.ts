@@ -39,10 +39,13 @@ declare global {
   var app: Main; // eslint-disable-line no-var
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
+  let appWin = nw.Window.get();
+  await showDevTools();
+  appWin.focus();
   let app = new Main();
   window.app = app;
-  void app.start();
+  await app.start();
 });
 
 const COMMON_PHRASES = new Map([
@@ -137,8 +140,6 @@ class Main {
         this.useScanDb = settings.useScanDb;
         void writeSettings(settings);
       });
-
-      await showDevTools();
 
       let updateButton = document.getElementById(
         'settings_translations_update',
