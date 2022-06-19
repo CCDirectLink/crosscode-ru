@@ -1,9 +1,55 @@
 ig.module('ultimate-localized-ui.fixes.quest-dialog')
-  .requires('game.feature.menu.gui.quests.quest-misc', 'ultimate-localized-ui.ticker-display')
+  .requires(
+    'game.feature.menu.gui.quests.quest-misc',
+    'game.feature.menu.gui.quests.quest-details',
+    'ultimate-localized-ui.ticker-display',
+  )
   .defines(() => {
+    sc.QuestDialog.inject({
+      setQuestRewards(quest, hideRewards, finished, ...args) {
+        let hooksIdx = this.hook.children.indexOf(this.titleGui.hook);
+        let descHook = this.descriptionGui.hook;
+        let sepHook = finished ? this.solvedGui!.hook : this.hook.children[hooksIdx + 2];
+        let taskHook = finished ? this.endDescriptionGui!.hook : this.firstTaskGui!.hook;
+        let rewardsIconHook = this.hook.children[hooksIdx + 4];
+        let rewardsLineHook = this.hook.children[hooksIdx + 5];
+        let itemsHook = this.itemsGui.hook;
+
+        for (let hook of [sepHook, taskHook, rewardsIconHook, rewardsLineHook, itemsHook]) {
+          let gui2: ig.GuiElementBase & { initialPosY?: number } = hook.gui;
+          gui2.initialPosY ??= hook.pos.y;
+          hook.pos.y = gui2.initialPosY;
+        }
+
+        this.parent(quest, hideRewards, finished, ...args);
+
+        let margin = 0;
+
+        margin = this.solvedGui != null ? 3 : 2;
+        sepHook.pos.y += Math.max(0, descHook.pos.y + descHook.size.y + margin - sepHook.pos.y);
+
+        margin = this.solvedGui != null ? 3 : 4;
+        taskHook.pos.y += Math.max(0, sepHook.pos.y + sepHook.size.y + margin - taskHook.pos.y);
+
+        margin = 1;
+        let delta = Math.max(0, taskHook.pos.y + taskHook.size.y + margin - rewardsLineHook.pos.y);
+        rewardsIconHook.pos.y += delta;
+        rewardsLineHook.pos.y += delta;
+        itemsHook.pos.y += delta;
+
+        // The positions of these elements are not stored in the loop at the
+        // beginning of the function because the original function resets them
+        // to absolute values with `setPos`, but only conditionally (and so we
+        // follow the said conditions here).
+        if (quest.rewards.exp) this.expGui.hook.pos.y += delta;
+        if (quest.rewards.money) this.creditGui.hook.pos.y += delta;
+        if (quest.rewards.cp) this.cpGui.hook.pos.y += delta;
+      },
+    });
+
     sc.QuestInfoBox.inject({
-      init() {
-        this.parent();
+      init(...args) {
+        this.parent(...args);
         let locationIconHook = this.locationGui.hook.children.find(
           ({ gui }) => gui instanceof ig.ImageGui && gui.image === this.gfx,
         );
@@ -12,6 +58,53 @@ ig.module('ultimate-localized-ui.fixes.quest-dialog')
             this.locationGui.hook.size.x -
             this.locationText.hook.pos.x -
             locationIconHook.pos.x / 2;
+        }
+      },
+
+      setQuest(quest, ...args) {
+        let descHook = this.descriptionGui.hook;
+        let viewHook1 = this.activeView.hook;
+        let viewHook2 = this.solvedView.hook;
+
+        for (let hook of [viewHook1, viewHook2]) {
+          let gui2: ig.GuiElementBase & { initialPosY?: number } = hook.gui;
+          gui2.initialPosY ??= hook.pos.y;
+          hook.pos.y = gui2.initialPosY;
+        }
+
+        this.parent(quest, ...args);
+
+        let margin = 4;
+        viewHook1.pos.y += Math.max(0, descHook.pos.y + descHook.size.y + margin - viewHook1.pos.y);
+        viewHook2.pos.y += Math.max(0, descHook.pos.y + descHook.size.y + margin - viewHook2.pos.y);
+      },
+    });
+
+    sc.QuestDetailsView.inject({
+      _setQuest(quest, ...args) {
+        let descHook = this.descriptionGui.hook;
+        let viewHook1 = this.activeView.hook;
+        let viewHook2 = this.solvedView.hook;
+
+        for (let hook of [viewHook1, viewHook2]) {
+          let gui2: ig.GuiElementBase & { initialSizeY?: number } = hook.gui;
+          gui2.initialSizeY ??= hook.size.y;
+          hook.size.y = gui2.initialSizeY;
+        }
+
+        this.parent(quest, ...args);
+
+        let margin = 2;
+        // The vertical alignments on these are ig.GUI_ALIGN.Y_BOTTOM
+        let viewHook1PosY = viewHook1.parentHook!.size.y - viewHook1.size.y - viewHook1.pos.y;
+        console.log(Math.max(0, descHook.pos.y + descHook.size.y + margin - viewHook1PosY));
+        viewHook1.size.y -= Math.max(0, descHook.pos.y + descHook.size.y + margin - viewHook1PosY);
+        let viewHook2PosY = viewHook2.parentHook!.size.y - viewHook2.size.y - viewHook2.pos.y;
+        viewHook2.size.y -= Math.max(0, descHook.pos.y + descHook.size.y + margin - viewHook2PosY);
+
+        let { container } = this.activeView;
+        if (container.hook.size.y !== viewHook1.size.y) {
+          container.setSize(container.hook.size.x, viewHook1.size.y);
         }
       },
     });
