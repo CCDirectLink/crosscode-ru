@@ -97,7 +97,6 @@ ig.module('ultimate-localized-ui.fixes.quest-dialog')
         let margin = 2;
         // The vertical alignments on these are ig.GUI_ALIGN.Y_BOTTOM
         let viewHook1PosY = viewHook1.parentHook!.size.y - viewHook1.size.y - viewHook1.pos.y;
-        console.log(Math.max(0, descHook.pos.y + descHook.size.y + margin - viewHook1PosY));
         viewHook1.size.y -= Math.max(0, descHook.pos.y + descHook.size.y + margin - viewHook1PosY);
         let viewHook2PosY = viewHook2.parentHook!.size.y - viewHook2.size.y - viewHook2.pos.y;
         viewHook2.size.y -= Math.max(0, descHook.pos.y + descHook.size.y + margin - viewHook2PosY);
