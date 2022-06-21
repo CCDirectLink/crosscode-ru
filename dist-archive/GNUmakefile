@@ -115,7 +115,7 @@ $(CC_WORLD_MAP_OVERHAUL_MOD_DIR):
 	$(call download_archive,$@,https://github.com/dmitmel/cc-world-map-overhaul/releases/download/v1.1.2/world-map-overhaul_v1.1.2.tgz,,--strip-components=1)
 
 $(QUICK_INSTALL_TMP_DIR)/ccloader:
-	$(call download_archive,$(@D),https://stronghold.openkrosskod.org/~dmitmel/ccloader3/20220208223224/ccloader_3.0.0-alpha_quick-install.tar.gz,,)
+	$(call download_archive,$(@D),https://stronghold.openkrosskod.org/~dmitmel/ccloader3/20220617184157/ccloader_3.0.0-alpha_quick-install.tar.gz,,)
 
 compile-translations: $(addprefix $(MOD_DIR)/$(TRANSLATIONS_DIR)/,$(TRANSLATIONS_FILES))
 
