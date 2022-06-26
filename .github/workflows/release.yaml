@@ -51,23 +51,14 @@ jobs:
       - name: Build
         run: yarn run build
 
-      - name: Download the latest translations from Notabridge
-        run: |
-          mkdir assets/ru-translation-tool/
-          curl --location --fail https://stronghold.openkrosskod.org/~notabridge/crosscode.tgz | tar --extract --gzip --file - -C assets/ru-translation-tool/ --strip-components 1
-
-      - name: Ensure that translations are up to date
+      - name: Download the latest translations from Notabenoid
         env:
           NOTABENOID_CREDENTIALS: ${{ secrets.NOTABENOID_CREDENTIALS }}
         if: env.NOTABENOID_CREDENTIALS != ''
         run: |
           nota_username="${NOTABENOID_CREDENTIALS%%:*}"
           nota_password="${NOTABENOID_CREDENTIALS#*:}"
-          chapters_with_updates="$(node tool/dist/headless-main.js -u @"$nota_username" -p @"$nota_password" -o assets/ru-translation-tool --checkUpdates)"
-          if [[ -n "$chapters_with_updates" ]]; then
-            printf "ERROR: The following chapters are not up to date (re-run of Notabridge is needed):\n%s\n" "$chapters_with_updates"
-            exit 1
-          fi
+          node tool/dist/headless-main.js --username @"$nota_username" --password @"$nota_password" --output assets/ru-translation-tool --fetchConnections 8 --progress
 
       - name: Export Localize Me translation packs
         run: node tool/dist/headless-export.js assets/ru-translation-tool/
