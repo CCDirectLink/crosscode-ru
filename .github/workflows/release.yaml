@@ -88,8 +88,6 @@ jobs:
           prerelease: false
           body_path: .github/release_body_template.md
           files: |
-            dist-archive/crosscode-ru_modpack_v*.tgz
-            dist-archive/crosscode-ru_modpack_v*.zip
             dist-archive/crosscode-ru_quick-install_v*.tgz
             dist-archive/crosscode-ru_quick-install_v*.zip
             dist-archive/crosscode-ru_v*.tgz
