@@ -71,22 +71,47 @@ jobs:
         working-directory: dist-archive
         run: make
 
-      - name: Get some values needed for the release
-        id: release_values
+      - name: Preparing metadata of the release
+        id: release_meta
         run: |
-          echo "::set-output name=date::$(date '+%Y-%m-%d')"
-          echo "::set-output name=tag::${GITHUB_REF#refs/tags/}"
+          date="$(date '+%Y-%m-%d')"
+          tag="${GITHUB_REF#refs/tags/}"
+          title="${tag}, LTS ${date}"
+
+          body_path="$(mktemp -t release_body.XXXXXXXXXX.md)"
+          cat > "$body_path" <<EOF
+          Смотрите [инструкции по установке](https://github.com/CCDirectLink/crosscode-ru#инструкции-по-установке) на главной странице.
+
+          **Совместимые версии игры:** 1.4.2-2
+
+          [![Скачать](https://github.com/CCDirectLink/crosscode-ru/raw/master/docs/media/download-button.png)](https://github.com/CCDirectLink/crosscode-ru/releases/download/${tag}/crosscode-ru_quick-install_${tag}.zip)
+
+          ## Нововведения
+
+          ## Изменения
+
+          ## Исправления
+
+          EOF
+
+          gha_set_output() {
+            local name="$1" str="$2"
+            str="${str//'%'/'%25'}"; str="${str//$'\n'/'%0A'}"; str="${str//$'\r'/'%0D'}"
+            printf "::set-output name=%s::%s\n" "$name" "$str"
+          }
+
+          gha_set_output title "${title}"
+          gha_set_output body_path "$body_path"
 
       - name: Create the release
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name:
-            ${{ steps.release_values.outputs.tag }}, LTS ${{ steps.release_values.outputs.date }}
+          name: ${{ steps.release_meta.outputs.title }}
+          body_path: ${{ steps.release_meta.outputs.body_path }}
           draft: true
           prerelease: false
-          body_path: .github/release_body_template.md
           files: |
             dist-archive/crosscode-ru_quick-install_v*.tgz
             dist-archive/crosscode-ru_quick-install_v*.zip
