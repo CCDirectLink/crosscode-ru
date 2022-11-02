@@ -80,7 +80,7 @@ jobs:
 
           body_path="$(mktemp -t release_body.XXXXXXXXXX.md)"
           cat > "$body_path" <<EOF
-          Смотрите [инструкции по установке](https://github.com/CCDirectLink/crosscode-ru#инструкции-по-установке) на главной странице.
+          Смотрите [инструкцию по установке](https://github.com/CCDirectLink/crosscode-ru#краткая-инструкция-по-установке) на главной странице.
 
           **Совместимые версии игры:** 1.4.2-2
 

@@ -1,103 +1,134 @@
 # <img src="icon48.png" alt="icon48.png" style="vertical-align: text-bottom;"> crosscode-ru
 
-Комьюнити-модпак русского перевода игры [CrossCode](https://cross-code.com/en/home), который мы все
+Комьюнити-мод русского перевода игры [CrossCode](https://cross-code.com/en/home), который мы все
 заслужили.
 
 **Наш веб-сайт**: https://crosscode.ru/ \
 **Наш Discord-сервер**: https://crosscode.ru/discord (https://discord.com/invite/QANXNbR) \
 **Наша группа в VK**: https://vk.com/crusscode
 
-[**Перейти к инструкции по установке!**](#инструкции-по-установке)
-
-[**Перейти к инструкции по обновлению!**](#инструкции-по-обновлению)
-
-![community translation official response 1](docs/media/community-translation-official-response1.png)
-
-![community translation official response 2](docs/media/community-translation-official-response2.png)
-
 ## Важная заметка о сообществе
 
-Discord-сервер русского сообщества нынче заархивирован и заморожен. Другими словами, туда нельзя
-ничего писать, а сам он является музеем. Но команда переводчиков создала новый сервер, не связанный
-с тематикой CrossCode, зайти на него можно по ссылке:
+Discord-сервер русского сообщества нынче заморожен и заархивирован: туда нельзя ничего писать, а сам
+он является музеем. Но команда переводчиков создала новый сервер, не связанный с тематикой
+CrossCode, зайти на него можно по ссылке:
 
 https://discord.gg/P9hKbZkYym
 
-Тем не менее, поддержка мода не заканчивается, об этом можно прочитать в
-[заметках к релизу 1.2.3](https://github.com/CCDirectLink/crosscode-ru/releases/tag/v1.2.3). Насчёт
-возможного перевода будущих проектов [RadicalFishGames](http://www.radicalfishgames.com/?page_id=17)
-читайте в
-[заметках к релизу 1.2.0](https://github.com/CCDirectLink/crosscode-ru/releases/tag/v1.2.0).
+Тем не менее, поддержка мода не заканчивается. Если есть вопросы об игре или переводе, или вы
+столкнулись с какой-нибудь проблемой, или если просто хочется поболтать - обращайтесь на этом новом
+сервере.
+
+## Краткая инструкция по установке
+
+[Открыть подробную инструкцию](#подробная-инструкция-по-установке)
+
+1. Перейдите на страницу последней версии перевода нажатием по этой кнопке:
+
+   [![Открыть страницу скачивания](docs/media/open-downloads-page-button.png)](https://github.com/CCDirectLink/crosscode-ru/releases/latest)
+
+   и там щёлкните по гигантской кнопке "Скачать!".
+
+2. Распакуйте (с заменой) файлы из скачанного архива прямо в папку игры
+   ([**где искать папку игры???**](#шаг-2-определите-путь-к-папке-игры)).
+
+3. Запустите игру, откройте настройки, выберите русский язык.
+
+4. Выйдете из игры и затем перезапустите её.
+
+5. Всё готово! Удачи и приятной игры!
+
+![new game](docs/media/screenshots/new-game.ru_RU.png)
+
+## Инструкция по обновлению
+
+В принципе, Вы можете просто повторить шаги из
+[инструкции по установке](#краткая-инструкция-по-установке): скачать новую версию перевода и
+распаковать её с заменой файлов, что перезапишет все файлы предыдущей версии. Но я рекомендую
+сначала удалить из папки игры вот эти все папки, связанные с переводом:
+
+![directories to delete](docs/media/screenshots/directories-to-delete-before-update.png)
 
 ## Фичи
 
-### 1. Собственно, русский перевод CrossCode
+Нажмите на любое изображение, чтобы открыть его в полном размере.
 
-![translated story 1](docs/media/screenshots/features/translated-story1.gif)
+<table>
+<tbody>
+<tr>
+<td align="center" colspan="2"><strong>Перевод всей игры и её интерфейса на русский</strong></td>
+</tr>
+<tr>
+<td align="center" width="50%"><img alt="translated story 1" src="docs/media/screenshots/features/translated-story1.gif"></td>
+<td align="center" width="50%"><img alt="translated story 1" src="docs/media/screenshots/features/translated-story1.png"></td>
+</tr>
+<tr>
+<td align="center" width="50%"><img alt="translated story 2" src="docs/media/screenshots/features/translated-story2.png"></td>
+<td align="center" width="50%"><img alt="translated interface" src="docs/media/screenshots/features/translated-interface.png"></td>
+</tr>
+<tr>
+<td align="center" colspan="2"><strong>Множество различных исправлений багов интерфейса</strong></td>
+</tr>
+<tr>
+<td align="center" width="50%"><img alt="ticker display" src="docs/media/screenshots/features/ticker-display.gif"><br>Например, бегущие строки</td>
+<td align="center" width="50%"><img alt="localized sprites" src="docs/media/screenshots/features/optional-localized-sprites.png"><br>Локализация текстур (опционально)</td>
+</tr>
+<tr>
+<td align="center" width="50%"><img alt="ui fix example before" src="docs/media/screenshots/features/ui-fix-example-before.png"><br>До применения бегущих строк</td>
+<td align="center" width="50%"><img alt="ui fix example after" src="docs/media/screenshots/features/ui-fix-example-after.png"><br>После (простите, в этот раз без гифки)</td>
+</tr>
+<tr>
+<td align="center" colspan="2"><strong>Улучшенная карта мира</strong></td>
+</tr>
+<tr>
+<td align="center" colspan="2"><img alt="world map overhaul" src="docs/media/screenshots/features/cc-world-map-overhaul.png"></td>
+</tr>
+</tbody>
+</table>
 
-![translated story 1](docs/media/screenshots/features/translated-story1.png)
+## Подробная инструкция по установке
 
-![translated story 2](docs/media/screenshots/features/translated-story2.png)
+Обновляетесь на новую версию? Сначала взгляните на
+[инструкцию по обновлению](#инструкция-по-обновлению).
 
-![translated interface](docs/media/screenshots/features/translated-interface.png)
+### Шаг 1. Скачивание перевода
 
-### 2. Куча различных исправлений интерфейса
+**ВНИМАНИЕ!!! Пожалуйста, внимательно читайте, что и куда надо скачивать!**
 
-**Например, бегущие строки:**
+Перейдите на страницу
+[последней версии](https://github.com/CCDirectLink/crosscode-ru/releases/latest) нажатием по этой
+кнопке:
 
-![ticker display](docs/media/screenshots/features/ticker-display.gif)
+[![Открыть страницу скачивания](docs/media/open-downloads-page-button.png)](https://github.com/CCDirectLink/crosscode-ru/releases/latest)
 
-Или, вот ещё один пример. **Оригинал:**
+и либо **щёлкните по огромной кнопке "Скачать!"**, которая автоматически скачает то, что надо, либо
+вручную скачайте архив с именем `crosscode-ru_quick-install_vX.Y.Z.zip` (или
+`crosscode-ru_quick-install_vX.Y.Z.tgz`, если вам не нравится `.zip`). Этот архив содержит сам мод
+русского перевода, все остальные необходимые для его работы моды, плюс загрузчик модов
+[CCLoader](https://github.com/CCDirectLink/CCLoader).
 
-![ui fix example before](docs/media/screenshots/features/ui-fix-example-before.png)
+### Шаг 2. Определите путь к папке игры
 
-(простите, в этот раз без гифки) **С фиксом для бегущих строк:**
-
-![ui fix example after](docs/media/screenshots/features/ui-fix-example-after.png)
-
-### 3. Опциональная локализация текстур
-
-![localized sprites](docs/media/screenshots/features/optional-localized-sprites.png)
-
-### 4. Улучшенная карта мира
-
-![world map overhaul](docs/media/screenshots/features/cc-world-map-overhaul.png)
-
-## Инструкции по установке
-
-Обновляетесь на новую версию? Сначала просмотрите
-[инструкции по обновлению](#инструкции-по-обновлению).
-
-### Шаг 1. Определите путь к папке игры
-
-Путь может отличаться в зависимости от операционной системы и метода установки игры. Папка игры
-выглядит следующим образом:
-
-**MS Windows:**
-
-![game directory contents on MS Windows](docs/media/screenshots/game-directory-contents_windows.ru_RU.png)
-
-**macOS:**
-
-![game directory contents on macOS](docs/media/screenshots/game-directory-contents_macos.ru_RU.png)
-
-**GNU/Linux:**
-
-![game directory contents on Linux](docs/media/screenshots/game-directory-contents_linux.ru_RU.png)
-
-#### Steam
-
-Для определения пути можно воспользоваться встроенным меню "локальные файлы" в свойствах игры:
+Путь будет отличаться в зависимости от операционной системы и метода установки игры. В случае, если
+вы купили игру в Steam - это проще простого. Кликните правой кнопкой мыши по игре в библиотеке,
+выберите во всплывшем меню пункт "Управление", затем кликните по пункту "Просмотреть локальные
+файлы":
 
 ![browse local files](docs/media/screenshots/steam-browse-local-files.ru_RU.png)
 
-Обычно папка, в которую Steam устанавливает игру, расположена в:
+Это откроет папку установки в проводнике. Как правило, у Steam эта папка расположена в:
 
-- **MS Windows**: `C:\Program Files\Steam\steamapps\common\CrossCode`
-- **macOS:** `~/Library/Application Support/Steam/steamapps/common/CrossCode`
-- **GNU/Linux:** `~/.local/share/Steam/steamapps/common/CrossCode`
+| Операционная система | Путь к папке установки                                           |
+| -------------------- | ---------------------------------------------------------------- |
+| **MS Windows**       | `C:\Program Files\Steam\steamapps\common\CrossCode`              |
+| **macOS**            | `~/Library/Application Support/Steam/steamapps/common/CrossCode` |
+| **GNU/Linux**        | `~/.local/share/Steam/steamapps/common/CrossCode`                |
 
-##### Заметка пользователям macOS
+Если же Вы решили пойти по благородному пути пиратства, то, думаю, Вы знаете, чем занимаетесь, ну и
+куда установлена игра тоже.
+
+<details>
+<summary><strong>Пользователям macOS требуется совершить ещё несколько действий (нажмите, чтобы развернуть)</strong></summary>
 
 На macOS папка игры расположена внутри установленного приложения. Для перехода в неё надо сделать
 следующее:
@@ -110,23 +141,32 @@ https://discord.gg/P9hKbZkYym
 4. Папка игры находится в `app.nw`
    ![mac screenshot app.nw](docs/media/screenshots/mac_game-directory-path.png)
 
-#### Для пиратов
+</details>
 
-Раз уж Вы решили пойти по благородному пути пиратства, то, думаю, Вы знаете, чем занимаетесь, ну и
-где лежит папка игры тоже.
+На всякий случай, вот каким образом выглядит папка игры:
 
-### Шаг 2. Скачивание модпака
+<details>
+<summary><strong>MS Windows (нажмите, чтобы развернуть)</strong></summary>
 
-**ВНИМАНИЕ!!! Пожалуйста, внимательно читайте, что и куда надо скачивать!**
+![game directory contents on MS Windows](docs/media/screenshots/game-directory-contents_windows.ru_RU.png)
 
-Перейдите на страницу
-[последнего релиза](https://github.com/CCDirectLink/crosscode-ru/releases/latest) и скачайте архив с
-именем `crosscode-ru_quick-install_vX.Y.Z.zip` (или `crosscode-ru_quick-install_vX.Y.Z.tgz` если вам
-не нравится `.zip`). **Обратите внимание на приписку `quick-install` в названии!** Этот архив уже
-содержит все моды из русского модпака плюс загрузчик модов
-[CCLoader](https://github.com/CCDirectLink/CCLoader).
+</details>
 
-### Шаг 3. Установка модпака
+<details>
+<summary><strong>macOS (нажмите, чтобы развернуть)</strong></summary>
+
+![game directory contents on macOS](docs/media/screenshots/game-directory-contents_macos.ru_RU.png)
+
+</details>
+
+<details>
+<summary><strong>GNU/Linux (нажмите, чтобы развернуть)</strong></summary>
+
+![game directory contents on Linux](docs/media/screenshots/game-directory-contents_linux.ru_RU.png)
+
+</details>
+
+### Шаг 3. Установка перевода
 
 Распакуйте файлы из архива прямо в папку игры:
 
@@ -162,9 +202,8 @@ https://discord.gg/P9hKbZkYym
 
 **ВНИМАНИЕ!** Изменение любой из этих двух опций требует перезапуска игры!
 
-Также стоит упомянуть, какие моды включены в состав модпака. Вы можете включать и выключать
-установленные моды в меню "Моды", при свежей установке модпака crosscode-ru это меню будет выглядеть
-так:
+Также стоит упомянуть, какие моды включены в состав перевода. Вы можете включать и выключать
+установленные моды в меню "Моды", при свежей установке это меню будет выглядеть так:
 
 ![options mods russian](docs/media/screenshots/options-mods.ru_RU.png)
 
@@ -189,26 +228,6 @@ https://discord.gg/P9hKbZkYym
 ### Шаг 6. Удачи и приятной игры!
 
 ![new game](docs/media/screenshots/new-game.ru_RU.png)
-
-## Инструкции по обновлению
-
-В принципе, вы можете просто повторить все шаги в
-[инструкции по установке](#инструкции-по-установке) и при распаковке архива перезаписать все
-установленные файлы. Но всё же, я рекомендую для начала удалить следующие папки в папке игры (папки
-отмечены `/` в конце):
-
-```
-<папка игры>/
-├─ assets/
-│  └─ mods/
-│     ├─ cc-world-map-overhaul/
-│     ├─ crosscode-ru/
-│     ├─ enhanced-ui/
-│     └─ Localize-me/
-└─ ccloader/
-```
-
-После чего можете спокойно выполнять установку [начиная с шага 2](#шаг-2-скачивание-модпака).
 
 ## Бонус: Как запустить игру на Android
 
@@ -281,7 +300,7 @@ https://discord.gg/P9hKbZkYym
 
 Команда crosscode-ru никак не связана с
 [RadicalFishGames](http://www.radicalfishgames.com/?page_id=17). Разрешение на распространение
-модпака в таком виде, в котором он сейчас есть, было получено
+перевода в таком виде, в котором он сейчас есть, было получено
 ([ссылка 1](https://discordapp.com/channels/143364538958348288/276459212807340034/676870708613087272),
 [ссылка 2](https://discordapp.com/channels/143364538958348288/276459212807340034/676891793417306132)).
 Переводы и изображения (ассеты) распространяются под лицензией
