@@ -13,7 +13,7 @@ const THIS_FILENAME = fileURLToPath(import.meta.url);
 const THIS_DIRNAME = paths.dirname(THIS_FILENAME);
 
 async function main(): Promise<void> {
-  let opts = yargs(process.argv.slice(2))
+  let opts = await yargs(process.argv.slice(2))
     .usage('$0')
     .help()
     .strict()
@@ -45,7 +45,8 @@ async function main(): Promise<void> {
         boolean: true,
         default: false,
       },
-    }).argv;
+    })
+    .parse();
 
   let scanDbFile = await tmp.file({ detachDescriptor: true });
   try {

@@ -5,11 +5,11 @@
     "node": ">=11.0.0"
   },
   "devDependencies": {
-    "@types/jsdom": "^16.2.14",
+    "@types/jsdom": "^20.0.0",
     "@types/progress": "^2.0.5",
     "@types/request": "^2.48.8",
     "@types/tmp": "^0.2.3",
-    "@types/yargs": "^16.0.4",
+    "@types/yargs": "^17.0.13",
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",
     "eslint": "^8.8.0",
@@ -20,7 +20,7 @@
     "ultimate-crosscode-typedefs": "dmitmel/ultimate-crosscode-typedefs"
   },
   "dependencies": {
-    "jsdom": "^19.0.0",
+    "jsdom": "^20.0.0",
     "progress": "^2.0.3",
     "request": "^2.88.2",
     "tmp": "^0.2.1",

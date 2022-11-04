@@ -23,7 +23,7 @@ interface CliOptions {
   checkUpdates: boolean;
 }
 
-function parseCliOptions(): CliOptions {
+async function parseCliOptions(): Promise<CliOptions> {
   function loadSecretOption(arg: unknown): string {
     let argStr = arg != null ? String(arg) : '';
     if (argStr.startsWith('@')) {
@@ -35,7 +35,7 @@ function parseCliOptions(): CliOptions {
     }
   }
 
-  return yargs(process.argv.slice(2))
+  return await yargs(process.argv.slice(2))
     .usage('$0')
     .help()
     .strict()
@@ -87,11 +87,12 @@ function parseCliOptions(): CliOptions {
         default: false,
         description: 'Print the names of chapters which need updating',
       },
-    }).argv;
+    })
+    .parse();
 }
 
 async function main(): Promise<void> {
-  let opts = parseCliOptions();
+  let opts = await parseCliOptions();
   await fs.promises.mkdir(opts.output, { recursive: true });
   let chapterStatusesFile = paths.join(opts.output, 'chapter-statuses.json');
   let chapterFragmentsDir = paths.join(opts.output, 'chapter-fragments');
