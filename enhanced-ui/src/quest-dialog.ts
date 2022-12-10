@@ -47,6 +47,8 @@ ig.module('ultimate-localized-ui.fixes.quest-dialog')
       },
     });
 
+    const QUEST_ICON_CORNER_WIDTH = 27;
+
     sc.QuestInfoBox.inject({
       init(...args) {
         this.parent(...args);
@@ -59,6 +61,7 @@ ig.module('ultimate-localized-ui.fixes.quest-dialog')
             this.locationText.hook.pos.x -
             locationIconHook.pos.x / 2;
         }
+        this.titleGui.tickerHook.maxWidth = this.hook.size.x - QUEST_ICON_CORNER_WIDTH * 2 - 3 * 2;
       },
 
       setQuest(quest, ...args) {
