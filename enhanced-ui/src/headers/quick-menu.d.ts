@@ -4,6 +4,6 @@ declare namespace sc {
 
     levelLabel?: sc.TextGui | null;
 
-    getLevelColorRgb(this: this): number[];
+    getLevelColorRgb(this: this): number;
   }
 }

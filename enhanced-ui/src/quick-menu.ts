@@ -26,17 +26,17 @@ ig.module('ultimate-localized-ui.fixes.quick-menu')
       getLevelColorRgb() {
         switch (this.displayColor) {
           case sc.GUI_NUMBER_COLOR.WHITE:
-            return [0xff, 0xff, 0xff];
+            return 0xffffff;
           case sc.GUI_NUMBER_COLOR.RED:
-            return [0xff, 0x69, 0x69];
+            return 0xff6969;
           case sc.GUI_NUMBER_COLOR.GREEN:
-            return [0x65, 0xff, 0x89];
+            return 0x65ff89;
           case sc.GUI_NUMBER_COLOR.GREY:
-            return [0x80, 0x80, 0x80];
+            return 0x808080;
           case sc.GUI_NUMBER_COLOR.ORANGE:
-            return [0xff, 0xc7, 0x31];
+            return 0xffc731;
           default:
-            return [0xff, 0xff, 0xff];
+            return 0xffffff;
         }
       },
 

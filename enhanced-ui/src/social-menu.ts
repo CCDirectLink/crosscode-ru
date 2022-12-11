@@ -74,9 +74,9 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
         },
       }),
       statusTextRecolors: {
-        party: [0xd3, 0xed, 0xff],
-        online: [0xad, 0xff, 0x94],
-        offline: [0xee, 0x9d, 0x96],
+        party: 0xd3edff,
+        online: 0xadff94,
+        offline: 0xee9d96,
       },
 
       init(...args) {

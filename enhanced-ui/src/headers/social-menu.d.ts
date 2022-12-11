@@ -4,6 +4,6 @@ declare namespace sc {
     statusNinepatch: ig.NinePatch;
     statusTextBg: ig.BoxGui;
     statusTextGui: sc.TextGui;
-    statusTextRecolors: Record<string, number[]>;
+    statusTextRecolors: Record<string, number>;
   }
 }

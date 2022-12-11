@@ -37,6 +37,9 @@ ig.module('ultimate-localized-ui.text-gui-utils')
   .defines(() => {
     sc.ui2.textRecolorDrawCallback = (textBlock, newColor) => {
       let fragment = textBlock.buffer;
+      let newColorRed = (newColor >> 16) & 0xff;
+      let newColorGreen = (newColor >> 8) & 0xff;
+      let newColorBlue = (newColor >> 0) & 0xff;
       if (fragment.width === 0 || fragment.height === 0) return;
       let scale = ig.system.scale * ig.imageAtlas.scale;
       let imageData = ig.system.context.getImageData(
@@ -48,9 +51,9 @@ ig.module('ultimate-localized-ui.text-gui-utils')
       let pixels = imageData.data;
       for (let i = 0, len = imageData.width * imageData.height * 4; i < len; i += 4) {
         if ((pixels[i + 0] > 0 || pixels[i + 1] > 0 || pixels[i + 2] > 0) && pixels[i + 3] > 0) {
-          pixels[i + 0] = newColor[0];
-          pixels[i + 1] = newColor[1];
-          pixels[i + 2] = newColor[2];
+          pixels[i + 0] = newColorRed;
+          pixels[i + 1] = newColorGreen;
+          pixels[i + 2] = newColorBlue;
         }
       }
       ig.system.context.putImageData(imageData, fragment.offX, fragment.offY);
