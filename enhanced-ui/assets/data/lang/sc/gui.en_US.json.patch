@@ -23,6 +23,9 @@
       },
       "quests": {
         "lvl": "LVL"
+      },
+      "skill": {
+        "cp": "cp"
       }
     }
   }
