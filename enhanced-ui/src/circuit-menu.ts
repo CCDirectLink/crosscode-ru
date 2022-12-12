@@ -22,7 +22,9 @@ ig.module('ultimate-localized-ui.fixes.circuit-menu')
         try {
           renderer.addGfx = (gfx, posX, posY, srcX, srcY, sizeX, sizeY, flipX, flipY) => {
             if (gfx === this.gfx && srcX === 368 && srcY === 272 && sizeX === 52 && sizeY === 11) {
-              return addGfx.call(renderer, this.patchedGfx, posX, posY, 1, 26, sizeX, sizeY);
+              gfx = this.patchedGfx;
+              srcX = 1;
+              srcY = 26;
             }
             return addGfx.call(renderer, gfx, posX, posY, srcX, srcY, sizeX, sizeY, flipX, flipY);
           };
