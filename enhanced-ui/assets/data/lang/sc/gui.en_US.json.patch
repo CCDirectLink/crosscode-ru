@@ -26,7 +26,18 @@
       },
       "skill": {
         "cp": "cp"
+      },
+      "equip": {
+        "lvl": "lvl"
       }
+    },
+    "status-hud": {
+      "exp": "EXP",
+      "hp": "HP",
+      "sp": "SP"
+    },
+    "arena": {
+      "lvl": "lvl"
     }
   }
 }

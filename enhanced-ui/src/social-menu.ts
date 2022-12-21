@@ -129,4 +129,16 @@ ig.module('ultimate-localized-ui.fixes.social-menu')
         });
       },
     });
+
+    sc.SocialBaseInfoBox.inject({
+      init(...args) {
+        this.parent(...args);
+        for (let { gui } of this.hook.children) {
+          if (gui instanceof sc.TextGui && gui.text === 'LVL') {
+            gui.setText(ig.lang.get('sc.gui.status-hud.lvl'));
+            break;
+          }
+        }
+      },
+    });
   });

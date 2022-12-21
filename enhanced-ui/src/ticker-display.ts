@@ -41,22 +41,12 @@ ig.module('ultimate-localized-ui.ticker-display')
 
         const ctor = this.constructor as typeof sc.ui2.TickerDisplayHook;
         if (ctor.PATTERN_SHADOW_LEFT == null) {
-          ctor.PATTERN_SHADOW_LEFT = this.shadowGfx.createPattern(
-            0,
-            0,
-            8,
-            1,
-            ig.ImagePattern.OPT.REPEAT_Y,
-          );
+          let pat = this.shadowGfx.createPattern(0, 0, 8, 1, ig.ImagePattern.OPT.REPEAT_Y);
+          ctor.PATTERN_SHADOW_LEFT = pat;
         }
         if (ctor.PATTERN_SHADOW_RIGHT == null) {
-          ctor.PATTERN_SHADOW_RIGHT = this.shadowGfx.createPattern(
-            0,
-            1,
-            8,
-            1,
-            ig.ImagePattern.OPT.REPEAT_Y,
-          );
+          let pat = this.shadowGfx.createPattern(0, 1, 8, 1, ig.ImagePattern.OPT.REPEAT_Y);
+          ctor.PATTERN_SHADOW_RIGHT = pat;
         }
       },
 

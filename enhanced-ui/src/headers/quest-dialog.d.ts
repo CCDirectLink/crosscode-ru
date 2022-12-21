@@ -3,4 +3,8 @@ declare namespace sc {
     levelLabel: sc.TextGui;
     tileOffsetToColorMapping: Record<string, string>;
   }
+
+  interface ArenaInfoBox {
+    levelLabel: sc.TextGui;
+  }
 }

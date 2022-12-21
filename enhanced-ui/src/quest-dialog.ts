@@ -153,6 +153,18 @@ ig.module('ultimate-localized-ui.fixes.quest-dialog')
       },
     });
 
+    sc.ArenaInfoBox.inject({
+      init(...args) {
+        this.parent(...args);
+        for (let { gui } of this.hook.children) {
+          if (gui instanceof sc.TextGui && gui.text === 'lvl') {
+            gui.setText(ig.lang.get('sc.gui.arena.lvl'));
+            break;
+          }
+        }
+      },
+    });
+
     sc.QuestStartDialogButtonBox.inject({
       init(...args) {
         this.parent(...args);

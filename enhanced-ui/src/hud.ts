@@ -50,8 +50,12 @@ ig.module('ultimate-localized-ui.fixes.pvp')
     });
   });
 
-ig.module('ultimate-localized-ui.fixes.param-hud')
-  .requires('game.feature.gui.hud.param-hud')
+ig.module('ultimate-localized-ui.fixes.status-hud')
+  .requires(
+    'game.feature.gui.hud.param-hud',
+    'game.feature.gui.hud.hp-hud',
+    'game.feature.gui.hud.sp-hud',
+  )
   .defines(() => {
     sc.ParamHudGui.inject({
       init(...args) {
@@ -66,6 +70,54 @@ ig.module('ultimate-localized-ui.fixes.param-hud')
           offset += newParamWidth - param.hook.size.x;
           param.hook.size.x = newParamWidth;
         }
+      },
+    });
+
+    sc.HpHudGui.inject({
+      UI2_DRAW_LABEL_AS_TEXT_BLOCK: true,
+      hpText: null,
+
+      init(...args) {
+        this.parent(...args);
+        if (!this.UI2_DRAW_LABEL_AS_TEXT_BLOCK) return;
+        this.hpText = new sc.TextGui(ig.lang.get('sc.gui.status-hud.hp'), {
+          font: sc.fontsystem.tinyFont,
+          linePadding: 0,
+          drawCallback: () => sc.ui2.textRecolorDrawCallback(this.hpText.textBlock, 0x9c9c9c),
+        });
+        this.hpText.setPos(8, 0);
+        this.addChildGui(this.hpText);
+      },
+
+      updateDrawables(renderer) {
+        this.parent(renderer);
+        if (!this.UI2_DRAW_LABEL_AS_TEXT_BLOCK) return;
+        let { pos, size } = this.hpText.hook;
+        renderer.addColor('#000000', pos.x, pos.y, size.x, size.y);
+      },
+    });
+
+    sc.SpHudGui.inject({
+      UI2_DRAW_LABEL_AS_TEXT_BLOCK: true,
+      spText: null,
+
+      init(...args) {
+        this.parent(...args);
+        if (!this.UI2_DRAW_LABEL_AS_TEXT_BLOCK) return;
+        this.spText = new sc.TextGui(ig.lang.get('sc.gui.status-hud.sp'), {
+          font: sc.fontsystem.tinyFont,
+          linePadding: 0,
+          drawCallback: () => sc.ui2.textRecolorDrawCallback(this.spText.textBlock, 0x9c9c9c),
+        });
+        this.spText.setPos(8, 0);
+        this.addChildGui(this.spText);
+      },
+
+      updateDrawables(renderer) {
+        this.parent(renderer);
+        if (!this.UI2_DRAW_LABEL_AS_TEXT_BLOCK) return;
+        let { pos, size } = this.spText.hook;
+        renderer.addColor('#000000', pos.x, pos.y, size.x, size.y);
       },
     });
   });
