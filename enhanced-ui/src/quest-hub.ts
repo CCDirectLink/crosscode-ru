@@ -13,6 +13,13 @@ ig.module('ultimate-localized-ui.fixes.quest-hub')
           this.hook.size.y = calculatedHeight;
           rewardsHook.size.y += calculatedHeight - oldHeight;
         }
+
+        for (let { gui } of this.levelContent.hook.children) {
+          if (gui instanceof sc.TextGui && gui.text === 'LvL') {
+            gui.setText(ig.lang.get('sc.gui.menu.questHub.lvl'));
+            break;
+          }
+        }
       },
     });
   });

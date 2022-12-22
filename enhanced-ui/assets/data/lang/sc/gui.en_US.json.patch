@@ -29,6 +29,12 @@
       },
       "equip": {
         "lvl": "lvl"
+      },
+      "questHub": {
+        "lvl": "LvL"
+      },
+      "enemy": {
+        "lvl": "lvl"
       }
     },
     "status-hud": {

@@ -26,3 +26,4 @@ import './lore-menu.js';
 import './main-menu.js';
 import './circuit-menu.js';
 import './equipment-menu.js';
+import './enemies-menu.js';
